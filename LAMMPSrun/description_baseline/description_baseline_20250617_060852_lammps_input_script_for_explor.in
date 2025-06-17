@@ -1,0 +1,64 @@
+```lammps
+# LAMMPS Input Script for Exploring Multiple Conformations of Tungsten using NWChem via MDI
+
+# Initialize simulation
+units metal
+atom_style atomic
+boundary p p p
+
+# Define the mass of tungsten
+mass 1 183.84
+
+# Communication settings
+comm_modify cutoff 2.0
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define potential and fix for quantum calculations
+fix 1 all mdi/qm mdi_protocol nwchem
+
+# Loop over different conformations
+variable conformations index bcc diamond sc
+label loop_start
+
+# Clear previous settings
+clear
+
+# Initialize simulation again for each conformation
+units metal
+atom_style atomic
+boundary p p p
+
+# Load the data file for the current conformation
+read_data data.${conformations}
+
+# Assign mass again after read_data
+mass 1 183.84
+
+# Reapply communication settings
+comm_modify cutoff 2.0
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define potential and fix for quantum calculations
+fix 1 all mdi/qm mdi_protocol nwchem
+
+# Setup output
+log log.${conformations}
+thermo 1
+thermo_style custom step temp pe etotal
+
+# Run simulation (zero timesteps for setup verification)
+run 0
+
+# Proceed to next conformation
+next conformations
+jump SELF loop_start
+
+# Finalize MDI communication
+mdi_exit
+```

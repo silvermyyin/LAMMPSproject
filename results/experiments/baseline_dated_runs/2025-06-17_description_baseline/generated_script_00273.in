@@ -1,0 +1,39 @@
+# LAMMPS input script for an electrochemical system with slab geometry
+
+units real
+atom_style full
+boundary p p f
+
+# Read data file
+read_data system.data
+
+# Include modular settings file
+include settings.mod
+
+# Define groups for electrodes
+group bottom_electrode type 1
+group top_electrode type 2
+
+# Set up long-range electrostatics for slab geometry
+kspace_style ewald/electrode 1.0e-8
+
+# Define thermodynamic output
+thermo 100
+thermo_style custom step temp pe c_qbot c_qtop
+
+# Define computes for electrode charge
+compute qbot bottom_electrode property/atom q
+compute qtop top_electrode property/atom q
+
+# Fix property to manage custom property d_eta
+fix feta all property/atom d_eta
+
+# Set d_eta for bottom and top electrode groups
+set group bottom_electrode d_eta 0.5
+set group top_electrode d_eta 3.0
+
+# Apply constant potential difference
+fix conp all electrode/conp top top_electrode 1.0 couple top symmetry yes
+
+# Run the simulation for initialization
+run 0

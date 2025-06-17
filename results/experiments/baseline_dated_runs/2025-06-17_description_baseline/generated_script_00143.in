@@ -1,0 +1,46 @@
+# LAMMPS input script for a hybrid QM/MM simulation using PySCF
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data data.mixture
+
+# Define atom groups
+group qm id 1:9
+group mm subtract all qm
+
+# Remove bonds and angles in QM region
+delete_bonds qm all remove
+
+# Set charges of QM atoms to zero
+set group qm charge 0.0
+
+# Define potentials
+pair_style hybrid lj/cut/coul/long 10.0
+pair_coeff * * lj/cut/coul/long 0.1 3.5
+
+bond_style harmonic
+angle_style harmonic
+
+# KSpace settings for long-range electrostatics
+kspace_style pppm 1.0e-4
+
+# Define QM/MM coupling using MDI/QMMM
+fix qmmm all mdi/qmmm pyscf input_file pyscf.in
+
+# Integrate equations of motion
+timestep 0.01
+fix 1 all nve
+
+# Thermodynamic output
+thermo 1
+thermo_style custom step temp etotal pe ke ebond eangle evdwl ecoul elong
+
+# Run simulation
+run 2
+
+# End of the script
+
+This script sets up a QM/MM simulation using LAMMPS with the PySCF package for the QM region. It employs hybrid potentials and detailed thermodynamic output for a brief simulation run.

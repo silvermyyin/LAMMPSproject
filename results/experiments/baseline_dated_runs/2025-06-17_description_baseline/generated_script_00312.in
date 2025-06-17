@@ -1,0 +1,51 @@
+# LAMMPS input script for Ti-Zr alloy using RANN potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create hcp lattice
+lattice hcp 2.995
+region simbox block 0 10 0 10 0 10
+create_box 2 simbox
+
+# Create atoms
+create_atoms 1 box
+
+# Assign random types, 10% type 2 (Zr), 90% type 1 (Ti)
+set type 1 type/fraction 2 0.1 12345
+
+# Define interatomic potential
+pair_style rann
+pair_coeff * * potential_rann Ti Zr
+
+# Velocity initialization
+velocity all create 300.0 12345 mom yes rot no dist gaussian
+
+# Fix for energy minimization
+fix 1 all box/relax iso 0.0 vmax 0.001
+
+# Energy minimization
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Remove box relaxation fix
+unfix 1
+
+# Equilibration with NPT ensemble
+fix 2 all npt temp 300.0 300.0 100.0 iso 0.0 0.0 1000.0
+
+# Output settings
+thermo 25
+thermo_style custom step temp press pe
+
+# Run equilibration
+timestep 0.001
+run 5000
+
+# Unfix the NPT ensemble
+unfix 2
+
+# End of script

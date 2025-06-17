@@ -1,0 +1,53 @@
+# LAMMPS input script for shock-induced phase transitions in alpha-quartz
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style charge
+
+# Read data
+read_data alpha_quartz.data
+
+# Replicate system
+replicate 2 1 4
+
+# Define potential
+pair_style buck/coul/cut 10.0
+pair_coeff * * 1.0e5 0.1 1.0 
+
+# Set up neighbor lists
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the quantum thermal bath
+fix 1 all qtb 300.0
+
+# Minimize the system
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Equilibrate at 300 K and 1.03125 bar
+timestep 0.001
+velocity all create 300.0 12345
+fix 2 all npt temp 300.0 300.0 0.1 iso 1.03125 1.03125 1.0
+run 5000
+unfix 2
+
+# Set up shock simulation with multi-scale shock technique
+fix 3 all qbmsst z 78.0 1.0 0.5
+
+# Define output
+thermo_style custom step time temp press etotal f_1[1] f_1[2] f_3[1] f_3[2] 
+thermo 100
+
+# Run the shock simulation in stages
+reset_timestep 0
+run 5000
+
+# Restart to handle potential breakdowns
+write_restart restart.alpha_quartz
+
+# Continue simulation
+read_restart restart.alpha_quartz
+run 6000

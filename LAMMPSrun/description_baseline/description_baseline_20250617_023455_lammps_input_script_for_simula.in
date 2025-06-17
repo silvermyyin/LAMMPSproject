@@ -1,0 +1,40 @@
+```lammps
+# LAMMPS input script for simulating DNA duplexes using the oxDNA model
+
+units real
+atom_style hybrid bond ellipsoid oxDNA
+
+# Create simulation box and read data
+boundary p p p
+read_data dna_duplex.data
+
+# Assign masses to all atom types (mass of oxDNA nucleotide)
+mass * 330.0
+
+# Define potential interactions
+pair_style oxDNA
+bond_style fene
+
+# Define pair coefficients
+pair_coeff * *
+
+# Define bond coefficients
+bond_coeff * 30.0 1.5 1.0
+
+# Thermostat settings
+fix 1 all langevin 300.0 300.0 1.0 12345 angmom yes
+fix 2 all nve/asphere
+
+# Set timestep
+timestep 0.01706
+
+# Output settings
+thermo 1000
+thermo_style custom step temp etotal ke pe ebond epair vol
+dump 1 all custom 1000 dump.dna id type x y z
+
+# Run the simulation
+run 1000000
+
+# End of script
+```

@@ -1,0 +1,57 @@
+# LAMMPS input script for testing a Poisson solver with ATC in a metallic system
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      charge
+
+# Create fcc lattice and simulation box
+lattice         fcc 4.08
+region          box block 0 16 0 3 0 3
+create_box      1 box
+create_atoms    1 box
+
+# Define interatomic potential
+pair_style      lj/cut 13.0
+pair_coeff      1 1 0.0104 3.4 13.0  # Lennard-Jones parameters for Argon
+
+# Set charges and dielectric constant
+set             type 1 charge 1.0
+dielectric      1.0
+
+# Define the ATC fix for coupling
+fix             atc all atc
+fix_modify      atc solver poisson
+
+# Set up boundary conditions for testing
+variable        simname string "Poisson_solver_test"
+
+# Fixed electric potential boundary condition (Dirichlet)
+fix             dirichlet all atc fix_potential boundary xlo 0.0 xhi 0.0
+
+# Neumann boundary condition
+fix             neumann all atc fix_flux boundary ylo 0.0 yhi 0.0
+
+# Robin boundary condition
+fix             robin all atc fix_robin boundary zlo 0.0 zhi 0.0
+
+# Run simulation for each boundary condition
+variable        simcount equal 4
+
+label           loop
+variable        i loop ${simcount}
+
+# Reset timestep for each run
+reset_timestep  0
+
+# Run a short simulation with a timestep of 0.0
+timestep        0.0
+run             100
+
+# Store results for analysis
+write_data      ${simname}_${i}.data
+
+next            i
+jump            SELF loop
+
+# End of script

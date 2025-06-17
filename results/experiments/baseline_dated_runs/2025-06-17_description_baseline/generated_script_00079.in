@@ -1,0 +1,73 @@
+# LAMMPS Input Script for Soft Repulsive Particles Simulation
+
+# Initialize the simulation
+units lj
+dimension 3
+atom_style atomic
+
+# Create a face-centered cubic (fcc) lattice
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 2 box
+create_atoms 1 box
+
+# Assign particle types in a 1:1 ratio
+set type 1 type/fraction 2 0.5 12345
+
+# Define initial velocity
+velocity all create 1.0 12345
+
+# Set neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define pair styles and potentials
+# Phase 1: Python pair style with harmonic potential
+pair_style python harmonic.py
+pair_coeff * * 1.0 1.0
+
+# Define simulation settings
+timestep 0.005
+thermo 50
+
+# Integrate using NVE ensemble
+fix 1 all nve
+
+# Run the simulation for 5000 steps
+run 5000
+
+# Write a restart file
+write_restart restart.harmonic
+
+# Phase 2: Harmonic/cut potential
+read_restart restart.harmonic
+pair_style harmonic/cut 1.12246
+pair_coeff * * 1.0 1.0
+
+# Run the simulation for another 5000 steps
+run 5000
+
+# Write a restart file
+write_restart restart.harmonic_cut
+
+# Phase 3: Tabulated potential using pair_style table
+read_restart restart.harmonic_cut
+pair_style table spline 1000
+pair_coeff * * mytable.txt harmonic 1.5
+
+# Run the simulation for the final 5000 steps
+run 5000
+
+# Write final restart file
+write_restart restart.final
+
+# Cleanup temporary files
+shell rm -f restart.harmonic
+shell rm -f restart.harmonic_cut
+
+# Output interaction data for analysis
+dump 1 all custom 50 dump.lammpstrj id type x y z
+dump_modify 1 sort id
+run 0
+
+# End of simulation

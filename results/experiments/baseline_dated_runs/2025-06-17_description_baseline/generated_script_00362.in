@@ -1,0 +1,29 @@
+# LAMMPS input script for calculating the cohesive energy of fcc titanium
+
+# Initialize simulation
+units metal
+atom_style atomic
+boundary p p p
+
+# Create simulation box
+lattice fcc 4.147029
+region box block 0 1 0 1 0 1
+create_box 1 box
+create_atoms 1 box
+
+# Define titanium properties
+mass 1 47.90
+
+# Set up potential
+pair_style meam/spline
+pair_coeff * * Ti.meam.spline Ti
+
+# Compute potential energy per atom
+variable Ecoh equal pe/atoms
+
+# Run simulation without dynamics
+run 0
+
+# Print cohesive energy and compare to reference value
+print "Calculated cohesive energy (eV/atom): ${Ecoh}"
+print "Reference cohesive energy (eV/atom): -4.792"

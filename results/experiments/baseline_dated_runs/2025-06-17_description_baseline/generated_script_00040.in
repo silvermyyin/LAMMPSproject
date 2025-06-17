@@ -1,0 +1,32 @@
+units electron
+atom_style electron
+
+read_data methane_data.dat
+
+pair_style eff/cut 1000.0
+pair_coeff * *
+
+neighbor 2.0 bin
+neigh_modify delay 5
+
+thermo_style custom step temp pe ke etotal epair evdwl epauli ecoul erestraint press
+thermo 100
+
+compute stress_atom all stress/atom virial
+compute pe_atom all pe/atom
+compute reduce_press all reduce sum c_stress_atom[1] c_stress_atom[2] c_stress_atom[3]
+
+minimize 1.0e-4 1.0e-6 100 1000
+min_style cg
+min_modify line quadratic
+
+dump 1 all custom 1000 dump.methane id type x y z c_pe_atom c_stress_atom[1] c_stress_atom[2] c_stress_atom[3]
+dump_modify 1 element C H
+dump 2 all custom 1000 dump.spin spin
+dump 3 all custom 1000 dump.radius radius
+
+fix 1 all nvt/eff temp 10000.0 10000.0 0.1
+
+timestep 0.001
+
+run 40000

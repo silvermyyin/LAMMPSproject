@@ -1,0 +1,42 @@
+# LAMMPS input script to simulate the formation energy of a relaxed vacancy in a bcc structure using MGPT potential
+
+units electronic
+atom_style atomic
+
+# Define lattice and create a 5x5x5 bcc supercell
+lattice bcc 3.308
+region box block 0 5 0 5 0 5
+create_box 1 box
+create_atoms 1 box
+
+# Remove the central atom to introduce a vacancy
+# Calculate the central position (2.5, 2.5, 2.5) for the 5x5x5 supercell
+group center_atom id 63
+delete_atoms group center_atom
+
+# Specify potential and its parameters
+pair_style mgpt
+pair_coeff * * mgpt.param
+
+# Set neighbor list parameters
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define thermodynamic output
+thermo 10
+thermo_style custom step vol temp pe etotal press
+
+# Minimize energy using the conjugate gradient method
+min_style cg
+minimize 1.0e-12 1.0e-12 10000 10000
+
+# Output key quantities
+variable natoms equal "count(all)"
+variable atomic_volume equal "vol/v_natoms"
+variable energy_per_atom equal "etotal/v_natoms"
+variable pressure_gpa equal "press*160.21766208"
+
+print "Number of atoms = ${natoms}"
+print "Atomic volume = ${atomic_volume} (angstrom^3/atom)"
+print "Total energy per atom = ${energy_per_atom} (Rydberg/atom)"
+print "Pressure = ${pressure_gpa} (GPa)"

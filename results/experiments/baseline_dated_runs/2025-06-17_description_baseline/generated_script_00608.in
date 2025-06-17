@@ -1,0 +1,65 @@
+# LAMMPS input script for simulating a rigid body system with Lennard-Jones units
+
+# Initialize simulation
+units lj
+atom_style bond
+
+# Read in data file
+read_data rigid_body_system.data
+
+# Define groups for each clump
+group clump1 id 1:10
+group clump2 id 11:20
+group clump3 id 21:30
+group clump4 id 31:40
+group clump5 id 41:50
+group clump6 id 51:60
+group clump7 id 61:70
+group clump8 id 71:80
+group clump9 id 81:90
+
+# Exclude intra-clump interactions
+neigh_modify exclude group clump1 clump1
+neigh_modify exclude group clump2 clump2
+neigh_modify exclude group clump3 clump3
+neigh_modify exclude group clump4 clump4
+neigh_modify exclude group clump5 clump5
+neigh_modify exclude group clump6 clump6
+neigh_modify exclude group clump7 clump7
+neigh_modify exclude group clump8 clump8
+neigh_modify exclude group clump9 clump9
+
+# Define interactions
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Initialize velocities
+velocity all create 100.0 12345
+
+# Define rigid bodies
+fix 1 clump1 rigid single
+fix 2 clump2 rigid single
+fix 3 clump3 rigid single
+fix 4 clump4 rigid single
+fix 5 clump5 rigid single
+fix 6 clump6 rigid single
+fix 7 clump7 rigid single
+fix 8 clump8 rigid single
+fix 9 clump9 rigid single
+
+# Set the timestep
+timestep 0.0001
+
+# Output settings
+thermo 50
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+run 10000
+
+# Uncomment the following lines to enable additional output options
+# dump 1 all atom 100 dump.rigid_body_system.lammpstrj
+# dump 2 all image 100 image.*.jpg type type
+# dump_modify 2 pad 5
+# run 10000
+# movie 3 all movie.mpg type type

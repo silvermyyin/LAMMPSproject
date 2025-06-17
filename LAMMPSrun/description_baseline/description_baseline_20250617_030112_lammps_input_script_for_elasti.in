@@ -1,0 +1,82 @@
+```lammps
+# LAMMPS Input Script for Elastic Constants Calculation of Silicon using COMB Potential
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      charge
+
+# Create a diamond lattice structure for silicon
+lattice         diamond 5.431
+region          box block 0 10 0 10 0 10 units lattice
+create_box      1 box
+create_atoms    1 box
+
+# Assign mass to silicon atoms
+mass            1 29.0
+
+# Define COMB potential
+pair_style      comb
+pair_coeff      * * ffield.comb Si
+
+# Set initial velocities
+velocity        all create 1.0 12345 mom yes rot yes dist gaussian
+
+# Define neighbor and communication settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Set up a minimization process and a relaxation with NVT
+thermo          100
+thermo_style    custom step temp pe etotal press vol lx ly lz pxx pyy pzz pxy pxz pyz
+
+# Relax the system by minimizing energy
+min_style       cg
+minimize        1e-4 1e-6 100 1000
+
+# Equilibrate the system at low temperature
+fix             1 all nvt temp 1.0 1.0 0.1
+run             1000
+unfix           1
+
+# Anisotropic box relaxation
+fix             2 all box/relax iso 0.0 vmax 0.001
+minimize        1e-4 1e-6 100 1000
+unfix           2
+
+# Define variables to hold deformation parameters
+variable        strain equal 0.01
+
+# Deformation test in x-direction
+fix             3 all deform 1 x scale ${strain}
+run             1000
+unfix           3
+
+# Deformation test in z-direction
+fix             4 all deform 1 z scale ${strain}
+run             1000
+unfix           4
+
+# Deformation test in yz-direction
+fix             5 all deform 1 yz delta ${strain}
+run             1000
+unfix           5
+
+# Deformation test in xy-direction
+fix             6 all deform 1 xy delta ${strain}
+run             1000
+unfix           6
+
+# Compute stress for analysis
+compute         stress all stress/atom NULL
+compute         p all reduce sum c_stress[1] c_stress[2] c_stress[3] c_stress[4] c_stress[5] c_stress[6]
+
+# Output stress and strain data
+thermo_style    custom step temp etotal press pxx pyy pzz pxy pxz pyz
+thermo          100
+
+# Final run to ensure all data is collected
+run             1000
+```
+
+Note: Ensure that the `ffield.comb` file is available in the working directory, as it contains the necessary parameters for the COMB potential specific to silicon. The script performs energy minimization, equilibrates the system, and applies various deformations to calculate the elastic constants.

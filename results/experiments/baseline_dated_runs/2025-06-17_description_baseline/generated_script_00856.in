@@ -1,0 +1,33 @@
+# LAMMPS input script for electrostatic interactions using PPPM
+
+# Initialization
+units real
+atom_style full
+boundary p p p
+
+# Read data
+read_data data.electrodes
+
+# Include modular settings
+include settings.mod
+
+# Setup for PPPM
+kspace_style pppm 1.0e-10
+
+# Define electrode groups
+group bottom_electrode type 1
+group top_electrode type 2
+
+# Fixes for electrodes
+fix conp bottom_electrode efield 1.0 0.0 0.0
+fix conp top_electrode efield -1.0 0.0 0.0
+
+# Output settings
+thermo_style custom step pe q bottom_electrode q top_electrode
+
+# Write inversion and vector data
+dump 1 all custom 1 inv.csv id type x y z
+dump 2 all custom 1 vec.csv vx vy vz
+
+# Run setup phase
+run 0

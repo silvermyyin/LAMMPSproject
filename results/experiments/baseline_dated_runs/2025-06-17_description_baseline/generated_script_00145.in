@@ -1,0 +1,61 @@
+# LAMMPS Input Script: Deposition of CF_x Molecules onto SiO2 Substrate
+
+units real
+atom_style charge
+boundary p p f
+
+# Initialize Simulation
+read_data sio2.data
+
+# Define Regions
+region frozen block INF INF INF INF INF 10
+region middle block INF INF INF INF 10 30
+region top block INF INF INF INF 30 INF
+
+# Assign Masses
+mass 1 28.085  # Silicon
+mass 2 15.999  # Oxygen
+mass 3 12.011  # Carbon
+mass 4 18.998  # Fluorine
+mass 5 39.948  # Argon
+
+# Define Pair Styles
+pair_style hybrid reax/c NULL zbl 3.0 5.0
+pair_coeff * * reax/c ffield.reax.sio2  Si O C F NULL
+pair_coeff 3 5 zbl
+pair_coeff 4 5 zbl
+
+# Group Definitions
+group frozen region frozen
+group middle region middle
+group top region top
+group substrate union frozen middle top
+
+# Set Neighbor and Neighbor Modifications
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Apply Force Settings
+fix 1 frozen setforce 0.0 0.0 0.0
+fix 2 middle nvt temp 300.0 300.0 100.0
+fix 3 top nve
+
+# Define Deposition Settings
+region deposition block -20 20 -20 20 40 60 units box
+fix 4 all deposit 100 2 200 12345 region deposition vz -0.5 -2.0 units box
+fix 5 all deposit 50 5 100 67890 region deposition vz -0.5 -2.0 units box
+
+# Evaporation Control
+fix 6 all evaporate 50 10 region top 123456
+
+# Output Settings
+thermo 100
+thermo_style custom step temp pe ke etotal press
+dump 1 all atom 500 dump.deposition.lammpstrj
+restart 10000 restart.deposition.*
+
+# Run Simulation
+timestep 1.0
+run 100000
+
+This script sets up the deposition of CF_x molecules and argon atoms onto an SiO2 substrate, using LAMMPS with realistic simulation conditions and monitoring tools.

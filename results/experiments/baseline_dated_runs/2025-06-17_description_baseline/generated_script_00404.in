@@ -1,0 +1,35 @@
+# LAMMPS input script for 2D hexagonally packed atomic system with Voronoi tessellation
+
+units metal
+dimension 2
+boundary f f p
+
+# Create a hexagonal lattice
+lattice hex 1.0
+
+# Define simulation region and create atoms
+region box block 0 10 0 10 -0.1 0.1
+create_box 1 box
+create_atoms 1 box
+
+# Set Lennard-Jones potential with a cutoff
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Enable compute voronoi/atom
+compute voro all voronoi/atom
+
+# Define output for first test: per-atom and local Voronoi quantities
+dump 1 all custom 1 dump.voro1 id type c_voro[1] c_voro[2] c_voro[3] c_voro[4]
+dump_modify 1 sort id
+
+# Define output for second test: local and global Voronoi quantities
+compute voro_area all reduce sum c_voro[1]
+thermo_style custom step atoms c_voro_area
+
+# Run with zero timesteps for data output only
+run 0
+
+# Clean up
+uncompute voro
+undump 1

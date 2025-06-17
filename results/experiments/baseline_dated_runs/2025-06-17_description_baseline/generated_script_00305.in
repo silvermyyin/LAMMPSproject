@@ -1,0 +1,74 @@
+# LAMMPS Input Script for FCC Gold Simulation with EAM Potential and ATC
+
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create FCC lattice for gold
+lattice fcc 4.08
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Set masses
+mass 1 196.9665
+
+# EAM potential for gold
+pair_style eam
+pair_coeff * * Au_u3.eam
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify delay 5
+
+# Define thermo output
+thermo 100
+thermo_style custom step temp pe ke etotal lx ly lz
+
+# Fix for atom-to-continuum coupling
+fix atc all atc control file Au_elastic.mat
+
+# Set time step
+timestep 0.001
+
+# Minimize energy
+min_style cg
+minimize 1e-10 1e-10 1000 10000
+
+# Equilibration
+velocity all create 300.0 12345 mom yes rot no dist gaussian
+fix 1 all nvt temp 300.0 300.0 0.1
+run 5000
+
+unfix 1
+
+# Deformation setup
+variable strain_rate equal 0.01
+variable stepsize equal 1000
+variable total_steps equal 10
+
+# Loop over deformation steps
+label loop
+variable i loop ${total_steps}
+
+  # Deform the box along the y-axis
+  fix 2 all deform 1 y scale ${strain_rate} remap v
+  run ${stepsize}
+
+  # Adjust velocities and measure strain
+  compute strain all displace/atom
+  variable total_strain equal c_strain[2]/ly
+  thermo_style custom step temp pe ke etotal lx ly lz v_total_strain
+
+  # Output strain and energies
+  print "Step ${i}: Total Strain = ${total_strain}"
+
+  next i
+jump SELF loop
+
+# Clean up
+unfix 2
+write_restart restart.final
+
+This script sets up an FCC gold crystal with EAM potential, applies deformation along the y-axis, and uses the `fix atc` command to couple atomistic and continuum scales. The simulation tracks thermodynamic properties and strain during the deformation process. Adjust paths and filenames as necessary for your specific setup and files.

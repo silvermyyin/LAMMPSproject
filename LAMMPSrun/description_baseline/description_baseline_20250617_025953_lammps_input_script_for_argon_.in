@@ -1,0 +1,44 @@
+```lammps
+# LAMMPS input script for Argon atoms modeled with Lennard-Jones potential
+
+# Initialize simulation
+units           lj
+dimension       3
+boundary        p f p
+atom_style      atomic
+
+# Create simulation box and atoms
+lattice         sc 1.0
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define interatomic potential
+pair_style      lj/cut 8.5
+pair_coeff      1 1 1.0 1.0 8.5
+
+# Assign mass to argon atoms
+mass            1 39.95
+
+# Initialize velocities
+velocity        all create 300.0 12345
+
+# Define fix for microcanonical ensemble
+fix             1 all nve
+
+# Define stochastic boundary conditions
+fix             2 all wall/reflect ylo EDGE yhi EDGE
+fix             3 all wall/lj93 ylo EDGE 1.0 1.0 8.5
+fix             4 all wall/lj93 yhi EDGE 1.0 1.0 8.5
+fix_modify      3 energy yes momentum yes
+fix_modify      4 energy yes momentum yes
+fix             5 all wall/reflect ylo EDGE yhi EDGE
+fix_modify      5 yhi velocity 0.1
+fix_modify      5 ylo exchange 0.2
+fix_modify      5 yhi exchange 0.2
+
+# Run the simulation
+timestep        0.005
+thermo          1000
+run             10000
+```

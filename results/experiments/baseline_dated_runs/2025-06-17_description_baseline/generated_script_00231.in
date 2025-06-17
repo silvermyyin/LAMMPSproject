@@ -1,0 +1,46 @@
+# LAMMPS input script for a 2D Lennard-Jones simulation
+
+# Initialize simulation
+units lj
+dimension 2
+atom_style atomic
+boundary p p p
+
+# Read initial atomic configuration
+read_data data.lj_system
+
+# Assign mass to all atom types
+mass * 1.0
+
+# Define Lennard-Jones potential with a cutoff distance of 2.5
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.2 2.5
+pair_coeff 1*100 1*100 1.0 1.2 2.5  # Specific self-interactions
+
+# Compute atomic displacements
+compute da all displace/atom
+
+# Define output settings
+thermo 1
+thermo_style custom step temp pe etotal press
+
+# Dump settings for atomic positions
+dump pos all atom 10 dump.positions.lammpstrj
+
+# Dump settings for images with color-coded atom types
+dump img all image 10 image.*.png type type
+dump_modify img pad 5
+dump_modify img color 1 blue
+dump_modify img color 2 green
+dump_modify img color 3 red
+dump_modify img color 4 cyan
+dump_modify img color 5 magenta
+dump_modify img color 6 yellow
+dump_modify img color 7 black
+dump_modify img color 8 white
+dump_modify img color 9 orange
+dump_modify img color 10 purple
+# Continue defining colors for other atom types if necessary
+
+# Run the simulation
+run 10000

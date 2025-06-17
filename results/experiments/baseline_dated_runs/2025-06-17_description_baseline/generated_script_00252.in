@@ -1,0 +1,45 @@
+# LAMMPS Input Script for S12S Surfactant System
+
+units lj
+atom_style full
+
+# Read the initial structure from a data file
+read_data s12s_surfactant_system.data
+
+# Define pair styles
+pair_style hybrid/overlay lj/cut 2.5 coul/long 10.0 gauss/cut 5.0
+pair_coeff * * lj/cut 1.0 1.0  # Example for Lennard-Jones
+pair_coeff * * gauss/cut 1.0 0.8  # Example for Gaussian
+pair_coeff * * coul/long  # Coulombic interactions
+
+# Define the kspace style for long-range electrostatics
+kspace_style pppm 1.0e-5
+
+# Define bond and angle styles
+bond_style harmonic
+angle_style harmonic
+
+# Define dihedral style using OPLS parameters
+dihedral_style opls
+
+# Set dielectric constant
+dielectric 0.4255
+
+# Group definitions
+group surfactant type 1 2 3  # Example atom types for surfactant
+group ions type 4 5  # Example atom types for ions
+
+# Initial velocity distribution
+velocity all create 1.0 12345
+
+# Fixes for integration and thermostatting
+fix 1 all nve/limit 0.1
+fix 2 all langevin 1.0 1.0 1.0 904297
+
+# Run settings
+timestep 0.005
+thermo 500
+thermo_style custom step temp etotal press
+
+# Run the simulation
+run 2000

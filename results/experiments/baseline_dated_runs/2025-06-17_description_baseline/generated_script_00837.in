@@ -1,0 +1,42 @@
+# LAMMPS Input Script for Electrode-Electrolyte Interface Simulation
+
+units real
+atom_style full
+
+# Read data file
+read_data data.au-elyt
+
+# Define groups for electrodes
+group bot type 1
+group top type 2
+
+# Define pair style and coefficients
+pair_style lj/cut/coul/long 12.0
+pair_coeff * * 0.1 3.5 # Example LJ parameters, adjust according to your system
+
+# Kspace settings for long-range electrostatics
+kspace_style pppm 1.0e-4
+
+# Compute total charge for each group
+compute charge_bot bot reduce sum q
+compute charge_top top reduce sum q
+
+# Compute potential energy and pressure
+compute pe all pe
+compute pressure all pressure thermo_temp
+
+# Define custom thermodynamic output
+thermo_style custom step temp c_pe c_pressure[3]
+thermo 1
+
+# Output to CSV file
+fix csv_output all print 1 "${step},${temp},${c_pe},${c_pressure[3]}" file out.csv screen no title "Step,Temp,PotEng,Press_Z"
+
+# Dump forces on each atom
+dump forces all custom 1 forces.lammpstrj id type x y z fx fy fz
+
+# Run the simulation
+timestep 1.0
+run 10000
+
+Make sure to adjust the `pair_coeff` and other parameters according to the specific properties of the atoms in your system. Additionally, ensure that the `data.au-elyt` file is formatted correctly for your LAMMPS version and contains the necessary atom type information.

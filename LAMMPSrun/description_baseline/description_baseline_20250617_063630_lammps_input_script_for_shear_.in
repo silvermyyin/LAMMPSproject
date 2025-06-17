@@ -1,0 +1,52 @@
+```lmp
+# LAMMPS Input Script for Shear Flow Simulation with AtC Coupling
+
+# Initialization
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Define lattice and create simulation box
+lattice         fcc 4.05
+region          simRegion block 0 20 0 10 0 5 units lattice
+create_box      1 simRegion
+create_atoms    1 box
+
+# Define a secondary region for AtC coupling
+region          atcRegion block 0 20 0 10 0 5 units lattice
+
+# Set potential
+pair_style      eam
+pair_coeff      * * Al99.eam.alloy Al
+
+# Define simulation settings
+mass            1 26.98
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Neighbor settings
+neighbor        2.0 bin
+neigh_modify    delay 5
+
+# Define AtC coupling
+fix             atc all atc file Ar_visc_no_atoms.mat region atcRegion
+
+# Create nodes and define boundary conditions for AtC mesh
+fix_modify      atc mesh create_nodeset rbc y max
+fix_modify      atc mesh create_nodeset lbc y min
+
+# Apply boundary conditions
+fix_modify      atc mesh bc vel rbc 0.0 0.1 0.0
+fix_modify      atc mesh bc vel lbc 0.0 0.0 0.0
+
+# Run settings
+timestep        0.001
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Output settings
+dump            1 all custom 200 dump.atoms id type x y z vx vy vz
+
+# Run the simulation
+run             5000
+```

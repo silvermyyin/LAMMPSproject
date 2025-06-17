@@ -1,0 +1,55 @@
+# LAMMPS Input Script for Thermodynamic Consistency Test using Hardy/field method
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Define simulation box
+lattice fcc 3.615
+region box block 0 16 0 6 0 6
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style eam/alloy
+pair_coeff * * Cu_u3.eam.alloy Cu
+
+# Initialize velocities to zero
+velocity all set 0.0 0.0 0.0
+
+# Define minimization parameters
+min_style cg
+minimize 1e-12 1e-12 10000 10000
+
+# Initialize atom-to-continuum (AtC) package
+fix atc all atc field
+fix_modify atc atcfield mass_density
+fix_modify atc atcfield displacement
+fix_modify atc atcfield stress
+fix_modify atc atcfield internal_energy
+fix_modify atc atcfield eshelby_stress
+fix_modify atc atcfield temperature
+
+# Output settings
+thermo 100
+thermo_style custom step pe lx ly lz press
+
+# Perform minimization and scaling
+variable scale equal 1.0
+label loop
+variable scale equal v_scale + 0.001
+change_box all x scale ${scale} y scale ${scale} z scale ${scale} remap
+minimize 1e-12 1e-12 10000 10000
+
+# Output data for analysis
+compute stress all stress/atom NULL
+compute pe_atom all pe/atom
+
+fix output all ave/atom 1 1 1 c_stress[1] c_stress[2] c_stress[3] c_stress[4] c_stress[5] c_stress[6] c_pe_atom
+dump 1 all custom 100 output.dump id type x y z fx fy fz c_stress[1] c_stress[2] c_stress[3] c_stress[4] c_stress[5] c_stress[6] c_pe_atom
+
+# Loop control
+if "${scale} < 1.1" then "jump SELF loop"
+
+# Finalize simulation
+write_restart final.restart

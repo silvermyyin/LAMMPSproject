@@ -1,0 +1,36 @@
+# LAMMPS Input Script for Water Hexamer Simulation using AMOEBA Force Field
+
+# Initialization
+units real
+atom_style hybrid amoeba
+boundary s s s
+
+# Read data
+read_data water_hexamer.data
+
+# Define pair style and coefficients
+pair_style amoeba
+pair_coeff * * amoeba_params.txt
+
+# Bond and angle styles
+bond_style class2
+angle_style amoeba
+
+# Special bonds
+special_bonds lj/coul 0.0 0.0 1.0
+
+# Fixes for simulation
+fix 1 all nve
+
+# Compute virial pressure
+compute myVirial all pressure thermo_temp virial
+
+# Thermo settings
+thermo_style custom step temp pe ke etotal press c_myVirial
+thermo 10
+
+# Run settings
+timestep 1.0
+run 100
+
+This script sets up a water hexamer system using the AMOEBA force field with the specified conditions and outputs the required thermodynamic properties. The `amoeba_params.txt` file should contain the pair coefficients specific to the AMOEBA model. Adjust any file paths as needed for your specific setup.

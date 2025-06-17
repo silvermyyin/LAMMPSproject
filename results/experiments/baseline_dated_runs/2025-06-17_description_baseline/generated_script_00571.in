@@ -1,0 +1,57 @@
+# SPC/E Water NEMD Simulation with eHEX Algorithm
+
+units           real
+atom_style      full
+boundary        p p p
+
+read_data       spce_water.data
+
+# Define atomistic potentials
+pair_style      lj/cut/coul/long 10.0 12.0
+pair_coeff      1 1 0.1553 3.166 # O-O interactions
+pair_coeff      2 2 0.0 0.0       # H-H interactions
+pair_coeff      1 2 0.0 0.0       # O-H interactions
+
+bond_style      harmonic
+bond_coeff      1 1000.0 1.0      # O-H bond
+
+angle_style     harmonic
+angle_coeff     1 100.0 109.47    # H-O-H angle
+
+# Use RATTLE to fix bonds and angles
+fix             1 all rattle 0.0001 20 0 b 1 a 1
+
+# Long-range electrostatics
+kspace_style    ewald 1.0e-4
+
+# Create two regions for temperature control
+region          hot block INF INF INF INF INF 10.0
+region          cold block INF INF INF INF 0.0 10.0
+
+group           hot region hot
+group           cold region cold
+
+# Enhanced Heat Exchange (eHEX/a) for temperature gradient
+fix             2 hot nvt temp 350.0 350.0 100.0
+fix             3 cold nvt temp 250.0 250.0 100.0
+
+# Neighbor list settings for large timestep
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Set timestep and run style
+timestep        3.0
+run_style       verlet
+
+# Initial velocities
+velocity        all create 300.0 12345
+
+# Output settings
+thermo_style    custom step temp press pe ke etotal
+thermo          100
+compute         temp_hot hot temp
+compute         temp_cold cold temp
+fix             4 all ave/time 100 1 100 c_temp_hot c_temp_cold file temp_profile.txt
+
+# Run the simulation
+run             10000

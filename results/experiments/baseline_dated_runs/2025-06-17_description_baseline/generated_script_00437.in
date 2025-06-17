@@ -1,0 +1,43 @@
+# LAMMPS input script for a water-ethanol mixture with dissolved salt
+
+# Initialize the simulation
+units real
+atom_style full
+boundary p p p
+
+# Read data and parameter files
+read_data water_ethanol_salt.data
+include forcefield_parameters.in
+
+# Group definitions
+group sodium type 1
+group chloride type 2
+group water type 3 4
+group ethanol type 5 6 7 8 9
+
+# Define force field styles
+pair_style lj/cut/coul/long 10.0
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+
+# Define pair coefficients
+pair_coeff * * # Define using the forcefield_parameters.in file
+
+# Define PPPM for long-range electrostatics
+kspace_style pppm 1.0e-4
+
+# SHAKE algorithm for water
+fix shake_water water shake 0.0001 20 0 b 1 a 1
+
+# Temperature and pressure control
+fix npt all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Output settings
+thermo 10
+thermo_style custom step temp press vol etotal
+dump traj all atom 10 trajectory.lammpstrj
+
+# Run the simulation
+timestep 1.0
+run 200

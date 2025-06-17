@@ -1,0 +1,40 @@
+# LAMMPS Input Script for Electrostatic Interactions in Slab Geometry with Constant Potential Electrodes
+
+units           real
+dimension       3
+boundary        p p p
+atom_style      charge
+
+# Read pre-defined settings
+include         settings.mod
+
+# Define the simulation box and atoms (details depend on settings.mod)
+read_data       system.data
+
+# Define kspace style for electrostatics in 2D slab
+kspace_style    ewald/electrode 1.0e-7
+kspace_modify   slab 3.0
+
+# Define groups for electrodes
+group           bot type 1
+group           top type 2
+
+# Apply constant potential difference with ramping potential
+fix             1 bot electrode/conp 0.0 1.979 10 symmetric
+fix             2 top electrode/conp 0.0 1.979 10 symmetric
+
+# Set thermo output and formatting
+thermo_style    custom step time v_potential v_qbot v_qtop v_qtheory v_pdev
+thermo          1
+
+# Define variables for output
+variable        potential equal f_1[1]
+variable        qbot equal f_1[2]
+variable        qtop equal f_2[2]
+variable        qtheory equal f_1[3]
+variable        pdev equal f_1[4]
+
+# Run the simulation for 10 timesteps
+run             10
+
+Note: The actual contents and definitions in `settings.mod` and `system.data` are assumed to be pre-defined and correct for the simulation setup. Adjust these files as necessary to fit the specific system's requirements.

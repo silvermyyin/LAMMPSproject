@@ -1,0 +1,42 @@
+# LAMMPS input script for a peridynamic simulation
+# Impact of a spherical projectile on a cylindrical target
+
+units           si
+atom_style      atomic
+
+# Define simulation box
+region          simbox block -0.05 0.05 -0.05 0.05 -0.05 0.05 units box
+create_box      2 simbox
+
+# Define cylindrical target
+region          target cylinder z 0 0 0.02 -0.05 0.05 units box
+create_atoms    1 region target
+
+# Define spherical projectile
+region          projectile sphere 0 -0.04 0 0.01 units box
+create_atoms    2 region projectile
+
+# Define masses
+mass            1 2.75e-26  # Mass corresponding to density 2200 kg/m^3 and volume 1.25e-10 m^3/atom
+mass            2 2.75e-26  # Same mass for the projectile for simplicity
+
+# Pair style and coefficients
+pair_style      peri/pmb
+pair_coeff      * * 0.1 0.25 0.0 0.0 0.0
+
+# Initial velocity for projectile
+velocity        all set 0.0 -100.0 0.0 units box
+
+# Compute damage
+compute         damage_target all damage/atom
+
+# Fixes
+fix             1 all nve
+
+# Output settings
+thermo          100
+thermo_style    custom step time temp etotal
+
+# Run simulation
+timestep        1.0e-7
+run             1000

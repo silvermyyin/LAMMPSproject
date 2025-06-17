@@ -1,0 +1,33 @@
+units metal
+atom_style atomic
+
+boundary f f f
+lattice fcc 5.43
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+create_atoms 1 box
+
+mass 1 1.0
+
+timestep 0.0
+
+fix atc all atc
+fix_modify atc mesh create 10 10 10
+
+# Set boundary conditions for electric potential
+fix_modify atc mesh bc electric_potential lbc constant 5.0
+fix_modify atc mesh bc electric_potential rbc flux -0.0001
+
+# Set fixed electron density
+fix_modify atc field electron_density set 0.000025
+
+# Set temperature of the system
+fix_modify atc field temperature set 300.0
+
+# Solve for electron drift-diffusion
+fix_modify atc solve drift_diffusion
+
+# Output for Poisson equation solution
+dump 1 all custom 1 potential_output.txt fx[atc/electric_potential] fx[atc/electron_density]
+
+run 1

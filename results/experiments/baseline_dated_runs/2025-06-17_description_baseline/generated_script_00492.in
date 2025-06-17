@@ -1,0 +1,53 @@
+# LAMMPS Input Script for Methanol using DREIDING Force Field
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read initial configuration
+read_data       methanol.data
+
+# Force field styles
+pair_style      hybrid/overlay lj/cut/coul/long 10.0 hbond/dreiding/lj 4.0 90.0 90.0
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  harmonic
+improper_style  none
+
+# Pair coefficients (example for methanol)
+pair_coeff      * * lj/cut/coul/long
+pair_coeff      1 1 lj/cut/coul/long 0.093 3.50
+pair_coeff      1 2 lj/cut/coul/long 0.046 3.00
+pair_coeff      * * hbond/dreiding/lj
+
+# Bond coefficients (example for methanol)
+bond_coeff      1 340.0 1.09  # C-H bond
+bond_coeff      2 450.0 1.41  # C-O bond
+
+# Angle coefficients (example for methanol)
+angle_coeff     1 50.0 109.5  # H-C-H angle
+angle_coeff     2 70.0 108.5  # C-O-H angle
+
+# Dihedral coefficients (example for methanol)
+dihedral_coeff  1 2.0 1 3  # C-O-H-C dihedral
+
+# Set arithmetic mixing rule for Lennard-Jones
+pair_modify     mix arithmetic
+
+# Kspace style for long-range electrostatics
+kspace_style    pppm 0.001
+
+# Define hydrogen bond criteria
+variable        N_HBonds equal nhbond('all')
+variable        E_HBonds equal ebond_hbond('all')
+
+# Integration settings
+fix             1 all nve
+
+# Thermo settings
+thermo_style    custom step time temp etotal ke pe v_N_HBonds v_E_HBonds
+thermo          10
+
+# Run simulation
+timestep        1.0
+run             100

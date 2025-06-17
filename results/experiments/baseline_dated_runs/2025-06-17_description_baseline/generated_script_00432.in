@@ -1,0 +1,54 @@
+# LAMMPS input script for NEB simulation with EAM potential
+
+# Initialization
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Atom definition
+read_data       iron_data.lmp
+
+# Define potentials
+pair_style      eam/fs
+pair_coeff      * * Fe_mm.eam.fs Fe
+
+# NEB settings
+neb             8 1.0
+neb_style       0.5 0.5
+
+# Group definition for the NEB path
+group           path type 1
+
+# Set properties for NEB
+fix             1 path property/atom d_neb 0.0
+
+# Custom fix for NEB
+fix             pafi path pafi
+
+# Neighbor settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Minimization settings
+min_style       fire
+min_modify      dmax 0.1 line quadratic
+
+# Define thermo output
+thermo          100
+thermo_style    custom step pe etotal fmax d_neb_max
+
+# Run minimization
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Output results
+variable        dist equal v_d_neb_avg
+variable        force_proj equal f_pafi
+print           "Average distance from hyperplane: ${dist}"
+print           "Force projection along MFEP: ${force_proj}"
+
+# Clean up
+unfix           1
+unfix           pafi
+
+This script is structured to initialize a material system (specifically iron) using the NEB method with EAM potentials, applying specialized fixes to compute and analyze energy landscapes and paths. Adjust the details such as the number of images and coefficients as needed for your specific case. Make sure to replace `iron_data.lmp` with the correct data file containing atomic positions.

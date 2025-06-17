@@ -1,0 +1,57 @@
+# LAMMPS input script for methane in TIP4P water simulation
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data methane_tip4p.data
+
+# Define pair styles and coefficients
+pair_style hybrid lj/cut/coul/long 12.0 lj/cut/tip4p/long/soft 1 2 1 1 0.125 12.0
+pair_coeff * * lj/cut/coul/long
+pair_coeff 1 1 lj/cut/tip4p/long/soft 1.0 3.5 # Example for methane-methane
+pair_coeff 1 2 lj/cut/tip4p/long/soft 0.2 3.0 # Example for methane-water
+pair_coeff 2 2 lj/cut/tip4p/long/soft 0.1 3.0 # Example for water-water
+
+# Define bond and angle potentials
+bond_style harmonic
+bond_coeff * 450 1.0 # Example coefficients
+
+angle_style harmonic
+angle_coeff * 60 109.5 # Example coefficients
+
+# Special bonds settings
+special_bonds lj/coul 0.0 0.0 0.5
+
+# Define kspace style
+kspace_style pppm/tip4p 1.0e-4
+
+# Define groups for shake
+group water type 2 3 4 # Assuming types 2, 3, 4 correspond to water
+fix shake_water water shake 0.0001 20 0 b 1 a 1 # Assuming water bonds and angles
+
+# Initialize velocities
+velocity all create 300.0 12345
+
+# Equilibration using NPT ensemble
+fix npt_all all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# FEP setup
+fix fep all adapt/fep 1000 pair lj/cut/tip4p/long/soft lambda 0.0 1.0 10.0
+fix modify adapt/fep atom 1 charge 0.0 -0.832 # Gradually change methane charge
+
+# Output settings
+thermo 100
+thermo_style custom step temp press pe ke etotal
+dump 1 all atom 1000 dump.methane_tip4p.lammpstrj
+
+# Run the simulation
+run 50000
+
+# Finalize
+unfix npt_all
+unfix shake_water
+unfix fep
+
+This script sets up a simulation system consisting of methane molecules in TIP4P water, using a hybrid pair style approach. The script specifies the necessary force fields, initializes system conditions, applies constraints to water geometry, and implements a FEP approach to explore the solvation process. Thermodynamic outputs and trajectories are periodically saved for analysis.

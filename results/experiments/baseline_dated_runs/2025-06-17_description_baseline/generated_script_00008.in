@@ -1,0 +1,35 @@
+# LAMMPS Input Script for 3D Lennard-Jones Melt Simulation
+
+# Variables for scaling the simulation box
+variable x equal 1
+variable y equal 1
+variable z equal 1
+
+# Initialize simulation in LJ units
+units lj
+atom_style atomic
+
+# Create a simulation box with dimensions scaled by input variables
+lattice fcc 0.8442
+region box block 0 ${x}*20 0 ${y}*20 0 ${z}*20
+create_box 1 box
+create_atoms 1 box
+
+# Define mass and potential
+mass 1 1.0
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Binning method for neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define settings for simulation output
+thermo 100
+
+# Run the simulation for initial setup
+timestep 0.005
+run 10000
+
+# Rerun simulation for post-processing analysis
+rerun lj_dump.bp first 0 last 10000 every 100 dump x y z vx vy vz box yes

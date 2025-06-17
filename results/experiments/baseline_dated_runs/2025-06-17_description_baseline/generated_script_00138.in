@@ -1,0 +1,52 @@
+# LAMMPS input script for Argon deposition on Polystyrene substrate
+
+units real
+atom_style molecular
+boundary p p f
+
+# Initialization
+read_data polystyrene.data
+
+# Define potential styles
+pair_style hybrid/overlay lj/cut 10.0 zbl 0.5 1.0
+pair_coeff * * lj/cut 0.1 3.4  # Example Lennard-Jones parameters for Argon
+pair_coeff * * zbl 1.0 1.0     # Example ZBL parameters
+
+# Define regions
+region substrate block INF INF INF INF INF 100 units box
+region deposition slab block INF INF INF INF 100 120 units box
+
+# Group definitions
+group substrate region substrate
+group mobile subtract all substrate
+group bottom_layer region block INF INF INF INF INF 5 units box
+group top_layer region block INF INF 95 INF INF INF units box
+
+# Fixes
+fix hold_bottom bottom_layer setforce 0.0 0.0 0.0
+fix nvt mobile nvt temp 300.0 300.0 100.0
+
+# Delete atoms above z = 95.0
+delete_atoms region top_layer
+
+# Deposition settings
+variable seed equal 12345
+variable rate equal 1.0
+variable vz equal sqrt(2.0 * 300.0 / 39.948)  # Example calculation for velocity (mass of Argon ~ 39.948 amu)
+velocity all create 300.0 ${seed} mom yes rot no dist gaussian
+
+# Thermo and output settings
+thermo 100
+thermo_style custom step temp etotal pe ke
+dump 1 all custom 1000 dump.lammpstrj id type x y z vx vy vz
+
+# Run deposition cycles
+label loop
+variable i loop 10
+fix deposit all deposit ${rate} 1 100 ${seed} region deposition vz ${vz} units box
+run 10000
+unfix deposit
+next i
+jump SELF loop
+
+# End of script

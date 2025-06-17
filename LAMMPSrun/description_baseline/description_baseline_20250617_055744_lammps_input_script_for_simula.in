@@ -1,0 +1,44 @@
+```lammps
+# LAMMPS input script for simulating magnetic skyrmions in a bcc iron lattice
+
+units metal
+atom_style spin
+dimension 3
+boundary p p f
+
+# Read initial configuration
+read_data initial.skyrmion
+
+# Define mass for iron atoms
+mass * 55.845
+
+# Pair style and coefficients
+pair_style hybrid/overlay spin/exchange 1.0 spin/dmi 1.0
+pair_coeff * * spin/exchange 1.0
+pair_coeff * * spin/dmi 1.0
+
+# Spin dynamics settings
+fix 1 all precession/spin 1.0 0.1
+fix 2 all langevin/spin 300.0 300.0 1.0 12345
+
+# Zeeman field and anisotropy
+fix 3 all setforce 0.0 0.0 0.0
+fix 4 all addforce 0.0 0.0 1.0
+fix 5 all spin/zeeman 0.1 0.0 0.0
+fix 6 all spin/anisotropy 0.1 0.0 0.0 1.0
+
+# NEB settings for skyrmion transition pathways
+neb 0.1 1000 1000 0.01 final final.neb
+thermo_style custom step temp pe ke etotal fmax fnorm
+thermo 100
+
+# Time integration
+timestep 0.0001
+
+# Output settings
+dump 1 all custom 100 dump.skyrmion id type x y z sx sy sz
+dump_modify 1 format "%d %d %.5f %.5f %.5f %.5f %.5f %.5f"
+
+# Run simulation
+run 10000
+```

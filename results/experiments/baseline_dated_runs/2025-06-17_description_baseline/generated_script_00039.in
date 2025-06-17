@@ -1,0 +1,63 @@
+# LAMMPS input script for drift-diffusion and Schrödinger equation simulation
+# Semiconductor material system: SiGe alloy
+# Units: metal
+
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Define lattice and simulation box
+lattice fcc 5.43
+region simbox block 0 100 0 10 0 10
+create_box 1 simbox
+
+# Initialize mesh
+region mesh block 0 80 0 1 0 1 units lattice
+create_atoms 1 region mesh
+
+# Read material properties from parameter file
+include params_SiGe_alloy.txt
+
+# Define variables for material properties
+variable T_init equal 300.0   # Initial temperature (K)
+variable Te_init equal 300.0  # Initial electron temperature (K)
+variable n_e_init equal 1e21  # Initial electron density (1/m^3)
+variable phi_init equal 0.0   # Initial electric potential (V)
+variable psi_init equal 0.0   # Initial electron wavefunction
+
+# Set initial conditions
+set region mesh temp ${T_init}
+set region mesh density_e ${n_e_init}
+set region mesh phi ${phi_init}
+set region mesh psi ${psi_init}
+
+# Define boundary conditions
+fix left_edge all setforce NULL 0.0 0.0
+fix right_edge all setforce 0.0 NULL NULL
+
+# Scenario 1: No external electric field
+print "Running Scenario 1: No external electric field"
+
+run 10000
+
+# Scenario 2: Linear electric potential
+print "Running Scenario 2: Linear electric field"
+
+# Apply linear electric potential across the boundaries
+variable phi_left equal 0.0
+variable phi_right equal 0.1
+fix electric_field all efield ${phi_left} ${phi_right} 0.0
+
+run 10000
+
+# Define custom thermo output
+thermo_style custom step temp etotal pe ke density_e
+thermo 100
+
+# Output settings
+dump 1 all custom 100 dump.semiconductor id type x y z vx vy vz
+dump_modify 1 sort id
+write_restart semiconductor.restart
+
+# End of script

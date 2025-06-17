@@ -1,0 +1,63 @@
+# LAMMPS input script for simulating elastic properties of an FCC Argon lattice
+
+units real
+atom_style atomic
+boundary p p p
+
+# Create FCC lattice
+lattice fcc 5.405
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define Lennard-Jones potential for Argon
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.238 3.405  # epsilon in kcal/mol, sigma in Angstroms
+
+# Define masses
+mass 1 39.948
+
+# Set initial velocity
+velocity all create 60.0 12345
+
+# Thermo settings
+thermo 100
+thermo_style custom step temp press etotal
+
+# NPT Equilibration
+fix 1 all npt temp 60.0 60.0 100.0 iso 0.0 0.0 1000.0
+run 5000
+
+# Switch to NVT for constant temperature
+unfix 1
+fix 2 all nvt temp 60.0 60.0 100.0
+run 5000
+
+# Calculate stress and elastic constants
+compute stress all stress/atom NULL
+compute sigma all reduce sum c_stress[1] c_stress[2] c_stress[3] c_stress[4] c_stress[5] c_stress[6]
+
+# Variables for elastic constants in pressure units
+variable V equal vol
+variable C11 equal (c_sigma[1]/v_V)*160.21766208  # Convert stress to GPa
+variable C12 equal (c_sigma[2]/v_V)*160.21766208
+variable C44 equal (c_sigma[4]/v_V)*160.21766208
+
+# Output elastic constants
+variable C11_avg equal ave(c11)
+variable C12_avg equal ave(c12)
+variable C44_avg equal ave(c44)
+
+fix 3 all ave/time 10 1 1000 v_C11 v_C12 v_C44 file elastic_constants.txt
+
+# Run more dynamics to average out fluctuations
+run 10000
+
+# Print final averaged values
+print "Averaged Elastic Constants:"
+print "C11 = ${C11_avg} GPa"
+print "C12 = ${C12_avg} GPa"
+print "C44 = ${C44_avg} GPa"
+
+unfix 2
+unfix 3

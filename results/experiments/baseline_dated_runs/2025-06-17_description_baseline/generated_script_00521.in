@@ -1,0 +1,52 @@
+# LAMMPS input script for simulating DNA duplexes using the oxDNA model
+
+units lj
+atom_style hybrid bond ellipsoid oxDNA
+
+boundary p p p
+
+read_data dna_data_file.data
+
+# Define masses for atom types
+mass 1 1.0  # example mass for oxDNA base
+mass 2 1.0  # example mass for oxDNA backbone
+
+# Define group for all atoms
+group all type 1 2
+
+# Bond interactions - oxDNA FENE potential
+bond_style fene/oxDNA
+bond_coeff 1 30.0 1.5 1.0 1.0
+
+# Pair interactions - hybrid overlay for oxDNA-specific potentials
+pair_style hybrid/overlay \
+    oxDNA/excluded_volume \
+    oxDNA/stacking \
+    oxDNA/hydrogen_bonding \
+    oxDNA/cross_stacking \
+    oxDNA/coaxial_stacking
+
+pair_coeff * * oxDNA/excluded_volume 1.0 1.0
+pair_coeff * * oxDNA/stacking 1.0 1.0
+pair_coeff * * oxDNA/hydrogen_bonding 1.0 1.0
+pair_coeff * * oxDNA/cross_stacking 1.0 1.0
+pair_coeff * * oxDNA/coaxial_stacking 1.0 1.0
+
+# Initializing the simulation
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the integrator and timestep
+fix 1 all nve/asphere
+timestep 0.00001
+
+# Output settings
+thermo_style custom step temp ke pe etotal
+thermo 1000
+
+dump 1 all custom 10000 dump.dna id type x y z xu yu zu
+
+# Run the simulation
+run 1000000
+
+This script initializes a 3D molecular dynamics simulation of DNA duplexes using the oxDNA model with the specified potentials and simulation settings. The data file `dna_data_file.data` should contain the initial configuration of the system.

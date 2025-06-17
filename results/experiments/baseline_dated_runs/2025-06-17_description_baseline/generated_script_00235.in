@@ -1,0 +1,59 @@
+# LAMMPS input script for molecular deposition on silicon substrate
+
+units real
+dimension 3
+boundary p p f
+atom_style full
+
+# Read in silicon substrate
+read_data silicon_substrate.data
+
+# Define groups
+group substrate type 1  # Assuming type 1 is silicon
+group bottom_layer id <= 100  # Freeze bottom layer atoms
+group middle_layer type 1 region middle
+group top_layer type 1 region top
+
+# Define regions
+region middle block INF INF INF INF 0.0 50.0
+region top block INF INF INF INF 50.0 100.0
+
+# Freeze bottom layer
+fix freeze bottom_layer setforce 0.0 0.0 0.0
+
+# Define potential
+pair_style hybrid/overlay reaxff lammps.reax ZBL
+pair_coeff * * reaxff lammps.reax Si O C F
+pair_coeff * * ZBL 0.0 0.0 0.0 0.0 2.0
+
+# Thermostat for middle layer
+fix nvt middle_layer nvt temp 300.0 300.0 100.0
+
+# NVE integration for top layer
+fix nve top_layer nve
+
+# Deposition settings
+variable dep_height equal 100.0
+variable dep_velocity equal 0.1
+variable dep_angle equal 45.0
+
+fix deposit all deposit 10 2 100 v_dep_height vz $dep_velocity units box region top
+
+# Define evaporation
+fix evaporate top_layer evaporate 10 1 region top
+
+# Simulation settings
+timestep 1.0
+thermo 100
+thermo_style custom step temp etotal ke pe press
+
+# Run the simulation
+variable i loop 100
+label loop
+run 1000
+next i
+jump SELF loop
+
+# Output settings
+dump 1 all custom 100 dump.deposit id type x y z vx vy vz
+dump_modify 1 sort id

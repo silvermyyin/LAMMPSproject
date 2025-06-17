@@ -1,0 +1,44 @@
+```lammps
+# LAMMPS Input Script for a 3D Copper Block Simulation using Tersoff Potential
+
+units metal
+atom_style atomic
+
+# Read initial configuration from data file
+read_data data.pos
+
+# Assign mass to all atoms (carbon-like atoms for graphene structure)
+mass * 12.0107
+
+# Specify Tersoff potential for carbon atoms using provided parameter file
+pair_style tersoff
+pair_coeff * * SiC.tersoff C
+
+# Define simulation box with periodic boundary conditions in all directions
+boundary p p p
+
+# Initialize velocities and set temperature to 300 K
+velocity all create 300.0 12345
+
+# Apply Langevin thermostat to control temperature
+fix langevin all langevin 300.0 300.0 0.1 12345
+
+# Integrate equations of motion using NVE ensemble
+fix nve all nve
+
+# Phonon analysis every 10 timesteps, outputting to specified file
+fix 1 all phonon 10 map.in Graphene nasr 50
+
+# Output thermodynamic information every 100 timesteps
+thermo 100
+thermo_style custom step temp pe ke press pxx pyy pzz
+
+# Dump atomic positions in XYZ format every 50,000 timesteps
+dump 1 all xyz 50000 dump.graphene.xyz
+
+# Write periodic restart files
+restart 50000 restart1 graphene.restart
+
+# Run the simulation for 6 million timesteps
+run 6000000
+```

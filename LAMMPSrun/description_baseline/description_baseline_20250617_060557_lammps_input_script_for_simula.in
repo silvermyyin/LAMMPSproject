@@ -1,0 +1,37 @@
+```lammps
+# LAMMPS input script for simulating a pure silicon crystal using COMB potential
+
+units           metal
+atom_style      charge
+boundary        p p p
+
+# Define the diamond lattice for silicon
+lattice         diamond 5.43
+region          simbox block 0 4 0 4 0 4
+create_box      1 simbox
+create_atoms    1 box
+
+# Assign mass and potential
+mass            1 29.0
+pair_style      comb
+pair_coeff      * * ffield.comb Si
+
+# Initialize velocities
+velocity        all create 10.1 12345 mom yes rot yes dist gaussian
+
+# Define the integration method
+timestep        0.00020
+fix             1 all nve
+
+# Output settings
+thermo          1
+thermo_style    custom step temp etotal pe evdwl ecoul press lx ly lz
+
+# Uncomment the following lines to enable output files
+# dump            1 all atom 1 dump.si
+# dump            2 all image 1 image.*.jpg type type
+# dump            3 all movie 1 movie.mpg type type
+
+# Run the simulation
+run             10
+```

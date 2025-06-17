@@ -1,0 +1,40 @@
+# LAMMPS input script for water system using SPCE model with hybrid/overlay potentials
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read data from a file
+read_data       water.data
+
+# Define potentials
+pair_style      hybrid/overlay table linear 1000
+pair_coeff      * * table spce_pair.table SPCE
+kspace_style    pppm 1.0e-4
+
+# Three-body potential (example format, modify according to actual table)
+pair_style      hybrid/overlay table linear 1000
+pair_coeff      * * table spce_threebody.table SPCE_3B
+
+# Set the timestep
+timestep        2.0
+
+# Define neighbor list
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Set initial velocities
+velocity        all create 300.0 12345 dist uniform
+velocity        all zero linear
+
+# Equilibration using NVT ensemble
+fix             1 all nvt temp 300.0 300.0 200.0
+
+# Output settings
+thermo          100
+thermo_style    custom step temp etotal press
+
+# Run the simulation
+run             1000
+
+# End of script

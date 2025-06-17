@@ -1,0 +1,27 @@
+# LAMMPS input script for PIMD simulation of hydrogen molecules
+
+units real
+atom_style full
+
+# Create simulation box and read data
+read_data hydrogen_data.lmp
+
+# Define pair style and interactions
+pair_style table linear 10000
+pair_coeff * * pair.table
+
+# Initialize velocities with Gaussian distribution at 1.0 K
+velocity all create 1.0 12345 mom yes dist gaussian
+
+# Define the PIMD settings
+fix 1 all pimd/nvt temp 25.0 25.0 100.0 tchain 3 mtd 10
+
+# Set timestep size
+timestep 0.001
+
+# Define output settings
+thermo_style custom step temp pe etotal press
+thermo 100
+
+# Run the simulation
+run 10000

@@ -1,0 +1,34 @@
+# LAMMPS input script for a 3D Lennard-Jones melt simulation
+
+units lj
+atom_style atomic
+
+# Read initial configuration from data file
+read_data data.snapshot
+
+# Define interaction potentials
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Initialize velocities at temperature 1.44 with random seed
+velocity all create 1.44 12345
+
+# Define the microcanonical ensemble (NVE)
+fix 1 all nve
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Compute pressure using virial method
+compute myPressure all pressure thermo_temp
+
+# Set thermo output
+thermo 100
+thermo_style custom step temp pe press
+
+# Output particle positions and forces
+dump 1 all atom 100 dump.lj id type x y z fx fy fz
+
+# Run simulation for 300 timesteps
+run 300

@@ -1,0 +1,56 @@
+# LAMMPS Input Script for Amorphous SiO2 Simulation
+
+units real
+atom_style charge
+boundary p p f
+
+# Read the equilibrated data file
+read_data data.amorphous_SiO2
+
+# Define masses of elements
+mass 1 28.085 # Si
+mass 2 15.999 # O
+mass 3 12.011 # C
+mass 4 18.998 # F
+mass 5 39.948 # Ar
+
+# Define pair styles
+pair_style hybrid reax/c NULL zbl 10.0
+pair_coeff * * reax/c ffield.reax Si O C F Ar
+pair_coeff * * zbl 0.0 0.0 10.0
+
+# Define regions
+region bottom block INF INF INF INF INF 5 units box
+region middle block INF INF INF INF 5 45 units box
+region top block INF INF INF INF 45 INF units box
+
+# Group atoms
+group bottom region bottom
+group middle region middle
+group top region top
+
+# Integrate bottom atoms with freezing
+fix freeze bottom setforce 0.0 0.0 0.0
+
+# Apply NPT ensemble for initial equilibration
+fix equil middle npt temp 300.0 300.0 100.0 iso 0.0 0.0 1000.0
+
+# Run initial equilibration
+timestep 0.25
+thermo 100
+thermo_style custom step temp pe ke etotal press vol density
+run 10000
+
+# Switch to NVT ensemble for the middle
+unfix equil
+fix nvt middle nvt temp 300.0 300.0 100.0
+
+# Apply NVE ensemble for the top
+fix nve top nve
+
+# Run simulation
+thermo 100
+dump myDump all custom 100 dump.amorphous_SiO2 id type x y z vx vy vz
+run 50000
+
+# End of script

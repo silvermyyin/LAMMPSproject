@@ -1,0 +1,69 @@
+# LAMMPS input script for a simple rigid body system
+
+units lj
+atom_style atomic
+
+# Create a 3x3x3 cubic lattice of atoms
+lattice fcc 0.8442
+region box block 0 9 0 9 0 9
+create_box 1 box
+create_atoms 1 box
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define groups for rigid bodies
+group clump1 id 1 2 3 4 5 6 7 8 9
+group clump2 id 10 11 12 13 14 15 16 17 18
+group clump3 id 19 20 21 22 23 24 25 26 27
+group clump4 id 28 29 30 31 32 33 34 35 36
+group clump5 id 37 38 39 40 41 42 43 44 45
+group clump6 id 46 47 48 49 50 51 52 53 54
+group clump7 id 55 56 57 58 59 60 61 62 63
+group clump8 id 64 65 66 67 68 69 70 71 72
+group clump9 id 73 74 75 76 77 78 79 80 81
+
+# Apply rigid body constraints
+fix 1 clump1 rigid single
+fix 2 clump2 rigid single
+fix 3 clump3 rigid single
+fix 4 clump4 rigid single
+fix 5 clump5 rigid single
+fix 6 clump6 rigid single
+fix 7 clump7 rigid single
+fix 8 clump8 rigid single
+fix 9 clump9 rigid single
+
+# Initialize velocities
+velocity all create 100.0 4928459
+
+# Modify neighbor list settings to exclude intra-clump interactions
+neighbor 0.3 bin
+neigh_modify exclude group clump1 clump1
+neigh_modify exclude group clump2 clump2
+neigh_modify exclude group clump3 clump3
+neigh_modify exclude group clump4 clump4
+neigh_modify exclude group clump5 clump5
+neigh_modify exclude group clump6 clump6
+neigh_modify exclude group clump7 clump7
+neigh_modify exclude group clump8 clump8
+neigh_modify exclude group clump9 clump9
+
+# Set timestep and run parameters
+timestep 0.0001
+thermo 50
+
+# Uncomment to dump atom positions
+# dump 1 all atom 100 dump.rigid
+
+# Uncomment to generate images
+# dump 2 all image 100 image.*.jpg type type & 
+#     axes yes 0.8 0.02 view 60 -30
+
+# Uncomment to create a movie
+# dump 3 all movie 100 movie.mpg type type & 
+#     axes yes 0.8 0.02 view 60 -30
+
+# Run the simulation
+run 10000

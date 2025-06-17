@@ -1,0 +1,42 @@
+# LAMMPS Input Script for Lennard-Jones Fluid in NVT Ensemble
+
+units lj
+atom_style atomic
+
+# Read density from command line
+variable rho equal $1
+variable N equal 10000
+variable L equal (v_N/v_rho)^(1.0/3.0)
+
+boundary p p p
+
+# Create simulation box and atoms
+region box block 0 ${L} 0 ${L} 0 ${L}
+create_box 1 box
+create_atoms 1 random ${N} 12345 box
+
+# Define Lennard-Jones potential with force shift
+pair_style lj/cut 2.5
+pair_modify shift yes
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocities
+velocity all create 1.50 987654 mom yes rot no dist gaussian
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Define NVT ensemble
+fix 1 all nvt temp 1.50 1.50 0.5
+
+# Output settings
+thermo 10000
+thermo_style custom step temp pe press
+thermo_modify flush yes
+
+# Run the simulation
+timestep 0.005
+run 1000000
+
+# Save the final state to a restart file
+write_restart lj_fluid.restart

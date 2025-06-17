@@ -1,0 +1,41 @@
+# LAMMPS input script for 3D MD simulation of Lennard-Jones particles
+# using Langevin thermostat in an elongated periodic box
+
+units           lj
+atom_style      atomic
+boundary        p p p
+
+# Create FCC lattice and initialize simulation box
+lattice         fcc 0.8442
+region          simbox block 0 8 0 8 0 20
+create_box      1 simbox
+create_atoms    1 box
+
+# Modify box to elongate in z-direction
+change_box      all z final 0 34 remap
+
+# Define potential
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5
+
+# Define groups
+region          left_half block INF INF INF INF INF 10
+group           left_half region left_half
+
+# Initialize velocities for left half group
+velocity        left_half create 6.0 12345
+
+# Define simulation settings
+timestep        0.004
+thermo          100
+thermo_style    custom step temp press pzz pe lx ly lz
+
+# Apply fixes
+fix             1 left_half nve
+fix             2 left_half langevin 3.0 0.8 100.0 12345
+
+# Run the simulation
+run             5000
+
+# Write final configuration
+write_data      final_configuration.data

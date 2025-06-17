@@ -1,0 +1,36 @@
+# LAMMPS input script for a water hexamer using HIPPO polarizable force field
+
+units real
+atom_style amoeba
+
+boundary s s s
+
+# Read molecular structure and topology from a data file
+read_data water_hexamer.data
+
+# Define force field parameters
+bond_style class2
+angle_style amoeba
+pair_style hippo
+
+# Set pair coefficients for water interactions
+pair_coeff * * hippo.water
+
+# Special bonds treatment: 1-5 scaling for non-bonded interactions
+special_bonds lj/coul 0.0 0.0 0.2
+
+# Define additional per-atom properties for HIPPO
+# (Assuming the data file includes necessary atom styles, types, and polarization axes)
+
+# Define computes for thermodynamics and virial pressure
+compute myVirial all pressure thermo_temp virial
+
+# Define thermodynamic outputs
+thermo_style custom step temp etotal ke pe press c_myVirial
+
+# Integrate equations of motion using the NVE ensemble
+fix 1 all nve
+
+# Time integration for 100 timesteps
+timestep 1.0
+run 100

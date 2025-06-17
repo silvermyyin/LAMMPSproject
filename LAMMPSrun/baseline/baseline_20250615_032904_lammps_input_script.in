@@ -1,0 +1,37 @@
+Sure, here is a simple LAMMPS input script that should fit your requirements:
+
+```lammps
+# LAMMPS input script
+
+units lj
+dimension 3
+boundary f f p
+
+atom_style atomic
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+mass 1 1.0
+
+pair_style none
+pair_coeff * *
+
+velocity all create 1.0 87287
+
+fix 1 all shake 0.0001 20 0 b 1 a 1
+
+thermo 100
+thermo_style custom step temp epair etotal
+
+dump 1 all atom 1000 dump.lammpstrj
+
+timestep 0.005
+run 25000
+```
+
+This script simulates a system of particles with no interaction (pair_style none) in a face-centered cubic (fcc) lattice. The system is in a 3D box (dimension 3) with periodic boundary conditions in the z-direction and fixed boundaries in the x and y directions (boundary f f p).
+
+The atoms are given initial velocities (velocity all create 1.0 87287) and the system is evolved for 25000 timesteps (run 25000). The simulation uses the SHAKE algorithm (fix 1 all shake 0.0001 20 0 b 1 a 1) to constrain bond lengths.
+
+The script outputs thermodynamic information every 100 timesteps (thermo 100) and writes the atomic trajectories to the file "dump.lammpstrj" every 1000 timesteps (dump 1 all atom 1000 dump.lammpstrj).

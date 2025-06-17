@@ -1,0 +1,41 @@
+# LAMMPS input script for solvated deca-alanine peptide with CHARMM force field
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read initial configuration
+read_data       deca_alanine.data
+
+# Force field settings
+pair_style      lj/charmm/coul/long 8.0 10.0
+bond_style      harmonic
+angle_style     charmm
+dihedral_style  charmm
+improper_style  harmonic
+kspace_style    pppm 1.0e-4
+
+# Define groups
+group           peptide id 1:132 # Assuming the peptide's atom IDs range from 1 to 132
+
+# Apply SHAKE constraint to hydrogen bonds
+fix             shake_hydrogen all shake 0.0001 20 0 b 1 a 1
+
+# Set up IMD for interactive MD simulation
+fix             imd all imd 30000 30000
+
+# NPT ensemble settings
+fix             npt all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0 drag 2.0
+
+# Output settings
+thermo          100
+thermo_style    custom step temp etotal press vol
+dump            1 all atom 1000 dump.dcd
+
+# Run the simulation
+timestep        1.0
+run             5000000
+
+# End of input script
+
+This script sets up a molecular dynamics simulation of a solvated deca-alanine peptide using the CHARMM force field in LAMMPS. It configures the system for use with the SHAKE algorithm, the PPPM method for long-range electrostatics, and the NPT ensemble with a drag coefficient for pressure control. The `fix imd` command is included for interactive molecular dynamics capabilities. Thermodynamic data is output every 100 timesteps, and a dump file is created every 1000 timesteps for analysis. Adjust the group definition based on the actual atom IDs in your `deca_alanine.data` file if needed.

@@ -1,0 +1,54 @@
+# LAMMPS Input Script for Buckyball-Carbon Nanotube Interaction
+
+units real
+dimension 3
+boundary p p p
+
+atom_style full
+
+# Read initial structure from data file
+read_data buckyball_nanotube.data
+
+# Define groups
+group mobile type 1
+
+# Define pairwise interaction
+pair_style lj/cut 10.0
+pair_coeff * * 0.0 0.0  # Placeholder, specify L-J parameters for C-C interactions
+
+# Define bonded interactions
+bond_style harmonic
+angle_style charmm
+dihedral_style charmm
+
+# Special bonds to eliminate non-bonded interactions between bonded atoms
+special_bonds lj/coul 0.0 0.0 0.0
+
+# Reflective wall conditions for mobile atoms
+fix walls mobile wall/reflect zlo EDGE zhi EDGE
+
+# Set initial velocities
+velocity all create 303.0 12345 mom yes rot yes dist gaussian
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Set up IMD for interactive visualization
+fix imd all imd 3001
+
+# Thermostat for temperature control
+fix langevin mobile langevin 300.0 300.0 100.0 12345
+
+# Integration method
+fix nve all nve
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+run 100000000
+
+# End of script
+
+Note: Ensure that you populate the `pair_coeff` command with appropriate Lennard-Jones parameters for carbon-carbon interactions and provide a valid path to your `buckyball_nanotube.data` file. Adjust the wall conditions as necessary for your specific simulation box dimensions.

@@ -1,0 +1,42 @@
+# LAMMPS input script for a polymer chain with charge regulation in a Lennard-Jones fluid
+
+# Initialize simulation
+units real
+dimension 3
+boundary p p p
+atom_style full
+
+# Create simulation box and atoms
+read_data polymer_chain.data
+
+# Define force field
+pair_style lj/cut/coul/long 10.0
+pair_coeff * * 0.1 1.0 10.0
+
+bond_style harmonic
+bond_coeff 1 300.0 1.0
+
+kspace_style pppm 1.0e-4
+
+# Set up groups for charge regulation
+group polymer type 1
+group solvent type 2
+
+# Define charge regulation parameters
+fix 1 polymer qeq/reax 10 0.0 0.0 1.0
+
+# Initialize velocities
+velocity all create 1.0 12345
+
+# Apply Langevin thermostat
+fix 2 all langevin 1.0 1.0 100.0 48279
+
+# Run simulation
+timestep 0.005
+thermo_style custom step temp pe ke etotal press
+thermo 100
+
+run 2000
+
+# Output thermodynamic data
+dump 1 all atom 100 dump.polymer.lammpstrj

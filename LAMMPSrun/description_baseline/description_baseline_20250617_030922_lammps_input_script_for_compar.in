@@ -1,0 +1,50 @@
+```lammps
+# LAMMPS Input Script for Comparing Hardy and Cauchy-Born Metrics
+
+units real
+atom_style atomic
+boundary p p p
+
+# Initialize simulation box
+lattice fcc 5.256
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential
+mass 1 39.95
+pair_style lj/cut 13.5
+pair_coeff 1 1 0.238 3.405  # Argon parameters: epsilon = 0.238 kcal/mol, sigma = 3.405 Å
+
+# Initialize AtC package
+fix atc all atc control 1 NULL NULL NULL
+fix_modify atc mesh create 1.0 1.0 1.0
+fix_modify atc transfer field displacement
+
+# Set minimization parameters
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Output settings
+thermo 100
+thermo_style custom step pe lx ly lz press
+
+# File outputs for volumetric finite element analysis
+fix atc_output all atc output every 100 filename atc_output.vtk
+
+# Minimize and scale simulation box
+variable scale equal 1.0
+label loop
+variable scale equal v_scale + 0.01
+change_box all x scale v_scale y scale v_scale z scale v_scale remap
+minimize 1.0e-4 1.0e-6 100 1000
+if "${scale} < 1.5" then "jump SELF loop"
+
+# Run simulation
+run 0
+
+# Cleanup
+unfix atc
+```
+
+This script sets up an argon system using Lennard-Jones interactions and applies the AtC package for comparing theoretical and simulated metrics under controlled deformation conditions. The minimization process is coupled with incremental volumetric scaling, and relevant outputs are logged for analysis.

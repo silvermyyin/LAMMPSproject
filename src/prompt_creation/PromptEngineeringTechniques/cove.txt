@@ -1,0 +1,49 @@
+# Chain-of-Verification (CoVe) Prompt Template for LAMMPS
+
+Imagine you are a LAMMPS expert assistant. For each user prompt, generate a LAMMPS input file and then verify each section for correctness and completeness, explaining your verification process.
+
+The format of a LAMMPS input file is as follows:
+# comments and description
+units <units>
+atom_style <style>
+boundary <boundary>
+read_data <datafile>
+pair_style <pair_style>
+pair_coeff <pair_coeff>
+fix <fix_id> <group> <fix_style> <args>
+timestep <value>
+run <steps>
+# ... (other LAMMPS commands as needed)
+
+Below are some example user prompts, input files, and verification steps to illustrate the CoVe approach:
+
+Prompt 1:
+Simulate a water box using the TIP3P model at 300K and 1 atm.
+
+Input file:
+# TIP3P water box simulation
+units           real
+atom_style      full
+boundary        p p p
+read_data       data.water
+pair_style      lj/cut/coul/long 10.0
+pair_coeff      1 1 0.1521 3.1507 10.0
+pair_coeff      1 2 0.0 0.0 10.0
+pair_coeff      2 2 0.0 0.0 10.0
+kspace_style    pppm 1.0e-4
+velocity        all create 300.0 12345
+fix             1 all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+thermo          100
+run             50000
+
+Verification:
+- Check that units, atom_style, and boundary are appropriate for water.
+- Confirm that TIP3P parameters are used for pair_style and pair_coeff.
+- Ensure kspace_style is set for long-range electrostatics.
+- Verify that fix npt is used for temperature and pressure control.
+- Confirm that the run length and output settings are reasonable.
+
+CoVe Reasoning Steps:
+Step 1: Generate the LAMMPS input file for the user prompt.
+Step 2: For each section (system setup, force field, ensemble, output), verify correctness and completeness.
+Step 3: Explain your verification process and highlight any potential issues. 

@@ -1,0 +1,48 @@
+```lammps
+# LAMMPS Input Script for Electrostatic Equilibrium in a Diamond Lattice
+
+units metal
+atom_style atomic
+
+# Create simulation box
+boundary f p p
+lattice diamond 1.0
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+
+# Define atoms
+create_atoms 1 box
+mass 1 12.01
+
+# Define potential
+pair_style none
+
+# Initialize AtC package
+fix myAtC all atc apply
+
+# Define mesh
+fix_modify myAtC mesh create 10 10 10
+
+# Set boundary conditions for displacement and velocity
+fix_modify myAtC field displacement set 0.0 0.0 0.0
+fix_modify myAtC field velocity set 0.0 0.0 0.0
+
+# Apply electric potential across boundaries
+fix_modify myAtC field electric_potential set linear 0.0 1.0 x
+
+# Define material models
+fix_modify myAtC material model default
+fix_modify myAtC material model CNT1
+fix_modify myAtC material model CNT2
+fix_modify myAtC material model CNT
+
+# Output settings
+fix_modify myAtC output electron_density custom/every 100 density.out
+fix_modify myAtC output thermodynamics custom/every 100 thermo.out
+
+# Run simulation
+timestep 0.001
+run 10000
+```
+
+This script defines a simulation box using a diamond lattice structure and employs the AtC package to simulate electrostatic behavior in a continuum framework. It sets fixed and periodic boundary conditions, initializes a mesh for the continuum domain, applies fixed displacement and velocity conditions, and linearly varies electric potential across the x-direction. The script explores different material models and outputs electron density and thermodynamic data.

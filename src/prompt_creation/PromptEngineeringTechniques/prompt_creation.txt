@@ -1,0 +1,8 @@
+# Prompt Creation Guide and Template
+To create an effective prompt for LAMMPS input script generation:
+1. Clearly state the simulation goal and physical system.
+2. Specify key parameters (ensemble, temperature, pressure, force field, etc.).
+3. Mention any constraints or special requirements.
+
+Example:
+"Generate a LAMMPS input script for an NPT simulation of water molecules at 300K and 1 atm using the TIP4P force field." 

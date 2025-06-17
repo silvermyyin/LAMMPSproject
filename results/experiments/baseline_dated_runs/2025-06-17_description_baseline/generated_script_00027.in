@@ -1,0 +1,36 @@
+# LAMMPS input script for 3D particles constrained to 2D plane using fix nve/manifold/rattle
+units lj
+dimension 3
+boundary p p f
+
+atom_style atomic
+read_data data.lammps
+
+mass * 1.0
+
+# Define no pair interactions
+pair_style none
+
+# Define the plane constraint using fix nve/manifold/rattle
+fix 1 all nve/manifold/rattle plane 0.0 0.0 1.0 0.0 tolerance 1.0e-4
+
+# Apply Langevin thermostat
+fix 2 all langevin 1.0 1.0 1.0 12321 gjf
+
+# Initialize velocities
+velocity all create 1.0 12345
+
+# Define output for MSD
+compute msd all msd com yes
+variable my_msd equal c_msd[4]
+
+# Run the simulation
+timestep 0.005
+thermo 1000
+thermo_style custom step pe ke etotal temp v_my_msd
+
+# Output MSD every 250 timesteps
+fix 3 all ave/time 250 1 250 c_msd[4] file msd.txt mode vector
+
+# Run for 50000 timesteps
+run 50000

@@ -1,0 +1,77 @@
+```lammps
+# LAMMPS Input Script for Regression Tests on Tersoff Potentials
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Lattice and region definition
+lattice         diamond 5.431
+region          box block 0 2 0 2 0 2
+create_box      1 box
+create_atoms    1 box
+
+# Define masses
+mass            1 28.0855  # Silicon
+
+# Velocity and temperature initialization
+velocity        all create 1800.0 12345 mom yes rot no
+
+# Thermodynamic settings
+thermo          10
+thermo_style    custom step temp etotal press
+
+# Define potentials
+pair_style      tersoff
+pair_coeff      * * Si.tersoff Si
+
+# Minimize energy
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Equilibrate using NVT
+fix             1 all nvt temp 1800.0 1800.0 0.1
+
+# Run simulation for Tersoff
+run             100
+
+# Test Tersoff/mod
+pair_style      tersoff/mod
+pair_coeff      * * SiC.tersoff Si
+
+run             100
+
+# Test Tersoff/mod/c
+pair_style      tersoff/mod/c
+pair_coeff      * * SiC.tersoff Si
+
+run             100
+
+# Testing for B/N/C systems
+# Scale the box
+change_box      all x scale 1.5 y scale 1.5 z scale 1.5 remap
+
+mass            2 10.811  # Boron
+mass            3 14.007  # Nitrogen
+mass            4 12.011  # Carbon
+
+# Create atoms for B/N/C system
+create_atoms    2 single 0.0 0.0 0.0
+create_atoms    3 single 2.7155 2.7155 2.7155
+create_atoms    4 single 1.35775 1.35775 1.35775
+
+# Potential for B/N/C system
+pair_style      tersoff
+pair_coeff      * * BNC.tersoff B N C
+
+# Minimize energy
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Apply potential shift
+pair_modify     shift yes
+
+# Run simulation for B/N/C system
+run             100
+
+unfix           1
+write_restart   tersoff_test.restart
+```

@@ -1,0 +1,49 @@
+# LAMMPS input script for simulating a dielectric interface with charged argon
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p f  # Periodic in y and z, reflective in x
+atom_style      charge
+
+# Read in the data file
+read_data       argon_interface.data
+
+# Define groups
+group           solid type 1
+group           liquid type 2
+
+# Set up potential
+pair_style      lj/cut 13.0
+pair_coeff      * * 0.2381 3.405  # Using Lennard-Jones parameters for argon
+
+# Define ATC coupling
+fix             atc all atc species 2
+fix_modify      atc species 1 charge_density -5.0  # Intrinsic negative charge density for liquid
+fix_modify      atc species 2 charge_density 5.0   # Intrinsic positive charge density for solid
+
+# Define non-uniform grid for ATC
+fix_modify      atc grid 20 20 20
+
+# Set dielectric properties
+fix_modify      atc dielectric 1.0  # Assume relative permittivity of 1 for the interface
+
+# Thermodynamic output
+thermo          100
+thermo_style    custom step temp pe etotal press
+
+# Output settings
+dump            1 all custom 500 dump.argon id type x y z q
+fix             2 all ave/time 100 1 100 c_myFix[1] file charge_density.profile
+
+# First stage: Active source condition
+run             5000
+
+# Second stage: Static source condition
+unfix           atc
+fix             atc all atc species 2 active no
+run             5000
+
+# End of script
+
+This script sets up a simulation environment reflecting the described requirements. It uses a Lennard-Jones potential for interactions, applies ATC coupling for managing electrostatics, and runs in stages to evaluate different conditions at the dielectric interface.

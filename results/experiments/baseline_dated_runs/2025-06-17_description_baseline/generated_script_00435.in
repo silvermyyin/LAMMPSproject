@@ -1,0 +1,50 @@
+# LAMMPS input script for NaCl and ethanol system
+
+units real
+atom_style full
+boundary p p p
+
+# Read data and parameter files
+read_data nacl_ethanol.data
+include params_set.txt
+
+# Define groups
+group nacl type 1 2  # Assuming type 1 and 2 are Na and Cl
+group ethanol type 3 4 5 6  # Assuming types 3, 4, 5, 6 are ethanol atoms
+
+# Set force field parameters
+pair_style lj/cut/coul/long 10.0
+pair_coeff * * 0.0 0.0  # Assuming parameters are set in params_set.txt
+kspace_style pppm 1.0e-4
+
+# Fix to prevent drift in NaCl group
+fix 1 nacl momentum 1 linear 1 1 1
+
+# NPT ensemble for equilibration
+fix 2 all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Set timestep
+timestep 1.0
+
+# Output settings
+thermo 1000
+thermo_style custom step temp press pe ke etotal
+dump 1 all atom 1000 trajectory.lammpstrj
+
+# Equilibration run
+run 5000
+
+# Compression loop
+variable i loop 20
+label loop_start
+
+  # Compress along x-axis by reducing box size by 1%
+  change_box all x scale 0.99
+
+  # Run for 500 timesteps
+  run 500
+
+next i
+jump SELF loop_start
+
+# End of script

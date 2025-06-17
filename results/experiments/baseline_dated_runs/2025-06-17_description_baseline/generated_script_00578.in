@@ -1,0 +1,44 @@
+# LAMMPS Input Script for Water Simulation with ReaxFF
+
+# Variables
+variable xrep equal 2
+variable yrep equal 2
+variable zrep equal 2
+
+# Initialization
+units real
+atom_style charge
+boundary p p f
+
+# Read data
+read_data water_data.lmp
+
+# Replicate the simulation box
+replicate ${xrep} ${yrep} ${zrep}
+
+# Force fields
+pair_style reaxff lmp_control.reax
+pair_coeff * * ffield.reax.water H O
+
+# Charge equilibration
+fix qeq all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
+
+# Reflective walls in z direction
+fix zwalls all wall/reflect zlo EDGE zhi EDGE
+
+# Thermostat
+fix nvt all nvt temp 300.0 300.0 100.0
+
+# Electric field in z direction
+variable efz equal 0.1
+fix efield all efield 0.0 0.0 ${efz}
+
+# Time integration
+timestep 0.5
+
+# Output settings
+thermo 10
+thermo_style custom step temp press density vol
+
+# Run the simulation
+run 10000

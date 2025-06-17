@@ -1,0 +1,55 @@
+Here is a complete LAMMPS input script for the described 2D simulation of ellipsoidal particles using the SRD method:
+
+# 2D Simulation of Ellipsoidal Particles with SRD Solvent
+
+units		lj
+dimension	2
+atom_style	hybrid ellipsoid sphere
+
+# Create simulation box
+lattice		square 0.7
+region		box block 0 50 0 50 -0.5 0.5
+create_box	2 box
+create_atoms	1 box
+
+# Define ellipsoidal particles
+group		ellipsoids type 1
+set		group ellipsoids shape 3.0 1.0 0.0
+set		group ellipsoids mass 1.0
+set		group ellipsoids quat/random 12345
+
+# Initialize velocities
+velocity	ellipsoids create 1.0 12345
+
+# Define interaction potential for ellipsoids
+pair_style	gb 1.0 1.0 1.0 5.0
+pair_coeff	1 1 1.0 1.0 3.0 1.0
+
+# Integrate ellipsoidal particle dynamics
+fix		1 ellipsoids nve/asphere
+
+# Create small particles as SRD solvent
+lattice		square 1.0
+create_atoms	2 random 1000 123456 box
+group		small type 2
+set		group small mass 0.01
+
+# Remove overlaps between large and small particles
+fix		2 all adapt 0 pair gb scale 1 2 0
+neigh_modify	exclude type 1 2
+
+# Define SRD parameters and fix
+fix		3 small srd 0.5 0.5 0.1 12345
+fix_modify	3 temp 1.0
+
+# Define compute and thermo settings
+compute		thermo_temp all temp
+compute		ellipsoid_temp ellipsoids temp/asphere
+thermo		100
+thermo_style	custom step temp c_thermo_temp epair etotal
+
+# Run simulation
+timestep	0.001
+run		10000
+
+This script sets up a 2D simulation of ellipsoidal particles with small particles acting as an SRD solvent. It initializes the system with random velocities and orientations, equilibrates the ellipsoids using the Gay-Berne potential, and uses the SRD method to model hydrodynamic interactions affecting the viscosity of the mixture. The simulation monitors thermodynamic properties to analyze the system's behavior.

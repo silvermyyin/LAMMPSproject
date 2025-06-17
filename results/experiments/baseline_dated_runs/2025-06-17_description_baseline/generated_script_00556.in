@@ -1,0 +1,39 @@
+# LAMMPS Input Script for EFF Model Simulation of Electrons
+
+units metal
+atom_style electron
+
+# Read initial data from file
+read_data data.Li.bohr
+
+# Define the pair style and coefficients
+pair_style eff/cut 20.88
+pair_coeff * *
+
+# Set boundary conditions
+boundary p p p
+
+# Minimize initial structure
+minimize 1e-4 1e-6 100 1000
+
+# Define electron radius limits and pressure corrections
+fix 1 all adapt 0 pair eff/cut emax 1.0 emin 0.5
+fix 2 all virial/eff
+
+# Define the ensemble for the simulation
+fix 3 all npt/eff temp 3000 3000 1.0 iso 1e7 1e7 1.0
+
+# Thermodynamic settings
+thermo 100
+thermo_style custom step temp etotal pe ke f_3 press
+thermo_modify line one
+
+# Compute stress and pressure
+compute myStress all stress/atom virial
+compute myPressure all pressure myStress
+
+# Run the simulation
+run 100
+
+# Output electron properties
+dump 1 all custom 100 electron_properties.dump id type x y z spin radius

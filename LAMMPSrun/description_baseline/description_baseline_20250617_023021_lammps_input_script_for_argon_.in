@@ -1,0 +1,47 @@
+```lammps
+# LAMMPS input script for Argon simulation with two-temperature model
+
+units real
+atom_style atomic
+
+# Create simulation box
+lattice fcc 5.256 origin 0.0 0.0 0.0
+region box block 0 10 0 10 0 10
+create_box 1 box
+boundary p p f
+
+# Read initial atomic configuration from data file
+read_data argon_initial.data
+
+# Define Lennard-Jones potential for Argon
+pair_style lj/cut 13.5
+pair_coeff 1 1 0.238 3.405
+
+# Define mass of Argon
+mass 1 39.95
+
+# Define region for internal group
+region internal block 2 8 2 8 2 8
+group internal region internal
+
+# Apply two-temperature model using ATC package
+fix atcFix internal atc two_temperature model external
+fix_modify atcFix mesh read mesh.dat
+fix_modify atcFix parameter read ttm_params.dat
+
+# Initialize atomic and electron temperatures
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+fix tempProfile all temp/profile 1 0 0 0.5
+fix_modify atcFix temperature/initialize atomic 300.0
+fix_modify atcFix temperature/initialize electron 300.0
+
+# Control thermal flux
+compute flux all heat/flux atcFix
+
+# Run simulation with explicit electron integration
+timestep 0.5
+thermo_style custom step temp pe c_flux
+thermo 10
+
+run 100
+```

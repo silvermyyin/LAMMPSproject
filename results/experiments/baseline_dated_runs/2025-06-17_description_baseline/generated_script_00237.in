@@ -1,0 +1,67 @@
+# LAMMPS Input Script for Argon FCC Lattice with AtC Elastic Damping
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Create simulation box
+region          simbox block 0 10 0 10 0 10 units box
+create_box      1 simbox
+
+# Create FCC lattice and Argon atoms
+lattice         fcc 4.05
+region          simregion block 0 10 0 10 0 10 units box
+create_atoms    1 region simregion
+
+# Set mass for Argon
+mass            1 39.948
+
+# Define Lennard-Jones potential with cutoff
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0103 3.4
+
+# Initialize velocities
+velocity        all create 0.0 1234567
+
+# AtC package settings
+fix             atc all atc
+fix_modify      atc mesh create 1 1 1 remap x
+
+# Apply elastic material properties
+fix_modify      atc transfer fix fx elastic none
+fix_modify      atc elastic_modulus 1.0e6
+fix_modify      atc poissons_ratio 0.3
+
+# Boundary conditions
+fix_modify      atc dirichlet left velocity 0.0 0.0 0.0
+fix_modify      atc dirichlet right displacement 0.0 0.0 0.0
+
+# Simulation settings
+timestep        0.005
+
+# Output settings
+thermo          100
+thermo_style    custom step time temp pe ke f_atc
+dump            1 all custom 100 dump.argon id type x y z
+
+# Simulation stages
+
+# Stage 1: Initial extension
+run             1000
+
+# Stage 2: Equilibration
+minimize        1.0e-4 1.0e-6 100 1000
+run             5000
+
+# Stage 3: Damping adjustments
+fix             damp all viscous 1.0
+run             5000
+
+# Finalize
+unfix           atc
+unfix           damp
+write_data      data.final
+
+This script sets up a molecular dynamics simulation using LAMMPS with an FCC lattice of Argon atoms, employing the AtC package to model elastic behavior with damping. It specifies the use of the Lennard-Jones potential and includes stages for initial extension, equilibration, and damping adjustments.

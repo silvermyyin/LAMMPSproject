@@ -1,0 +1,38 @@
+# LAMMPS input script for 2D NaCl system with long-range Coulombic interactions
+
+units           lj
+dimension       2
+atom_style      charge
+
+# Read initial configuration from data file
+read_data       nacl.data
+
+# Replicate the system to create a larger periodic box
+replicate       8 8 1
+
+# Define pair styles
+pair_style      hybrid/overlay zero 10.0 coul/long 10.0
+pair_coeff      * * zero
+pair_coeff      * * coul/long
+
+# Define kspace style for long-range electrostatics
+kspace_style    scafacos/p3m 0.001
+
+# Set neighbor and communication settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Assign initial velocities
+velocity        all create 1.5 12345
+
+# Define the integration method
+fix             1 all nve
+
+# Set timestep
+timestep        0.005
+
+# Output settings
+thermo          10
+
+# Run the simulation for 100 timesteps
+run             100

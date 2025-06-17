@@ -1,0 +1,48 @@
+# LAMMPS input script for molecular dynamics simulation with electron interactions
+
+# Set the atom style for electrons
+atom_style electron
+
+# Define variables
+variable sname string "initial_configuration.data"
+
+# Read the initial configuration from the specified data file
+read_data ${sname}
+
+# Define the pair style with a specified cutoff distance
+pair_style eff/cut 529.177249
+pair_coeff * *
+
+# Define compute commands to calculate energy components
+compute ke all ke/atom
+compute pe all pe/atom
+compute pauli all pe/pauli
+compute es all pe/coul
+compute restraint all pe/restraint
+compute pressure all stress/atom NULL
+
+# Set up the simulation box with fully flexible boundaries
+boundary p p p
+
+# Energy minimization using conjugate gradient
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Output settings
+thermo 10
+thermo_style custom step time etotal pe ke temp press
+
+# Dump settings for XYZ and LAMMPS trajectory formats
+dump 1 all xyz 100 output.xyz
+dump 2 all custom 100 output.lammpstrj id type x y z
+
+# Equilibration at 300 K using NVT ensemble
+fix 1 all nvt/eff temp 300.0 300.0 100.0
+
+# Set the timestep for the simulation
+timestep 0.0005
+
+# Run the equilibration simulation for 400,000 steps
+run 400000
+
+# End of script

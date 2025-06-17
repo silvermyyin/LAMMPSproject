@@ -1,0 +1,43 @@
+# LAMMPS input script for a 2D Potts model with strain coupling
+# Simulation of a 50x50 lattice with 2500 sites
+
+units           lattice
+dimension       2
+boundary        p p p
+
+# Define the lattice
+lattice         sq 1.0
+region          box block 0 50 0 50 -0.5 0.5
+create_box      1 box
+create_sites    box
+
+# Application style for Potts with strain coupling
+app_style       potts/strain
+app_modify      temperature 1.0
+
+# Initialize the system
+set_sites       all spin 0.0
+
+# Neighbor settings
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Sector command for domain decomposition
+sector
+
+# Solver style
+solve_style     tree
+
+# Run parameters
+timestep        1.0
+thermo          10
+thermo_style    custom step temp epair etotal
+
+# Run the simulation
+run             1000
+
+# Output settings
+dump            1 all custom 10 dump.sites id type x y
+dump_modify     1 sort id
+
+# End of input script

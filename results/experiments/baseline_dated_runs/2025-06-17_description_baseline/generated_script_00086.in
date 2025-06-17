@@ -1,0 +1,39 @@
+# LAMMPS input script for 2D NEB simulation of atom transition from surface to adatom state
+
+# Initialize simulation
+units lj
+dimension 2
+boundary p p f
+atom_style atomic
+
+# Create lattice and read initial configuration
+lattice hex 0.9
+read_data initial.hop1.end
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_modify shift yes
+pair_coeff * * 1.0 1.0 2.5
+
+# Define groups
+region fixed_layer block INF INF INF 0.1 INF
+group fixed region fixed_layer
+group mobile subtract all fixed
+
+# Define region and group for NEB atoms
+region neb_atoms block INF INF 0.1 INF INF
+group neb group neb_atoms
+set group neb type 2
+
+# Apply NEB specific settings
+neb 0.0 0.1 2000 1e-6 final.hop1
+min_style quickmin
+minimize 1e-6 1e-8 100 1000
+
+# Fix constraints
+fix 1 fixed setforce 0.0 0.0 0.0
+fix 2 mobile neb 0.0 0.1
+
+# Run NEB calculation
+timestep 0.05
+run 2000

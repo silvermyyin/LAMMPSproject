@@ -1,0 +1,44 @@
+# LAMMPS input script for a 3D Lennard-Jones melt simulation
+
+units lj
+atom_style atomic
+
+# Create simulation box and atoms
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Set mass and initialize velocities
+mass 1 1.0
+velocity all create 1.44 87287 loop geom
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define communication and balance settings
+comm_style tiled
+balance 1.0 rcb
+
+# Define integrator
+fix 1 all nve
+
+# Compute velocity averages over a grid
+fix 2 all ave/spatial 1 10 100 z lower 0.1 vz units reduced file vel.profile
+
+# Output settings
+thermo 100
+thermo_style custom step temp etotal press
+
+# Uncomment the following lines for additional spatially resolved data collection
+# dump 1 all image 100 image.*.jpg type type &
+#       axes yes 0.8 0.02 view 60 -30
+# dump 2 all grid 100 grid.*.bin type 0.1 0.1 0.1
+
+# Run the simulation
+run 500

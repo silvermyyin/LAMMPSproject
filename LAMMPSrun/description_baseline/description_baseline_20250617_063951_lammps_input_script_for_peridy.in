@@ -1,0 +1,51 @@
+```lammps
+# LAMMPS input script for peridynamic simulation of impact fracture dynamics
+
+units          si
+atom_style     atomic
+dimension      3
+boundary       p p p
+
+# Create a cylindrical target
+region target_reg cylinder y 0.0 0.0 0.005 0.0 0.005 units box
+create_box 1 target_reg
+
+# Define material properties and create target atoms
+lattice sc 1.0
+region target_atoms cylinder y 0.0 0.0 0.005 0.0 0.005 units box
+create_atoms 1 region target_atoms
+
+# Define mass based on density and volume
+mass 1 2.75e-26  # mass in kg/atom, calculated from given density and volume
+
+# Define peridynamic potential
+pair_style peri/lps
+pair_coeff * * 1.0e10 1.0e-8 0.25  # Example coefficients
+
+# Initialize velocities
+velocity all create 0.0 12345
+
+# Define integration
+fix 1 all nve
+
+# Indenter setup
+region indenter sphere 0.0 0.00155 0.0 0.001 units box
+create_atoms 1 single 0.0 0.00155 0.0
+set atom 1 type 2
+mass 2 1e-30  # Mass of indenter (negligible) to focus on force impact
+
+# Apply a massive force to the indenter
+fix 2 all addforce 0.0 -1.0e17 0.0
+
+# Set indenter velocity
+velocity indenter set 0.0 -100.0 0.0
+
+# Monitor damage
+compute damage all damage/atom
+
+# Run the simulation
+timestep 1.0e-7
+thermo 100
+thermo_style custom step time temp pe ke etotal press
+run 1000
+```

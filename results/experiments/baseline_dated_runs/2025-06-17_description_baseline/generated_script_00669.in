@@ -1,0 +1,44 @@
+# LAMMPS input script for a buckyball inside a carbon nanotube simulation
+
+# Initialize simulation
+units real
+atom_style molecular
+boundary f f f
+log log.buckyball_nanotube
+
+# Read initial configuration
+read_data data.buckyball_nanotube
+
+# Define interatomic potentials
+pair_style lj/cut/gpu 10.0
+pair_coeff * * 0.0 0.0  # Placeholder, should be set based on atom types
+bond_style harmonic
+angle_style charmm
+dihedral_style charmm
+
+# Define groups
+group mobile type 1
+
+# Reflective walls for mobile atoms
+fix wall_reflect mobile wall/reflect xlo EDGE xhi EDGE ylo EDGE yhi EDGE zlo EDGE zhi EDGE
+
+# Set initial velocities
+velocity mobile create 303.0 12345
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Fix NVE with Langevin thermostat
+fix nve_integration mobile nve
+fix langevin_thermostat mobile langevin 300.0 300.0 100.0 12345
+
+# Enable interactive molecular dynamics (IMD)
+fix imd all imd 54321
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+timestep 1.0
+run 100000000

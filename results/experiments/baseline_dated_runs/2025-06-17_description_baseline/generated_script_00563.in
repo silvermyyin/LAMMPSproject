@@ -1,0 +1,60 @@
+# LAMMPS input script for ions between dielectric interfaces
+
+# Initialize simulation
+units real
+dimension 3
+boundary p p f
+atom_style charge
+
+# Create simulation box
+region box block 0 10 0 10 0 10
+create_box 3 box
+
+# Define interfacial regions
+region interface1 block INF INF INF INF 0 1
+region interface2 block INF INF INF INF 9 10
+
+# Create atoms
+create_atoms 1 single 5 5 1
+create_atoms 2 single 5 5 9
+
+# Assign charges
+set type 1 charge 1.0  # Cation
+set type 2 charge -1.0 # Anion
+
+# Define groups
+group ions type 1 2
+group interface1 region interface1
+group interface2 region interface2
+
+# Pair interactions
+pair_style lj/cut/coul/long 10.0
+pair_coeff 1 1 0.1 3.0
+pair_coeff 2 2 0.1 3.0
+pair_coeff 1 2 0.1 3.0
+
+# Long-range interactions
+kspace_style pppm 1.0e-4
+kspace_modify slab 3.0
+
+# Dielectric constants
+dielectric_modify dynamic yes
+dielectric_modify epsilon1 2.0
+dielectric_modify epsilon2 4.0
+
+# Polarization solvers
+polarize_style bem/gmres
+#polarize_style bem/icc
+#polarize_style optimize
+
+# Fix for time integration
+fix 1 ions nve
+
+# Run setup
+run 0
+
+# Thermo output
+thermo_style custom step temp pe evdwl ecoul elong
+thermo 1
+
+# End of script

@@ -1,0 +1,58 @@
+# LAMMPS Input Script for 2D Poiseuille Flow using Lattice Boltzmann Method
+
+# Initialize simulation
+units           lj
+dimension       2
+atom_style      rheology
+boundary        p p f
+
+# Create geometry
+lattice         sq2 0.7
+region          simbox block 0 50 0 20 -0.1 0.1
+create_box      2 simbox
+
+# Define fluid and wall regions
+region          fluid block 0 50 1 19
+region          wall_bottom block 0 50 0 1
+region          wall_top block 0 50 19 20
+
+# Create atoms
+create_atoms    1 region fluid
+create_atoms    2 region wall_bottom
+create_atoms    2 region wall_top
+
+# Set mass and properties
+mass            1 1.0
+mass            2 1.0
+
+# Initialize velocities with slight random displacement
+velocity        all create 0.1 87287
+velocity        all temp 0.1
+
+# Define groups
+group           fluid region fluid
+group           walls region wall_bottom region wall_top
+
+# Set rigid wall properties
+fix             freeze walls setforce 0.0 0.0 0.0
+
+# Define pair style and coefficients
+pair_style      rheology 1.0 0.5 1.0
+pair_coeff      * * 
+
+# Apply external force to fluid
+fix             flow fluid addforce 1.0 0.0 0.0
+
+# Set timestep
+timestep        0.005
+
+# Compute thermodynamic properties
+compute         ke fluid ke/atom
+compute         press all pressure NULL
+
+# Output settings
+thermo_style    custom step temp c_ke c_press
+thermo          100
+
+# Run simulation
+run             20000

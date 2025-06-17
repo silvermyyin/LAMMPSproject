@@ -1,0 +1,46 @@
+```lammps
+# LAMMPS input script for 2D molecular dynamics simulation with bonded interactions
+
+# Initialization
+units         lj
+dimension     2
+boundary      p p p
+atom_style    molecular
+
+# Read data
+read_data     initial_configuration.dat
+
+# Replicate system
+replicate     3 3 1
+
+# Mass and velocity initialization
+mass          * 1.0
+velocity      all create 0.1 12345
+
+# Pairwise interaction (Lennard-Jones potential)
+pair_style    lj/cut 2.5
+pair_coeff    * * 1.0 1.0 2.5
+
+# Bonded interaction (Harmonic bond)
+bond_style    harmonic
+bond_coeff    * 50.0 1.0
+
+# Special bonds setting for FENE-type exclusions
+special_bonds fene
+
+# Set neighbor list
+neighbor      0.3 bin
+neigh_modify  every 1 delay 0 check yes
+
+# Integration settings
+fix           1 all nve
+
+# Output settings
+dump          1 all custom 100 dump.atom id type x y z
+dump_modify   1 sort id
+dump_modify   1 scale no
+
+# Run the simulation
+timestep      0.005
+run           5000
+```

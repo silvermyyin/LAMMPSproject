@@ -1,0 +1,44 @@
+# LAMMPS input script for 3D simulation of DNA duplexes using oxDNA2 model
+
+units lj
+dimension 3
+atom_style hybrid bond ellipsoid oxDNA
+
+boundary p p p
+
+read_data dna_duplexes.data
+
+# Define masses for atom types
+mass 1 3.1575
+mass 2 3.1575
+mass 3 3.1575
+mass 4 3.1575
+
+# Pairwise interactions
+pair_style hybrid/overlay oxDNA excluded_volume stacking hydrogen_bond cross_stacking coaxial_stacking dh_electrostatics
+pair_coeff * * oxDNA
+
+# Bond interactions
+bond_style fene
+bond_coeff * 30.0 1.5 1.0 1.0
+
+# Special bonds
+special_bonds lj/coul 0.0 1.0 1.0
+
+# Integration settings
+timestep 1e-5
+
+# Set up fixes
+fix 1 all nve/asphere
+fix 2 all langevin 0.1 0.1 2.5 12345
+
+# Output settings
+thermo 1000
+thermo_style custom step temp epair ebond emol elong evdwl etotal
+thermo_modify lost ignore
+
+# Dump settings for trajectory output
+dump 1 all custom 10000 trajectory.lammpstrj id type x y z ix iy iz
+
+# Run the simulation
+run 1000000

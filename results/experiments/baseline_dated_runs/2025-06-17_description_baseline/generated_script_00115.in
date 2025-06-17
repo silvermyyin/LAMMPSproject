@@ -1,0 +1,68 @@
+# LAMMPS input script for 2D Lennard-Jones Poiseuille flow around obstacles
+
+units lj
+dimension 2
+boundary p s s
+
+atom_style atomic
+
+# Create a hexagonal lattice for initial positions
+lattice hex 0.8
+region simbox block 0 40 0 20 -0.5 0.5
+create_box 3 simbox
+
+# Define regions for fluid and boundaries
+region lower_wall block INF INF INF 1.0 INF INF
+region upper_wall block INF INF 19.0 INF INF INF
+region void1 circle 10 10 2.0
+region void2 circle 30 10 2.0
+
+# Create atoms for fluid
+create_atoms 1 region simbox
+delete_atoms region lower_wall
+delete_atoms region upper_wall
+delete_atoms region void1
+delete_atoms region void2
+
+# Create atoms for lower wall
+create_atoms 2 region lower_wall
+
+# Create atoms for upper wall
+create_atoms 3 region upper_wall
+
+# Define groups
+group fluid type 1
+group lower_wall type 2
+group upper_wall type 3
+group boundaries union lower_wall upper_wall
+
+# Set masses
+mass 1 1.0
+mass 2 1.0
+mass 3 1.0
+
+# Define Lennard-Jones potential
+pair_style lj/cut 1.12246
+pair_coeff * * 1.0 1.0 1.12246
+
+# Set initial velocities for fluid atoms
+velocity fluid create 1.0 12345
+
+# Fixes
+fix 1 fluid nve
+fix 2 fluid temp/rescale 100 1.0 1.0 0.02 1.0
+fix 3 lower_wall setforce 0.0 0.0 0.0
+fix 4 upper_wall setforce 0.0 0.0 0.0
+
+# Apply external force to drive the flow
+variable fdrive equal 0.1
+fix 5 upper_wall addforce v_fdrive 0.0 0.0
+fix 6 fluid addforce v_fdrive 0.0 0.0
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+timestep 0.003
+run 25000

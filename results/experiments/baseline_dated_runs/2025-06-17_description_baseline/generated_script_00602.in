@@ -1,0 +1,62 @@
+# LAMMPS Input Script for Thermal Coupling Simulation using AtC package
+
+units           metal
+dimension       3
+boundary        p p p
+
+atom_style      atomic
+
+# Create an FCC lattice
+lattice         fcc 3.52
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0104 3.40 13.5
+
+# Define regions for thermal boundaries
+region          left block INF 0.1 INF INF INF INF
+region          right block 9.9 INF INF INF INF INF
+
+# Groups for MD and boundary conditions
+group           boundary_left region left
+group           boundary_right region right
+group           internal subtract all boundary_left boundary_right
+
+# Set initial velocities
+velocity        all create 20.0 12345
+
+# Apply velocity boundaries
+fix             1 boundary_left setforce 0.0 0.0 0.0
+fix             2 boundary_right setforce 0.0 0.0 0.0
+
+# Set a thermostat
+fix             3 all nvt temp 20.0 20.0 0.1
+
+# Initialize AtC package
+fix             atc all atc
+
+# Define mesh and couple regions
+fix_modify      atc mesh create 1 1 1
+fix_modify      atc couple thermal off
+fix_modify      atc couple thermal on group internal
+
+# Set up FEM mesh
+fix_modify      atc mesh fem
+
+# Apply temperature boundary conditions using AtC
+fix_modify      atc bc temp boundary_left 40.0
+fix_modify      atc bc temp boundary_right 20.0
+
+# Timestep and run parameters
+timestep        5.0
+run_style       verlet
+
+# Output settings
+thermo_style    custom step time etotal pe temp
+thermo          100
+
+# Run the simulation
+run             1000

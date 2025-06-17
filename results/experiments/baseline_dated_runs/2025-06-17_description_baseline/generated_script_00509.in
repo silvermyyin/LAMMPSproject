@@ -1,0 +1,42 @@
+# LAMMPS input script for calculating Hardy fields under uniaxial strain
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Create simulation box and atoms
+lattice         fcc 3.615
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+create_atoms    1 region simbox
+
+# Define interatomic potential
+pair_style      eam
+pair_coeff      * * Cu_u3.eam
+
+# Define groups
+group           all type 1
+
+# Set up AtC
+fix             atc all atc mesh 10 10 10 region simbox
+fix_modify      atc mesh yes
+fix_modify      atc fields mass_density displacement stress internal_energy
+fix_modify      atc localization_function step
+
+# Set up timestep
+timestep        0.001
+
+# Run equilibration
+thermo          100
+run             1000
+
+# Apply uniaxial strain
+displace_atoms  all move 0.01 0.0 0.0 units box
+run             5000
+
+# Output results
+dump            1 all custom 100 dump.atoms id type x y z
+dump_modify     1 sort id
+
+# End of script

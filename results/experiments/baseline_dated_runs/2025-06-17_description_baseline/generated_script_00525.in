@@ -1,0 +1,50 @@
+# LAMMPS input script for simulating CaO crystal using Pedone potential
+
+units metal
+dimension 3
+boundary p p p
+atom_style charge
+
+# Create fcc lattice for CaO
+lattice fcc 4.81
+region box block 0 10 0 10 0 10
+create_box 2 box
+create_atoms 1 box
+create_atoms 2 box basis 2 2 2
+
+# Assign charges to Ca and O
+set type 1 charge 1.2
+set type 2 charge -1.2
+
+# Apply small random displacements to avoid perfect lattice alignment
+displace_atoms all random 0.01 0.01 0.01 12345
+
+# Pair style and coefficients
+pair_style hybrid/overlay born/coul/long 10.0 10.0
+pair_coeff * * born/coul/long 0.0 0.0 1.0
+pair_coeff 1 2 born/coul/long 0.0 0.0 1.0
+pair_coeff 1 1 born/coul/long 0.0 0.0 1.0
+pair_coeff 2 2 born/coul/long 0.0 0.0 1.0
+
+# Kspace style for long-range Coulombic interaction
+kspace_style pppm 1.0e-4
+
+# Define minimization parameters
+min_style cg
+minimize 1.0e-10 1.0e-10 1000 10000
+
+# Define timestep
+timestep 0.002
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp press pe vol lx ly lz
+
+# Relaxation process
+fix 1 all box/relax iso 0.0 vmax 0.001
+run 0
+
+# Clean up
+unfix 1
+
+This script sets up the simulation environment according to the provided requirements, including the use of the Pedone potential model and PPPM for handling long-range interactions. It achieves the relaxation of the ionic crystal structure through energy minimization while monitoring the lattice parameter and pressure.

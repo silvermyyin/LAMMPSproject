@@ -1,0 +1,44 @@
+# LAMMPS input script for 3D MD simulation of DNA duplexes using oxDNA2 model
+
+# Initialize simulation
+units lj
+atom_style hybrid bond ellipsoid
+dimension 3
+boundary p p p
+
+# Read initial configuration from data file
+read_data dna_duplexes.data
+
+# Define atom types for DNA strands
+atom_modify map array
+comm_modify vel yes
+
+# Set pair style and coefficients for oxDNA2 interactions
+pair_style hybrid/overlay oxDNA2 oxDNA2_base/stack oxDNA2_hbond oxDNA2_elec
+pair_coeff * * oxDNA2
+pair_coeff * * oxDNA2_base/stack
+pair_coeff * * oxDNA2_hbond
+pair_coeff * * oxDNA2_elec
+
+# Define bond style and coefficients
+bond_style fene
+bond_coeff * 30.0 1.5 1.0 1.0
+
+# Define temperature control
+fix 1 all langevin 0.1 0.1 1.0 123456
+fix_modify 1 respa 1
+
+# Integrate equations of motion using NVE with aspherical particles
+fix 2 all nve/asphere
+
+# Set timestep
+timestep 1e-5
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe ke etotal
+dump 1 all custom 10000 traj_dna_duplexes.lammpstrj id type x y z
+dump_modify 1 sort id
+
+# Run the simulation
+run 1000000

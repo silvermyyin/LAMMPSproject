@@ -1,0 +1,48 @@
+```lammps
+# LAMMPS input script for a DNA-like structure simulation using the oxDNA2 model
+
+units lj
+atom_style hybrid bond ellipsoid oxDNA
+boundary p p p
+
+# Read initial configuration
+read_data data.dsring
+
+# Define mass for all atoms
+mass * 3.1575
+
+# Define the pair style and pair coefficients for oxDNA2
+pair_style hybrid/overlay oxDNA
+pair_coeff * * oxDNA
+
+# Define the bond style and bond coefficients
+bond_style fene
+bond_coeff * 30.0 1.5 1.0 1.0
+
+# Define the timestep
+timestep 1.0e-5
+
+# Group all atoms
+group all type *
+
+# Define the NVE ensemble with aspherical integration
+fix 1 all nve/asphere
+
+# Compute energies
+compute rot_energy all erotate/sphere
+compute kin_energy all ke
+compute pot_energy all pe
+
+# Output settings
+thermo 1000
+thermo_style custom step time temp c_kin_energy c_rot_energy c_pot_energy etotal press
+
+# Balance computational load across processors
+balance 1.0 shift xyz 10 1.0
+
+# Dump trajectory data for analysis
+dump 1 all custom 1000 trajectory.lammpstrj id type x y z ix iy iz
+
+# Run the simulation
+run 100000
+```

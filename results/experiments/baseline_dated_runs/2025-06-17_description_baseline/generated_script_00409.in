@@ -1,0 +1,54 @@
+# LAMMPS input script for deposition on a silicon substrate
+
+units real
+atom_style charge
+boundary p p f
+
+# Read initial configuration
+read_data silicon_crystal.data
+
+# Define regions
+region bottom_layer block INF INF INF INF INF 10 units box
+region middle_layer block INF INF INF INF 10 20 units box
+region top_layer block INF INF INF INF 20 INF units box
+
+# Group definitions
+group bottom region bottom_layer
+group middle region middle_layer
+group top region top_layer
+group mobile subtract all bottom
+
+# Set force field interaction styles
+pair_style hybrid reax/c NULL zbl 1.0 1.5
+pair_coeff * * reax/c ffield.reax.sio Si O C F
+pair_coeff * * zbl 14 8 1.0 1.5  # Example for Si-O, adjust as needed
+
+# Fixes for dynamics
+fix freeze bottom setforce 0.0 0.0 0.0
+fix nvt middle nvt temp 300.0 300.0 100.0
+fix nve top nve
+
+# Charge equilibration and temperature computation
+fix qeq all qeq/reax 1 0.0 10.0 1e-6 reax/c
+compute temp_mobile mobile temp
+
+# Deposition settings
+variable dep_rate equal 2.0  # deposition rate in molecules/ps
+variable dep_height equal 50.0  # height from which molecules are deposited
+fix dep all deposit 3000 1 100 v_dep_rate region top_layer vz -0.1 -0.2 units box
+
+# Evaporation of excess atoms
+fix evap top evaporate 10 1 top_layer 12345
+
+# Thermo and output settings
+thermo 100
+thermo_style custom step time temp press pe ke etotal
+dump 1 all custom 1000 dump.silicon id type x y z vx vy vz
+restart 10000 restart.silicon
+
+# Run simulation
+timestep 0.25
+run 100000  # Adjust number of steps as needed
+
+# Write final configuration
+write_data final_configuration.data

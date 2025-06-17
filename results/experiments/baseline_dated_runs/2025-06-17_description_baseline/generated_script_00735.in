@@ -1,0 +1,38 @@
+# LAMMPS input script for graphene-ionic liquid supercapacitor with constant potential electrodes
+
+# Initialization
+units           real
+atom_style      full
+boundary        p p p
+
+# Read data
+read_data       supercapacitor.data
+
+# Include external settings
+include         external_settings.in
+
+# Define groups
+group           bottom_electrode type 1
+group           top_electrode type 2
+group           ionic_liquid type 3
+
+# Setup interactions (assuming potential styles predefined in external settings)
+pair_style      hybrid/overlay lj/cut 10.0 coul/long 12.0
+kspace_style    pppm 1.0e-4
+
+# Fixes for constant potential electrodes
+fix             bottom_potential bottom_electrode electrode/conp -1.0 zmax top_electrode coupling yes symmetry yes
+fix             top_potential top_electrode electrode/conp 1.0 zmin bottom_electrode coupling yes symmetry yes
+
+# Thermo settings
+thermo          50
+thermo_style    custom step temp pe etotal f_bottom_potential f_top_potential
+
+# Run settings
+timestep        1.0
+run             500
+
+# Write output
+write_data      final_configuration.data
+
+Note: The script assumes a file named `supercapacitor.data` for the initial configuration and `external_settings.in` for additional settings related to styles, groups, computes, and fixes not explicitly defined in this script. Adjust these filenames as necessary for your specific setup.

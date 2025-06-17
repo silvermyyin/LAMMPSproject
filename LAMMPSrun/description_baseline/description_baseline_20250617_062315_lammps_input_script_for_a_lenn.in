@@ -1,0 +1,54 @@
+```lammps
+# LAMMPS input script for a Lennard-Jones fluid in a confined slab geometry
+
+units lj
+atom_style atomic
+
+# Define simulation box with mixed boundary conditions
+boundary p p m
+
+# Create a face-centered cubic lattice
+lattice fcc 0.8442
+region box block 0 10 0 10 -5 5
+create_box 1 box
+
+# Create atoms in a slab region
+region slab block 0 10 0 10 -2 2
+create_atoms 1 region slab
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define masses
+mass 1 1.0
+
+# Define groups for atoms and walls
+group mobile region slab
+
+# Initialize velocities
+velocity mobile create 1.5 87287
+
+# Apply NVE integration and Langevin thermostat
+fix 1 mobile nve
+fix 2 mobile langevin 1.5 1.5 0.5 49829
+
+# Define harmonic wall potentials
+variable wall_pos equal 4.0
+fix 3 all wall/harmonic zlo -${wall_pos} 1.0 1.0
+fix 4 all wall/harmonic zhi ${wall_pos} 1.0 1.0
+
+# Implement feedback control mechanism for wall position
+fix 5 all controller force NULL NULL v_wall_pos NULL NULL NULL NULL thermo 100
+
+# Define thermo output
+thermo 100
+thermo_style custom step temp press pxx pyy pzz f_3 f_4
+
+# Run the simulation for equilibration
+timestep 0.005
+run 10000
+
+# Continue simulation with feedback control
+run 50000
+```

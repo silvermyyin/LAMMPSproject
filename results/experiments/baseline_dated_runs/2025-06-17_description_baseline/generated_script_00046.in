@@ -1,0 +1,51 @@
+# 2D Lennard-Jones Liquid Simulation for MSD Analysis
+
+units lj
+dimension 2
+atom_style atomic
+
+# Create a 2D square simulation box
+lattice sq 0.6
+region simbox block 0 40 0 40 -0.5 0.5
+create_box 1 simbox
+create_atoms 1 box
+
+# Define interaction potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define settings for neighboring list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initial velocity setup
+velocity all create 1.0 12345
+
+# Set up the integration style
+fix 1 all nve
+fix 2 all langevin 1.0 1.0 1.0 12345
+fix enforce2d all enforce2d
+
+# Run equilibration
+thermo 1000
+thermo_style custom step temp
+run 50000
+
+# Unfix thermostat after equilibration
+unfix 2
+
+# Reset velocities, run for data collection
+velocity all create 1.0 56789
+reset_timestep 0
+
+# Compute MSD and diffusion coefficient
+compute msd all msd com yes
+variable msd equal c_msd[4]
+variable diffusion equal v_msd/(2*step*dt)
+
+# Output thermodynamic data
+thermo 1000
+thermo_style custom step temp v_msd v_diffusion
+
+# Run simulation for MSD analysis
+run 100000

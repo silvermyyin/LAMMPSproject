@@ -1,0 +1,54 @@
+# LAMMPS input script for BCC lattice with bispectrum analysis
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Define a BCC lattice with a parameter of 2.0
+lattice bcc 2.0
+region box block 0 10 0 10 0 10
+create_box 2 box
+create_atoms 1 box
+
+# Assign random displacements to atoms
+displace_atoms all random 0.05 0.05 0.05 12345
+
+# Define mass for the two atom types
+mass 1 180.88
+mass 2 180.88
+
+# Use a dummy zero pair potential
+pair_style zero 2.5
+pair_coeff * *
+
+# Set up ZBL potential for reference
+pair_style zbl 1.0 2.5
+pair_coeff 1 1 zbl 1.0 2.0
+pair_coeff 2 2 zbl 1.0 2.0
+
+# Group all atoms
+group all type 1 2
+
+# Compute bispectrum components using SNAP
+compute bispectrum all sna/atom 2.5 0.99363 3 3
+compute bispectrum_vector all snav/atom 2.5 0.99363 3 3
+compute bispectrum_derivative all snad/atom 2.5 0.99363 3 3
+
+# Sum bispectrum values over the group
+compute sum_bispectrum all reduce sum c_bispectrum
+compute sum_bispectrum_vector all reduce sum c_bispectrum_vector
+compute sum_bispectrum_derivative all reduce sum c_bispectrum_derivative
+
+# Thermodynamic settings and output
+thermo 100
+thermo_style custom step temp pe ke etotal press v_sum_bispectrum v_sum_bispectrum_vector v_sum_bispectrum_derivative
+# Uncomment below to output to a file
+# thermo_modify flush yes
+
+# Run the simulation
+timestep 0.001
+run 1000
+
+# Uncomment for additional output, if necessary
+# dump 1 all custom 100 dump.bispectrum id type x y z c_bispectrum[*] c_bispectrum_vector[*] c_bispectrum_derivative[*]
+# dump_modify 1 sort id

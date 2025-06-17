@@ -1,0 +1,40 @@
+# LAMMPS input script for Lennard-Jones melt simulation with MDI interface
+
+units lj
+atom_style atomic
+
+# Define variables for densities
+variable densities index 0.7 0.8 0.9
+
+# Loop over densities
+label loop
+variable density equal v_densities
+read_data data.${density}
+
+# Displace atoms randomly to simulate thermal agitation
+displace_atoms all random 0.1 0.1 0.1 87287
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Set up neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Apply MDI fix for quantum mechanical calculations
+fix mdi_calc all mdi/qm
+
+# Thermo settings to output temperature and virial components
+thermo_style custom step temp pe ke etotal press pxx pyy pzz
+thermo 10
+
+# Define output dump file
+dump 1 all atom 10 dump_${density}.lammpstrj
+
+# Perform a zero-step run to output initial state
+run 0
+
+# Next iteration of the loop
+next densities
+jump SELF loop

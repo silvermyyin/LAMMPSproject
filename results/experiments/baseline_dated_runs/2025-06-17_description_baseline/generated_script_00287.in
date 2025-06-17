@@ -1,0 +1,45 @@
+# LAMMPS input script for a TATB system using ReaxFF
+
+units real
+atom_style charge
+
+# Read initial configuration from data file
+read_data tatb.data
+
+# Specify ReaxFF potential
+pair_style reax/c NULL
+pair_coeff * * ffield.reax C H O N
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Charge equilibration
+fix qeq all qeq/reaxff 1 0.0 10.0 1e-6 reax/c
+
+# Integration settings
+fix 1 all nve
+
+# Compute energy components
+compute reax all pair reax/c
+compute reax_atom all property/atom q
+compute reax_energy all pe/atom
+
+# Output bond information
+fix reax_bonds all reaxff/bonds 50 reax_bonds.txt
+compute reax_bond_atom all reaxff/atom 100 reax_bond_atom.txt
+
+# Thermodynamic output
+thermo 1
+thermo_style custom step temp epair etotal evdwl ebond eangle elong ecoul pe c_reax[1] c_reax[2] c_reax[3] c_reax[4] c_reax[5] c_reax[6]
+thermo_modify lost warn
+
+# Dump local and per-atom bond data
+dump 1 all custom 1 dump.reax id type x y z c_reax_atom
+dump_modify 1 sort id
+
+# Run the simulation
+timestep 0.0625
+run 25
+
+# End of script

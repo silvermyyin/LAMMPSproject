@@ -1,0 +1,39 @@
+# LAMMPS input script for simulating magnetic and dynamic properties of bcc iron
+
+units metal
+atom_style spin
+
+# Create a 3D periodic box with bcc lattice
+lattice bcc 2.8665
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Set masses and initial magnetic moments
+mass 1 55.845
+set group all spin 2.2 0.0 0.0 1.0
+
+# Define potentials: EAM for atomic interactions, Spin exchange, and Neel model for magnetic
+pair_style hybrid/overlay eam spin/exchange 6.0 spin/neel 6.0
+pair_coeff * * eam Fe.eam.alloy Fe
+pair_coeff * * spin/exchange 1.0
+pair_coeff * * spin/neel 0.1
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initialize simulation parameters
+velocity all create 200.0 12345 mom yes rot yes dist gaussian
+
+# Fixes for dynamics and thermal fluctuations
+fix 1 all nve/spin
+fix 2 all langevin/spin 200.0 200.0 0.1 12345
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe ke etotal emag mag
+
+# Run the simulation
+timestep 0.001
+run 200000

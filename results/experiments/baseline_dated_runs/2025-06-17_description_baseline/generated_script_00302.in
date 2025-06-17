@@ -1,0 +1,70 @@
+# LAMMPS Input Script for Elastic Constant Calculation
+# This script calculates the elastic constants of a crystal structure
+# using controlled deformations and measures the resulting stress changes.
+
+# Include modular files
+include init.mod
+include potential.mod
+include displace.mod
+
+# Define variables for strain
+variable strain equal 0.01
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Read the initial data
+read_data data.crystal
+
+# Apply the potential
+include potential.mod
+
+# Relax the box and the atoms
+fix 1 all box/relax aniso 0.0
+minimize 1.0e-10 1.0e-10 1000 10000
+
+# Loop over the Voigt notation for elastic constants
+# 1-6 correspond to xx, yy, zz, yz, xz, xy
+label loop
+variable i loop 6
+
+# Apply positive strain
+include displace.mod
+variable sign equal 1
+run 0
+
+# Calculate positive stress
+variable stress_pos equal -pxx  # Modify based on direction
+
+# Apply negative strain
+include displace.mod
+variable sign equal -1
+run 0
+
+# Calculate negative stress
+variable stress_neg equal -pxx  # Modify based on direction
+
+# Compute elastic constants
+variable C${i} equal (stress_pos - stress_neg) / (2*${strain})
+
+# Output results
+print "C${i} = ${C${i}} GPa"
+
+next i
+jump SELF loop
+
+# Calculate bulk modulus, shear modulus, and Poisson ratio for cubic crystals
+variable K equal (C11 + 2*C12)/3
+variable G equal (C11 - C12 + 3*C44)/5
+variable nu equal C12 / (C11 + C12)
+
+print "Bulk modulus K = ${K} GPa"
+print "Shear modulus G = ${G} GPa"
+print "Poisson ratio nu = ${nu}"
+
+# End of script
+
+Note: The `displace.mod` file should handle the displacements for both positive and negative strains, applying them in the direction specified by the Voigt notation `i`. The `potential.mod` file should define the interaction potential for the crystal structure, such as the Stillinger-Weber potential for silicon. The stress components (e.g., `pxx`, `pyy`, `pzz`) should be modified based on the current direction of interest.

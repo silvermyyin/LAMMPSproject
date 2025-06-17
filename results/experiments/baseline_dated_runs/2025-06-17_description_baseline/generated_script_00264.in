@@ -1,0 +1,45 @@
+# LAMMPS Input Script for Energy Minimization of Water Model using LATTE and FIRE
+
+# Set simulation parameters
+units metal
+atom_style full
+
+# Read initial configuration from data file
+read_data data.water
+
+# Define replication factors
+variable xrep equal 1
+variable yrep equal 1
+variable zrep equal 1
+replicate ${xrep} ${yrep} ${zrep}
+
+# Set initial velocities to zero
+velocity all create 0.0 12345
+
+# Define pair style and interactions
+pair_style zero 10.0
+pair_coeff * *
+
+# Fix for quantum mechanical calculations
+fix qm all mdi/qm elements O H
+
+# Define the integration ensemble
+fix 1 all nve
+
+# Thermodynamic output settings
+thermo 10
+thermo_style custom step temp pe etotal press
+
+# Minimization settings using the FIRE algorithm
+min_style fire
+min_modify dmax 0.1 line 500 force 500
+
+# Convergence criteria
+minimize 1.0e-4 1.0e-4 500 500
+
+# Run the simulation
+run 0
+
+# Unfix and clean up
+unfix qm
+unfix 1

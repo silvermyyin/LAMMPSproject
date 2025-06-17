@@ -1,0 +1,52 @@
+# LAMMPS Input Script for Aqueous Electrolyte System with Gold Electrodes
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data data.au-aq
+
+# Define groups
+group bottom_electrode type 1
+group top_electrode type 2
+group water type 3 4
+group ions type 5 6
+group electrolyte union water ions
+
+# Pair style and coefficients
+pair_style lj/cut/coul/long 15.0
+pair_coeff * * 0.0 0.0 15.0  # Example coefficient, should be set for each pair interaction
+
+# Bond and Angle styles
+bond_style harmonic
+angle_style harmonic
+
+# Kspace style
+kspace_style pppm/electrode 1e-7
+
+# Define fixes
+fix 1 electrolyte shake 0.0001 20 0 b 1 a 1  # Assuming water O-H bonds and H-O-H angles
+fix 2 electrolyte nvt temp 298.0 298.0 100.0
+
+# Compute charge distribution and dipole moments
+compute charge_bottom bottom_electrode property/atom q
+compute charge_top top_electrode property/atom q
+compute dipole_bottom bottom_electrode dipole/atom
+compute dipole_top top_electrode dipole/atom
+compute temp_electrolyte electrolyte temp
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal
+thermo_modify flush yes
+
+# Dump settings
+dump 1 all custom 1000 dump.au-aq id type x y z q
+dump_modify 1 sort id
+
+# Run the simulation
+timestep 1.0
+run 10000
+
+Note: The pair coefficients and specific atom type IDs for bonds and angles in the `fix shake` command should be set according to the system's specific data file, "data.au-aq". Adjustments may be needed for the `pair_coeff` command to correctly reflect interactions between different atom types in your system.

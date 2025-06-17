@@ -1,0 +1,51 @@
+# LAMMPS Input Script for SPCE Water Model Simulation
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data water_spce.data
+
+# Define hybrid/overlay pair style
+pair_style hybrid/overlay coul/long 12.0 python lj/custom
+
+# Define bond and angle styles
+bond_style harmonic
+angle_style harmonic
+
+# Define SHAKE constraints
+fix shake_waters all shake 0.0001 20 0 b 1 a 1
+
+# Define pair coefficients for custom Python-based Lennard-Jones potential
+pair_coeff * * python lj/custom lj_potential.py
+
+# Define bond coefficients
+bond_coeff 1 450 1.0  # O-H bond
+
+# Define angle coefficients
+angle_coeff 1 55 104.52  # H-O-H angle
+
+# Initialize simulation
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Setup the long-range solver
+kspace_style pppm 1e-4
+
+# Generate and use a tabulated potential for long-range interactions
+pair_write 1 1 1000 r 10.0 table.txt table.spce
+
+# Setup NVT ensemble
+timestep 1.0
+fix nvt all nvt temp 300.0 300.0 100.0
+
+# Output settings
+thermo 10
+thermo_style custom step temp press etotal
+
+# Run the simulation
+run 100
+
+# Clean up tabulated potential file
+shell rm table.spce

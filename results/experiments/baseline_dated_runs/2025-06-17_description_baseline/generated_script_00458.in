@@ -1,0 +1,31 @@
+# LAMMPS input script for aluminum atoms using AGNI potential
+
+units metal
+dimension 3
+boundary p p f
+
+atom_style atomic
+read_data adatom.data
+
+# Include the AGNI potential file
+pair_style agni
+pair_coeff * * Al.agni Al
+
+# Set up simulation parameters
+timestep 0.0005
+
+# Initialize velocities
+velocity all create 500.0 12345
+
+# Apply NVT ensemble with Nosé-Hoover thermostat
+fix 1 all nvt temp 250.0 250.0 0.1
+
+# Remove linear momentum drift
+fix 2 all momentum 1 linear 1 1 1
+
+# Define thermodynamic output
+thermo 100
+thermo_style custom step temp ke
+
+# Run the simulation
+run 1000

@@ -1,0 +1,54 @@
+```lmp
+# LAMMPS input script for an electrochemical cell simulation
+
+# Initialization
+units metal
+dimension 3
+boundary p p p
+atom_style charge
+
+# Create simulation box and atoms
+region box block 0 50 0 50 0 50
+create_box 2 box
+create_atoms 1 random 1000 12345 box
+create_atoms 2 random 1000 67890 box
+
+# Masses
+mass 1 197.0  # Gold
+mass 2 22.99  # Sodium (for saline solution)
+
+# Pair potential
+pair_style eam/alloy
+pair_coeff * * AuCu.eam.alloy Au Na
+
+# Thomas-Fermi metallicity model for electrodes
+fix 1 all qeq/point 1 10 1e-6
+fix 2 all electrode/conp 1 bot top 0.0 1.0
+
+# Group definitions
+region bot block 0 50 0 50 0 5
+group bot region bot
+region top block 0 50 0 50 45 50
+group top region top
+
+# Constant potential for electrodes
+fix 3 bot electrode/conp 1 bot top 0.0
+fix 4 top electrode/conp 1 bot top 1.0
+
+# Neighbor and communication
+neighbor 2.0 bin
+neigh_modify delay 5 every 1
+
+# Settings file inclusion
+include settings.txt
+
+# Thermo settings
+thermo 50
+thermo_style custom step temp pe etotal f_3 f_4
+
+# Run the simulation
+timestep 0.001
+run 500
+```
+
+Note: Ensure the `settings.txt` file includes additional configurations relevant to your specific simulation setup.

@@ -1,0 +1,54 @@
+# 3D Spin Dynamics Simulation of BCC Iron with Spin Lattice Model
+
+units metal
+atom_style spin
+boundary f f f
+
+# Create the simulation box
+lattice bcc 2.87
+region whole block 0 10 0 10 0 10
+create_box 2 whole
+
+# Define two regions with different spin configurations
+region fixed block 0 5 0 10 0 10
+region randomized block 5 10 0 10 0 10
+
+# Create atoms and assign spins
+create_atoms 1 region fixed
+create_atoms 2 region randomized
+
+# Set initial spins for fixed region
+set region fixed spin 1.0 0.0 0.0
+
+# Set initial randomized spins for the other region
+set region randomized spin random
+
+# Define interaction styles
+pair_style hybrid/overlay spin/exchange spin/dmi
+pair_coeff * * spin/exchange 1.0
+pair_coeff * * spin/dmi 0.1
+
+# Define the fixes
+fix 1 all precession/spin zeeman 0.0 0.0 0.1 anisotropy 0.01 1.0 0.0 0.0
+fix 2 all langevin/spin 300.0 300.0 1.0 12345
+
+# Constrain fixed spins
+fix 3 group fixed setforce/spin 0.0 0.0 0.0
+
+# Integrate spin dynamics
+fix 4 all nve/spin
+
+# Spin minimization for energy relaxation
+min_modify line quadratic
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Time integration parameters
+timestep 0.0001
+
+# Output settings
+thermo 100
+thermo_style custom step temp etotal pe ke mz mx my
+dump 1 all custom 100 spin_dynamics.dump id type x y z sx sy sz
+
+# Run the simulation
+run 10000

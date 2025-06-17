@@ -1,0 +1,47 @@
+# LAMMPS input script for peridynamic simulation of a cylindrical target impacted by a spherical projectile
+
+units           si
+atom_style      atomic
+boundary        p p p
+
+# Define lattice and region for target
+lattice         sc 1.0
+region          target cylinder z 0.0 0.0 0.01 0.0 0.1 units box
+create_box      2 target
+create_atoms    1 region target
+
+# Define region for projectile
+region          projectile sphere 0.0 0.1 0.0 0.005 units box
+create_atoms    2 region projectile
+
+# Mass and material properties
+mass            1 2200
+mass            2 2200
+
+# Peridynamic parameters
+pair_style      peri/eps 0.01 0.01 1.0e11
+pair_coeff      * * 
+
+# Initial velocities
+velocity        all set 0.0 0.0 0.0
+velocity        group projectile set 0.0 -100.0 0.0
+
+# Neighbor and timestep settings
+neighbor        0.002 bin
+neigh_modify    every 1 delay 0 check yes
+timestep        1.0e-7
+
+# Fix for time integration
+fix             1 all nve
+
+# Compute and output
+compute         damage all damage/atom
+thermo_style    custom step temp epair emol etotal c_damage[1] c_damage[2] c_damage[3]
+thermo          100
+
+# Run the simulation
+run             1000
+
+# End of script
+
+This script sets up a peridynamic simulation using LAMMPS where a cylindrical target is impacted by a spherical projectile. The peridynamic model is specified with `pair_style peri/eps`, and the projectile is given an initial velocity to simulate the impact event. The simulation tracks damage evolution and outputs thermodynamic data every 100 timesteps for analysis.

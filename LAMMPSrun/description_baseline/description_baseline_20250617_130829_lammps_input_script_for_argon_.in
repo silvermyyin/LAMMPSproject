@@ -1,0 +1,61 @@
+```lammps
+# LAMMPS input script for Argon system using Lennard-Jones potential
+# Simulation to study energy density and stress metrics
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC lattice and define simulation box
+lattice         fcc 4.05
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define interatomic potential
+pair_style      lj/cut 10.0
+pair_coeff      1 1 0.0103 3.4
+
+# Set neighbor list and timestep
+neighbor        2.0 bin
+neigh_modify    delay 5
+
+# Set initial conditions
+velocity        all create 10.0 87287 loop geom
+mass            1 39.948
+
+# Define thermo output
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Initialize AtC package for computing field properties
+fix             atc all atc fix_modify atc output fields
+
+# Define fields to output
+fix             atc all atc fix_modify atc output fields
+fix_modify      atc grid temp
+fix_modify      atc grid stress/atom
+fix_modify      atc grid energy/atom
+
+# Apply Nosé-Hoover thermostat
+fix             nvt all nvt temp 10.0 300.0 100.0
+
+# Run simulation with temperature increments
+variable        temp equal 10.0
+label           loop
+fix_modify      nvt temp v_temp v_temp 100.0
+run             5000
+variable        temp equal v_temp + 50.0
+if "${temp} <= 300.0" then "jump SELF loop"
+
+# Output results to files
+dump            1 all custom 1000 dump.argon id type x y z vx vy vz
+fix             averages all ave/time 100 1 1000 c_myTemp c_myStress c_myEnergy file results.avg mode vector
+
+# End of the simulation
+unfix           nvt
+write_restart   restart.final
+```
+
+This script sets up a molecular dynamics simulation for argon using the Lennard-Jones potential. It initializes an FCC lattice, uses a Nosé-Hoover thermostat to incrementally increase the temperature, and employs the AtC package to compute and output thermomechanical fields. The results are averaged and written to output files for analysis.

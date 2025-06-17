@@ -1,0 +1,57 @@
+# LAMMPS Input Script for Silicon-Vacuum System with Convective Drift-Diffusion and Schrödinger-Poisson Dynamics
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create a face-centered cubic lattice
+lattice         fcc 5.43
+region          simbox block 0 20 0 20 0 20 units lattice
+create_box      1 simbox
+
+# Define the atomic potential for Silicon
+pair_style      tersoff
+pair_coeff      * * Si.tersoff Si
+
+# Initialize the system with a uniform temperature
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define a mesh for the AtC package
+fix             atc all atc mesh tetra
+fix_modify      atc mesh create nodeset box region simbox
+fix_modify      atc mesh create elementset wire region simbox
+fix_modify      atc mesh nodeset wire apply temperature 300.0
+
+# Apply the convective drift-diffusion model
+fix_modify      atc model ddc_sp
+fix_modify      atc ddc_sp set converged_temperature 1e-5
+fix_modify      atc ddc_sp set converged_density 1e-5
+
+# Initialize electron flux and potential
+fix_modify      atc ddc_sp initial_electron_density 1.0e21
+fix_modify      atc ddc_sp initial_electron_temperature 300.0
+fix_modify      atc ddc_sp initial_electron_potential 0.0
+fix_modify      atc ddc_sp apply electron_flux 1.0e12
+
+# Schrödinger-Poisson self-consistency
+fix_modify      atc ddc_sp schrodinger_poisson self-consistent
+
+# Apply boundary conditions
+fix_modify      atc ddc_sp set nodeset box potential 0.0
+fix_modify      atc ddc_sp set nodeset wire electron_density 1.0e21
+fix_modify      atc ddc_sp fix wavefunction nodeset wire
+
+# Output settings
+thermo          100
+thermo_style    custom step temp etotal pe ke press
+dump            1 all custom 500 output.lammpstrj id type x y z
+fix             1 all ave/time 100 1 100 c_thermo_pe c_thermo_ke c_thermo_temp c_thermo_etotal file thermo_output.txt
+
+# Run the simulation
+timestep        0.001
+run             5000
+
+# End of script
+
+This script sets up a LAMMPS simulation using the AtC package to model a silicon-vacuum system with specified physical properties and boundary conditions. It includes the convective drift-diffusion model coupled with Schrödinger-Poisson dynamics to study electron transport and density distribution.

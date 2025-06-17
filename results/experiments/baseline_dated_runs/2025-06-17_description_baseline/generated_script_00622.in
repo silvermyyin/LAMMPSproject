@@ -1,0 +1,43 @@
+# LAMMPS input script for bispectrum computes in a BCC lattice
+
+units metal
+dimension 3
+boundary p p p
+
+# Define a BCC lattice with a lattice constant of 2.0
+lattice bcc 2.0
+region box block 0 2 0 2 0 2
+create_box 1 box
+create_atoms 1 box
+
+# Assign mass to atoms
+mass 1 180.88
+
+# Apply a random displacement to all atoms
+displace_atoms all random 0.01 0.01 0.01 87287
+
+# Use a dummy potential with a cutoff factor
+pair_style zero 6.0
+pair_coeff * *
+
+# Define bispectrum computes
+compute pod_atom all pod/atom 3 Ta
+compute podd_atom all podd/atom 3 Ta
+compute pod_global all pod/global 3 Ta
+compute pod_local all pod/local 3 Ta
+
+# Run the simulation for a specified number of steps
+timestep 0.001
+run 1000
+
+# Uncomment these lines if you want to output data for analysis
+# dump 1 all custom 100 dump.pod_atom id type c_pod_atom[*]
+# dump 2 all custom 100 dump.podd_atom id type c_podd_atom[*]
+# dump 3 all custom 100 dump.pod_global id type c_pod_global[*]
+# dump 4 all custom 100 dump.pod_local id type c_pod_local[*]
+
+# Example printing an arbitrary local descriptor value
+variable local_desc equal c_pod_local[1]
+print "Arbitrary local descriptor value: ${local_desc}"
+
+This script sets up a BCC lattice, applies a dummy potential, and defines bispectrum computes for analyzing atomic environments using POD parameters for tantalum. The output commands are commented out, as specified.

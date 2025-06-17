@@ -1,0 +1,52 @@
+# LAMMPS input script for thermal coupling using AtC package
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Create FCC lattice of argon
+lattice         fcc 4.0
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.5
+pair_coeff      * * 0.0103 3.405
+
+# Initialize velocities
+velocity        all create 20.0 12345 mom yes rot yes dist gaussian
+
+# Define groups for AtC
+group           mobile region box
+
+# AtC package setup
+fix_modify      AtC fix atc all
+fix_modify      AtC mesh_units lattice
+fix_modify      AtC mesh_element_type tetrahedron
+fix_modify      AtC mesh_number_of_elements 10 10 10
+
+# Thermal coupling
+fix             atc all atc thermal/2temp
+fix_modify      atc thermal/electron_temp 20.0
+
+# Apply thermostat
+fix             1 all temp/rescale 10 20.0 20.0 0.1 1.0
+
+# Define thermal flux and boundary conditions
+fix_modify      AtC thermal_flux_control left boundary
+fix_modify      AtC thermal_flux_control right boundary
+
+# Output settings
+thermo          50
+thermo_style    custom step temp pe etotal
+
+# Equilibration run
+run             400
+
+# Apply temperature source term
+fix_modify      atc thermal_source_term 0.001
+
+# Production run
+run             1000

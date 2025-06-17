@@ -1,0 +1,37 @@
+# LAMMPS input script for 2D simulation of rounded polygonal bodies
+
+units lj
+dimension 2
+atom_style body
+
+# Read initial configuration from a data file
+read_data initial_config.data
+
+# Replicate the system
+replicate 4 4 1
+
+# Define the interaction style
+pair_style body/rounded/polygon 1.0 0.5 0.1 1.0
+pair_coeff * *
+
+# Set boundary conditions
+boundary p f p
+
+# Create velocity distribution
+velocity all create 0.5 12345 dist gaussian
+
+# Define integration settings
+fix 1 all npt temp 0.5 0.5 1.0 iso 1.0 1.0 1.0
+
+# Enforce 2D constraint
+fix 2 all enforce2d
+
+# Apply polygonal wall potential (assuming a wall on y=0)
+fix 3 all wall/polygon yplane 0.0
+
+# Output settings
+thermo 1000
+thermo_style custom step temp ke pe etotal press
+
+# Run the simulation
+run 100000

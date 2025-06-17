@@ -1,0 +1,56 @@
+# LAMMPS Input Script for Polymer System Simulation
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration from data file
+read_data polymer_system.data
+
+# Define non-bonded interactions
+pair_style lj/cut 10.0
+pair_modify shift yes
+pair_coeff * * 0.0 0.0 10.0  # Generic LJ parameters, specific values should be updated
+
+# Define bonded interactions
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+
+# Avoid special bonds interactions
+special_bonds lj/coul 0.0 0.0 0.0
+
+# Set dielectric constant
+dielectric 1.0
+
+# Neighbor list and communication settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Minimize the system to remove any large forces
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Setup for NPT ensemble
+timestep 1.0  # Time step of 1 fs for real units
+
+# Define variables for temperature ramp
+variable Tstart equal 600.0
+variable Tend equal 300.0
+variable nsteps equal 8000000  # Total number of timesteps for 8 ns
+
+# Equilibrate using NPT ensemble
+fix 1 all npt temp ${Tstart} ${Tend} $(v_nsteps/1000000.0) iso 1.0 1.0 1000.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe vol press density
+
+# Dump atomic positions for analysis
+dump 1 all atom 1000 polymer_system.lammpstrj
+
+# Run the simulation
+run ${nsteps}
+
+# Write final data and restart files
+write_data polymer_system_final.data
+write_restart polymer_system_final.restart

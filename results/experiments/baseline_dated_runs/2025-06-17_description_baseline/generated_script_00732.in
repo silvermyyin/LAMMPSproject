@@ -1,0 +1,42 @@
+# LAMMPS Input Script for Argon MD Simulation with Lennard-Jones Potential
+
+# Command-line variables
+variable a equal 5.26            # Lattice constant in Angstroms for Argon
+variable T equal 120.0           # Initial temperature in Kelvin
+variable box_size equal 10       # Size of the cubic box (in terms of lattice units)
+
+# Initialization
+units real
+atom_style atomic
+boundary p p p
+
+# Create fcc lattice
+lattice fcc ${a}
+region simbox block 0 ${box_size} 0 ${box_size} 0 ${box_size}
+create_box 1 simbox
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/cut 10.2           # LJ cutoff distance in Angstrom (3 x sigma for Argon)
+pair_coeff 1 1 0.238 3.405       # Epsilon in kcal/mol, Sigma in Angstrom for Argon
+
+# Set initial velocities
+velocity all create ${T} 12345 dist gaussian
+
+# Define settings for the NVE ensemble
+fix 1 all nve
+
+# Time settings
+timestep 1.0                     # Timestep in fs
+
+# Thermodynamic output
+compute temp_reduced all temp/reduce
+compute pe_reduced all pe/atom
+
+thermo_style custom step temp c_temp_reduced pe c_pe_reduced press
+thermo 100
+
+# Run the simulation
+run 5000
+
+# End of script

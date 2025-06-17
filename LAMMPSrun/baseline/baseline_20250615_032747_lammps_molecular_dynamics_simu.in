@@ -1,0 +1,41 @@
+Below is a LAMMPS input script that fulfills your requirements:
+
+```lmp
+# LAMMPS molecular dynamics simulation using LJ units
+
+# Specify units and dimension
+units lj
+dimension 3
+
+# Initialize system
+atom_style atomic
+boundary f f f
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Set mass of atom type
+mass 1 1.0
+
+# Pair potential and neighbor settings
+pair_style none
+pair_modify shift yes
+
+# Define SHAKE/RATTLE constraints
+fix 1 all shake 0.0001 20 0 b 1 a 1
+
+# Initialize velocities
+velocity all create 1.0 87287
+
+# Thermodynamic output
+thermo 100
+
+# Integration settings
+timestep 0.005
+
+# Run the simulation
+run 25000
+```
+
+Please note that some specific parameters like the lattice constant or the temperature for velocity creation are set to arbitrary values, as they were not specified in your requirements. You may have to adjust these according to your specific simulation system.

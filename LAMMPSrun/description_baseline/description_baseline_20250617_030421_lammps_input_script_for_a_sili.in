@@ -1,0 +1,39 @@
+```lammps
+# LAMMPS input script for a silicon lattice with PKA and electronic stopping
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define lattice and create atoms
+lattice         fcc 5.431
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define mass and potential
+mass            1 28.0855
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Define velocities
+velocity        all create 300.0 12345
+
+# Assign high velocity to PKA
+group           pka id 1
+velocity        pka set 0.0 0.0 1000.0 units box
+
+# Define timestep control and electronic stopping
+fix             1 all dt/reset 1.0e-4 0.001 0.01 0.5
+fix             2 all nve
+fix             3 all electron/stopping 0.01
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal f_3
+
+# Run simulation
+timestep        0.001
+run             10000
+```

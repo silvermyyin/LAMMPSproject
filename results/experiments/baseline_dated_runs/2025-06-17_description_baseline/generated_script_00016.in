@@ -1,0 +1,32 @@
+# LAMMPS Input Script for Metal Alloy System using MEAM Potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Read data from external file
+read_data data.fe
+
+# Define interatomic potential
+pair_style meam
+pair_coeff * * library.meam Fe Ti C FeTiC.meam Fe Ti C
+
+# Define simulation settings
+neighbor 2.0 bin
+neigh_modify delay 10 check yes
+
+# Define minimization settings
+min_style fire
+min_modify dmax 0.1 line quadratic
+
+# Define thermodynamic output
+thermo 10
+thermo_style custom step pe etotal fmax fnorm temp press
+thermo_modify format float %20.14g
+
+# Perform energy minimization
+minimize 1e-8 1e-8 2000 10000
+
+# End of script

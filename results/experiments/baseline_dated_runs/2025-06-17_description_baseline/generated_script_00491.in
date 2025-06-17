@@ -1,0 +1,48 @@
+# LAMMPS input script for granular flow through a funnel
+
+units si
+atom_style sphere
+dimension 3
+boundary p p f
+
+# Define the simulation box
+region simbox block -5 5 -5 5 0 10 units box
+create_box 1 simbox
+
+# Define the funnel geometry
+region funnel_cone cone z 0 0 0 2 0 5 units box open
+region funnel_cylinder cylinder z 0 0 5 10 units box open
+region funnel union 2 funnel_cone funnel_cylinder
+
+# Define the particles
+create_atoms 1 random 5000 12345 funnel
+
+# Particle properties
+set type 1 diameter 0.5 1.0
+set type 1 mass 1.0
+
+# Define pair interaction (Hertzian contact model)
+pair_style gran/hertz/history 200.0 NULL 50.0 NULL 0.5 0.0
+pair_coeff * *
+
+# Gravity in the negative z-direction
+fix 1 all gravity 9.81 vector 0.0 0.0 -1.0
+
+# Insert particles at the top using fix pour
+region pour_region cylinder z 0 0 1 8 units box
+fix 2 all pour 1000 1 5000 12345 region pour_region diam 0.5 1.0 rate 1.0
+
+# Integrate motion using NVE
+fix 3 all nve/sphere
+
+# Compute dynamic balancing
+fix 4 all balance 1000 1.0 shift xyz 10 1.0
+
+# Output settings
+thermo 1000
+thermo_style custom step atoms ke
+dump 1 all custom 1000 dump.particles id type x y z vx vy vz
+
+# Run the simulation
+timestep 0.001
+run 50000

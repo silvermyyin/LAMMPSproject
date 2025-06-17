@@ -1,0 +1,53 @@
+# LAMMPS input script for 2D SPH simulation of water flow under gravity
+
+# Initialize simulation
+units         si
+dimension     2
+boundary      f f p
+atom_style    sphere
+
+# Create simulation box
+region        simbox block 0 10 0 10 -0.5 0.5
+create_box    2 simbox
+
+# Create water particles (type 1) and boundary particles (type 2)
+region        waterblock block 1 9 1 9
+create_atoms  1 random 1000 12345 waterblock
+region        boundary block 0 10 0 1
+create_atoms  2 random 200 54321 boundary
+
+# Set masses and radii
+set           type 1 mass 0.001
+set           type 1 diameter 0.01
+set           type 2 mass 0.001
+set           type 2 diameter 0.01
+
+# Define pair style and coefficients
+pair_style    hybrid/overlay sph/taitwater/morris 0.01 1.0 7.0 0.5 20.0 sph/density/continuity
+pair_coeff    * * sph/taitwater/morris 1 1
+pair_coeff    * * sph/density/continuity 1 1
+
+# Define neighbor settings
+neighbor      0.02 bin
+neigh_modify  delay 0
+
+# Set initial velocities for water particles
+velocity      all create 0.0 987654321 dist gaussian
+
+# Define gravity
+fix           gravity all gravity 9.81 vector 0 -1 0
+
+# Define integration
+fix           integrate_water all nve/sphere
+
+# Define variable timestep based on CFL condition
+variable      dt equal 0.3*(0.01/sqrt(9.81*0.01))
+timestep      ${dt}
+
+# Output settings
+thermo        100
+thermo_style  custom step time ke pe etotal
+dump          1 all custom 100 dump.sph id type x y z vx vy vz
+
+# Run simulation
+run           25000

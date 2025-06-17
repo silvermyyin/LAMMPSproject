@@ -1,0 +1,46 @@
+# LAMMPS input script for QMMM simulation of SiO2 zeolite and methane
+
+units metal
+atom_style full
+
+# Read data file
+read_data sio2_methane.data
+
+# Define regions for MM and QM atoms
+group mm_atoms type 1 2  # Si and O
+group qm_atoms type 3 4  # C and H
+
+# Define potentials
+pair_style hybrid/overlay buck/coul/short 10.0 lj/cut 10.0
+pair_coeff * * buck/coul/short 10000.0 0.1 32.0  # Example parameters for SiO2
+pair_coeff 3 4 lj/cut 0.065 3.5  # C-H interaction
+pair_coeff 1 3 lj/cut 0.055 3.5  # Si-C interaction
+pair_coeff 2 3 lj/cut 0.055 3.5  # O-C interaction
+pair_coeff 1 4 lj/cut 0.02 2.5  # Si-H interaction
+pair_coeff 2 4 lj/cut 0.02 2.5  # O-H interaction
+
+# Bond and angle styles for MM atoms
+bond_style harmonic
+bond_coeff * 300.0 1.5
+angle_style harmonic
+angle_coeff * 50.0 109.5
+
+# Remove QM bonds and angles
+delete_bonds qm_atoms multi remove
+
+# Initialize simulation
+velocity all create 300.0 12345
+
+# Fixes
+fix nve_qm qm_atoms nve
+fix qmmm all mdi/qmmm mode force engine nwchem qmmm yes
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp etotal ke pe ebond eangle epair evdwl ecoul press
+
+# Run simulation
+timestep 0.0001
+run 10000
+
+Note: This script assumes that the `sio2_methane.data` file is correctly formatted and contains the necessary atom types as specified. The parameters for the potentials are illustrative and should be replaced with accurate values for your system. The `fix mdi/qmmm` command is used assuming you have compiled LAMMPS with the necessary QMMM package and NWChem interface.

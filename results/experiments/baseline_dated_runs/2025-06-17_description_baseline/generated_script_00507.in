@@ -1,0 +1,39 @@
+# LAMMPS Input Script for Cyclohexane and Methane Mixture Simulation
+
+units           real
+atom_style      template
+
+# Read in system configuration from data file
+read_data       template-mix.data
+
+# Define potential styles
+pair_style      lj/cut 12.0
+pair_modify     mix geometric tail yes
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  harmonic
+
+# Define interactions (example parameters, modify as needed)
+pair_coeff      * * 0.0 0.0
+bond_coeff      * 300.0 1.5
+angle_coeff     * 50.0 109.5
+dihedral_coeff  * 1.0 1 2
+
+# Set up simulation box with periodic boundaries
+boundary        p p p
+
+# Define group for all atoms
+group           all type *
+
+# Define time integration and thermostat
+timestep        1.0
+fix             1 all nvt temp 300.0 300.0 100.0
+
+# Output settings
+thermo          100
+thermo_style    custom step temp press pe ke etotal
+
+# Run the simulation
+run             2000
+
+This script sets up a molecular dynamics simulation for a mixture of cyclohexane and methane using a template-based atom style. It applies the Lennard-Jones potential with a specified cutoff and employs harmonic potentials for bonded interactions. The Nosé-Hoover thermostat manages temperature control, and periodic boundary conditions are applied to allow for a realistic simulation environment.

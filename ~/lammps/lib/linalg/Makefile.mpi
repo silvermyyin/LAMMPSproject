@@ -1,0 +1,5 @@
+# Settings
+#
+CC =		mpicxx -std=c++11
+CCFLAGS =	-O3 -fPIC
+DEPFLAGS =	-M 

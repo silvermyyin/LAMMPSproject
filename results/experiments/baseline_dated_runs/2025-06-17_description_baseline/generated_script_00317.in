@@ -1,0 +1,41 @@
+# Spin dynamics simulation of a simple cubic lattice system
+
+units metal
+atom_style spin
+dimension 3
+boundary f f f
+
+lattice sc 1.0
+region box block 0 1 0 1 0 1
+create_box 1 box
+create_atoms 1 box
+
+set atom * spin 2.0 1.0 0.0
+
+pair_style spin/exchange 1.0
+pair_coeff * *
+
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the Zeeman field
+fix 1 all precession/spin 10.0 0.0 0.0 0.0
+
+# Apply the NVE spin integrator
+fix 2 all nve/spin
+
+# Apply a Langevin thermostat
+fix 3 all langevin/spin 0.0 0.0 0.01 12345
+
+timestep 0.0001
+
+thermo 100
+thermo_style custom step temp pe ke etotal lx ly lz press v_magnetization[1] v_magnetization[2] v_magnetization[3]
+
+# Define variables for magnetization components
+variable magnetization equal "sum(all,spinx)/count(all)"
+variable magnetization[1] equal "sum(all,spinx)"
+variable magnetization[2] equal "sum(all,spiny)"
+variable magnetization[3] equal "sum(all,spinz)"
+
+run 500000

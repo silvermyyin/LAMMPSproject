@@ -1,0 +1,40 @@
+# LAMMPS input script for overdamped dynamics of non-interacting ellipsoidal particles with dipole moments
+
+units lj
+atom_style ellipsoid
+
+# Define the simulation box
+region box block -8 8 -8 8 -8 8
+create_box 1 box
+
+# Create atoms on a simple cubic lattice
+lattice sc 1.0
+create_atoms 1 box
+set type 1 mass 1.0
+
+# Assign random dipoles and quaternions
+set type 1 dipole/random 12345
+set type 1 quat/random 12345
+
+# Define shape of ellipsoids (prolate spheroids)
+set type 1 shape 1.5 1.0 1.0
+
+# Pair style and interactions
+pair_style none
+
+# Define group for all particles
+group all type 1
+
+# Define fix for Brownian dynamics with anisotropic drag coefficients
+fix 1 all brownian/asphere 1.0 gamma_t_eigen 1.0 0.5 0.5 gamma_r_eigen 0.1 0.05 0.05 12345
+
+# Set timestep and run parameters
+timestep 0.00001
+thermo 100
+thermo_style custom step temp ke pe c_msd[1] c_msd[2] c_msd[3]
+
+# Define compute for mean square displacement (MSD)
+compute msd all msd
+
+# Run the simulation
+run 3000

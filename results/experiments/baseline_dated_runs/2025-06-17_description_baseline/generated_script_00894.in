@@ -1,0 +1,42 @@
+# LAMMPS input script for a hexagonal boron nitride (hBN) monolayer simulation
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create atoms from a data file
+read_data hbn.data
+
+# Assign atomic masses
+mass 1 10.81  # Boron
+mass 2 14.01  # Nitrogen
+
+# Define interatomic potential
+pair_style tersoff
+pair_coeff * * BNC.tersoff B N
+
+# Adjust the potential for cutoff effects
+variable shift equal 0.1
+pair_modify shift ${shift}
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define initial conditions
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define the simulation ensemble
+fix 1 all nve
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+timestep 0.001
+run 1000
+
+# End of the input script

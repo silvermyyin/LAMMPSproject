@@ -1,0 +1,40 @@
+# LAMMPS input script for Ni system with hybrid SNAP potentials
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define lattice and create atoms
+lattice         fcc 3.52
+region          box block 0 3 0 3 0 3
+create_box      1 box
+create_atoms    1 box
+
+# Set masses
+mass            1 58.693  # Mass of Ni
+
+# Pair style and coefficients for SNAP potentials
+pair_style      hybrid/overlay snap snap
+pair_coeff      * * snap snap_linear.snapcoeff Ni.snapparam Ni
+pair_coeff      * * snap snap_quadratic.snapcoeff Ni.snapparam Ni
+
+# Mixing parameter lambda
+variable        lambda equal 0.2
+variable        lambda_adapt equal v_lambda*(1.0-step/100.0) + (1-v_lambda)*(step/100.0)
+
+# Fix adapt to scale the contributions of SNAP potentials
+fix             1 all adapt 1 pair snap snap_linear snap_coeff 1 scale v_lambda_adapt
+fix             2 all adapt 1 pair snap snap_quadratic snap_coeff 1 scale (1.0-v_lambda_adapt)
+
+# Initial velocities
+velocity        all create 300.0 12345
+
+# Define simulation settings
+timestep        0.0005
+thermo          1
+
+# Run simulation
+fix             3 all nve
+run             100
+
+This script initializes a simulation for a nickel system using hybrid SNAP potentials and dynamically adjusts the scaling of the linear and quadratic contributions using the `fix adapt` command. The output frequency for thermodynamic properties is set to every timestep to closely monitor the simulation's behavior.

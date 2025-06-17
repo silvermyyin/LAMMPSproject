@@ -1,0 +1,37 @@
+# LAMMPS Input Script for Molecular Dynamics Simulation of Aluminum using AGNI Potential
+
+units           metal
+atom_style      atomic
+
+# Read initial configuration from data file
+read_data       vacancy.data
+
+# Define boundary conditions
+boundary        p p p
+
+# Specify the AGNI potential file
+pair_style      agni 3.0
+pair_coeff      * * Al_jpc.agni Al
+
+# Set neighbor list parameters
+neighbor        2.0 bin
+neigh_modify    every 2 delay 0 check yes
+
+# Initialize simulation settings
+timestep        0.0005
+velocity        all create 900.0 12345 mom yes rot no dist gaussian
+
+# Apply thermostat for constant temperature simulation
+fix             1 all nvt temp 900.0 900.0 0.1
+
+# Remove linear momentum
+fix             2 all momentum 1 linear 1 1 1
+
+# Define thermo output
+thermo          100
+thermo_style    custom step temp ke etotal
+
+# Run the simulation
+run             1000
+
+# End of script

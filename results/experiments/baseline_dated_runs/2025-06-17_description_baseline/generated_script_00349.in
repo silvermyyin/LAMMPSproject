@@ -1,0 +1,39 @@
+# LAMMPS Input Script for Solvated Deca-Alanine Peptide Simulation
+# CHARMM force field, NPT ensemble, SHAKE constraints, IMD enabled
+
+units real
+atom_style full
+pair_style lj/charmm/coul/long 8.0 10.0
+bond_style harmonic
+angle_style charmm
+dihedral_style charmm
+improper_style harmonic
+kspace_style pppm 1.0e-4
+
+# Read in data file
+read_data deca_alanine_solvated.data
+
+# Define groups
+group peptide type 1 2 3 4 5 6 7 8 9 10 # Example atom types for peptide
+group water type 11 12 # Example atom types for water
+
+# Apply SHAKE constraints to water and certain bonds in peptide
+fix shake_bonds all shake 0.0001 20 0 b 11 a 12
+
+# Set up IMD for interactive visualization
+fix imd all imd 5678
+
+# Set up NPT ensemble
+fix npt all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Timestep and run settings
+timestep 2.0
+thermo 100
+thermo_style custom step temp press etotal
+
+# Run the simulation for 10 ns
+run 5000000
+
+# End of script
+
+This script sets up and runs a molecular dynamics simulation of a solvated deca-alanine peptide using the CHARMM force field, with constraints and IMD enabled, for a total of 10 ns. Adjust the atom types and data file name as applicable to your specific system.

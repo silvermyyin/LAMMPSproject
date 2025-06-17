@@ -1,0 +1,32 @@
+# LAMMPS input script for a vesicle system using ellipsoidal particles
+
+units lj
+atom_style ellipsoid
+
+# Read initial configuration
+read_data read_data.vesicle1026
+
+# Define interaction style
+pair_style ylz
+pair_coeff * * 1.0 1.0 1.0 1.0 1.0
+
+# Set up simulation box with periodic boundary conditions
+boundary p p p
+
+# Define neighbor list
+neighbor 0.3 bin
+neigh_modify delay 5
+
+# Define temperature and damping for Langevin thermostat
+fix 1 all langevin 0.2 0.2 1.0 12345
+fix 2 all nve/asphere
+
+# Set timestep size
+timestep 0.001
+
+# Output settings
+thermo 200
+thermo_style custom step temp press
+
+# Run the simulation
+run 3000

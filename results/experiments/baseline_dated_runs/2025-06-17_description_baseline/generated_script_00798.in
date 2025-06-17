@@ -1,0 +1,44 @@
+# LAMMPS input script for molecular dynamics simulation with detailed bonded interactions
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read data and parameter files
+read_data       system.data
+include         parameters.in
+
+# Define interaction potentials
+pair_style      lj/cut/coul/long 14.0
+pair_modify     mix geometric
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  harmonic
+improper_style  harmonic
+kspace_style    pppm 0.0001
+
+# Neighbor list settings
+neighbor        2.0 bin
+neigh_modify    delay 5 every 1
+
+# Initialize velocities
+velocity        all create 300.0 12345
+
+# Energy minimization
+min_style       cg
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Define the NVT ensemble
+fix             1 all nvt temp 300.0 300.0 100.0
+
+# Periodic momentum zeroing
+fix             2 all momentum 100 linear 1 1 1 angular
+
+# Output settings
+thermo          1000
+thermo_style    custom step temp pe ke etotal press
+dump            1 all atom 1000 trajectory.lammpstrj
+
+# Run the simulation
+timestep        1.0
+run             50000

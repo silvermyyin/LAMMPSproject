@@ -1,0 +1,41 @@
+# LAMMPS input script for NEMD simulation using HEX/a algorithm
+
+units           lj
+atom_style      atomic
+
+# Read equilibrated configuration
+read_data       data.lj
+
+# Define Lennard-Jones potential with shifted-force
+pair_style      lj/sf 3.0
+pair_coeff      * * 1.0 1.0 3.0
+
+# Set timestep and neighbor skin distance for large timestep
+timestep        0.007
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Define regions for thermal reservoirs
+region          lower block INF INF INF INF INF 0.5
+region          upper block INF INF INF INF 4.5 INF
+
+group           lower region lower
+group           upper region upper
+
+# Apply NVE integrator
+fix             1 all nve
+
+# Apply energy exchange to maintain temperature gradient
+fix             2 all ehex 0.15 lower upper
+
+# Output settings
+thermo          100
+thermo_style    custom step temp etotal
+
+# Compute spatial and temporal averaging
+compute         temp_profile all temp/profile 1 0 0 z 10 out bin
+fix             3 all ave/spatial 10 100 1000 z lower 0.5 v_temp_profile file out.Tlj_hex
+fix             4 all ave/time 10 100 1000 c_temp_profile file out.Elj_hex
+
+# Run the simulation
+run             5000

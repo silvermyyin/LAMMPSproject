@@ -1,0 +1,29 @@
+# LAMMPS input script for a monolayer MoS2 simulation
+
+units metal
+dimension 3
+boundary p p f
+atom_style atomic
+
+# Read atomic configuration from a data file
+read_data mos2_data_file
+
+# Define the modified Stillinger-Weber potential for MoS2
+pair_style sw/mod
+pair_coeff * * sw.mod MoS2.sw Mo S
+
+# Initialize velocities at 300 K
+velocity all create 300.0 12345
+
+# Apply the NVE ensemble
+fix 1 all nve
+
+# Set the timestep
+timestep 0.001
+
+# Thermodynamic output
+thermo 500
+thermo_style custom step temp etotal pe ke
+
+# Run the simulation
+run 5000

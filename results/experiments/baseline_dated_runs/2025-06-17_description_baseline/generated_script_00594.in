@@ -1,0 +1,35 @@
+# LAMMPS Input Script for Calculating Steinhardt-Nelson Bond Orientational Order Parameters in an FCC Crystal
+
+# Initialize simulation
+units           lj
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC lattice and simulation box
+lattice         fcc 1.0
+region          box block 0 3 0 3 0 3
+create_box      1 box
+create_atoms    1 box
+
+# Define interatomic potential
+pair_style      lj/cut 3.0
+pair_coeff      1 1 1.0 1.0 3.0
+
+# Define compute for orientational order parameters
+compute         orient all orientorder/atom degrees 4
+compute         Ql all reduce ave c_orient[1]
+compute         Wl_hat all reduce ave c_orient[2]
+
+# Setup output
+thermo_style    custom step temp etotal c_Ql c_Wl_hat
+thermo          1
+
+# Run the simulation (0 timesteps for structural analysis only)
+run             0
+
+# Print final averaged orientational order parameters
+print           "Average Q_l: ${Ql}"
+print           "Average W_l_hat: ${Wl_hat}"
+
+This script sets up and analyzes a simple FCC crystal using the Steinhardt-Nelson bond orientational order parameters without running a dynamic simulation. It provides immediate structural analysis based on the initial configuration.

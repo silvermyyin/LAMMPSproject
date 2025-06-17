@@ -1,0 +1,45 @@
+# LAMMPS input script for analyzing bond orientational order parameters
+# of a perfect fcc crystallite transforming into an icosahedral cluster
+
+# Initialize simulation
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create fcc lattice
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define interaction potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define specific region to exclude atoms beyond a cutoff radius
+region inner sphere 5 5 5 4.0
+group inner region inner
+
+# Set initial velocities
+velocity all create 1.0 12345
+
+# Compute bond orientational order parameters
+compute boop all orientorder/atom degrees 4 6
+
+# Define microcanonical ensemble for equilibration
+fix 1 all nve
+
+# Run equilibration
+timestep 0.005
+run 5000
+
+# Quenching process
+reset_timestep 0
+velocity all scale 0.1
+run 5000
+
+# Output bond orientational order parameters
+dump 1 all custom 100 orientorder.lammps id type c_boop[1] c_boop[2] c_boop[3] c_boop[4]
+
+# End of script

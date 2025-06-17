@@ -1,0 +1,42 @@
+# LAMMPS Input Script for Graphene-Oxide Nanoparticle in Vacuum
+
+# Initialize the simulation
+units real
+atom_style full
+boundary p p p
+
+# Read the initial configuration from a data file
+read_data graphene_oxide.data
+
+# Include parameter settings
+include forcefield_params.in
+
+# Define groups
+group water type 1 2 3  # Assuming O, H1, H2 for TIP4P water model
+group graphene_oxide type 4 5 6  # Define based on atom types in the data file
+
+# Define potentials
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+improper_style harmonic
+pair_style lj/cut/tip4p/long 1 2 1 1 0.125 12.0
+kspace_style pppm 1.0e-4
+
+# Constrain water molecule geometry using SHAKE
+fix fix_shake water shake 0.0001 20 0 b 1 a 1
+
+# Define the NVE ensemble with temperature control
+fix fix_nve all nve
+fix fix_temp all temp/berendsen 300.0 300.0 100.0
+
+# Output settings
+thermo 1000
+thermo_style custom step temp etotal press
+dump dump_trajectory all atom 1000 graphene_oxide.lammpstrj
+
+# Run the simulation
+timestep 1.0  # Using appropriate timestep for real units
+run 50000
+
+# End of input script

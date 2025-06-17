@@ -1,0 +1,41 @@
+# LAMMPS Input Script for Core-Shell Model Simulation
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style full
+
+# Create simulation box and atoms (assuming data file format)
+read_data core_shell_system.data
+
+# Define pairs and interactions
+pair_style born/coul/dsf/cs 0.05
+pair_coeff 1 1 0.5 0.3 1.0 1.2 0.2
+pair_coeff 1 2 0.6 0.4 1.1 1.3 0.3
+pair_coeff 2 2 0.7 0.5 1.2 1.4 0.4
+
+# Define groups for core and shell atoms
+group cores type 1
+group shells type 2
+
+# Define bonds (assuming harmonic bonds are applied in the data file)
+bond_style harmonic
+
+# Setup initial velocities and temperature control
+velocity all create 1427.0 12345 mom yes rot no
+fix 1 all nve
+fix 2 all temp/berendsen 1427.0 1427.0 100.0
+
+# Define computes for temperature and energy monitoring
+compute cs_temp all temp/cs cores shells
+thermo_style custom step temp etotal pe ke
+thermo 100
+
+# Equilibration phase
+timestep 0.002
+run 500
+
+# Remove thermostat and continue dynamics
+unfix 2
+run 1000

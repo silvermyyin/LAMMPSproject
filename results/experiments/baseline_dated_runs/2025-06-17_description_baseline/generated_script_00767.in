@@ -1,0 +1,36 @@
+# LAMMPS input script for a beryllium solid using the EFF model
+
+# Initialize simulation
+units electron
+atom_style electron
+boundary p p p
+
+# Read initial configuration
+read_data beryllium_solid.data
+
+# Pair style and coefficients
+pair_style eff/cut 31.6125
+pair_coeff * *
+
+# Communication settings
+comm_modify vel yes
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Define custom temperature compute
+compute myTemp all temp/eff
+
+# Output settings
+thermo_style custom step c_myTemp pe ke etotal temp press
+thermo 1
+
+# Dump settings
+dump myDump all custom 1 dump.eff id type x y z vx vy vz q spin radius
+
+# Integrate dynamics
+fix myIntegrator all nve/eff
+
+# Run simulation for zero steps (initialization only)
+run 0

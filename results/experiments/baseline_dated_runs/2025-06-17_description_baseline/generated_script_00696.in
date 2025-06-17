@@ -1,0 +1,37 @@
+# LAMMPS input script for BCC iron lattice using EAM potential and TTM
+
+units           metal
+dimension       3
+boundary        p p p
+
+atom_style      atomic
+
+# Define BCC lattice and region
+lattice         bcc 2.87
+region          box block -10 10 -10 10 -10 10
+create_box      1 box
+create_atoms    1 box
+
+# Assign mass to iron atoms
+mass            1 55.845
+
+# EAM potential for iron
+pair_style      eam/fs
+pair_coeff      * * FeVoter-ChenRecheck.fs Fe
+
+# Two-temperature model parameters
+fix             1 all ttm 300.0 0.1 2.87 1.0e5 1.0e-11 0.1
+
+# Set initial conditions
+velocity        all create 300.0 12345
+
+# Define the integration method
+timestep        0.0001
+
+# Output settings
+thermo          100
+thermo_style    custom step temp etotal f_1[1] f_1[2] f_1[3] f_1[4]
+
+# Run the simulation
+fix             2 all nve
+run             1000

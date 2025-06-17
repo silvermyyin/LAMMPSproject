@@ -1,0 +1,37 @@
+# LAMMPS Input Script for Lennard-Jones Particles Simulation
+
+units real
+atom_style full
+
+# Create initial simulation box and atoms
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 random 100 12345 box
+
+# Define LJ potential with cutoff
+pair_style lj/cut 5.0
+pair_coeff 1 1 0.238 3.405 5.0
+
+# Set initial velocities
+velocity all create 300.0 12345
+
+# Define the simulation settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the integrator and ensemble
+timestep 1.0
+fix 1 all npt temp 300.0 300.0 1000.0 iso 0.0 0.0 10000.0
+
+# Apply generalized replica exchange method
+fix 2 all grem 100 10 400 -0.01 -30000
+
+# Define output settings
+thermo 10
+thermo_style custom step temp pe etotal press vol
+
+# Run the simulation
+run 10000
+
+# Write final configuration to restart file
+write_restart lj_particles_simulation.restart

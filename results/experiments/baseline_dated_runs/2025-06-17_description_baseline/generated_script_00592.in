@@ -1,0 +1,45 @@
+# LAMMPS input script for methane (CH4) simulation with eff/cut potential
+
+units electron
+atom_style electron
+
+boundary p p p
+
+read_data data.CH4fc.bohr
+
+pair_style eff/cut 1000.0
+pair_coeff * *
+
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define computes for various energy components
+compute ke all ke/eff
+compute pauli all pauli/eff
+compute coul all coul/eff
+compute radius all radius/eff
+compute stress all stress/atom
+compute pe all pe
+
+# Reduce per-atom stress to system pressure
+compute pressure all reduce sum c_stress[1] c_stress[2] c_stress[3]
+
+# Calculate effective temperature
+compute effTemp all temp/eff
+compute effPressure all pressure effTemp
+
+# Define thermodynamic output
+variable totalEnergy equal etotal
+variable potentialEnergy equal pe
+variable kineticEnergy equal c_ke
+variable pauliEnergy equal c_pauli
+variable coulEnergy equal c_coul
+variable radiusEnergy equal c_radius
+variable temp equal c_effTemp
+variable pressure equal c_effPressure
+
+thermo_style custom step v_totalEnergy v_potentialEnergy v_kineticEnergy v_pauliEnergy v_coulEnergy v_radiusEnergy v_temp v_pressure
+thermo 1
+
+# Run simulation for 0 steps to analyze initial state
+run 0

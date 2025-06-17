@@ -1,0 +1,33 @@
+# LAMMPS input script for SPCE water model using hybrid potentials
+
+units           real
+atom_style      full
+
+# Read initial configuration from data file
+read_data       water_data.lmp
+
+# Define pair and three-body potentials using hybrid/overlay
+pair_style      hybrid/overlay table linear 1000
+pair_coeff      1 1 table spce_pair.table SPCE_OO
+pair_coeff      1 2 table spce_pair.table SPCE_OH
+pair_coeff      2 2 table spce_pair.table SPCE_HH
+
+# Define three-body interaction potentials
+# Assume that threebody/table potential files are prepared
+pair_style      hybrid/overlay threebody/table linear 1000
+pair_coeff      * * threebody/table spce_threebody.table SPCE_THREEBODY
+
+# Init velocity, equilibration, and thermostat
+velocity        all create 300.0 12345 dist uniform mom yes rot yes
+fix             1 all nvt temp 300.0 300.0 200.0
+
+# Define timestep and run parameters
+timestep        2.0
+thermo          100
+run             1000
+
+# Uncomment the following lines to dump atomistic data
+# dump            1 all atom 100 dump.water
+# dump_modify     1 scale no
+
+# Note: Ensure spce_pair.table and spce_threebody.table exist with correct format

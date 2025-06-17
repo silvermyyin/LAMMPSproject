@@ -1,0 +1,45 @@
+# LAMMPS input script to simulate the hexagonal omega phase of titanium
+# Using meam/sw/spline potential for atomic interactions
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Define lattice parameters for hexagonal omega phase
+# Lattice vectors are defined for a hexagonal structure
+# The omega phase might have unique lattice constants 'a' and 'c'
+variable a equal 4.60  # lattice constant a in Angstroms
+variable c equal 2.95  # lattice constant c in Angstroms
+
+lattice custom 1.0 &
+    a1 ${a} 0.0 0.0 &
+    a2 0.0 ${a} 0.0 &
+    a3 0.0 0.0 ${c} &
+    basis 0.0 0.0 0.0
+
+region box block 0 1 0 1 0 1 units lattice
+create_box 1 box
+create_atoms 1 box
+
+# Set mass for titanium
+mass 1 47.90
+
+# Define potential
+pair_style meam/sw/spline
+pair_coeff * * Ti.meam Ti Ti
+
+# Compute potential energy per atom
+compute pe_atom all pe/atom
+compute pe_avg all reduce ave c_pe_atom
+
+# Output settings
+thermo 1
+thermo_style custom step pe c_pe_avg
+
+# Initial run to calculate cohesive energy
+run 0
+
+# Compare calculated cohesive energy with reference
+variable ref_cohesive_energy equal -4.435
+variable diff equal c_pe_avg - v_ref_cohesive_energy
+print "Cohesive energy difference from reference: ${diff} eV/atom"

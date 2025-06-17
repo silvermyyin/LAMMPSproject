@@ -1,0 +1,54 @@
+# LAMMPS input script for a 3D granular flow simulation in a rotating container
+
+# Initialize simulation
+units si
+dimension 3
+boundary f f f
+atom_style sphere
+
+# Create simulation box
+region box block 0 10 0 10 0 10 units box
+create_box 2 box
+
+# Define regions for particle insertion
+region pour_region block 4 6 4 6 8 9 units box
+
+# Particle properties
+variable diameter equal 1.0
+variable density equal 2500.0
+
+# Define pair style and coefficients
+pair_style hybrid gran/hooke 200000.0 0.3 50.0 NULL
+pair_coeff * *
+
+# Define gravity
+fix gravity all gravity 1.0 vector 0.0 0.0 -1.0
+
+# Insert particles using fix pour
+fix pour_particles all pour 100 1 12345 region pour_region diam $diameter dens $density rate 1
+
+# Define integration method
+fix integrate all nve/sphere
+
+# Define rotations
+variable step equal step
+fix rotate_x all move rotate 5 5 5 1 0 0 0.2 units box
+fix rotate_y all move rotate 5 5 5 0 1 0 0.2 units box
+fix rotate_z all move rotate 5 5 5 0 0 1 0.2 units box
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step atoms temp press
+
+# Run simulation with rotation phases
+timestep 0.01
+run 5000
+unfix rotate_x
+fix rotate_y all move rotate 5 5 5 0 1 0 0.2 units box
+run 5000
+unfix rotate_y
+fix rotate_z all move rotate 5 5 5 0 0 1 0.2 units box
+run 5000
+unfix rotate_z
+
+# End of script

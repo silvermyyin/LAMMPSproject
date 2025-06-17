@@ -1,0 +1,38 @@
+# LAMMPS Input Script for Silicon System with Energy Minimization and Dynamical Matrix Calculation
+
+units metal
+atom_style full
+boundary p p p
+
+# Read the initial configuration and force field parameters
+read_data silicon_input_file.lmp
+include ff-silicon.lmp
+
+# Define output settings
+log log.silicon
+thermo 100
+thermo_style custom step time pe temp press
+
+# Restart settings
+restart 10000 restart.silicon
+
+# Define minimization settings
+variable do_minimize equal 1  # Set to 0 to skip minimization, 1 to perform it
+
+if "${do_minimize} == 1" then & 
+  "minimize 1e-5 1e-5 10000 10000"
+
+# Output minimized structure in a DCD format
+dump 1 all dcd 100 silicon_minimized.dcd
+dump_modify 1 sort id
+
+# Calculate the dynamical matrix
+dynamical_matrix all 1.0e-4 dynmat.dat
+
+# Run
+run 0
+
+# Clean up dumps
+undump 1
+
+This script is designed to be flexible and can be adjusted to start from a previous state or initiate a new simulation. It will perform energy minimization if specified and calculate the dynamical matrix for vibrational analysis.

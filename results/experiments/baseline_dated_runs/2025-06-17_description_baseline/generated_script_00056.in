@@ -1,0 +1,46 @@
+# LAMMPS input script for 2D Taylor-Green vortex simulation
+
+units lj
+dimension 2
+atom_style rheo
+
+# Define simulation box
+lattice sq2 0.5
+region box block 0 40 0 40 -0.5 0.5
+create_box 1 box
+create_atoms 1 box
+
+# Initialize velocities for Taylor-Green vortex
+variable rho0 equal 1.0
+variable pi equal 3.14159265359
+variable A equal 0.1
+variable k equal 2.0*${pi}/40.0
+variable ux atom ${A}*sin(${k}*x)*cos(${k}*y)
+variable uy atom -${A}*cos(${k}*x)*sin(${k}*y)
+variable uz atom 0.0
+
+# Set initial velocities
+velocity all set v_ux v_uy v_uz
+
+# Define pair style and coefficients
+pair_style rheo 1.0 1.0
+pair_coeff * *
+
+# Define neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Fixes for rheology and 2D constraints
+fix 1 all rheo
+fix 2 all enforce2d
+
+# Timestep based on stability criterion
+variable dtmax equal 0.005
+timestep ${dtmax}
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal press vol
+
+# Run the simulation
+run 10000

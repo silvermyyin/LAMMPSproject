@@ -1,0 +1,40 @@
+# LAMMPS input script for oxDNA model simulation
+
+units lj
+dimension 3
+boundary p p p
+atom_style hybrid bond ellipsoid
+
+# Read initial data
+read_data dna_data.lammps
+
+# Set atom masses (uniform for all atoms)
+mass * 1.0
+
+# Define pair interactions for oxDNA model
+pair_style hybrid/overlay lj/cut 1.12246 harmonic 30.0 1.5
+pair_coeff * * lj/cut 1.0 1.0 1.12246
+pair_coeff * * harmonic 30.0 1.5
+
+# Set bond style for FENE interaction
+bond_style fene
+bond_coeff * 30.0 1.5 1.0 1.0
+
+# Define nve integrator with dot thermostat for constant energy
+fix 1 all nve/limit 0.1
+
+# Timestep
+timestep 0.00001
+
+# Define outputs
+thermo 1000
+thermo_style custom step temp pe ke etotal press
+
+# Dump positions, velocities, forces, and torques
+dump 1 all custom 1000 dump.dna id type x y z vx vy vz fx fy fz
+dump_modify 1 append yes
+
+# Run the simulation for a million timesteps
+run 1000000
+
+This script sets up a molecular dynamics simulation of a DNA-like system using the oxDNA model with LAMMPS. It includes the necessary interactions and outputs to study the dynamics and energetics of the system.

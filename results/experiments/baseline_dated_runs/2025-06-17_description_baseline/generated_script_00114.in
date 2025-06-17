@@ -1,0 +1,42 @@
+# LAMMPS input script for a 3D Lennard-Jones melt simulation with RDF analysis
+
+units lj
+atom_style atomic
+
+# Define variables for box dimensions
+variable x equal 20
+variable y equal 20
+variable z equal 20
+
+# Create simulation box and atoms
+region box block 0 ${x} 0 ${y} 0 ${z}
+create_box 1 box
+create_atoms 1 box
+
+# Set masses
+mass 1 1.0
+
+# Define interatomic potential
+pair_style lj/cut 5.0
+pair_coeff 1 1 1.0 1.0 5.0
+
+# Define neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Set initial velocities
+velocity all create 1.0 87287 loop geom
+
+# Define output settings
+thermo 100
+
+# Run the main simulation to generate the dump file
+timestep 0.005
+run 10000
+
+# Rerun simulation to calculate RDF from dump file
+rerun lj.dump dump x y z box
+compute myRDF all rdf 100
+fix 1 all ave/time 100 1 100 c_myRDF[*] file rdf.rerun mode vector
+
+# End of script

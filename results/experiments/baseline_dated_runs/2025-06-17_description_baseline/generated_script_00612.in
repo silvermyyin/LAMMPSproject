@@ -1,0 +1,60 @@
+# LAMMPS Input Script for Methane in TIP4P Water with FEP
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read in initial configuration
+read_data       methane_tip4p.data
+
+# Define Pair Styles
+pair_style      hybrid/overlay lj/cut/coul/long 12.0 12.0 tip4p/long/soft 1 2 1 1 0.125 12.0
+pair_coeff      * * lj/cut/coul/long 0.0 0.0
+pair_coeff      1 1 lj/cut/coul/long 0.1094 3.75   # Methane Carbon (LJ parameters)
+pair_coeff      2 2 lj/cut/coul/long 0.0 0.0     # Methane Hydrogen (no LJ interaction)
+pair_coeff      * * tip4p/long/soft
+
+# Define Bond and Angle styles for SHAKE
+bond_style      harmonic
+angle_style     harmonic
+
+# Kspace style for long-range interactions
+kspace_style    pppm 1.0e-4
+
+# SHAKE constraints
+fix             1 all shake 0.0001 20 0 b 1 a 1
+
+# Define groups
+group           methane type 1 2
+group           water type 3 4 5
+
+# Define NPT ensemble
+fix             2 all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# FEP setup
+variable        lambda equal ramp(0,1)
+variable        qscale equal v_lambda
+fix             3 methane adapt 0 pair lj/cut/coul/long scale * * v_lambda &
+                        pair lj/cut/coul/long scale * * v_lambda &
+                        fix modify 2 temp v_qscale
+
+# Output thermodynamic properties
+thermo          5000
+thermo_style    custom step temp press pe ke etotal
+
+# Dump trajectory
+dump            1 all custom 10000 traj.lammpstrj id type x y z
+
+# Run simulation
+timestep        1.0
+run             100000
+
+# FEP calculation
+fix             4 all adapt 10 pair lj/cut/coul/long scale 1 1 v_lambda
+fix             5 all adapt 10 pair lj/cut/coul/long scale 2 2 v_lambda
+run             50000
+
+unfix           4
+unfix           5
+
+# End of script

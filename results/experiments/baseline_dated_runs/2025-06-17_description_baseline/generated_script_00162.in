@@ -1,0 +1,40 @@
+# LAMMPS input script for a graphene system using LATTE quantum model
+
+units metal
+atom_style full
+
+# Specify the number of replications in each dimension via variables
+variable x equal 1
+variable y equal 1
+variable z equal 1
+
+# Read initial configuration from data file
+read_data data.graphene
+
+# Replicate the system if necessary
+replicate ${x} ${y} ${z}
+
+# Assign initial velocities
+velocity all create 100.0 12345 dist gaussian
+
+# Set pair style to zero since classical interactions are not considered
+pair_style zero 10.0
+
+# Define group for carbon atoms (assuming type 1 is carbon)
+group carbon type 1
+
+# Apply quantum mechanical model (LATTE)
+fix qm all mdi/qm mode latte group carbon virial
+
+# Integrate equations of motion with constant NVE ensemble
+fix 1 all nve
+
+# Define timestep
+timestep 0.00025
+
+# Output thermodynamic properties
+thermo_style custom step temp pe etotal press
+thermo 5
+
+# Run the simulation
+run 20

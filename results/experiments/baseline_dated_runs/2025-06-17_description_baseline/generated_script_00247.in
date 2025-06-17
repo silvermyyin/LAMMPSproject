@@ -1,0 +1,61 @@
+# 2D Simulation of Rigid Star-Shaped Particles with SRD Interactions
+
+units lj
+dimension 2
+atom_style hybrid sphere molecular
+
+# Create simulation box
+boundary p p p
+lattice hex 0.7
+region box block 0 100 0 100 -0.1 0.1
+create_box 2 box
+
+# Create star-shaped particles (type 1)
+lattice hex 0.5
+create_atoms 1 box
+group stars type 1
+set group stars diameter 2.0
+set group stars mass 5.0
+
+# Initial velocities for stars
+velocity stars create 1.0 12345 loop geom
+
+# Equilibrate star particles with a soft potential
+pair_style soft 1.0
+pair_coeff * * 0.0 1.0
+fix ramp_up all adapt 1000 pair soft a * * ramp 0.0 50.0
+
+# Run equilibration
+timestep 0.001
+thermo 100
+run 5000
+
+# Create small particles (type 2) on a high-density lattice
+region small_particle_region block 10 90 10 90 -0.1 0.1
+lattice hex 0.9
+create_atoms 2 region small_particle_region
+group small_particles type 2
+set group small_particles diameter 1.0
+set group small_particles mass 1.0
+
+# Delete overlapping particles
+delete_atoms overlap 0.8 all all
+
+# Define Lennard-Jones potential interactions
+unfix ramp_up
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+pair_coeff 1 2 1.0 1.0 2.5
+pair_coeff 2 2 0.0 1.0 2.5
+
+# Apply SRD fix for hydrodynamic interactions
+fix srd all srd 0.5 0.5 0.1 12345 collision slip group small_particles
+fix_modify srd mesh yes
+
+# Run the simulation
+timestep 0.005
+thermo_style custom step temp epair etotal
+thermo 100
+
+# Main run to study diffusion and dynamics
+run 20000

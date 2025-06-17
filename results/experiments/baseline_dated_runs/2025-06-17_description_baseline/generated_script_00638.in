@@ -1,0 +1,36 @@
+# LAMMPS input script for Kob-Andersen binary Lennard-Jones mixture
+
+units lj
+atom_style atomic
+
+# Read initial configuration
+read_data data.ka_mixture
+
+# Define pair interactions with Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+pair_coeff 1 2 1.5 0.8 2.5
+pair_coeff 2 2 0.5 0.88 2.5
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 5 delay 0 check yes
+
+# Apply Langevin thermostat
+fix 1 all langevin 0.75 0.75 0.1 48279
+
+# Integrate equations of motion using NVE
+fix 2 all nve
+
+# Apply Widom insertion method for chemical potential
+fix 3 all widom 100 12345
+
+# Output settings
+thermo 10
+thermo_style custom step temp pe etotal press vol density f_3
+
+# Run the simulation
+timestep 0.002
+run 100
+
+This script sets up a molecular dynamics simulation using the Kob-Andersen model for a binary Lennard-Jones mixture. It includes specific interaction parameters, temperature control, and analysis of the chemical potential using Widom insertion. The thermodynamic properties are output every 10 steps over a total of 100 timesteps.

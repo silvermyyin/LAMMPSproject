@@ -1,0 +1,51 @@
+```lammps
+# LAMMPS input script for simulating a BCC metallic system with MLIAP
+# using a quadratic compute model, and ZBL potential
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define lattice and region
+lattice         bcc 2.0
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Set masses
+mass            1 180.88
+
+# Initialize velocities with random perturbations
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+displace_atoms  all random 0.01 0.01 0.01 12345
+
+# Pair style and coefficients
+pair_style      zbl 2.0 3.0
+pair_coeff      * * 180.88
+
+# Define MLIAP compute
+compute         sna all sna/compute quadratic 3.0
+
+# Define groups
+group           metal type 1
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press pxx pyy pzz c_sna[1] c_sna[2] c_sna[3]
+
+# Run first simulation with gradient flag 0
+fix             1 all nve
+compute_modify  sna gradient 0
+run             500
+
+# Reset and run second simulation with gradient flag 1
+unfix           1
+reset_timestep  0
+fix             1 all nve
+compute_modify  sna gradient 1
+run             500
+
+# End of script
+```
+
+This script sets up a basic LAMMPS simulation utilizing a Machine Learning Interatomic Potential with a quadratic compute model, designed for a metallic system with a BCC lattice and ZBL potential. The script includes configurations for running two simulations with different gradient flags to evaluate the performance of the MLIAP descriptor computation.

@@ -1,0 +1,42 @@
+# LAMMPS input script for fcc argon using Lennard-Jones potential
+
+units real
+atom_style atomic
+
+# Create FCC lattice
+lattice fcc 5.256227487
+region simbox block 0 10 0 10 0 10 units lattice
+create_box 1 simbox
+
+# Read initial atomic configuration from data file
+read_data argon_fcc.data
+
+# Assign mass to argon atoms
+mass 1 39.95
+
+# Define interatomic potential
+pair_style lj/cut 13.5
+pair_coeff 1 1 0.238 3.405
+
+# Set boundary conditions
+boundary p p p
+
+# Initialize AtC package
+fix atc all atc
+
+# Create mesh and fields
+atc create_mesh 4 4 4
+atc field mass_density
+
+# Set output for fields
+atc output mass_density file mass_density.out
+
+# Define computes for atomic analysis
+compute disp all displace/atom
+compute mdens all property/atom mass
+
+# Output atomic displacements and mass density every timestep
+dump 1 all custom 1 dump.argon id type x y z c_disp[1] c_disp[2] c_disp[3] c_mdens
+
+# Run simulation for a single timestep
+run 1

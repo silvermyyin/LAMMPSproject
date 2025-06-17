@@ -1,0 +1,41 @@
+```lammps
+# LAMMPS Input Script for a Metallic System using Lennard-Jones Potential
+
+units metal
+dimension 3
+boundary p p p
+
+variable ibead index 1
+
+# Atomistic setup
+atom_style atomic
+read_data data.${ibead}
+
+# Define mass and pair interaction
+mass 1 39.948
+pair_style lj/cut 9.5251
+pair_modify shift yes
+pair_coeff 1 1 0.00965188 3.4
+
+# Initial velocities
+velocity all create 0.0 ${ibead} dist gaussian
+
+# PIMD and thermostat/barostat setup
+fix 1 all pimd 10
+fix 2 all pimd/obabo 1 0.001
+fix 3 all pimd/obabo/thermo pile_l 113.15
+fix 4 all npt/asphere 113.15 113.15 1.0 iso 1.0 1.0 1.0 bzp
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp f_3 vol press
+
+# Timestep setting
+timestep 0.001
+
+# Run the simulation
+run 1000
+
+# Uncomment the following line to dump trajectory data in a custom format
+# dump 1 all custom 1000 dump.${ibead}.lammpstrj id type x y z
+```

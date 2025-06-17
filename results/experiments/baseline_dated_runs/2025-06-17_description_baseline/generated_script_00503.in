@@ -1,0 +1,43 @@
+# LAMMPS input script for calculating the formation energy of an unrelaxed vacancy in a bcc lattice using MGPT
+
+units metal
+dimension 3
+boundary p p p
+
+# Calculate lattice constant from atomic volume
+variable vol equal 121.6
+variable a equal (v_vol*2)^(1.0/3.0)
+
+# Create a 5x5x5 bcc lattice
+lattice bcc ${a}
+region box block 0 5 0 5 0 5
+create_box 1 box
+create_atoms 1 box
+
+# Remove the central atom to create a vacancy
+delete_atoms region box group NULL compress no
+
+# Set potential using MGPT for Ta
+pair_style mgpt
+pair_coeff * * Ta.mgpt Ta.mgpt.params
+
+# Initialize velocities to zero at 0 K
+velocity all create 0.0 12345 mom yes rot no
+
+# Define the NVE ensemble
+fix 1 all nve
+
+# Set the number of timesteps to 0 for energy calculation
+timestep 0.001
+run 0
+
+# Output thermodynamic properties
+thermo_style custom step temp pe etotal press vol
+thermo 1
+
+# Print formation energy and other properties
+print "Atomic volume (A^3): ${vol}"
+print "Total energy (Ry/atom): $(etotal)"
+print "Pressure (GPa): $(press)"
+
+This script sets up a simulation to calculate the vacancy formation energy in a bcc lattice using the MGPT potential model for tantalum, tailored to the specific conditions described.

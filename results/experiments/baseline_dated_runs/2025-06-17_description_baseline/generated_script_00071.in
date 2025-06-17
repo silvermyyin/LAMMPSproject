@@ -1,0 +1,31 @@
+# LAMMPS Input Script for a 3D Spin-Lattice Simulation of Cobalt
+
+units metal
+atom_style spin
+boundary p p p
+
+# Initialize simulation from data file
+read_data cobalt_spin_lattice.data
+
+# Define potentials
+pair_style hybrid eam/alloy spin/exchange
+pair_coeff * * eam/alloy Co.eam.alloy Co
+spin_coeff * * spin/exchange 1.0 0.1 0.05
+
+# Define simulation settings
+neighbor 2.0 bin
+neigh_modify delay 0 every 1
+
+# Define fixes
+fix 1 all precession 0.0 0.0 0.0
+fix 2 all langevin/spin 300.0 300.0 0.1 48279
+fix 3 all nve/spin/lattice
+
+# Output settings
+thermo 1
+thermo_style custom step temp pe ke etotal lx ly lz
+dump 1 all custom 1 dump.spins id type x y z sx sy sz
+
+# Run simulation
+timestep 0.0001
+run 100

@@ -1,0 +1,43 @@
+# LAMMPS input script for methanol molecular dynamics simulation
+
+units real
+atom_style atomic
+
+# Read initial configuration
+read_data methanol.data
+
+# Define interactions
+pair_style table spline 12.0
+pair_coeff * * methanol_table.txt
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes dist gaussian
+
+# Define custom fix for NPT ensemble
+fix bocs all npt temp 300.0 300.0 100.0 iso 0.986 0.986 1000.0
+
+# Define timestep
+timestep 1.0
+
+# Convert units for output
+variable vol equal vol*1.0e-24
+variable press equal press*0.986923
+variable epot equal pe*4.184
+variable etot equal etotal*4.184
+
+# Thermo output
+thermo 500
+thermo_style custom step temp v_epot v_etot v_press v_vol
+
+# Run the simulation
+run 10000
+
+# Output data for further analysis
+dump 1 all atom 1000 dump.methanol.lammpstrj
+dump_modify 1 scale no
+
+write_data methanol_final.data

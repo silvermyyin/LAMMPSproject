@@ -1,0 +1,37 @@
+# LAMMPS Input Script for Molecular Dynamics Simulation with Constant Potential Electrodes
+
+# Initialize simulation
+units real
+atom_style full
+boundary p p p
+
+# Create simulation box and atoms (not specified, assume pre-defined data file)
+read_data data.system
+
+# Include modular settings
+include settings.mod
+
+# Define K-space style for long-range interactions
+kspace_style pppm/electrode 1.0e-7
+
+# Define groups for electrodes (assume atoms are pre-grouped in data file)
+group bottom_electrode type 1
+group top_electrode type 2
+
+# Define fixes for constant potential electrodes with ramping potential difference
+variable vmin equal -1.0
+variable vmax equal 1.0
+variable ramp equal "ramp(vmin,vmax)"
+fix electrode_bottom bottom_electrode electrode/conp v_ramp
+fix electrode_top top_electrode electrode/conp v_ramp
+
+# Thermodynamic output settings
+thermo_style custom step v_ramp f_electrode_bottom f_electrode_top lz \
+                       etotal press
+thermo 1
+
+# Run simulation for 10 timesteps
+timestep 1.0
+run 10
+
+Note: This script assumes that the "settings.mod" file includes necessary styles, computes, groups, and fixes. Additionally, it assumes that the data file "data.system" defines atoms, bonds, and initial configurations. The potential ramp is managed via a variable "ramp" that changes linearly from `vmin` to `vmax` over the simulation. Adjust the atom types for the electrodes and ensure proper setup in the data file for a complete simulation.

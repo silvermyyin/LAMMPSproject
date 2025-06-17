@@ -1,0 +1,55 @@
+# LAMMPS Input Script for Uniaxial Strain on Copper Using Hardy Field Method
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Define lattice structure
+lattice         fcc 3.615
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+create_atoms    1 region simbox
+
+# Define potential
+pair_style      eam
+pair_coeff      * * Cu_u3.eam
+
+# Define groups
+group           all type 1
+region          analysis block 2 8 2 8 2 8
+group           analysis region analysis
+
+# Set variables for strain
+variable        strain_rate equal 0.001
+variable        timestep equal 0.001
+
+# Define AtC package settings
+fix             mesh all atc mesh fem create 1 1 1
+fix             atc all atc fieldadd displacement vel2fem
+fix             atc all atc fieldadd stress 
+fix             atc all atc fieldadd mass_density
+fix             atc all atc fieldadd internal_energy
+
+# Equilibrate the system
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+fix             nvt all nvt temp 300.0 300.0 0.1
+timestep        ${timestep}
+run             1000
+
+# Apply uniaxial strain along x-axis
+displace_atoms  all move ${strain_rate} 0 0 units box
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+dump            1 all custom 100 dump.strain id type x y z fx fy fz
+dump_modify     1 sort id
+
+# Run the simulation
+run             5000
+
+# Finalize
+write_restart   restart.final
+
+This script sets up a simulation of copper using LAMMPS with conditions specified for applying uniaxial strain and using the Hardy field method through the AtC package. The system is initialized on an fcc lattice and equilibrated before the strain is applied.

@@ -1,0 +1,36 @@
+# LAMMPS input script for a molecular simulation of disilane (Si2H6) using eFF model
+
+units electron
+atom_style electron
+boundary f f f
+
+# Read the initial configuration from a data file
+read_data data.Si2H6
+
+# Define the potential using electron force field with a cutoff
+pair_style eff/cut 1000.0
+pair_coeff * *
+
+# Define neighbor list settings
+neighbor 1.0 nsq
+neigh_modify every 1 delay 0 check yes
+
+# Compute stress/atom to derive pressure
+compute stressPerAtom all stress/atom eff
+
+# Compute temperature and pressure
+compute eff_temp all temp/effect
+compute eff_press all pressure eff_temp
+
+# Define thermo settings
+thermo 100
+thermo_style custom step time temp pe ke etotal press c_eff_press
+
+# Energy minimization settings
+min_style cg
+min_modify line quadratic
+tolerance 1.0e-6
+maxiter 1000
+
+# Perform energy minimization
+minimize 1.0e-4 1.0e-6 100 1000

@@ -1,0 +1,54 @@
+# LAMMPS input script for a rotating drum simulation with cohesive and non-cohesive particles
+
+units		si
+atom_style	granular
+
+# Define simulation box
+boundary	f f f
+newton		off
+
+region		box block -20 20 -20 20 -20 20 units box
+create_box	2 box
+
+# Define granular pair styles and coefficients
+pair_style	gran model hertz 1.0 jkr 1.0
+pair_coeff	* * 1.0 1.0 0.1 0.5 1.0
+
+# Define material properties
+fix		m1 all property/global youngsModulus peratomtype 1e5 1e5
+fix		m2 all property/global poissonsRatio peratomtype 0.3 0.3
+fix		m3 all property/global coefficientFriction peratomtypepair 2 0.5 0.5 0.5 0.5
+
+# Create cylindrical drum
+region		drum cylinder y 0 0 15 0 20 units box
+create_atoms	1 random 5000 12345 drum
+
+# Assign diameters and densities
+fix		diam all property/atom diameter 0.5 1.0
+fix		rho all property/atom density constant 1.0
+
+# Set initial velocities
+velocity	all create 0.0 12345
+
+# Define gravity
+variable	g equal 9.81
+fix		gravity all gravity ${g} vector 0 0 -1
+
+# Output settings
+timestep	0.001
+thermo		100
+thermo_style	custom step time ke v_g
+
+# Prepare for rotation
+variable	w equal 0.1  # angular velocity
+fix		rotate all move rotate 0 0 0 0 1 0 ${w}
+
+# Run initial packing stage
+run		5000
+
+# Change gravity to simulate drum rotation
+unfix		gravity
+fix		gravity all gravity ${g} vector 0 -1 0
+
+# Run rotating drum simulation
+run		10000

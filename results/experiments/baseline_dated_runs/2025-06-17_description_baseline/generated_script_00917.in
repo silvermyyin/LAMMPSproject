@@ -1,0 +1,52 @@
+# LAMMPS input script for calculating thermal conductivity of a LJ liquid using Green-Kubo
+
+units lj
+dimension 3
+boundary p p p
+
+# Create simulation box
+lattice fcc 0.6
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set simulation parameters
+mass 1 1.0
+velocity all create 1.35 12345
+
+# Thermostat for equilibration
+fix 1 all nvt temp 1.35 1.35 0.5
+timestep 0.005
+
+# Equilibration run
+thermo 100
+run 20000
+
+# Switch to NVE ensemble
+unfix 1
+fix 2 all nve
+
+# Compute heat flux
+compute myK all ke/atom
+compute myP all pe/atom
+compute myStress all stress/atom NULL
+compute myJ all heat/flux myK myP myStress
+
+# Autocorrelation for Green-Kubo
+fix 3 all ave/correlate 100 100 10000 c_myJ[1] c_myJ[2] c_myJ[3] type auto file J0Jt.dat ave running
+variable scale equal ${convert}/(3*vol*kb*temp^2)*${dt}
+variable k11 equal trap(f_3[3])*v_scale
+variable k22 equal trap(f_3[4])*v_scale
+variable k33 equal trap(f_3[5])*v_scale
+variable kappa equal (v_k11+v_k22+v_k33)/3.0
+
+# Output settings
+thermo_style custom step temp etotal press v_k11 v_k22 v_k33 v_kappa
+thermo 1000
+
+# Production run
+run 100000

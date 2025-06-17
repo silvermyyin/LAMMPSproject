@@ -1,0 +1,35 @@
+# LAMMPS input script for bilayer hBN with carbon atoms using REBO and Kolmogorov-Crespi potentials
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Read initial configuration
+read_data bilayer_hbn.data
+
+# Define groups for layers
+group layer1 id <= 1000  # assuming the first 1000 atoms belong to layer 1
+group layer2 id > 1000   # remaining atoms belong to layer 2
+
+# Define pair styles and coefficients
+pair_style hybrid/overlay rebo kolmogorov/crespi 16.0
+pair_coeff * * rebo CH.airebo C B N NULL   # REBO for chemical interactions within layers
+pair_coeff * * kolmogorov/crespi C B N NULL NULL   # Kolmogorov-Crespi for interlayer interactions
+
+# Assign initial velocities
+velocity all create 300.0 12345 dist gaussian
+
+# Compute energy contributions
+compute rebo_energy all pair rebo
+compute kc_energy all pair kolmogorov/crespi
+
+# Define thermo output
+thermo 100
+thermo_style custom step temp etotal ke pe c_rebo_energy c_kc_energy
+
+# Fix for integration
+fix 1 all nve
+
+# Run the simulation
+timestep 0.001
+run 1000

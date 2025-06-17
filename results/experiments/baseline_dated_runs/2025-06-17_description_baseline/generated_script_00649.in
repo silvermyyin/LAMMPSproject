@@ -1,0 +1,45 @@
+# LAMMPS input script for 2D SPH simulation of water flowing over a dam
+
+units           si
+dimension       2
+boundary        f f p
+atom_style      granular
+
+read_data       dam_data.dat
+
+# Define pair style and coefficients
+pair_style      hybrid/overlay sph/rhosum 0.02 sph/taitwater 0.02 1000 10.0
+pair_coeff      * * sph/rhosum
+pair_coeff      * * sph/taitwater
+
+# Define groups
+group           water type 1
+group           bc type 2
+
+# Gravity settings
+fix             gravity water gravity 9.81 vector 0 -1 0
+
+# 2D constraint
+fix             enforce2d all enforce2d
+
+# Timestep settings
+variable        dt equal 0.02*dtfactor
+fix             timestep water adapt timestep v_dt
+
+# Run settings
+timestep        0.001
+thermo_style    custom step ke pe etotal
+thermo          100
+
+# Tiled communication
+comm_style      tiled
+
+# Simulation run
+run             7500
+
+# Output settings
+# Uncomment visualization and output commands as needed
+# dump           id all custom 100 dump.sph id type x y z vx vy vz
+# fix            avevel all ave/spatial 100 1 100 x lower 0.02 y lower 0.02 vx vy vz file vel.profile
+
+# End of script

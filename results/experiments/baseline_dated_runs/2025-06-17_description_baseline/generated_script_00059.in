@@ -1,0 +1,73 @@
+# LAMMPS Input Script for 2,2-Dimethylhexane Simulation with LJ/RELRES Potential
+
+units real
+atom_style molecular
+boundary p p p
+
+# Create or read initial data
+read_data dimethylhexane.data
+
+# Pair style and coefficients for lj/relres
+pair_style lj/relres 10.0
+pair_coeff * * 0.1094 3.4
+
+# Bond and angle styles
+bond_style harmonic
+angle_style harmonic
+
+# Lennard-Jones settings with different Rso parameters
+# Initial Rso setting
+variable rso1 equal 6.25
+variable rso2 equal 7.25
+
+# Group definitions
+group group1 type 1 2 3 # Example group for part of the molecule
+group group2 type 4 5 6 # Another group
+
+# Pair style settings for different groups
+pair_modify group group1 lj/relres ${rso1}
+pair_modify group group2 lj/relres ${rso2}
+
+# Simulation settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Thermostat and timestep
+fix 1 all nvt temp 290.0 290.0 100.0
+timestep 1.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp press pe ke etotal
+
+# Run the simulation with initial Rso
+run 50000
+
+# Write restart file
+write_restart restart.rso1
+
+# Change Rso settings for mixed groups and continue simulation
+pair_modify group group1 lj/relres ${rso2}
+pair_modify group group2 lj/relres ${rso1}
+
+# Read the previous restart file
+read_restart restart.rso1
+
+# Continue the simulation with new settings
+run 50000
+
+# Write restart file
+write_restart restart.rso2
+
+# Reference simulation using lj/smooth pair style
+pair_style lj/smooth 10.0
+pair_coeff * * 0.1094 3.4
+
+# Read the previous restart file
+read_restart restart.rso2
+
+# Run the reference simulation
+run 50000
+
+# Write final restart file
+write_restart restart.final

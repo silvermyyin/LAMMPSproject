@@ -1,0 +1,44 @@
+```lammps
+# LAMMPS input script for 3D bcc iron with spin dynamics and magnetic interactions
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+atom_modify     map array
+comm_modify     mode single vel yes
+
+# Create bcc lattice
+lattice         bcc 2.8665
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+mass            1 55.845
+
+# Initialize velocities
+velocity        all create 100.0 12345 mom yes dist gaussian
+
+# Define potentials
+pair_style      hybrid/overlay eam spin/exchange 10.0 spin/dipole/cut 10.0
+pair_coeff      * * eam Fe_mm.eam.fs
+pair_coeff      * * spin/exchange 1.0 0.0 0.0
+pair_coeff      * * spin/dipole/cut 1.0
+
+# Initialize spins
+spin            * random 2.2 12345
+
+# Define time integration and spin dynamics
+timestep        0.0001
+
+fix             1 all nve/spin
+fix             2 all precession/spin 0.1
+fix             3 all langevin/spin 100.0 100.0 0.1 12345
+
+# Thermodynamic output
+thermo_style    custom step temp pe etotal spx spy spz
+thermo          100
+
+# Run the simulation
+run             10000
+```

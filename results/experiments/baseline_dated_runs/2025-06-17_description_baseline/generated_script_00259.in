@@ -1,0 +1,45 @@
+# LAMMPS input script for protein simulation using CHARMM force field
+
+units real
+atom_style full
+boundary p p p
+
+# Read the protein structure from data file
+read_data data.bpti
+
+# Include CHARMM force field parameters
+pair_style lj/charmm/coul/long 10.0 12.0
+bond_style harmonic
+angle_style charmm
+dihedral_style charmm
+improper_style harmonic
+kspace_style pppm 1.0e-4
+
+# Special bond interactions for CHARMM
+special_bonds charmm
+
+# Define groups
+group protein type 1
+
+# Energy minimization
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Define time integration settings
+timestep 8.0
+
+# Apply a Nose-Hoover thermostat and gradually increase temperature
+fix 1 all nvt temp 200.0 300.0 100.0
+
+# Apply a corotational filter to manage angular momentum artifacts
+fix 2 all filter/corotate
+
+# Run_style with multiple time-stepping
+run_style respa 4 2 2 bond 1 angle 2 dihedral 2 pair 3 kspace 4
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Equilibrate the system for 25 time units
+run 25000

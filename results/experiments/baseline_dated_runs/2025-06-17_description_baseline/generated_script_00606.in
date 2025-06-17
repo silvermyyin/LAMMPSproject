@@ -1,0 +1,60 @@
+# LAMMPS input script for Ethanol simulation with hybrid force field
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data ethanol.data
+
+# Define hybrid pair style
+pair_style      hybrid lj/cut/coul/long 12.0 thole 0.2
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  opls
+
+# Define pair coefficients
+pair_coeff      * * lj/cut/coul/long 0.0 0.0
+# Add specific pair coefficients for atoms in ethanol
+# Example: pair_coeff 1 1 lj/cut/coul/long 0.066 3.5
+# ...
+
+# Define bond coefficients
+bond_coeff 1 harmonic 340.0 1.09  # C-H bond example
+bond_coeff 2 harmonic 310.0 1.41  # C-C bond example
+
+# Define angle coefficients
+angle_coeff 1 harmonic 50.0 109.5  # H-C-H angle example
+angle_coeff 2 harmonic 60.0 110.0  # C-C-H angle example
+
+# Define dihedral coefficients
+dihedral_coeff 1 opls 0.0 1.0 -0.5 0.0  # Example for C-C-C-H
+
+# Thole pair_style settings for polarization effects
+pair_coeff * * thole 0.2
+
+# KSpace style for long-range interactions
+kspace_style pppm 1.0e-4
+
+# Group definitions for Drude particles
+group drude type 3  # Assuming type 3 is Drude particles
+
+# Initialization
+timestep 0.5
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+velocity drude create 1.0 54321 mom yes rot yes dist gaussian
+
+# Fixes for temperature and pressure control
+fix 1 all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+fix 2 drude tgnpt/drude temp 1.0 1.0 100.0
+
+# SHAKE algorithm for constraining bonds involving hydrogen
+fix 3 all shake 0.0001 20 0 b 1 a 1
+
+# Output settings
+thermo 100
+thermo_style custom step temp press etotal pe ke ebond eangle edihed evdwl ecoul elong
+dump 1 all custom 100 trajectory.lammpstrj id type x y z
+
+# Run the simulation
+run 2000

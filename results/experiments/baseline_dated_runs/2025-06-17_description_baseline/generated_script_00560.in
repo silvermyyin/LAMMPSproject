@@ -1,0 +1,50 @@
+# LAMMPS input script for bilayer graphene simulation using Lebedeva potential
+
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial configuration
+read_data 2particles.dat
+
+# Define groups for the two graphene layers
+group graphene1 type 1
+group graphene2 type 2
+
+# Pair style and coefficients
+pair_style hybrid/overlay lebedeva/z 10.0
+pair_coeff * * lebedeva/z C C
+
+# Set up neighbor list
+neighbor 2.0 bin
+neigh_modify delay 10 check yes
+
+# Define variables for displacement
+variable disp_x equal 0.05
+variable disp_y equal 0.05
+
+# Output settings
+thermo 10
+thermo_style custom step temp pe press
+
+# Dump settings
+dump 1 all atom 1 dump.lammpstrj
+
+# Initial energy minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Loop for incremental displacement
+variable i loop 400
+label loop_start
+
+  # Displace graphene2 layer
+  displace_atoms graphene2 move ${disp_x} ${disp_y} 0.0
+
+  # Calculate energy and forces
+  run 0
+
+  # Next iteration
+  next i
+jump SELF loop_start
+
+# End of script

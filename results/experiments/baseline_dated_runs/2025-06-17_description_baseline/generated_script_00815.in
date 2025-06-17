@@ -1,0 +1,30 @@
+# LAMMPS input script for ZnOH2 system using ReaxFF potential
+
+units real
+atom_style charge
+
+# Read initial atomic configuration
+read_data data.ZnOH2
+
+# Define the ReaxFF potential
+pair_style reaxff
+pair_coeff * * ffield.reax.ZnOH2 H O Zn
+
+# Setup neighbor list
+neighbor 2.0 bin
+neigh_modify every 10 delay 0 check yes
+
+# Define fixes
+fix 1 all nve
+fix 2 all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
+
+# Define temperature control
+fix 3 all temp/berendsen 500.0 500.0 100.0
+
+# Set timestep and run parameters
+timestep 0.25
+thermo 100
+thermo_style custom step temp etotal press
+
+# Run the simulation
+run 1000

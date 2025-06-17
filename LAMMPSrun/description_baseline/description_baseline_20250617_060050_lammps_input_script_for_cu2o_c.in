@@ -1,0 +1,67 @@
+```lmp
+# LAMMPS input script for Cu2O crystal using COMB potential
+
+# Initialization
+units metal
+dimension 3
+boundary p p p
+atom_style charge
+
+# Read data file
+read_data cu2o.data
+
+# Set atomic masses
+mass 1 63.546  # Copper
+mass 2 15.999  # Oxygen
+
+# Define potential
+pair_style comb
+pair_coeff * * ffield.comb Cu O
+
+# Set up charge equilibration
+fix 1 all qeq/comb 1 0.0001
+
+# Set initial velocities
+velocity all create 10.0 12345 mom yes rot yes dist gaussian
+
+# Output settings
+thermo 100
+thermo_style custom step temp etotal press vol
+
+# Initial equilibration
+fix 2 all nve
+run 5000
+unfix 2
+
+# Energy minimization
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Deformation for elastic constants calculation
+variable delta equal 0.002
+
+# Deformation in x direction
+fix 3 all deform 1 x scale v_delta remap x
+run 1000
+unfix 3
+
+# Deformation in z direction
+fix 4 all deform 1 z scale v_delta remap x
+run 1000
+unfix 4
+
+# Deformation in yz direction
+fix 5 all deform 1 yz delta v_delta remap x
+run 1000
+unfix 5
+
+# Deformation in xy direction
+fix 6 all deform 1 xy delta v_delta remap x
+run 1000
+unfix 6
+
+# Clean up and finish
+write_restart cu2o_final.restart
+```
+
+This script sets up a simulation of a Cu2O crystal using the COMB potential, initializes velocities at a low temperature, performs equilibration and energy minimization, and carries out deformations to calculate elastic constants. The output includes detailed thermodynamic and stress information for analysis.

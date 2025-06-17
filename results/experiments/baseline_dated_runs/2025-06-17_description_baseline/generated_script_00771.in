@@ -1,0 +1,43 @@
+# LAMMPS Input Script for a Solvated 5-mer Peptide Simulation
+
+units real
+dimension 3
+atom_style angle
+
+# Restrict z-direction to a single processor for performance
+processors * * 1
+
+# Read topology and force field data
+read_data data.peptide.gz
+
+# Define force field styles
+pair_style lj/sdk 15.0
+bond_style harmonic
+angle_style sdk
+
+# Special bonds settings
+special_bonds lj/coul 0.0 0.0 1.0
+
+# Velocity initialization
+velocity all create 303.0 12345 dist gaussian
+
+# Integrate using NVT ensemble
+fix 1 all nvt temp 303.0 303.0 100.0
+
+# Neighbor list settings
+neighbor 3.0 bin
+neigh_modify every 5 delay 0 check yes
+
+# Output settings
+thermo 200
+thermo_style custom step temp epair etotal press
+
+# Trajectory outputs
+dump 1 all xtc 100 xtc_trajectory.xtc
+dump_modify 1 unwrap yes
+
+dump 2 all dcd 100 dcd_trajectory.dcd
+dump_modify 2 unwrap yes
+
+# Run the simulation
+run 1000

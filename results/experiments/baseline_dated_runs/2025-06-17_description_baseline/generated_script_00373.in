@@ -1,0 +1,36 @@
+# LAMMPS Input Script for 3D Lennard-Jones Melt using MDI
+
+units lj
+atom_style atomic
+
+# Define simulation box and lattice
+lattice fcc 1.0
+region box block 0 1 0 1 0 1
+create_box 1 box
+create_atoms 1 box
+
+# Set mass for the atomic type
+mass 1 1.0
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Setup neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initialize simulation
+velocity all create 1.0 12345
+
+# Define thermo output
+thermo 1
+thermo_style custom step temp pe etotal press vol
+
+# Integrate using MDI
+fix 1 all mdi
+
+# Run simulation
+run 1000
+
+This script configures a basic simulation environment for a Lennard-Jones fluid using the LAMMPS MDI interface, which is suitable for coupling with other codes or engines for advanced molecular dynamics tasks. Adjust the `fix mdi` parameters as needed to match your specific MDI setup or external engine requirements.

@@ -1,0 +1,46 @@
+# LAMMPS input script for exploring tungsten crystalline conformations using NWChem via MDI
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Communication settings
+comm_modify cutoff 2.0
+
+# Define tungsten mass
+mass 1 183.84
+
+# Neighbor settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# List of lattice structures to simulate
+variable structures index bcc diamond sc
+
+# Loop over the structures
+label loop_structures
+variable structure name $structures
+
+# Read the data file for the current structure
+read_data ${structure}.data
+
+# Setup the MDI quantum mechanical fix with NWChem
+fix 1 all mdi/qm mdi_name mdi_qm nwchem
+
+# Run the simulation
+thermo 100
+thermo_style custom step temp etotal press
+
+# Perform energy minimization instead of dynamics
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Output log and restart files
+write_restart ${structure}.restart
+
+# Next structure
+next structures
+jump SELF loop_structures
+
+# End of script
+
+This script is designed to systematically study the specified tungsten lattice structures using quantum mechanical calculations via the MDI interface with NWChem. Each configuration is read from a corresponding data file, and the simulation results, including energy and pressure, are logged for analysis.

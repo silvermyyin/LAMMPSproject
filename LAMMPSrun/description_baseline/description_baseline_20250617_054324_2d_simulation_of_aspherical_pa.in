@@ -1,0 +1,61 @@
+```lammps
+# 2D Simulation of Aspherical Particles using Stochastic Rotation Dynamics (SRD)
+
+units lj
+dimension 2
+atom_style hybrid line sphere
+boundary p p p
+
+# Read initial configuration
+read_data initial_data.dat
+
+# Define groups for large (line segment) and small (sphere) particles
+group large type 1
+group small type 2
+
+# Adjust mass of small particles
+mass 2 0.1
+
+# Add small particles on a high-density lattice
+lattice sq2 0.84
+region small_region block 0 50 0 50 -0.5 0.5
+create_atoms 2 region small_region
+
+# Pair potential to remove overlapping particles
+pair_style lj/cut 1.122
+pair_coeff 1 1 1.0 1.0 1.122
+pair_coeff 1 2 0.0 1.0 1.122 # No interaction between large and small
+pair_coeff 2 2 1.0 1.0 1.122
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# SRD settings for solvent dynamics
+fix srd all srd 1.0 0.5 0.25 12345
+fix_modify srd exclude group large
+
+# Define simulation box deformation to simulate shear
+variable gamma equal 0.0
+variable shear_rate equal 0.001
+fix deform all deform 1 xy erate v_shear_rate remap v units box
+
+# Setup output
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+# Run initial stage without shear
+timestep 0.005
+run 10000
+
+# Change box to triclinic for shear simulation
+change_box all triclinic
+
+# Apply shear and continue simulation
+variable gamma equal ramp(0.0, 0.1)
+fix deform all deform 1 xy erate v_shear_rate remap v units box
+
+run 20000
+```
+
+This script initializes a 2D system of aspherical particles with a solvent modeled by smaller particles. The script uses SRD for the solvent, applies a Lennard-Jones potential to remove overlaps, and simulates shear deformation to study particle dynamics.

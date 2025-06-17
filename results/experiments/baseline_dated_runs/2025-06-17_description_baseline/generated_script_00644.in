@@ -1,0 +1,47 @@
+# LAMMPS input script for coarse-grained SDS surfactant monolayer simulation
+
+units real
+dimension 3
+atom_style full
+
+# Read initial configuration from a compressed data file
+read_data data.sds.gz
+
+# Define pair styles with hybrid/overlay for Lennard-Jones and Coulombic interactions
+pair_style hybrid/overlay lj/cut/coul/long 10.0
+
+# Define bond and angle styles
+bond_style harmonic
+angle_style sdk
+
+# Define pair coefficients (example values, should be adjusted to your specific system)
+pair_coeff * * lj/cut/coul/long 0.1 3.0
+
+# Define bond coefficients (example values, should be adjusted to your specific system)
+bond_coeff * 100.0 1.5
+
+# Define angle coefficients (example values, should be adjusted to your specific system)
+angle_coeff * 50.0 120.0 1.0
+
+# Special bonds settings to exclude certain non-bonded interactions
+special_bonds lj/coul 0.0 0.0 0.5
+
+# Settings for PPPM method for long-range Coulombic interactions
+kspace_style pppm 1.0e-4
+
+# Neighbor list settings for efficient force calculations
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Define the NVT ensemble for integration
+fix 1 all nvt temp 310.0 310.0 100.0
+
+# Set the timestep to a relatively large value for coarse-grained dynamics
+timestep 10.0
+
+# Output settings for monitoring the simulation
+thermo 10
+thermo_style custom step temp pe ke etotal press
+
+# Run the simulation for 100 timesteps
+run 100

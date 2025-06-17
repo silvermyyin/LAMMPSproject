@@ -1,0 +1,76 @@
+# LAMMPS input script for calculating thermal conductivity of a Lennard-Jones fluid
+
+# Initialization
+units lj
+atom_style atomic
+boundary p p p
+
+variable x equal 10
+variable y equal 10
+variable z equal 40
+
+lattice fcc 0.6
+region box block 0 ${x} 0 ${y} 0 ${z}
+create_box 1 box
+create_atoms 1 box
+
+mass 1 1.0
+
+# LJ potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Velocity and initial temperature
+velocity all create 1.35 87287
+
+# Define regions for temperature gradient
+region hot block 0 ${x} 0 ${y} 0 5
+region cold block 0 ${x} 0 ${y} 35 ${z}
+
+# Group atoms
+group hot region hot
+group cold region cold
+group middle subtract all hot cold
+
+# Equilibration
+fix 1 all nvt temp 1.35 1.35 1.0
+
+# Thermostat hot and cold regions
+fix hot_temp hot langevin 1.70 1.70 1.0 48279
+fix cold_temp cold langevin 1.00 1.00 1.0 29381
+
+# Modify fix to calculate energy exchange
+fix_modify hot_temp energy yes
+fix_modify cold_temp energy yes
+
+# Time settings
+timestep 0.005
+thermo 100
+thermo_style custom step temp pe ke etotal f_hot_temp f_cold_temp
+
+# Run equilibration
+run 5000
+
+# Main simulation to calculate thermal conductivity
+unfix 1
+fix 2 all nve
+
+# Variables to calculate thermal conductivity
+variable dT equal f_hot_temp[2]-f_cold_temp[2]
+variable energy_exchange equal f_hot_temp[1]+f_cold_temp[1]
+variable conductivity equal v_energy_exchange/(v_dT*${y}*${x})
+
+# Output settings
+thermo_style custom step temp pe ke etotal v_dT v_energy_exchange v_conductivity
+
+# Run simulation
+run 20000
+
+# Print thermal conductivity
+print "Thermal Conductivity: ${conductivity}"
+
+# End of script

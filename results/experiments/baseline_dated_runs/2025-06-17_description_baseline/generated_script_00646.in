@@ -1,0 +1,58 @@
+# LAMMPS input script for querying and comparing equilibrium lattice constants
+# for aluminum and zirconium using various EAM models from OpenKIM
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Initialize variables for lattice constants
+variable        lat_al_1 equal 0.0
+variable        lat_al_2 equal 0.0
+variable        lat_zr equal 0.0
+
+# Al - EAM_Dynamo_ErcolessiAdams_1994_Al
+kim_init        KIM inter EAM_Dynamo_ErcolessiAdams_1994_Al__MO_123629422045_005
+lattice         fcc ${lat_al_1}
+region          box block 0 1 0 1 0 1
+create_box      1 box
+create_atoms    1 box
+minimize        1.0e-4 1.0e-6 100 1000
+variable        lat_al_1 equal lx
+print           "Lattice constant for Al using EAM_Dynamo_ErcolessiAdams_1994_Al: ${lat_al_1} Angstroms"
+
+# Al - EAM_Dynamo_WineyKubotaGupta_2010_Al
+kim_init        KIM inter EAM_Dynamo_WineyKubotaGupta_2010_Al__MO_149316865608_005
+lattice         fcc ${lat_al_2}
+region          box block 0 1 0 1 0 1
+create_box      1 box
+create_atoms    1 box
+minimize        1.0e-4 1.0e-6 100 1000
+variable        lat_al_2 equal lx
+print           "Lattice constant for Al using EAM_Dynamo_WineyKubotaGupta_2010_Al: ${lat_al_2} Angstroms"
+
+# Zr - EAM_Dynamo_MendelevAckland_2007v3_Zr
+kim_init        KIM inter EAM_Dynamo_MendelevAckland_2007v3_Zr__MO_004835508849_000
+lattice         hcp ${lat_zr}
+region          box block 0 1 0 1 0 1
+create_box      1 box
+create_atoms    1 box
+minimize        1.0e-4 1.0e-6 100 1000
+variable        lat_zr equal lx
+print           "Lattice constant for Zr using EAM_Dynamo_MendelevAckland_2007v3_Zr: ${lat_zr} Angstroms"
+
+# Query all available EAM models for Al from OpenKIM
+kim_query       metal fcc Al
+foreach kim_model [kim_query models]
+
+  kim_init      KIM inter $kim_model
+  lattice       fcc
+  region        box block 0 1 0 1 0 1
+  create_box    1 box
+  create_atoms  1 box
+  minimize      1.0e-4 1.0e-6 100 1000
+  variable      lat_current equal lx
+  print         "Lattice constant for Al using model $kim_model: ${lat_current} Angstroms"
+  
+endforeach
+
+print "All lattice constant calculations completed."

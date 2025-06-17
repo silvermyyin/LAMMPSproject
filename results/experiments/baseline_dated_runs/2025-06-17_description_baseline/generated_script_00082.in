@@ -1,0 +1,65 @@
+# LAMMPS input script for charge equilibration comparison using buck/coul/long
+
+units           metal
+atom_style      charge
+
+# Read initial data
+read_data       data.aC
+
+# Define the pair style and coefficients
+pair_style      buck/coul/long 10.0
+pair_coeff      * * <A> <rho> <C>  # Placeholder for specific parameters
+
+# KSpace style for long-range interactions
+kspace_style    ewald 1.0e-4
+
+# Define neighbor settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Initial velocity generation
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define timestep
+timestep        1.0
+
+# Output settings
+thermo          10
+thermo_style    custom step temp epair etotal press
+
+# Run setup for different charge equilibration methods
+
+# Method 1: qeq/shielded
+fix             qeq1 all qeq/shielded 1 1.0e-5 200
+run             100
+unfix           qeq1
+write_restart   restart.qeq_shielded
+
+# Method 2: qeq/point
+fix             qeq2 all qeq/point 1 1.0e-5 200
+run             100
+unfix           qeq2
+write_restart   restart.qeq_point
+
+# Method 3: qeq/slater
+fix             qeq3 all qeq/slater 1 1.0e-5 200
+run             100
+unfix           qeq3
+write_restart   restart.qeq_slater
+
+# Method 4: qeq/dynamic
+fix             qeq4 all qeq/dynamic 1 1.0e-5 200
+run             100
+unfix           qeq4
+write_restart   restart.qeq_dynamic
+
+# Method 5: qeq/fire
+fix             qeq5 all qeq/fire 1 1.0e-5 200
+run             100
+unfix           qeq5
+write_restart   restart.qeq_fire
+
+# Final output
+write_data      final_equilibrated_system.data
+
+Ensure to replace `<A>`, `<rho>`, and `<C>` with the actual parameters for the Buckingham potential specific to your material system. The script assumes that all charge equilibration methods and pair coefficients are valid and that the data file `data.aC` is correctly formatted for LAMMPS.

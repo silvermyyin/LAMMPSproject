@@ -1,0 +1,54 @@
+```lammps
+# LAMMPS input script for a single 32-bead coarse-grained polymer in a thermal Lattice-Boltzmann fluid
+
+units lj
+atom_style hybrid molecular sphere
+boundary p p f
+
+# Create simulation box
+region box block 0 50 0 50 0 50
+create_box 2 box
+
+# Create polymer chain
+create_atoms 1 single 25 25 25
+mass 1 1.0
+set type 1 diameter 1.0
+
+# Define FENE bond for polymer chain
+bond_style fene
+bond_coeff 1 30.0 1.5 1.0 1.0
+
+# Define Lennard-Jones potential for monomer interactions
+pair_style lj/cut 1.12246
+pair_coeff 1 1 1.0 1.0 1.12246
+
+# Polymer chain connectivity
+# Assuming the chain is linear and each bead is bonded to the next
+variable i loop 31
+label loop
+  bond_coeff 1 $i $(i+1)
+next i
+jump SELF loop
+
+# Optical trap-like force
+fix trap all addforce 0.0 0.0 -0.1 region box
+
+# Lattice-Boltzmann fluid
+fix lb all lb/fluid 0.1 0.1 0.01 1.0 region box
+fix lb_viscous all lb/viscous 1.0
+
+# Integrate system using rigid/small for monomers
+fix rigid_monomers all rigid/small molecule
+
+# Periodic momentum correction
+fix momentum_correction all momentum 100 linear 1 1 1
+
+# Run simulation
+timestep 0.005
+thermo 100
+thermo_style custom step temp pe ke etotal
+run 10000
+
+# Output
+dump 1 all custom 100 dump.polymer id type x y z
+```

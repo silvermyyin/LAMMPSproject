@@ -1,0 +1,35 @@
+```lammps
+# LAMMPS Input Script for High Temperature Simulation of Silicon in an FCC Lattice
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create an FCC lattice for Silicon
+lattice         fcc 5.431
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+create_atoms    1 box
+
+# Define mass for Silicon atoms
+mass            1 28.085
+
+# Set up interatomic potential using MEAM/spline
+pair_style      meam/spline
+pair_coeff      * * Si_1.meam.spline Si
+
+# Initialize velocities to achieve a temperature of 500 K
+velocity        all create 500.0 87287 loop geom
+
+# Define settings for the NVT ensemble
+fix             1 all nvt temp 500.0 500.0 1.0
+
+# Set timestep and run parameters
+timestep        0.001
+thermo          50
+thermo_style    custom step temp pe ke etotal
+
+# Run the simulation
+run             500
+```

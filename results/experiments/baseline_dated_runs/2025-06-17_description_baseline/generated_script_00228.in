@@ -1,0 +1,53 @@
+# LAMMPS input script for AtC thermal coupling simulation
+# Heat conduction in MD/FEM regions
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Create FCC lattice and region
+lattice         fcc 3.615
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define potential
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0103 2.5 13.5
+
+# Define groups
+group           internal region box
+group           ghost subtract all internal
+
+# Initialize velocities
+velocity        all create 20.0 87287 loop geom
+
+# Set up AtC
+fix             atc internal atc transfer thermal mesh fem
+fix_modify      atc mesh create 3 3 3
+fix_modify      atc mesh velocity 0.0 0.0 0.0
+fix_modify      atc mesh temperature 20.0
+
+# Boundary conditions for FEM
+fix_modify      atc mesh bc temperature constant xlo 40.0
+fix_modify      atc mesh bc temperature constant xhi 20.0
+
+# Set up time integration
+timestep        0.001
+run_style       respa 2 3
+
+# Initial temperature control with rescale
+fix             temp_rescale internal temp/rescale 100 20.0 20.0 0.1 1.0
+
+# Switch to Nose-Hoover thermostat after initial equilibration
+run             50000
+unfix           temp_rescale
+fix             temp_hoover internal nvt temp 20.0 20.0 0.1
+
+# Output settings
+thermo          1000
+thermo_style    custom step temp pe ke etotal
+
+# Run simulation
+run             100000

@@ -1,0 +1,50 @@
+# LAMMPS Input Script for Drift-Diffusion Simulation in a Semiconductor
+
+units metal
+atom_style atomic
+dimension 3
+boundary f p p
+
+# Define the face-centered cubic lattice
+lattice fcc 3.615
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+
+# Create atoms
+create_atoms 1 box
+mass 1 1.0
+
+# Initialize the AtC package
+fix atc all atc two_temperature
+
+# Read material properties from external file
+fix_modify atc read_data Si_ddm.mat
+
+# Define mesh
+fix_modify atc mesh create 10 10 10
+
+# Set initial conditions: temperature and electron density
+fix_modify atc set_temperature 300.0
+fix_modify atc set_electron_density gaussian 1.0 5.0 1.0 0.5
+
+# Set boundary conditions
+fix_modify atc boundary electron_density 1 constant
+fix_modify atc boundary potential 1 linear
+
+# Setup thermodynamic outputs
+thermo 100
+thermo_style custom step temp pe etotal press
+
+# First stage: Fixed electric potential
+run 5000
+
+# Second stage: Allow electric field shielding
+fix_modify atc allow_field_shielding on
+run 5000
+
+# Final outputs
+dump 1 all custom 100 dump.atoms id type x y z vx vy vz
+dump 2 all custom 100 dump.electron_density id type x y z density
+dump 3 all custom 100 dump.thermo id step temp etotal press
+
+# End of script

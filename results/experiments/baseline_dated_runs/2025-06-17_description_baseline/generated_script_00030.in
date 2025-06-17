@@ -1,0 +1,66 @@
+# LAMMPS input script for 2D Lennard-Jones fluid simulation using Gaussian dynamics
+
+# Initialization
+units lj
+dimension 2
+atom_style atomic
+boundary p p p
+
+# Variables
+variable rho equal 0.8
+variable temp equal 1.0
+variable lj_cut equal 2.5
+variable timestep equal 0.005
+variable equil_steps equal 10000
+variable run_steps equal 50000
+variable x_length equal 40
+variable y_length equal 10
+
+# Create simulation box
+region simbox block 0 ${x_length} 0 ${y_length} -0.5 0.5
+create_box 1 simbox
+
+# Create atoms
+lattice sq2d $rho
+create_atoms 1 box
+
+# Define Lennard-Jones potential
+pair_style lj/cut ${lj_cut}
+pair_coeff 1 1 1.0 1.0 ${lj_cut}
+
+# Neighbor list
+neighbor 0.3 bin
+neigh_modify delay 0 every 1 check yes
+
+# Define initial velocities
+velocity all create $temp 12345 dist gaussian
+
+# Fixes for thermostat
+fix 1 all nve
+fix 2 all temp/csvr $temp $temp 0.1 # Profile-unbiased thermostat (PUT)
+
+# Equilibration
+thermo 1000
+run ${equil_steps}
+
+# Apply Gaussian dynamics for flow
+unfix 2
+velocity all set 1.0 0.0 0.0 sum yes
+fix 3 all temp/csvr $temp $temp 0.1
+fix 4 all momentum 100 linear 1 1 0
+fix 5 all langevin $temp $temp 0.1 12345 zero yes
+
+# Run simulation to achieve steady-state
+thermo_style custom step temp pe ke etotal
+thermo 1000
+run ${run_steps}
+
+# Output profiles and data
+compute myTemp all temp/profile 1 0 0
+compute myPress all pressure myTemp
+
+fix 6 all ave/spatial 1 1000 1000 x center 0.0 ${x_length} vx density/mass file velocity_x.profile
+fix 7 all ave/spatial 1 1000 1000 y center 0.0 ${y_length} vy density/mass file velocity_y.profile
+fix 8 all ave/spatial 1 1000 1000 x center 0.0 ${x_length} density/mass file density.profile
+
+# End of script

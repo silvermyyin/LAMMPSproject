@@ -1,0 +1,48 @@
+```lammps
+# LAMMPS input script for SPH simulation of water flow through a complex geometry
+
+units          real
+atom_style     sphere
+boundary       f f f
+
+# Define the region and create particles
+region         water cylinder y 0 0 10 0 100 units box
+create_box     2 water
+
+lattice        sc 0.1
+create_atoms   1 region water
+
+# Define the SPH fluid and boundary interaction
+pair_style     hybrid/overlay sph/rhosum 0.1 20 sph/estack 0.1 20 1.0 wall/stl mesh.stl
+
+# Polynomial EOS for water
+fix            eos all eos/poly 1.0 0.0 0.0 0.0 1.0 0.0 0.0
+
+# Define initial properties
+mass           1 0.001   # mass in grams
+set            group all diameter 0.1
+set            group all density 1.0
+set            group all velocity 0.0 0.0 0.0
+
+# Apply gravity
+fix            gravity all gravity 9.81 vector 0 -1 0
+
+# Neighbor settings
+neighbor       0.2 bin
+neigh_modify   every 1 delay 0 check yes
+
+# Timestep control for stability
+fix            dt_control all dt/reset 1 1e-5 1e-3 0.1 units box
+
+# Output settings
+thermo         100
+thermo_style   custom step time pe ke etotal press
+
+dump           1 all custom 100 dump.sph id type x y z vx vy vz density
+dump           2 all custom 100 dump.neighbor id type c_neigh
+dump           3 all custom 100 dump.contact id type c_contact_radius
+
+# Run the simulation
+timestep       0.001
+run            5000
+```

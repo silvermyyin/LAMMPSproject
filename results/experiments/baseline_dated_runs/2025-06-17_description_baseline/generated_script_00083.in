@@ -1,0 +1,57 @@
+# LAMMPS Input Script for AtC Thermal Coupling Simulation
+
+# Initialize simulation
+units real
+atom_style atomic
+dimension 3
+boundary p p f
+
+# Create simulation box
+region simbox block 0 20 0 20 0 20 units box
+create_box 1 simbox
+
+# Create atoms in FCC lattice
+lattice fcc 3.615
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/cut 13.5
+pair_coeff 1 1 0.0103 3.405
+
+# Define groups for AtC
+region md block 5 15 5 15 5 15 units box
+group mdregion region md
+group ghost subtract all mdregion
+
+# Set initial velocities
+velocity all create 20.0 12345
+
+# Define boundary conditions
+fix left_boundary all setforce NULL NULL 0
+fix heat_source mdregion addforce 0.0 0.0 0.1
+
+# Set temperature of left boundary
+region left boundary block 0 1 0 20 0 20 units box
+group left region left
+fix temp_left left temp/rescale 10 40.0 40.0 0.1 1.0
+
+# Setup AtC thermal coupling
+fix atc all atc thermal 1.0
+fix_modify atc interpolate mesh
+fix_modify atc couple ghost
+
+# Time integration
+timestep 0.5
+fix nve all nve
+
+# Output settings
+thermo 100
+thermo_style custom step temp epair etotal
+
+# Run simulation
+run 10500
+
+# Unfix and reset
+unfix temp_left
+unfix atc
+unfix nve

@@ -1,0 +1,30 @@
+# LAMMPS input script for slab geometry with ewald/electrode
+units           real
+atom_style      full
+boundary        p p f
+
+# Read in external settings
+include         settings.mod
+
+# Define simulation box and read data
+read_data       data.slab
+
+# Set up force fields
+pair_style      lj/cut/coul/long 10.0
+pair_coeff      * * 0.0 0.0 10.0
+kspace_style    ewald/electrode 1.0e-8
+kspace_modify   slab ew2d
+
+# Define groups for electrodes
+group           bottom_electrode type 1
+group           top_electrode type 2
+
+# Apply fix for constant potential difference
+fix             conp bottom_electrode efield/electrode top_electrode 1.0 0.0 file inversion inv.csv vector vec.csv
+
+# Thermodynamic output
+thermo_style    custom step pe evdwl ecoul elong
+thermo          1
+
+# Run simulation
+run             0

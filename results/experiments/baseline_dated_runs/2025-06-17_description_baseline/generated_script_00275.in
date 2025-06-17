@@ -1,0 +1,58 @@
+# LAMMPS input script for 2D simulation of Gay-Berne ellipsoids in LJ fluid
+
+units lj
+dimension 2
+atom_style ellipsoid
+
+# Create simulation box
+lattice sq 0.02
+region boxreg block 0 20 0 20 -0.25 0.25
+create_box 2 boxreg
+
+# Create atoms
+create_atoms 1 box
+
+# Set masses and shapes
+mass 1 1.0
+mass 2 1.5
+
+shape 1 1.0 1.0 1.0
+shape 2 3.0 1.0 1.0
+
+# Define particle types (10% ellipsoids)
+set type 2 type/fraction 2 0.1 12345
+
+# Initialize velocities and orientations
+velocity all create 2.4 123456 geom
+set type 2 quat random 123456
+
+# Pair style and coefficients
+pair_style gayberne 1.0 3.0 1.0 3.0
+pair_coeff 1 1 1.0 1.0 1.0 1.0 1.0
+pair_coeff 1 2 1.0 1.0 1.0 1.0 1.0
+pair_coeff 2 2 1.0 3.0 1.0 3.0 1.0
+
+# Group definitions
+group ellipsoids type 2
+
+# Set neighbor list
+neighbor 0.3 bin
+neigh_modify delay 0 every 1 check yes
+
+# Initial equilibration with NPT
+fix 1 all npt/asphere temp 2.4 2.4 1.0 iso 0.0 0.0 1.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp etotal epair press vol
+dump 1 all custom 100 dump.gayberne id type x y z quatw quati quatj quatk
+
+# Run initial equilibration
+run 5000
+
+# Switch to NVE for production run
+unfix 1
+fix 2 all nve/asphere
+
+# Continue simulation and data collection
+run 20000

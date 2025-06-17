@@ -1,0 +1,37 @@
+# LAMMPS Input Script for Diamond Lattice Simulation of Silicon
+
+units metal
+dimension 3
+boundary p p p
+
+# Define lattice and region
+lattice diamond 5.43
+region box block 0 1 0 1 0 1 units lattice
+create_box 1 box
+create_atoms 1 box
+
+# Mass and potential setup
+mass 1 28.08
+
+# Define interactions (using a placeholder potential, e.g., Stillinger-Weber)
+pair_style sw
+pair_coeff * * Si.sw Si
+
+# Initial velocities
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Fix for NVE integration
+fix 1 all nve
+
+# External callback for interfacing with a Python script
+fix 2 all external pf/callback 1 python_script.py
+
+# Thermodynamic output
+thermo 1
+
+# Uncomment the following line to enable image dumping
+# dump 1 all image 100 image.*.jpg type type & 
+#     axes yes 0.8 0.02 view 60 -30
+
+# Run the simulation
+run 10000

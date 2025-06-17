@@ -1,0 +1,45 @@
+# LAMMPS input script for AtC thermal coupling simulation
+
+units           lj
+atom_style      atomic
+
+# Define simulation box and regions
+lattice         fcc 0.8442
+region          box block 0 10 0 10 0 10
+create_box      2 box
+
+# Create MD region and ghost atoms region
+region          md block 2 8 2 8 2 8
+create_atoms    1 region md
+
+# Define interatomic potential
+pair_style      lj/cut 13.5
+pair_coeff      * * 1.0 1.0 2.5
+
+# Define initial velocities
+velocity        all create 20.0 12345
+
+# Define groups for MD and ghost atoms
+group           md_atoms region md
+
+# Set up thermal coupling using AtC package
+fix_modify      thermo md_atoms
+fix             atc all atc thermal temp 40.0
+
+# Set thermal coupling properties
+fix_modify      atc temp_file 20.0
+fix_modify      atc coupling_style thermal
+fix_modify      atc coupling_method direct
+fix_modify      atc coupling_length 2.5
+
+# Configure timestep and run parameters
+timestep        5
+thermo          100
+thermo_style    custom step temp etotal pe
+
+# Apply boundary conditions
+fix             left_boundary all wall/reflect xlo 0.0
+fix             right_boundary all wall/reflect xhi 10.0
+
+# Run the simulation
+run             5000

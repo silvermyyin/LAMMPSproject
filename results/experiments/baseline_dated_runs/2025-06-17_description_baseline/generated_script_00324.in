@@ -1,0 +1,58 @@
+# LAMMPS input script for simulating electrostatic properties with electrode molecules
+
+units real
+atom_style full
+dimension 3
+boundary p p p
+
+# Read data file
+read_data data.au-vac
+
+# Define groups for electrodes
+group bottom_electrode type 1
+group top_electrode type 2
+
+# Define interatomic potentials
+pair_style lj/cut/coul/long 14.0
+pair_coeff * * 0.1 3.0  # Example Lennard-Jones parameters
+
+# Setup kspace for long-range Coulombic interactions
+kspace_style pppm 1.0e-4
+
+# Define variables
+variable Vstart equal 0.0
+variable Vend equal 2.0
+variable separation equal 20.0  # Example separation distance in Angstroms
+variable eps0 equal 8.854187817e-12  # Permittivity of free space in F/m
+variable area equal 100.0  # Example area of electrode in Å^2
+
+# Apply potential difference
+fix 1 all efield ramp v_Vstart v_Vend 0.0 0.0
+
+# Run simulation
+timestep 1.0
+run 10000
+
+# Compute sum of charges
+variable q_bottom equal sum([bottom_electrode])  # Sum of charges on bottom electrode
+variable q_top equal sum([top_electrode])  # Sum of charges on top electrode
+
+# Compute theoretical capacitance
+variable C_theoretical equal v_eps0*v_area/(v_separation*1.0e-10)  # Convert separation to meters
+
+# Compute theoretical charge
+variable q_theoretical equal v_C_theoretical * v_Vend
+
+# Compute percentage deviation
+variable deviation equal (abs(v_q_bottom) - v_q_theoretical) / v_q_theoretical * 100
+
+# Output results
+print "Theoretical capacitance (F): ${C_theoretical}"
+print "Simulated charge on bottom electrode (C): ${q_bottom}"
+print "Theoretical charge (C): ${q_theoretical}"
+print "Percentage deviation (%): ${deviation}"
+
+# Clean up
+unfix 1
+
+This script sets up a LAMMPS simulation for a system with two electrodes in vacuum, applying a potential difference to study electrostatic properties. It calculates theoretical and simulated values, providing a comparison of accuracy. Adjust the Lennard-Jones parameters, separation distance, and electrode area based on your specific system details.

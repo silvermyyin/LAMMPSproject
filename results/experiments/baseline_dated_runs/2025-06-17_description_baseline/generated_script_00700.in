@@ -1,0 +1,55 @@
+# LAMMPS input script for 3D granular flow simulation
+
+units si
+dimension 3
+atom_style sphere
+
+boundary fm fm fm
+
+# Define simulation domain
+region box block 0 10 0 10 0 10 units box
+create_box 1 box
+
+# Material properties for granular particles
+variable Kn equal 10000.0
+variable Kt equal 2000.0
+variable gamma_n equal 50.0
+variable gamma_t equal 10.0
+variable xmu equal 0.5
+
+# Define pair style and coefficients
+pair_style granular hooke/history ${Kn} ${Kt} ${gamma_n} ${gamma_t} ${xmu}
+pair_coeff * *
+
+# Define gravity
+variable g equal 1.0
+fix gravity all gravity ${g} vector 0.0 0.0 -1.0
+
+# Define regions for particle pouring
+region pour1 block 4 6 4 6 8 10 units box
+region pour2 block 2 4 4 6 8 10 units box
+region pour3 block 6 8 4 6 8 10 units box
+region pour4 block 4 6 2 4 8 10 units box
+
+# Pour particles into the container
+fix pour1 all pour 1000 1 12345 region pour1 diam 0.5 density 2500 rate 1.0
+fix pour2 all pour 1000 1 23456 region pour2 diam 0.5 density 2500 rate 1.0
+fix pour3 all pour 1000 1 34567 region pour3 diam 0.5 density 2500 rate 1.0
+fix pour4 all pour 1000 1 45678 region pour4 diam 0.5 density 2500 rate 1.0
+
+# Define wall interactions using granular wall fix
+region container block 0 10 0 10 0 10 units box
+fix wall all wall/gran/region container hooke/history ${Kn} ${Kt} ${gamma_n} ${gamma_t} ${xmu}
+
+# Integrate motion
+fix integrate all nve/sphere
+
+# Set timestep
+timestep 0.0001
+
+# Define output
+thermo_style custom step atoms ke pe etotal vol
+thermo 1000
+
+# Run simulation
+run 100000

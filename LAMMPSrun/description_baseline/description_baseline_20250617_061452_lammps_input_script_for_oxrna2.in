@@ -1,0 +1,48 @@
+```lammps
+# LAMMPS input script for oxRNA2 model simulation of RNA duplexes
+
+units lj
+atom_style hybrid bond molecular
+dimension 3
+boundary p p p
+
+# Read initial configuration from data file
+read_data rna_duplex.data
+
+# Define atom masses (arbitrarily set for example)
+mass 1 1.0  # Mass for nucleotide type 1
+mass 2 1.0  # Mass for nucleotide type 2
+
+# Define bond style
+bond_style hybrid fene
+bond_coeff 1 fene 30.0 1.5 1.0 1.0
+
+# Define pair style and coefficients for oxRNA2 interactions
+pair_style hybrid/overlay lj/cut 1.1225 oxRNA2/stack oxRNA2/hbond oxRNA2/cross_stack oxRNA2/coax_stack dh/coul
+pair_coeff * * lj/cut 1.0 1.0
+pair_coeff * * oxRNA2/stack
+pair_coeff * * oxRNA2/hbond
+pair_coeff * * oxRNA2/cross_stack
+pair_coeff * * oxRNA2/coax_stack
+pair_coeff * * dh/coul 1.0 1.0 1.0
+
+# Group atoms by type for special interactions or analysis
+group type1 type 1
+group type2 type 2
+
+# Set up integration
+fix 1 all nve/asphere
+
+# Balance load across processors
+balance 1.0 shift xyz
+
+# Set the timestep
+timestep 0.00001
+
+# Output settings
+thermo 1000
+thermo_style custom step temp etotal ke pe ebond epair
+
+# Run the simulation
+run 1000000
+```

@@ -1,0 +1,53 @@
+# LAMMPS Input Script for Methane in TIP4P Water with FEP
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data methane_tip4p.data
+
+# Define pair styles
+pair_style hybrid/overlay lj/cut/coul/long 12.0 12.0 lj/cut 12.0 tip4p/long/soft 1 2 1 1 12.0 12.0
+
+# Define pair coefficients
+pair_coeff * * lj/cut/coul/long
+pair_coeff 1 2 lj/cut 0.0 0.0 # methane-water initial interaction (will change via FEP)
+pair_coeff 2 2 tip4p/long/soft 0.1852 3.1589 0.0 # TIP4P water
+
+# Define kspace style for long-range electrostatics
+kspace_style pppm 1.0e-4
+
+# Fix to apply SHAKE constraints
+fix shake_water all shake 0.0001 20 0 b 2 a 2
+
+# Define groups
+group methane type 1
+group water type 2
+
+# Initialize velocities
+velocity all create 300.0 12345
+
+# Equilibration with NPT ensemble
+fix npt all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp press pe ke etotal
+dump trajectory all custom 1000 traj.lammpstrj id type x y z
+
+# Free Energy Perturbation (FEP) Settings
+fix fep all adapt 1000 pair lj/cut/coul/long 1 2 scale 0.0 1.0 1000
+fix fep_charge all adapt 1000 q methane scale 0.0 1.0 1000
+
+# Run simulation
+run 50000
+
+# Unfix and cleanup
+unfix npt
+unfix shake_water
+unfix fep
+unfix fep_charge
+undump trajectory
+
+# End of script

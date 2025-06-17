@@ -1,0 +1,59 @@
+```lammps
+# LAMMPS Input Script for Equilibration of Alpha Quartz with QTB
+
+# Initialize simulation
+units metal
+atom_style charge
+dimension 3
+boundary p p p
+
+# Define lattice and region
+variable a equal 4.913    # Lattice constant a for alpha quartz
+variable c equal 5.405    # Lattice constant c for alpha quartz
+lattice custom 1.0 &
+    a1 ${a} 0.0 0.0 &
+    a2 0.0 ${a} 0.0 &
+    a3 0.0 0.0 ${c} &
+    basis 0.4697 0.0 0.0 &
+    basis 0.0 0.4697 0.0 &
+    basis 0.0 0.0 0.4697 &
+    basis 0.4133 0.2667 0.1193 &
+    basis 0.7333 0.1467 0.7867
+region box block 0 1 0 1 0 1 units lattice
+create_box 2 box
+
+# Create atoms
+create_atoms 1 box basis 1 1 basis 2 1 basis 3 1 basis 4 2 basis 5 2
+
+# Assign masses and charges
+mass 1 28.0855  # Silicon mass
+mass 2 15.999   # Oxygen mass
+set type 1 charge 1.2
+set type 2 charge -0.6
+
+# Define potential
+pair_style buck/coul/long 10.0
+pair_coeff 1 2 18003.7572 0.205204 133.5381
+pair_coeff 2 2 1388.7730 0.362319 175.0000
+kspace_style pppm 1.0e-4
+
+# Define simulation parameters
+variable temp equal 300.0
+variable press equal 0.0
+variable tdamp equal 0.1
+variable pdamp equal 1.0
+
+# Set up QTB
+fix 1 all qtb temp ${temp} seed 12345 window 0.5
+
+# Time integration and equilibration
+timestep 0.001
+fix 2 all nph iso ${press} ${press} ${pdamp} temp ${temp} ${temp} ${tdamp}
+
+# Output settings
+thermo 200
+thermo_style custom step temp press etotal vol
+
+# Run the simulation
+run 2000
+```

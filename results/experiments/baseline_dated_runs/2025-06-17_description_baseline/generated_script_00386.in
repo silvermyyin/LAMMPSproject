@@ -1,0 +1,38 @@
+# LAMMPS input script for simulating ionized adamantane using electron-based model
+
+# Initialize simulation
+units real
+atom_style electron
+boundary p p p
+
+# Create atoms (example: assuming a data file 'adamantane.data' exists)
+read_data adamantane.data
+
+# Define electron-based potential
+pair_style eff/cut 100.0
+pair_coeff * *
+
+# Set neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Output settings
+thermo 1000
+thermo_style custom step pe etotal press temp
+
+# Minimize the structure
+minimize 1.0e-4 1.0e-6 100 1000
+write_data minimized_structure.data
+write_dump all xyz minimized_structure.xyz
+
+# Define and run dynamics
+timestep 0.001
+fix 1 all nve/eff
+
+# Run the simulation
+run 200000
+
+# Output trajectory
+dump 1 all custom 1000 trajectory.lammpstrj id type x y z spin radius fx fy fz
+
+# End of the script

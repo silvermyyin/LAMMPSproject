@@ -1,0 +1,41 @@
+# LAMMPS input script for NaCl system with core-shell model
+
+units           metal
+atom_style      full
+boundary        p p p
+
+# Create atoms (example, should be replaced with actual data)
+read_data       nacl_data.txt
+
+# Define groups for core and shell
+group           cores type 1
+group           shells type 2
+
+# Core-shell pair style
+pair_style      born/coul/long/cs 10.0
+pair_coeff      * * 0.138 0.317 0.0 0.0 0.0 # Example coefficients, replace with actual values
+
+# Harmonic bond for core-shell interaction
+bond_style      harmonic
+bond_coeff      1 100.0 0.0 # Example coefficients, replace with actual values
+
+# Kspace style for long-range interactions
+kspace_style    ewald 1.0e-4
+
+# Initialize velocities for cores at 1427 K
+velocity        cores create 1427.0 12345 mom yes rot yes dist gaussian
+velocity        shells create 1427.0 12345 mom yes rot yes dist gaussian
+
+# Fix for core-shell decoupling and temperature control
+fix             1 all nve
+fix             2 all temp/cs berendsen 1427.0 1427.0 100.0
+
+# Output settings
+thermo          100
+thermo_style    custom step temp etotal press
+
+# Run the simulation
+timestep        0.002
+run             1500
+
+Note: Ensure to replace placeholders like `pair_coeff`, `bond_coeff`, and the `read_data` file with actual values and data files specific to the system you are simulating.

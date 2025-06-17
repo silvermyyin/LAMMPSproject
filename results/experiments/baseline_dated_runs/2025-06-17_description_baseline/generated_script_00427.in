@@ -1,0 +1,64 @@
+# LAMMPS input script for computing elastic constant tensor at finite temperature
+
+# Load modular files
+include init.mod
+include potential.mod
+include displace.mod
+
+# Main script
+units metal
+atom_style atomic
+
+# Initialize simulation parameters
+read_data data.crystal
+
+# Equilibrate the system
+fix 1 all npt temp 300.0 300.0 100.0 iso 0.0 0.0 1000.0
+thermo 100
+thermo_style custom step temp pe etotal press
+run 10000  # Equilibration run
+
+# Unfix the NPT ensemble and switch to NVT
+unfix 1
+fix 1 all nvt temp 300.0 300.0 100.0
+run 5000  # Further equilibration
+
+# Calculate elastic constants
+variable delta equal 0.001
+
+# Loop over six deformation modes
+variable i loop 6
+label loop_start
+
+include displace.mod # Displace and calculate stress
+
+# Reset simulation box
+reset_timestep 0
+run 5000  # Allow relaxation after deformation
+
+# Increment loop variable
+next i
+jump SELF loop_start
+
+# Calculate and output elastic constants
+variable c11 equal (v_pxx1-v_pxx2)/v_delta
+variable c12 equal (v_pxx2-v_pxx3)/v_delta
+variable c44 equal (v_pxx3-v_pxx4)/v_delta
+
+# Output results
+print "Elastic Constant C11: ${c11} GPa"
+print "Elastic Constant C12: ${c12} GPa"
+print "Elastic Constant C44: ${c44} GPa"
+
+# Calculate average moduli for cubic crystals
+variable bulk_modulus equal (v_c11 + 2*v_c12)/3
+variable shear_modulus equal (v_c11 - v_c12)/2
+variable poisson_ratio equal v_c12/(v_c11 + v_c12)
+
+print "Bulk Modulus: ${bulk_modulus} GPa"
+print "Shear Modulus: ${shear_modulus} GPa"
+print "Poisson's Ratio: ${poisson_ratio}"
+
+# End of script
+
+**Note:** This script assumes that modular files `init.mod`, `potential.mod`, and `displace.mod` are correctly set up with the necessary configurations for the simulation, and that the `data.crystal` file contains the initial atomic configuration for your specific crystal.

@@ -1,0 +1,65 @@
+# LAMMPS Input Script for Argon System under Uniaxial Strain
+# Comparing Hardy and Cauchy-Born Metrics
+
+units real
+atom_style atomic
+boundary f p p
+
+# Create FCC lattice for Argon
+lattice fcc 4.05
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential using EAM for Argon
+pair_style eam
+pair_coeff * * Au_u3.eam
+
+# Set mass of atoms (using Gold mass for this example)
+mass * 196.97
+
+# Define groups
+group all_atoms type 1
+group internal region box
+
+# Simulation settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Thermodynamic output
+thermo 10
+thermo_style custom step temp pe ke press vol lx ly lz
+
+# Initial minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Initial timestep
+timestep 0.0
+
+# Apply ATC fixes for Hardy and Cauchy-Born metrics
+fix hardy all_atoms atc hardy file hardy_params.txt
+fix cauchy internal atc cauchy file cauchy_params.txt
+
+# Output settings for ATC
+fix hardy_output all_atoms atc output hardy output_file hardy.log
+fix cauchy_output internal atc output cauchy output_file cauchy.log
+
+# Uniaxial strain simulation
+variable strain_x equal "lx*0.01"
+variable step_count equal 100
+variable step_size equal 0.001
+
+# Run simulation with incremental displacement
+label loop
+variable i loop ${step_count}
+  displace_atoms all_atoms move ${step_size} 0.0 0.0 units box
+  run 10
+next i
+jump SELF loop
+
+# Final clean-up
+unfix hardy
+unfix cauchy
+unfix hardy_output
+unfix cauchy_output
+write_data final_data.dat

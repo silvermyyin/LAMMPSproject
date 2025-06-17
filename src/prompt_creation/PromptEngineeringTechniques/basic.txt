@@ -1,0 +1,2 @@
+# Basic Prompt Template
+Generate a LAMMPS input script for the following task: {task} 

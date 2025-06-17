@@ -1,0 +1,53 @@
+# LAMMPS Input Script for Cohesive Energy Calculation of Alpha-Titanium using MEAM/SW/spline potential
+
+# Initialization
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define custom HCP lattice for alpha-Titanium
+variable a equal 2.951  # Lattice constant a in Angstroms
+variable c equal 4.683  # Lattice constant c in Angstroms
+lattice         custom ${a} &
+                a1 1.0 0.0 0.0 &
+                a2 0.5 0.86602540378 0.0 &
+                a3 0.0 0.0 ${c}/${a} &
+                basis 0.0 0.0 0.0 &
+                basis 0.3333333 0.6666667 0.5
+
+# Create simulation box and atoms
+region          box block 0 1 0 1 0 1
+create_box      1 box
+create_atoms    1 box
+
+# Set mass of Titanium
+mass            1 47.90
+
+# Define potential
+pair_style      meam/sw/spline
+pair_coeff      * * potential_file.meam Ti
+
+# Zero temperature setup
+velocity        all create 0.0 12345 mom yes rot yes dist gaussian
+
+# Minimize to zero temperature configuration
+minimize        1.0e-8 1.0e-8 1000 10000
+
+# Compute potential energy and cohesive energy
+compute         pe all pe/atom
+variable        Ecoh equal pe/atoms
+thermo_style    custom step temp epair v_Ecoh
+thermo          1
+
+# Run a single timestep to output the energy
+run             0
+
+# Compare calculated cohesive energy with reference value
+variable        ref_Ecoh equal -4.831
+variable        diff equal v_Ecoh - v_ref_Ecoh
+print           "Calculated cohesive energy: ${Ecoh} eV/atom"
+print           "Reference cohesive energy: ${ref_Ecoh} eV/atom"
+print           "Difference: ${diff} eV/atom"
+
+# End of script

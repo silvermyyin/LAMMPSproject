@@ -1,0 +1,49 @@
+# LAMMPS input script for E3B3 water model simulation
+
+# Initialization
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data e3b_box.data
+
+# Pair and bond potentials
+pair_style hybrid/overlay e3b 4.5 tip4p/long/omp 1 2 1 1 0.1546 12.0
+pair_coeff * * tip4p/long/omp 0.0 0.0 0.0
+pair_coeff * * e3b
+
+bond_style harmonic
+bond_coeff 1 450 0.9572
+
+angle_style harmonic
+angle_coeff 1 55 104.52
+
+# Kspace style for long-range interactions
+kspace_style pppm/tip4p 1e-5
+
+# SHAKE constraints for rigid water molecules
+fix shake_water all shake 0.0001 20 0 b 1 a 1
+
+# Thermostat for NVT ensemble
+fix nvt_control all nvt temp 298.0 298.0 100.0
+
+# Timestep
+timestep 2.0
+
+# Output settings
+thermo 1000
+thermo_style custom step temp press vol pe etotal
+
+# Compute E3B interaction energy
+compute E3B_energy all pair e3b
+variable e3b_energy equal c_E3B_energy
+
+# Thermo output for E3B interaction energy
+thermo_modify lost warn
+thermo_style custom step temp press vol pe etotal v_e3b_energy
+
+# Run the simulation
+run 50000
+
+# End of script

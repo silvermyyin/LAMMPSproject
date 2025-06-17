@@ -1,0 +1,57 @@
+```lammps
+# LAMMPS input script for deposition of dimer molecules onto a substrate
+
+units           lj
+dimension       3
+boundary        p p f
+atom_style      molecular
+
+# Create simulation box
+region          simbox block 0 50 0 50 0 50
+create_box      3 simbox
+
+# Define substrate region
+region          substrate block 0 50 0 50 0 5
+create_atoms    1 random 500 12345 substrate
+group           substrate region substrate
+set             group substrate type 1
+
+# Define deposition region
+region          depo slab 0 50 0 50 45 50
+create_atoms    2 random 1000 67890 depo
+group           dimers region depo
+set             group dimers type 2
+
+# Define dimer bonds
+mass            1 1.0
+mass            2 1.0
+
+bond_style      harmonic
+bond_coeff      1 30.0 1.0
+
+# Pair interactions
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5
+pair_coeff      1 2 1.0 1.0 2.5
+pair_coeff      2 2 1.0 1.0 2.5
+
+# Define groups
+group           fixed_atoms type 1
+group           mobile_atoms type 2
+
+# Velocity setup
+velocity        dimers set 0.0 0.0 -0.1
+
+# Fixes
+fix             1 dimers rigid/nve/small molecule
+fix             2 mobile_atoms langevin 1.0 1.0 1.0 12345
+fix             3 fixed_atoms setforce 0.0 0.0 0.0
+
+# Run settings
+timestep        0.005
+thermo          100
+thermo_style    custom step temp pe press
+
+# Run simulation
+run             50000
+```

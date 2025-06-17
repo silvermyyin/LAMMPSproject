@@ -1,0 +1,58 @@
+```lammps
+# LAMMPS input script for calculating Hardy fields in an fcc Cu system with volumetric stretch
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create fcc lattice of copper
+lattice fcc 3.615
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Set potential and mass
+mass 1 63.550
+pair_style eam
+pair_coeff * * Cu_u3.eam
+
+# Define groups
+group all type 1
+
+# Define simulation settings
+neighbor 2.0 bin
+neigh_modify delay 0 every 1
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Atomistic-to-continuum coupling setup
+fix myAtC all atc field
+fix_modify myAtC mesh create 1 1 1 region box
+
+# Define thermo output
+thermo 100
+thermo_style custom step temp pe ke etotal press lx ly lz
+
+# Equilibration
+reset_timestep 0
+fix 1 all nvt temp 300.0 300.0 0.1
+run 5000
+unfix 1
+
+# Apply volumetric stretch
+variable stretch equal 1.001
+change_box all scale ${stretch} ${stretch} ${stretch} remap
+
+# Run simulation with AtC
+fix 2 all nvt temp 300.0 300.0 0.1
+run 5000
+unfix 2
+
+# Output AtC fields
+fix 3 all atc field_output every 100 file hardy_fields.txt
+
+# End of script
+```

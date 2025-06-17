@@ -1,0 +1,45 @@
+```lammps
+units           metal
+dimension       2
+boundary        f f p
+atom_style      atomic
+
+# Create an FCC lattice and region
+lattice         fcc 3.615
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define atomic masses for carbon
+mass            1 12.01
+
+# Initialize velocities for temperature control
+velocity        all create 300.0 12345
+
+# Set up potential (using a generic pair style for demonstration)
+pair_style      tersoff
+pair_coeff      * * SiC.tersoff C
+
+# Setup AtC package
+fix             atc all atc
+fix_modify      atc mesh create brick 10 10 1
+fix_modify      atc node set temperature 300.0
+fix_modify      atc node set electron_density 0.005
+fix_modify      atc node set gate_voltage 5.0
+
+# Define the integration and Poisson solver
+fix_modify      atc electron integration explicit
+fix_modify      atc poisson solver iterative
+
+# Boundary conditions for electrical and thermal behavior
+fix_modify      atc node bc set temperature 300.0
+fix_modify      atc element bc set voltage 5.0
+
+# Thermodynamic output
+thermo          100
+thermo_style    custom step time temp pe ke etotal f_atc[etemp] f_atc[edensity]
+
+# Run the simulation
+timestep        0.001
+run             10000
+```

@@ -1,0 +1,46 @@
+# LAMMPS Input Script for a 3D Lennard-Jones Melt Simulation
+
+# Initialize the simulation
+units lj
+atom_style atomic
+
+# Define variables for box dimensions
+variable x equal 20
+variable y equal 20
+variable z equal 20
+
+# Create the simulation box
+lattice fcc 1.0
+region box block 0 ${x} 0 ${y} 0 ${z}
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set atom mass
+mass 1 1.0
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp epair etotal press
+
+# Read atomic configurations from dump file and perform zero-timestep runs
+read_dump dumpfile200.lammpstrj 200 x y z box yes
+run 0
+
+read_dump dumpfile800.lammpstrj 800 x y z box yes
+run 0
+
+read_dump dumpfile600.lammpstrj 600 x y z box yes
+run 0
+
+read_dump dumpfile400.lammpstrj 400 x y z box yes
+run 0
+
+# End of LAMMPS input script

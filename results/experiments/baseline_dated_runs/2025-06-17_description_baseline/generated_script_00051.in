@@ -1,0 +1,45 @@
+# LAMMPS input script for silicon using the Stillinger-Weber potential
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Create a region and lattice
+region box block 0 10 0 10 0 10
+create_box 1 box
+lattice diamond 5.431
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style sw
+pair_coeff * * Si.sw Si
+
+# Initialize simulation settings
+reset_timestep 0
+neighbor 1.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define variables for output intervals
+variable thermo_step equal 100
+variable ave_time_step equal 1000
+
+# Output settings
+thermo ${thermo_step}
+thermo_style custom step temp pe press
+
+# Fix for averaging pressure over time
+fix 1 all ave/time 1 ${ave_time_step} ${ave_time_step} v_press file pressure_avg.txt ave one
+
+# Integrator
+fix 2 all nve
+
+# Optional Langevin thermostat
+# Uncomment the following lines to apply the Langevin thermostat
+# variable target_temp equal 300.0
+# variable damp equal 100.0
+# variable seed equal 12345
+# fix 3 all langevin ${target_temp} ${target_temp} ${damp} ${seed}
+
+# Run the simulation
+timestep 0.001
+run 10000

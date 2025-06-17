@@ -1,0 +1,37 @@
+```lammps
+# LAMMPS input script for graphene-OH interacting with Cu2O (110) using COMB3 potential
+
+units           real
+atom_style      charge
+boundary        p p p
+
+# Read initial configuration and charges
+read_data       graphene_Cu2O.data
+
+# Set atomic masses
+mass            1 15.9994   # Oxygen
+mass            2 63.546    # Copper
+mass            3 1.00784   # Hydrogen
+mass            4 12.011    # Carbon
+
+# Specify COMB3 potential
+pair_style      comb3 polar_off
+pair_coeff      * * ffield.comb3 O Cu H C
+
+# Charge equilibration
+fix             1 all qeq/comb 10 0.0001
+
+# Integrate using NVE ensemble
+fix             2 all nve
+
+# Initialize temperature
+velocity        all create 300.0 12345
+
+# Thermodynamic output
+thermo          10
+thermo_style    custom step temp etotal pe press
+
+# Run the simulation
+timestep        0.00020
+run             100
+```

@@ -1,0 +1,39 @@
+```lammps
+# LAMMPS input script for simulating a Lennard-Jones fluid in an fcc lattice
+
+# Initialize simulation
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create FCC lattice
+lattice fcc 0.8442
+region simbox block 0 4 0 4 0 4
+create_box 1 simbox
+create_atoms 1 box
+
+# Set masses
+mass 1 1.0
+
+# Define Lennard-Jones potential with smoothing
+pair_style lj/smooth/linear 3.0
+pair_coeff 1 1 1.0 1.0 3.0
+
+# Initialize velocities
+velocity all create 0.1 87287 loop geom
+
+# Define harmonic mapping average (HMA) parameters
+variable T_hma equal 9.579586686264458
+
+# Set up output for potential energy, pressure, and HMA
+thermo_style custom step time temp pe press v_T_hma
+thermo 1000
+
+# Define fix for NVT ensemble with Nosé-Hoover thermostat
+fix 1 all nvt temp 1.0 1.0 0.5
+
+# Run the simulation
+timestep 0.005
+run 220000
+```

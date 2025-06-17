@@ -1,0 +1,48 @@
+# LAMMPS input script for 3D molecular dynamics simulation of an FCC lattice of nickel with spin dynamics
+
+units           metal
+atom_style      atomic
+atom_modify     map array
+
+boundary        p p p
+
+# Create FCC lattice of nickel
+lattice         fcc 3.52
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Pair styles for atomic and spin interactions
+pair_style      hybrid/overlay eam/alloy spin/exchange 1.0
+pair_coeff      * * eam/alloy Ni_u3.eam
+
+# Initialize spins randomly
+spin            random
+
+# Define groups
+group           nickel type 1
+
+# Set initial velocity distribution at 100 K
+velocity        all create 100.0 12345 mom yes rot yes dist gaussian
+
+# Define integration style
+fix             1 all nve/spin
+
+# Spin relaxation with Langevin thermostat
+fix             2 all langevin/spin 100.0 100.0 21.0 12345
+
+# Thermodynamic outputs
+thermo          100
+thermo_style    custom step time temp pe ke etotal
+
+# Output atomistic and spin data
+dump            1 all custom 100 dump.atom id type x y z vx vy vz
+dump            2 all custom 100 dump.spin id type sx sy sz
+
+# Run the simulation
+timestep        0.0001
+run             1000
+
+# End of script
+
+This script sets up a molecular dynamics simulation for an FCC lattice of nickel, incorporating atomic interactions via the EAM potential and spin dynamics using a spin/exchange pair style. The simulation initializes random spin orientations and applies a Langevin thermostat for spin relaxation. Outputs include thermodynamic and atomic/spin data, facilitating post-simulation analysis of magnetic properties.

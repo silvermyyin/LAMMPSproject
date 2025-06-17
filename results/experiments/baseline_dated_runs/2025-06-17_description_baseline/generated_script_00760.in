@@ -1,0 +1,32 @@
+# LAMMPS input script for water simulation using HDNNP
+
+units metal
+atom_style full
+
+# Define simulation box with periodic boundaries
+read_data water_data_360.dat
+
+# Set up pair style and coefficients
+pair_style hybrid/overlay lj/cut 8.0 hdnnp 6.36 hdnnp_dir ./hdnnp_data
+pair_coeff * * lj/cut 0.0 0.0  # Disable Lennard-Jones for this example
+pair_coeff * * hdnnp 1 2 3 # Assuming 3 atom types in HDNNP
+
+# Neighbor settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the integration ensemble
+fix 1 all nve
+
+# Run the simulation
+timestep 0.0005
+run 10
+
+# Output settings (commented out)
+# dump 1 all atom 1 water_sim.lammpstrj
+# dump_modify 1 sort id
+
+# Unfixes and cleanup
+unfix 1
+
+This script sets up a molecular dynamics simulation for water using a high-dimensional neural network potential (HDNNP) in LAMMPS. The focus is on testing the potential setup and integration for a few steps, with output commands commented out as requested.

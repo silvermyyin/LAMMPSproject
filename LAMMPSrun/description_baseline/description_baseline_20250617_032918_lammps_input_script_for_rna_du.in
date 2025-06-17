@@ -1,0 +1,47 @@
+```lammps
+# LAMMPS input script for RNA duplexes using the oxRNA2 model
+
+units lj
+atom_style hybrid bond ellipsoid oxdna
+boundary p p p
+
+read_data rna_duplex.data
+
+pair_style hybrid/overlay lj/cut 1.122 fene 30.0 1.5 1.0 1.0 \
+                            oxdna2/ex_vol oxrna2/stack oxrna2/hbond \
+                            oxrna2/xstack oxrna2/coaxstack oxrna2/dh 1.0
+
+pair_coeff * * lj/cut 0.0 1.0
+bond_style fene
+bond_coeff * 30.0 1.5 1.0 1.0
+
+# oxRNA2 specific pair potentials
+pair_coeff * * oxdna2/ex_vol
+pair_coeff * * oxrna2/stack
+pair_coeff * * oxrna2/hbond
+pair_coeff * * oxrna2/xstack
+pair_coeff * * oxrna2/coaxstack
+pair_coeff * * oxrna2/dh 1.0
+
+mass 1 1.0  # Set mass for atom type 1
+mass 2 1.0  # Set mass for atom type 2
+mass 3 1.0  # Set mass for atom type 3
+
+group rna type 1 2 3
+
+neighbor 1.0 bin
+neigh_modify every 1 delay 0 check yes
+
+fix 1 all nve/asphere
+
+timestep 0.01706
+
+thermo_style custom step temp pe ke etotal
+thermo 1000
+
+dump 1 all custom 1000 dump.rna id type x y z
+
+run 1000000
+
+write_data final_rna_duplex.data
+```

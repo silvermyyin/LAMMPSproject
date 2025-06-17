@@ -1,0 +1,60 @@
+# LAMMPS Input Script for Argon System with Shear Deformation
+# Comparing Hardy and Cauchy-Born Metrics
+
+units metal
+atom_style atomic
+
+# Initialize simulation box
+lattice fcc 4.05
+region box prism 0 10 0 10 0 10 0 0 0 units lattice
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/smooth/linear 2.5
+pair_coeff 1 1 0.0103 3.4
+
+# Define boundary conditions
+boundary p p p
+
+# Initialize velocities
+velocity all create 300.0 12345
+
+# Define fixes
+fix 1 all nvt temp 300.0 300.0 0.1
+fix 2 all atc full
+
+# AtC fields
+fix_modify 2 atc field density
+fix_modify 2 atc field internal_energy
+fix_modify 2 atc field stress
+fix_modify 2 atc field displacement
+fix_modify 2 atc field cb_force_density
+fix_modify 2 atc field cb_energy_density
+
+# Minimization
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Shear deformation loop
+variable shear_step equal 0.01
+variable max_shear_steps equal 100
+
+label loop
+variable i loop ${max_shear_steps}
+
+  # Apply shear deformation
+  displace_box all xy delta ${shear_step}
+  run 1000
+
+  # Output thermodynamic data
+  thermo 100
+  thermo_style custom step temp pe lx ly lz pxx pyy pzz pxy pxz pyz
+
+  # Compare Hardy and Cauchy-Born fields
+  fix_modify 2 atc output every 100 file cb_hardy_comparison.txt
+
+next i
+jump SELF loop
+
+# End of script

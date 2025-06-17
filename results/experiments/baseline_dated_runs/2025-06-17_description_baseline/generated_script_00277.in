@@ -1,0 +1,35 @@
+# LAMMPS input script for a 3D molecular dynamics simulation using ReaxFF potential
+
+units real
+atom_style atomic
+
+# Create simulation box
+lattice fcc 4.4300
+region box block 0 20 0 20 0 20
+create_box 1 box
+create_atoms 1 box
+
+# Define masses
+mass 1 39.95
+
+# Set potential using ReaxFF from KIM
+kim_init simulator models Sim_LAMMPS_ReaxFF_StrachanVanDuinChakraborty_2003_CHNO__SM_107643900657_000
+pair_style reax/c library.reaxc NULL
+pair_coeff * * CHON.ff
+
+# Set initial velocities
+velocity all create 200.0 12345
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the integration method
+fix 1 all nve
+
+# Run the simulation
+timestep 1.0
+run 100
+
+# Cleanup
+unfix 1

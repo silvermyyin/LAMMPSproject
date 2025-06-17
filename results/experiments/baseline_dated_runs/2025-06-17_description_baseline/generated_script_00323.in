@@ -1,0 +1,50 @@
+# LAMMPS input script for conducting interface simulation between charged liquid and solid argon
+
+units           real
+atom_style      charge
+dimension       3
+boundary        f p p
+
+# Read initial configuration
+read_data       interface_system.data
+
+# Define groups for solid and fluid argon
+group           solid type 1
+group           fluid type 2
+
+# Set Lennard-Jones potential for argon-argon interactions
+pair_style      lj/cut 10.0
+pair_coeff      * * 0.238 3.405  # Using standard Lennard-Jones parameters for Argon
+
+# Initialize simulation parameters
+timestep        1.0
+thermo          100
+thermo_style    custom step temp press pe ke etotal density
+
+# Define the AtC package settings for electrostatic interactions
+fix             atc all atc transfer fix_flux
+
+# Create a non-uniform grid for AtC
+fix_modify      atc mesh 20 20 20
+
+# Apply species concentration, mass density, and charge density fields
+fix_modify      atc field species_concentration solid_conc fluid_conc
+fix_modify      atc field mass_density mass_solid mass_fluid
+fix_modify      atc field charge_density charge_solid charge_fluid
+
+# Set extrinsic charges at the interface
+region          interface block 0 10 INF INF INF INF
+group           interface region interface
+fix             charge_interface interface atc field_apply charge_density
+
+# Control charge feedback and potential settings
+fix_modify      atc charge feedback 1.0
+fix_modify      atc potential shielding far-field static_source
+
+# Output volume integrals of properties
+fix             output_all all atc output volume_integral mass_density charge_density
+
+# Run the simulation
+run             10000
+
+# End of script

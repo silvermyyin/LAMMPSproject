@@ -1,0 +1,34 @@
+Here is a simple LAMMPS input script that fulfills the given requirements:
+
+```lmp
+# LAMMPS Input Script
+
+units lj
+dimension 3
+boundary p p f
+
+atom_style atomic
+lattice fcc 0.8442
+region box block 0 5 0 5 0 5
+create_box 1 box
+create_atoms 1 box
+mass 1 1.0
+
+pair_style none
+pair_coeff * * 
+
+velocity all create 1.0 87287
+
+fix 1 all shake 0.0001 20 0 b 1 a 1
+
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+run 25000
+```
+
+This script sets up a 3D LAMMPS simulation with a periodic boundary condition in the x and y directions and a fixed boundary condition in the z direction (boundary p p f). The simulation uses Lennard-Jones units (units lj) and the atomic style (atom_style atomic). It creates a simulation box (via create_box) and fills it with atoms (via create_atoms). The pair potential is set to none, so no interactions between atoms are calculated.
+
+The script then initializes the velocities of the atoms (via velocity) and applies the SHAKE constraint (via fix shake). The simulation is run for 25,000 timesteps (run 25000). 
+
+This script also outputs thermodynamic properties such as the temperature, potential energy, kinetic energy, total energy, and pressure every 100 timesteps (thermo 100 and thermo_style custom).

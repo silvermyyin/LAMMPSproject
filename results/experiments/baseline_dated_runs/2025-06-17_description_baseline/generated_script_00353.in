@@ -1,0 +1,50 @@
+# LAMMPS input script for thermal transport simulation in a 2D system using AtC
+
+# Initialize simulation
+units real
+dimension 2
+boundary p p f
+atom_style atomic
+
+# Create FCC lattice
+lattice fcc 3.615
+
+# Define regions
+region cyl_region cylinder z 0.0 0.0 10.0 0.0 20.0
+region block_region block -10.0 10.0 -10.0 10.0 0.0 20.0
+region intersect_region intersect 2 cyl_region block_region
+
+# Create simulation box and read atoms
+create_box 1 intersect_region
+read_data initial_data_file.data
+
+# Set potential
+pair_style lj/cut 13.5
+pair_coeff * * 0.0103 3.4
+
+# AtC coupling for thermal transport
+fix atc all atc thermal
+fix_modify atc mesh create 0.5 0.5 0.0 10 10 1
+fix_modify atc initial_temperature 300.0
+fix_modify atc boundary_temperature 300.0 500.0
+fix_modify atc thermal_flux 0.01
+
+# Time integration and equilibration
+timestep 5.0
+thermo 100
+run_style verlet
+run 500
+
+# Reset timestep and continue equilibration
+reset_timestep 0
+run 1000
+
+# Output settings
+dump 1 all custom 100 mesh_output.lammpstrj id type x y z
+fix 2 all ave/time 100 1 100 c_temp file temperature_profile.txt mode vector
+
+# Exponential filter for equilibration
+fix 3 all nve/limit 0.1
+run 500
+
+# End of script

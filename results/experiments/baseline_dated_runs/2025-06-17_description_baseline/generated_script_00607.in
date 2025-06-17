@@ -1,0 +1,50 @@
+# LAMMPS input script for QMMM simulation of SiO2 interacting with methane
+
+# Initialize simulation
+units real
+dimension 3
+boundary p p p
+atom_style full
+
+# Read data file containing zeolite and methane structure
+read_data zeolite_methane.data
+
+# Define atom groups
+group mm type 1 2  # Silicon and Oxygen
+group qm type 3 4  # Carbon and Hydrogen
+
+# Define pair styles and coefficients
+pair_style hybrid/overlay buck/coul/long 6.5 lj/cut 6.5
+pair_coeff * * buck/coul/long 0.0 0.0 0.0  # No Buckingham for QM atoms
+pair_coeff 1 2 buck/coul/long 18000.0 0.3 133.0  # Si-O
+pair_coeff 1 1 buck/coul/long 18000.0 0.3 133.0  # Si-Si
+pair_coeff 2 2 buck/coul/long 18000.0 0.3 133.0  # O-O
+
+pair_coeff 3 3 lj/cut 0.1094 3.758  # C-C
+pair_coeff 4 4 lj/cut 0.0300 2.5    # H-H
+pair_coeff 3 4 lj/cut 0.0450 3.129  # C-H (mixing rule)
+
+# Define QM/MM interaction
+fix qmmm all mdi/qmmm
+
+# Set up neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initialize velocities for QM atoms
+velocity qm create 300.0 4928459 dist gaussian
+
+# Integrate QM atoms using NVE
+fix 1 qm nve
+
+# Set timestep
+timestep 0.0001
+
+# Thermo settings
+thermo 1
+thermo_style custom step temp pe ke etotal press
+
+# Run the simulation
+run 10000
+
+Note: This script assumes that a data file named `zeolite_methane.data` exists and contains the atomic coordinates and types for the SiO2 zeolite structure and the methane molecule. The `mdi/qmmm` fix is hypothetical and would need to be replaced with the appropriate QM/MM interface used in practice, as LAMMPS does not natively support QM/MM.

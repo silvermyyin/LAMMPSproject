@@ -1,0 +1,42 @@
+# LAMMPS input script for MOF simulation using MOF-FF force field
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read the atomic configuration from data file
+read_data       hkust1.data
+
+# Define pair style and coefficients
+pair_style      buck6d/coul/gauss/dsf 12.0 0.2
+pair_coeff      * * 1000.0 3.0 25000.0 2.5 1.0 1.0 # Example coefficients for all atom types
+
+# Define bond styles and coefficients
+bond_style      hybrid class2 morse
+bond_coeff      1 class2 320.0 1.4 2.5 1.0 0.5 0.1
+bond_coeff      2 morse 300.0 1.2 1.8
+
+# Define angle styles and coefficients
+angle_style     hybrid class2/p6 cosine/buck6d
+angle_coeff     1 class2/p6 80.0 109.5 1.0 0.5 0.2
+angle_coeff     2 cosine/buck6d 100.0 120.0 3.0 0.5 2.0
+
+# Define dihedral styles and coefficients
+dihedral_style  opls
+dihedral_coeff  1 0.0 1.0 0.5 0.0
+
+# Neighbor and communication settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Define simulation settings
+timestep        1.0
+thermo          100
+thermo_style    custom step temp etotal press
+
+# Run the simulation
+fix             1 all nvt temp 300.0 300.0 100.0
+run             10000
+
+# Output settings
+dump            1 all custom 500 dump.mof id type x y z

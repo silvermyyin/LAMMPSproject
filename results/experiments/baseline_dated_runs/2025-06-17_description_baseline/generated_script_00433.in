@@ -1,0 +1,44 @@
+# LAMMPS input script for electron system simulation
+
+units electron
+atom_style electron
+
+# Variables
+variable sname string "data.electron"
+
+# Initialize system
+read_data ${sname}
+
+# Define boundary conditions
+boundary p p p
+
+# Define pair style and cutoff
+pair_style eff/cut 6.447968
+pair_coeff * *
+
+# Define region for temperature analysis
+region temp_region block 0.0 10.0 0.0 10.0 0.0 10.0
+
+# Define compute for temperature and pressure
+compute temp_eff all temp/eff
+compute press_eff all pressure/evirials temp_eff
+
+# Output settings
+thermo 100
+thermo_style custom step temp c_temp_eff press c_press_eff pe ke etotal
+
+# Minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Initial run with temperature rescaling
+fix temp_rescale all temp/rescale/eff 0.0 300.0 0.1 1.0
+fix nve all nve/eff
+
+run 10000
+
+# Remove temperature rescaling and continue
+unfix temp_rescale
+
+run 10000
+
+# End of script

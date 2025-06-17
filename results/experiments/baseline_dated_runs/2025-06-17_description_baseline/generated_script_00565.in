@@ -1,0 +1,42 @@
+# LAMMPS Input Script for Binary Mixture: Liquid and Solid Particles
+
+units           lj
+atom_style      atomic
+boundary        p p p
+
+read_data       binary_mixture.data
+
+# Define pair style and coefficients
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5  # Liquid-Liquid interactions
+pair_coeff      1 2 0.8 1.2 2.5  # Liquid-Solid interactions
+pair_coeff      2 2 1.0 1.0 2.5  # Solid-Solid interactions
+
+# Define groups
+region          bottom block INF INF INF INF INF 0.5
+group           liquid type 1
+group           solid type 2
+group           bottom region bottom
+group           solid_up subtract solid bottom
+
+# Fixes
+fix             nvt_liquid liquid nvt temp 0.8 0.8 0.1
+fix             nve_solid solid nve
+fix             freeze_bottom bottom setforce 0.0 0.0 0.0
+fix             piston_up solid_up aveforce 0.0 0.0 -1.0
+
+# Compute stress
+compute         stress_liquid liquid stress/mop
+compute         stress_solid solid stress/mop
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe etotal press
+dump            1 all custom 100 dump.mixture id type x y z vx vy vz
+
+# Run setup
+run             0
+
+# Time averaging of stress
+fix             stress_avg_liquid liquid ave/time 1 100 100 c_stress_liquid file stress_liquid.txt
+fix             stress_avg_solid solid ave/time 1 100 100 c_stress_solid file stress_solid.txt

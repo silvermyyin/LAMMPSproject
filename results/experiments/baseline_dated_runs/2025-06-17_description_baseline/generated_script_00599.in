@@ -1,0 +1,45 @@
+# LAMMPS Input Script for Amorphous Carbon Simulation using ReaxFF
+
+# ---------- Initialize Simulation ---------------------
+units real
+atom_style charge
+boundary p p p
+
+# ---------- Create Simulation Box ---------------------
+lattice sc 26.25
+region simbox block 0 1 0 1 0 1
+create_box 1 simbox
+
+# ---------- Define Potential --------------------------
+pair_style reaxff lmp_control.reaxff
+pair_coeff * * ffield.reax C
+
+# ---------- Create Atoms ------------------------------
+create_atoms 1 random 2000 12345 simbox
+
+# ---------- Set Masses ------------------------------
+mass 1 12.01  # Carbon
+
+# ---------- Neighbor List -----------------------------
+neighbor 2.0 bin
+neigh_modify every 10 delay 0 check yes
+
+# ---------- Charge Equilibration ----------------------
+fix qeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reax/c
+
+# ---------- Define Settings ---------------------------
+timestep 0.1
+thermo 100
+thermo_style custom step temp pe etotal press density
+
+# ---------- Initial Velocities ------------------------
+velocity all create 3500.0 12345 mom yes rot yes dist gaussian
+
+# ---------- Fixes -------------------------------------
+fix nvt all nvt temp 3500.0 3500.0 100.0
+
+# ---------- Run Simulation ----------------------------
+dump myDump all custom 100 dump.amorphousC id type q x y z
+run 5000000
+
+Note: Ensure the `ffield.reax` file, which contains the ReaxFF force field parameters, and the `lmp_control.reaxff` configuration file for the ReaxFF potential are available in the working directory. These files should be configured to suit the specific system being simulated.

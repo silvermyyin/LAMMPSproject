@@ -1,0 +1,60 @@
+```lammps
+# LAMMPS script for calculating elastic constants of fcc Argon
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create the fcc lattice of Argon with lattice parameter 5.405 Å
+lattice         fcc 5.405
+region          box block 0 5 0 5 0 5
+create_box      1 box
+create_atoms    1 box
+
+# Define interatomic potential: Lennard-Jones
+pair_style      lj/cut 12.0
+pair_coeff      1 1 0.0103 3.40  # Argon parameters: epsilon = 0.0103 eV, sigma = 3.40 Å
+
+# Define mass of Argon
+mass            1 39.948
+
+# Set the initial temperature
+velocity        all create 60.0 12345 mom yes rot yes dist gaussian
+
+# Setup NPT ensemble for equilibration
+fix             1 all npt temp 60.0 60.0 1.0 iso 0.0 0.0 10.0
+
+# Run equilibration
+timestep        0.001
+thermo          100
+thermo_style    custom step temp press vol
+run             10000
+
+# Change box dimensions to maintain correct density
+unfix           1
+fix             2 all nvt temp 60.0 60.0 1.0
+
+# Compute necessary properties for elastic constants
+compute         1 all stress/atom NULL
+compute         2 all reduce sum c_1[1] c_1[2] c_1[3] c_1[4] c_1[5] c_1[6]
+
+# Setup output for elastic constants calculation
+variable        V equal vol
+variable        C11 equal (c_2[1]+c_2[2]+c_2[3])/3/${V}*160.21766208
+variable        C12 equal (c_2[4]+c_2[5]+c_2[6])/3/${V}*160.21766208
+variable        C44 equal (c_2[1]-c_2[2])/2/${V}*160.21766208
+
+# Run the simulation and calculate elastic constants
+run             20000
+
+# Output the calculated elastic constants
+print           "C11 = ${C11} GPa"
+print           "C12 = ${C12} GPa"
+print           "C44 = ${C44} GPa"
+
+# Clean up
+unfix           2
+```
+
+This script sets up a face-centered cubic lattice of Argon atoms, equilibrates the system, and computes the elastic constants C11, C12, and C44 using stress and volume calculations. The results are averaged and printed in GPa.

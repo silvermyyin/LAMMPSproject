@@ -1,0 +1,40 @@
+# LAMMPS Input Script for Single-Point Energy Calculations of UO2 Clusters
+
+units metal
+atom_style full
+
+# Loop over cluster sizes
+variable sizes loop 3
+label loop_start
+
+# Clear previous simulation data
+clear
+
+# Read data file for the current cluster size
+variable filename equal "cluster_${sizes}.data"
+read_data ${filename}
+
+# Set up the neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the timestep
+timestep 0.001
+
+# Establish MDI connection and set up quantum mechanical calculations
+mdi "-role ENGINE -name LAMMPS -method STANDALONE"
+fix 1 all mdi/qm virial yes
+
+# Output thermodynamic properties every step
+thermo 1
+thermo_style custom step temp pe etotal press
+
+# Perform the single-point energy calculation
+run 0
+
+# End of loop
+next sizes
+jump SELF loop_start
+
+# Terminate the MDI connection
+mdi exit

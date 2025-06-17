@@ -1,0 +1,32 @@
+# LAMMPS input script for silicalite in vacuum using Tersoff potential
+
+# Initialization
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Atom definition
+read_data       silicalite.data
+
+# Interatomic potential
+pair_style      tersoff
+pair_coeff      * * SiO2.tersoff Si O
+
+# Neighbor settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Thermostat
+fix             1 all nvt temp 300.0 300.0 0.1
+
+# Output settings
+thermo          1000
+thermo_style    custom step temp pe etotal press
+dump            1 all custom 1000 dump.silicalite id type x y z vx vy vz
+
+# Timestep
+timestep        0.0005
+
+# Run the simulation
+run             20000

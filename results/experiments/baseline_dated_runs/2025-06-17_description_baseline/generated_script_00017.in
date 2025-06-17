@@ -1,0 +1,34 @@
+# LAMMPS Input Script for Cyclohexane-Methane Mixture Simulation
+
+# Initialize simulation
+units real
+atom_style template
+
+# Read the restart file
+read_restart molecular-mix.restart
+
+# Read molecular structure file for cyclohexane
+molecule cyclohexane cyclohexane.mol
+
+# Define simulation settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the pair style and coefficients
+pair_style lj/cut 12.0
+pair_coeff * * 0.0 0.0  # Assuming placeholders, adjust based on actual data
+
+# Define the temperature control
+fix 1 all nvt temp 300.0 300.0 1.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp press pe ke etotal
+
+# Run the simulation
+timestep 1.0
+run 2000
+
+# Clean up
+unfix 1
+shell rm -f molecular-mix.restart

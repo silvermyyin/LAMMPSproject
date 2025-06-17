@@ -1,0 +1,40 @@
+# LAMMPS Input Script for Nylon Polymerization using Class2 Force Field
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read initial configuration from data file
+read_data       nylon_initial.data extra/bond/per/atom 4 extra/angle/per/atom 6
+
+# Define force field
+pair_style      lj/class2/coul/long 10.0
+bond_style      class2
+angle_style     class2
+dihedral_style  class2
+improper_style  class2
+kspace_style    pppm 1.0e-4
+
+# Initial velocities
+velocity        all create 300.0 4928459 dist gaussian
+
+# Define bond/react steps
+fix             1 all bond/react \
+                pair nylon.monomer unreacted reacted1 reacted2 \
+                react1 nylon_reaction_1.txt 1 1 \
+                react2 nylon_reaction_2.txt 1 1
+
+# NVT ensemble for temperature control
+fix             2 all nvt temp 300.0 300.0 100.0
+
+# Output settings
+thermo_style    custom step temp press density f_1[1] f_1[2] f_1[3]
+thermo          50
+
+# Run simulation
+timestep        1.0
+run             10000
+
+# Ensure proper cleanup
+unfix           1
+unfix           2

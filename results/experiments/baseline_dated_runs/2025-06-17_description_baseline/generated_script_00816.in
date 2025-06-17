@@ -1,0 +1,44 @@
+# LAMMPS input script for 3D Lennard-Jones melt simulation
+
+units       lj
+atom_style  atomic
+
+# Define simulation box and lattice
+lattice     fcc 0.8442
+region      box block 0 10 0 10 0 10
+create_box  1 box
+create_atoms 1 box
+
+# Mass of atoms
+mass        1 1.0
+
+# Pair potential using Python-based pair style
+pair_style  python 2.5 file py_pot.LJCutMelt
+pair_coeff  * *
+
+# Define neighbor list settings
+neighbor    0.3 bin
+neigh_modify every 20 delay 0 check yes
+
+# Set initial velocities
+velocity    all create 3.0 87287
+
+# Define integration parameters
+fix         1 all nve
+
+# Output settings
+thermo      50
+
+# Run simulation with restarts and data output
+run         250
+write_restart restart1.lmp
+
+run         250
+write_restart restart2.lmp
+
+run         250
+write_data  melt.data
+
+# Clean up temporary files
+shell rm restart1.lmp
+shell rm restart2.lmp

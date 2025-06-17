@@ -1,0 +1,69 @@
+```lammps
+# LAMMPS Input Script for QMMM Simulation of Two Water Molecules
+
+units real
+atom_style full
+
+# Create simulation box and define atoms
+boundary p p p
+region simbox block 0 10 0 10 0 10
+create_box 2 simbox
+
+# Define atom types
+# 1 = QM Oxygen
+# 2 = QM Hydrogen
+# 3 = MM Oxygen
+# 4 = MM Hydrogen
+
+# Create atoms
+create_atoms 1 single 2.0 5.0 5.0
+create_atoms 2 single 2.96 5.0 5.0
+create_atoms 2 single 2.0 5.76 5.0
+create_atoms 3 single 7.0 5.0 5.0
+create_atoms 4 single 7.96 5.0 5.0
+create_atoms 4 single 7.0 5.76 5.0
+
+# Define masses
+mass 1 15.999
+mass 2 1.008
+mass 3 15.999
+mass 4 1.008
+
+# Define LJ parameters for MM interactions
+pair_style hybrid/overlay lj/cut 10.0 coul/long 10.0
+pair_coeff * * lj/cut 0.0 0.0 # No LJ for QM atoms
+pair_coeff 3 3 lj/cut 0.1521 3.1507
+pair_coeff 3 4 lj/cut 0.0 0.0
+pair_coeff 4 4 lj/cut 0.0 0.0
+
+# Define bond and angle interactions for MM atoms
+bond_style harmonic
+bond_coeff 1 450.0 0.9572
+angle_style harmonic
+angle_coeff 1 55.0 104.52
+
+# Assign bonds and angles (only for MM molecule)
+create_bonds single 3 4 4
+create_bonds single 4 4 3
+create_angles single 4 4 4
+
+# Group atoms
+group QM type 1 2
+group MM type 3 4
+
+# Initialize velocities
+velocity all create 300.0 12345
+
+# Define QM/MM coupling
+fix qmmm all mdi/qmmm nwchem
+
+# Time integration
+fix 1 all nve
+
+# Output settings
+thermo 1
+thermo_style custom step temp etotal pe ke
+
+# Run simulation
+run 1000
+```

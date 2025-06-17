@@ -1,0 +1,42 @@
+# LAMMPS input script for drift-diffusion and Schrödinger equations in semiconductor
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Create a 1D domain
+lattice         fcc 5.43
+region          simbox block 0 10 0 1 0 1
+create_box      1 simbox
+create_atoms    1 box
+
+mass            1 1.0
+
+# Setup AtC package
+fix             atc all atc two_temperature
+fix_modify      atc mesh create 40 1 1
+fix_modify      atc mesh set matfile Si_ddm_schrodinger.mat
+
+# Define node sets for boundary conditions
+fix_modify      atc mesh node_set add left 0 0 0 0
+fix_modify      atc mesh node_set add right 10 0 0 0
+
+# Initial conditions
+fix_modify      atc initial_conditions set temperature 300.0
+fix_modify      atc initial_conditions set electron_temperature 30000.0
+fix_modify      atc initial_conditions set electron_density 0.0
+fix_modify      atc initial_conditions set wavefunction 0.0
+fix_modify      atc initial_conditions set potential 0.0
+
+# Apply electric potential gradient
+fix_modify      atc boundary_conditions set potential left 0.0
+fix_modify      atc boundary_conditions set potential right 1.0
+
+# Thermodynamic output
+thermo_style    custom step temp pe ke etotal press v_electron_density
+thermo          100
+
+# Run the simulation
+timestep        0.001
+run             10000

@@ -1,0 +1,21 @@
+# Ignore Python virtual environment
+.venv/
+venv/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore LAMMPS log files
+results/be_description_generated_logs/
+
+# Ignore LAMMPS dump files
+dump_*.xyz
+sw_example.xml
+
+# Ignore outdated/intermediate result files
+results/experiments/comprehensive_baseline_*
+results/experiments/improved_baseline_*
+results.csv
+results_table.tex
+*.log
+log.lammps 

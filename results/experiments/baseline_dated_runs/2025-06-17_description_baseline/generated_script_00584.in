@@ -1,0 +1,40 @@
+# LAMMPS Input Script for Bilayer Graphene with Adsorbates
+
+units metal
+dimension 3
+boundary p p p
+
+atom_style atomic
+
+# Read atomic data from file
+read_data graphene_bilayer.data
+
+# Define groups for different layers
+group layer1 id <= 1000
+group layer2 id > 1000
+
+# Define potentials
+pair_style hybrid rebo airebo 3.0 lj/cut 10.0 ilp/graphene_hBN
+pair_coeff * * rebo CH.airebo NULL C
+pair_coeff * * ilp/graphene_hBN C C
+
+# Initialize velocities for the system
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define computes to check energy contributions
+compute rebo_energy all pe/atom pair rebo
+compute ilp_energy all pe/atom pair ilp/graphene_hBN
+
+# Define temperature compute
+compute temp all temp
+
+# Set up the integration
+timestep 0.001
+fix nve all nve
+
+# Output settings
+thermo 100
+thermo_style custom step temp etotal pe ke
+
+# Run the simulation
+run 1000

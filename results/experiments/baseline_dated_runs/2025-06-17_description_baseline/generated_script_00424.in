@@ -1,0 +1,95 @@
+# LAMMPS input script for Monte Carlo relaxation of a perturbed 2D hexagonal lattice
+
+units lj
+dimension 2
+atom_style atomic
+
+# Create a 2D hexagonal lattice
+lattice hex 1.0
+region box block 0 10 0 10 -0.1 0.1
+create_box 1 box
+create_atoms 1 box
+
+# Define Lennard-Jones potential with shifted energy at cutoff
+pair_style lj/cut 2.5
+pair_modify shift yes
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Setup neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Variables for simulation
+variable max_disp equal 0.2
+variable mc_disp equal 0.1
+variable T equal 0.05
+variable accepted_moves equal 0
+variable attempted_moves equal 0
+variable min_energy equal 0
+
+# Initialize velocities to perturb the lattice
+velocity all create 0.0 12345
+displace_atoms all random v_max_disp v_max_disp 0 12345
+
+# Compute initial energy
+compute pe all pe
+variable initial_energy equal c_pe
+variable min_energy equal c_pe
+
+thermo_style custom step temp v_initial_energy v_min_energy v_accepted_moves
+thermo 1
+
+# Monte Carlo move loop
+variable mc_steps loop 1000
+label loop_mc
+  # Randomly select an atom and attempt a displacement
+  variable atom_id equal floor(random(1, count(all), 12345))
+  variable dx equal random(-v_mc_disp, v_mc_disp, 12345)
+  variable dy equal random(-v_mc_disp, v_mc_disp, 12345)
+  group selected id v_atom_id
+
+  # Store current position and energy
+  compute pe_old selected pe
+  variable old_pe equal c_pe_old
+  displace_atoms selected move v_dx v_dy 0.0
+  compute pe_new selected pe
+  variable new_pe equal c_pe_new
+
+  # Metropolis criterion
+  variable delta_pe equal v_new_pe - v_old_pe
+  variable acceptance equal exp(-v_delta_pe/v_T)
+  if "${delta_pe} < 0.0" then &
+    "variable accepted equal 1" &
+  else &
+    "variable rand equal random(0.0, 1.0, 12345)" &
+    "if ${rand} < ${acceptance} then variable accepted equal 1 else variable accepted equal 0"
+
+  # Accept or reject the move
+  if "${accepted} == 1" then &
+    "variable accepted_moves equal ${accepted_moves} + 1" &
+  else &
+    "displace_atoms selected move -v_dx -v_dy 0.0"
+
+  # Update minimum energy
+  if "${new_pe} < ${min_energy}" then &
+    "variable min_energy equal ${new_pe}"
+
+  # Increment attempted moves
+  variable attempted_moves equal ${attempted_moves} + 1
+
+  # Output current state
+  print "Step ${mc_steps} Attempt ${attempted_moves} Accepted ${accepted_moves} Energy ${new_pe}"
+
+  next mc_steps
+jump SELF loop_mc
+
+# Output final results
+print "Initial Energy: ${initial_energy}"
+print "Final Energy: ${new_pe}"
+print "Minimum Energy: ${min_energy}"
+print "Total Accepted Moves: ${accepted_moves}"
+print "Total Attempted Moves: ${attempted_moves}"
+
+# End of the script
+
+This script sets up a 2D hexagonal lattice, perturbs it, then uses Monte Carlo moves to relax the system. The energy is evaluated using Lennard-Jones interactions with a shifted cutoff, and the simulation outputs relevant energy and move data.

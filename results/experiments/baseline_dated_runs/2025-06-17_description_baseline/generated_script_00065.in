@@ -1,0 +1,41 @@
+# LAMMPS input script for simple cubic lattice of silicon using MEAM/SW/spline potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create lattice and simulation box
+lattice sc 2.612
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Set atomic mass for silicon
+mass 1 28.085
+
+# Define potential
+pair_style meam/spline
+pair_coeff * * meam/spline Si.meam.spline Si
+
+# Define neighbor settings
+neighbor 2.0 bin
+neigh_modify delay 10
+
+# Set thermo output
+thermo 1
+thermo_style custom step pe lx ly lz
+
+# Run a single step to compute static properties
+run 0
+
+# Output properties
+variable cohesive_energy equal pe/atoms
+variable atomic_volume equal vol/atoms
+variable lattice_constant equal lx/10.0
+
+# Print results for analysis
+print "Cohesive energy per atom (eV): ${cohesive_energy}"
+print "Atomic volume (Angstrom^3): ${atomic_volume}"
+print "Lattice constant (Angstrom): ${lattice_constant}"

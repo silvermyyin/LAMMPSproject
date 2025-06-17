@@ -1,0 +1,45 @@
+```lammps
+# LAMMPS Input Script for 3D tDPD Simulation of Pure Diffusion with Reaction Source Term
+
+units lj
+atom_style dpd
+
+# Create a cubic simulation box
+region box block 0 20 0 20 0 20
+create_box 1 box
+
+# Create particles
+create_atoms 1 random 16000 12345 box
+
+# Set masses
+mass 1 1.0
+
+# tDPD pair style and coefficients
+pair_style tdpd 1.0 0.5 1.0 1.0 0.2
+pair_coeff * * 3.0 1.0 1.0
+
+# Set initial velocities
+velocity all create 1.0 12345
+
+# Define timestep and run parameters
+timestep 0.01
+thermo 100
+
+# Periodic boundary conditions
+boundary p p p
+
+# Define regions for source terms
+region source1 block INF INF INF INF 0.0 1.0
+region source2 block INF INF INF INF 19.0 20.0
+
+# Define fix for adding/removing particles
+fix add_particles all deposit 10 1 500 12345 region source1 near 0.1 attempt 10
+fix remove_particles all evaporate 10 12345 region source2 every 5
+
+# Monitor concentration using chunk/atom and fix ave/chunk
+compute concentration all chunk/atom bin/1d y lower 1.0 units box
+fix avg_conc all ave/chunk 10 10 100 concentration density/mass ave running file concentration_profile.dat
+
+# Run the simulation
+run 600
+```

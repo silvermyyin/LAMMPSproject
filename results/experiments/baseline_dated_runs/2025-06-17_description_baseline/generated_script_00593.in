@@ -1,0 +1,37 @@
+# LAMMPS input script for coarse-grained SPC/E water using hybrid/overlay pair style
+
+units           real
+atom_style      atomic
+dimension       3
+boundary        p p p
+
+# Create simulation box and atoms
+region          box block 0 50 0 50 0 50
+create_box      1 box
+# Assuming the atoms are already defined externally and read in
+read_data       system.data
+
+# Define pair styles
+pair_style      hybrid/overlay table spline 9.0 dpd/tstat 300.0 300.0 10.0 34387
+pair_coeff      * * table potential.table SPC/E
+pair_coeff      * * dpd/tstat 10.0 300.0 300.0
+
+# Initialize velocities
+velocity        all create 300.0 12345
+
+# Define integrator and run settings
+timestep        1.0
+fix             1 all nve
+
+# Thermostat using DPD
+fix             2 all temp/rescale 100 300.0 300.0 0.1 1.0
+fix_modify      2 temp dpd
+
+# Setup output
+thermo          100
+thermo_style    custom step temp press
+
+# Run the simulation
+run             1000
+
+Note: Ensure that the `system.data` file containing the initial atomic configuration and the `potential.table` file for the tabulated potential are correctly prepared and available in the working directory. Adjust the simulation box size, the number of atoms, and the potential table as needed based on your system specifics.

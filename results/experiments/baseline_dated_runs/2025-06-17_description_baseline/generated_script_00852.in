@@ -1,0 +1,37 @@
+# LAMMPS input script for 3D droplet oscillation simulation using many-body DPD
+
+units lj
+dimension 3
+boundary p p p
+
+atom_style dpd
+
+# Create simulation box
+region simbox block -25 25 -10 10 -10 10
+create_box 1 simbox
+
+# Create droplet region using FCC lattice
+lattice fcc 0.85
+region droplet sphere 0 0 0 8
+create_atoms 1 region droplet
+
+# Define pair styles and coefficients
+pair_style hybrid/overlay mdpd/rhosum 1.0 1.0 25.0 1.0 1.0 mdpd 1.0 1.0 25.0
+pair_coeff * * mdpd/rhosum 18.75 1.0 0.75 0.5
+pair_coeff * * mdpd 18.75 1.0 0.75 0.5
+
+# Set initial velocities
+velocity all create 1.0 12345 dist gaussian
+
+# Define compute for temperature monitoring
+compute myTemp all temp
+
+# Integrate equations of motion using fix mvv/dpd
+fix 1 all mvv/dpd 1.0 1.0 1.0 12345
+
+# Set timestep and run the simulation
+timestep 0.01
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+run 4000

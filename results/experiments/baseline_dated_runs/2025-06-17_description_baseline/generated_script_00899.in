@@ -1,0 +1,38 @@
+# LAMMPS input script for a solvated 5-mer peptide simulation
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data data.peptide
+
+# Set force field parameters
+pair_style lj/charmm/coul/long 10.0 12.0
+pair_modify mix arithmetic
+bond_style harmonic
+angle_style charmm
+dihedral_style charmm
+improper_style harmonic
+kspace_style pppm 1.0e-4
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the time step
+timestep 1.0  # 1 fs time step
+
+# Define the integration style
+run_style respa 3 2 2 bond 1 angle 1 dihedral 1 improper 1 pair 2 kspace 3
+
+# Apply NVT ensemble with thermostat
+fix 1 all nvt temp 250.0 250.0 100.0 tchain 1
+fix 2 all filter/corotate
+
+# Output thermo data every 50 steps
+thermo 50
+thermo_style custom step temp press pe ke etotal
+
+# Run the simulation for 8 ps
+run 8000

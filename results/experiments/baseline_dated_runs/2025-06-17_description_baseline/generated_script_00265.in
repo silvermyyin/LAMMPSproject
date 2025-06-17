@@ -1,0 +1,42 @@
+# LAMMPS Input Script for GCMC Simulation of Lennard-Jones Fluid
+
+units lj
+atom_style atomic
+
+# Define simulation box and initialize atoms
+region box block 0 5 0 5 0 5
+create_box 1 box
+
+# Create initial set of atoms
+create_atoms 1 random 50 12345 box
+
+# Set atomic mass
+mass 1 1.0
+
+# Define Lennard-Jones potential with cutoff
+pair_style lj/cut 3.0
+pair_coeff 1 1 1.0 1.0 3.0
+
+# Set neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define groups for GCMC
+group all type 1
+
+# GCMC settings
+fix gcmc all gcmc 10 100 100 0 29495 2.0 -1.25 0.5 pressure 1.5 displace 0.1 region box
+
+# Thermodynamic output settings
+thermo 100
+thermo_style custom step temp pe ke etotal press density atoms f_gcmc[1] f_gcmc[2] f_gcmc[3] f_gcmc[4]
+thermo_modify flush yes
+
+# Output to file
+fix avg all ave/time 100 1 1000 c_thermo_press c_thermo_density c_thermo_atoms &
+    f_gcmc[1] f_gcmc[2] f_gcmc[3] f_gcmc[4] file gcmc_averages.txt
+
+# Run the simulation
+run 10000
+
+This script sets up a Grand Canonical Monte Carlo (GCMC) simulation for a Lennard-Jones fluid using LAMMPS in reduced units. It starts by defining the system and atomic interactions, then configures the GCMC process, and outputs various thermodynamic properties to monitor the simulation's progress.

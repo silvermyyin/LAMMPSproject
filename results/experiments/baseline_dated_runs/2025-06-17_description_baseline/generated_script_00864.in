@@ -1,0 +1,50 @@
+# LAMMPS Input Script for Silicon Crystal Simulation
+
+# Initialization
+units           real
+atom_style      charge
+boundary        p p f
+
+# Create Silicon Lattice
+lattice         diamond 5.43
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+create_atoms    1 box
+
+# Define Potential Parameters
+pair_style      hybrid reax/c NULL zbl 3.0 5.0
+pair_coeff      * * reax/c ffield.reax.SiO Si
+pair_coeff      * * zbl 14 18  # ZBL for Si-Ar interactions
+
+# Define Regions
+region          frozen block INF INF INF INF 0 1
+region          thermal block INF INF INF INF 1 8
+region          free block INF INF INF INF 8 INF
+
+# Group Definitions
+group           frozen region frozen
+group           thermal region thermal
+group           free region free
+
+# Immobilize Bottom Layer
+fix             freeze frozen setforce 0.0 0.0 0.0
+
+# Thermostats and Integration
+velocity        all create 300.0 12345
+
+fix             nvt thermal nvt temp 300.0 300.0 100.0
+fix             nve free nve
+
+# Output Settings
+thermo          100
+thermo_style    custom step time temp pe ke etotal press
+
+# Run Simulation
+timestep        0.25
+run             5000
+
+# Potential Extensions - Deposition (Commented Out)
+# region          deposit_region block 1 9 1 9 9 9.5
+# fix             deposit all deposit 100 3 1000 12345 region deposit_region vz -0.1 -0.1
+
+# End of Script

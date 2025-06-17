@@ -1,0 +1,31 @@
+# LAMMPS input script for uniaxial NVT deformation simulation of a WCA fluid
+
+units           lj
+atom_style      atomic
+boundary        p p p
+
+# Read initial configuration from data file
+read_data       wca_fluid.data
+
+# Define interaction potential with cutoff for WCA
+pair_style      lj/cut 1.122562
+pair_coeff      * * 1.0 1.0
+
+# Set the simulation box to triclinic
+change_box      all triclinic
+
+# Velocity initialization
+velocity        all create 0.722 12345
+
+# Thermodynamic settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press pxx pyy pzz
+
+# Fixes
+fix             1 all nvt/uef temp 0.722 0.722 100.0 strainrate -0.5 -0.5 -0.5
+fix             2 all momentum 100 linear 1 1 1
+
+# Run the simulation
+run             10000
+
+# End of input script

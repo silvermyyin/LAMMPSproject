@@ -1,0 +1,56 @@
+# LAMMPS Input Script for 2D Circular Cluster of Bonded Particles with LJ Walls
+
+units           lj
+dimension       2
+boundary        p p p
+atom_style      bond
+
+# Define LJ parameters
+variable        sigma equal 1.0
+variable        epsilon equal 1.0
+variable        rc equal 2.5
+
+# Create a hexagonal lattice
+lattice        hex ${sigma}
+region         simulation_box block 0 20 0 20 -0.1 0.1 units box
+create_box     1 simulation_box
+
+# Define a circular region for particle creation
+region         circle_circle circle 10 10 5 units box
+create_atoms   1 region circle_circle
+
+# Define bonds
+neighbor       0.3 bin
+neigh_modify   delay 0 every 1 check yes
+
+# Bond potential
+bond_style     harmonic
+bond_coeff     1 30.0 ${sigma}
+
+# LJ Interactions between particles
+pair_style     lj/cut ${rc}
+pair_coeff     1 1 ${epsilon} ${sigma} ${rc}
+
+# Walls using Lennard-Jones 9-3 potential
+variable        wall_epsilon equal 1.0
+variable        wall_sigma equal 1.0
+variable        wall_cutoff equal 2.5
+
+fix             walls all wall/lj93 xlo EDGE ${wall_epsilon} ${wall_sigma} ${wall_cutoff} \
+                                xhi EDGE ${wall_epsilon} ${wall_sigma} ${wall_cutoff} \
+                                ylo EDGE ${wall_epsilon} ${wall_sigma} ${wall_cutoff} \
+                                yhi EDGE ${wall_epsilon} ${wall_sigma} ${wall_cutoff}
+
+# Set initial velocities
+velocity       all create 1.0 12345 dist gaussian
+
+# Fix for time integration
+fix            1 all nve
+
+# Output settings
+thermo         100
+thermo_style   custom step temp pe ke etotal press
+
+# Run the simulation
+timestep       0.001
+run            40000

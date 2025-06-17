@@ -1,0 +1,52 @@
+```lammps
+# LAMMPS input script for EAM system with Hardy and Cauchy-Born metrics
+units metal
+atom_style atomic
+dimension 3
+
+# Define lattice and region
+lattice fcc 3.615
+region whole block 0 10 0 10 0 10
+create_box 1 whole
+
+# Define sub-region for atom creation
+region subreg block 1 9 1 9 1 9
+create_atoms 1 region subreg
+
+# Assign mass corresponding to copper
+mass 1 63.546
+
+# Apply EAM potential
+pair_style eam
+pair_coeff * * Cu_u3.eam
+
+# Neighbor settings
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Boundary conditions
+boundary f p p
+
+# Initialize AtC package
+atom_modify map array
+fix atc all atc control_file atc_control.txt
+
+# Evaluate field variables
+fix field all atc field temperature displacement internal_energy stress
+
+# Set timestep to zero for static simulation
+timestep 0.0
+
+# Apply series of displacements for uniaxial strain
+variable strain equal ramp(0, 0.1, 100)
+fix deform all deform 1 x variable v_strain
+
+# Output thermodynamic information
+thermo 10
+thermo_style custom step temp pe ke etotal press
+
+# Run the simulation for a static analysis
+run 0
+```
+
+Note: Ensure that the `Cu_u3.eam` potential file is available in the working directory, and create a control file `atc_control.txt` as needed for the AtC package. Adjust the simulation box size, strain values, and other parameters as per requirements.

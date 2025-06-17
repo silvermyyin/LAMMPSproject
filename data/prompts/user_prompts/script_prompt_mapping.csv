@@ -1,0 +1,706 @@
+script_name,script_path,natural_language_prompt,simulation_type,units,atom_style,pair_style,ensemble,temperature,pressure,timestep,run_steps,num_atom_types,num_fixes,num_dumps,special_features,complexity_score,script_length_lines
+in.lammps,data/real_world/research_scripts/PACKAGES/dpd-smooth/equipartition-verification/in.lammps,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 3D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Set timestep to ${dt}
+- Run for 200 timesteps
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,micro,sph,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,${dt},200.0,0,1,0,dynamic_variables,4,46
+in.lammps,data/real_world/research_scripts/COUPLE/lammps_spparks/in.lammps,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use 2D simulation
+- Use lj/cut 2.5 pair potential
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,atomic,lj/cut 2.5,,,,,,0,0,2,conditional_logic,5,117
+in.min,data/real_world/research_scripts/min/in.min,"Set up a melting point calculation simulation.
+
+Requirements:
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",melting,,,,,,,,,0,0,0,energy_minimization; velocity_initialization; conditional_logic; loop_structures,5,45
+in.min,data/real_world/research_scripts/in.min,"Set up a melting point calculation simulation.
+
+Requirements:
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",melting,,,,,,,,,0,0,0,energy_minimization; velocity_initialization; conditional_logic; loop_structures,5,45
+in.lammps,data/real_world/research_scripts/in.lammps,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use 2D simulation
+- Use lj/cut 2.5 pair potential
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,atomic,lj/cut 2.5,,,,,,0,0,2,conditional_logic,5,117
+in.lmp,data/real_world/research_scripts/PACKAGES/pimd/langevin_reduced_units/in.lmp,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Use lj/cut 2.8015 pair potential
+- Set timestep to 0.00044905847
+- Run for 1,000 timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,atomic,lj/cut 2.8015,pimd/langevin,1.00888,,0.00044905847,1000.0,1,1,0,dynamic_variables; conditional_logic; loop_structures,6,27
+in.h2bulk.nve,data/real_world/research_scripts/in.h2bulk.nve,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Use eff/cut 30.627847 pair potential
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,eff/cut 30.627847,,,,,,0,0,0,energy_minimization; velocity_initialization; dynamic_variables; conditional_logic,6,49
+in.lmp,data/real_world/research_scripts/in.lmp,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Use lj/cut 2.8015 pair potential
+- Set timestep to 0.00044905847
+- Run for 1,000 timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,atomic,lj/cut 2.8015,pimd/langevin,1.00888,,0.00044905847,1000.0,1,1,0,dynamic_variables; conditional_logic; loop_structures,6,27
+in.h2bulk.nve,data/real_world/research_scripts/PACKAGES/eff/H_plasma/in.h2bulk.nve,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Use eff/cut 30.627847 pair potential
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,eff/cut 30.627847,,,,,,0,0,0,energy_minimization; velocity_initialization; dynamic_variables; conditional_logic,6,49
+in.nvt,data/real_world/research_scripts/PACKAGES/atc/hardy/in.nvt,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 13.0 pair potential
+- Apply NVT ensemble at 30.0K
+- Set timestep to 4.0
+- Run for 1,000 timesteps
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,real,atomic,lj/cut 13.0,nvt,30.0,,4.0,1000.0,0,3,0,velocity_initialization; conditional_logic,7,39
+in.ch4.min,data/real_world/research_scripts/in.ch4.min,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Set atom_style to electron
+- Apply boundary conditions: f f f
+- Use eff/cut 100.0 pair potential
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,electron,eff/cut 100.0,,,,,,0,0,0,energy_minimization; dynamic_variables; conditional_logic,7,32
+in.nvt,data/real_world/research_scripts/in.nvt,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 13.0 pair potential
+- Apply NVT ensemble at 30.0K
+- Set timestep to 4.0
+- Run for 1,000 timesteps
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,real,atomic,lj/cut 13.0,nvt,30.0,,4.0,1000.0,0,3,0,velocity_initialization; conditional_logic,7,39
+in.ch4.min,data/real_world/research_scripts/PACKAGES/eff/CH4/in.ch4.min,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Set atom_style to electron
+- Apply boundary conditions: f f f
+- Use eff/cut 100.0 pair potential
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,electron,eff/cut 100.0,,,,,,0,0,0,energy_minimization; dynamic_variables; conditional_logic,7,32
+in.rigid.nve,data/real_world/research_scripts/in.rigid.nve,"Set up a rigid body molecular dynamics simulation.
+
+Requirements:
+- Set timestep to 0.0001
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,,,,rigid/nve,,,0.0001,,0,1,0,velocity_initialization; conditional_logic,7,82
+in.rigid.nve,data/real_world/research_scripts/rigid/in.rigid.nve,"Set up a rigid body molecular dynamics simulation.
+
+Requirements:
+- Set timestep to 0.0001
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,,,,rigid/nve,,,0.0001,,0,1,0,velocity_initialization; conditional_logic,7,82
+in.water.min,data/real_world/research_scripts/QUANTUM/LATTE/in.water.min,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to full
+- Use zero 1.0 pair potential
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,metal,full,zero 1.0,nve,,,,,0,2,0,energy_minimization; velocity_initialization; dynamic_variables; conditional_logic; loop_structures,8,40
+in.water.min,data/real_world/research_scripts/in.water.min,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to full
+- Use zero 1.0 pair potential
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,metal,full,zero 1.0,nve,,,,,0,2,0,energy_minimization; velocity_initialization; dynamic_variables; conditional_logic; loop_structures,8,40
+in.indent.min,data/real_world/research_scripts/indent/in.indent.min,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Set atom_style to atomic
+- Use 2D simulation
+- Apply boundary conditions: p s p
+- Use lj/cut 2.5 pair potential
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,,atomic,lj/cut 2.5,,,,,,0,5,0,energy_minimization; dynamic_variables; conditional_logic,9,81
+in.Li-dendritic.min,data/real_world/research_scripts/in.Li-dendritic.min,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: p p p
+- Use eff/cut 50.112 pair potential
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,eff/cut 50.112,,,,,,0,0,2,energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic,9,38
+in.indent.min,data/real_world/research_scripts/in.indent.min,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Set atom_style to atomic
+- Use 2D simulation
+- Apply boundary conditions: p s p
+- Use lj/cut 2.5 pair potential
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,,atomic,lj/cut 2.5,,,,,,0,5,0,energy_minimization; dynamic_variables; conditional_logic,9,81
+in.Li-dendritic.min,data/real_world/research_scripts/PACKAGES/eff/Li-dendritic/in.Li-dendritic.min,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: p p p
+- Use eff/cut 50.112 pair potential
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,eff/cut 50.112,,,,,,0,0,2,energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic,9,38
+in.Li-dendritic.nvt,data/real_world/research_scripts/in.Li-dendritic.nvt,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: p p p
+- Use eff/cut 50.112 pair potential
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,eff/cut 50.112,,,,,,0,0,2,energy_minimization; restart_capability; dynamic_variables; conditional_logic,10,53
+in.Li-dendritic.nvt,data/real_world/research_scripts/PACKAGES/eff/Li-dendritic/in.Li-dendritic.nvt,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: p p p
+- Use eff/cut 50.112 pair potential
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,eff/cut 50.112,,,,,,0,0,2,energy_minimization; restart_capability; dynamic_variables; conditional_logic,10,53
+in.adamantane_ionized.nve,data/real_world/research_scripts/PACKAGES/eff/Auger-Adamantane/in.adamantane_ionized.nve,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: f f f
+- Use eff/cut 100.0 pair potential
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,eff/cut 100.0,,,,,,0,0,4,energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic,11,52
+in.adamantane_ionized.nve,data/real_world/research_scripts/in.adamantane_ionized.nve,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: f f f
+- Use eff/cut 100.0 pair potential
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,eff/cut 100.0,,,,,,0,0,4,energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic,11,52
+in.amorphous.carbon.lammps,data/real_world/research_scripts/in.amorphous.carbon.lammps,"Create a reactive molecular dynamics simulation using ReaxFF potential.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Set timestep to 0.1
+- Include 4 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,,,,,,0.1,,4,1,1,charge_equilibration; conditional_logic,12,37
+in.lammps,data/real_world/research_scripts/PACKAGES/dpd-smooth/2d-diffusion/in.lammps,"Set up a rigid body molecular dynamics simulation.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 2D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Set timestep to ${dt}
+- Run for 10,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,micro,sph,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,${dt},10000.0,0,3,1,dynamic_variables; conditional_logic,12,50
+in.amorphous.carbon.lammps,data/real_world/research_scripts/ReaxFF.carbon.tests/amorphous.carbon.nanoparticle/in.amorphous.carbon.lammps,"Create a reactive molecular dynamics simulation using ReaxFF potential.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Set timestep to 0.1
+- Include 4 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,,,,,,0.1,,4,1,1,charge_equilibration; conditional_logic,12,37
+in.amorphous.carbon.lammps,data/real_world/research_scripts/ReaxFF.carbon.tests/amorphous.carbon.graphitization/case.density.2.2.graphitization/in.amorphous.carbon.lammps,"Create a reactive molecular dynamics simulation using ReaxFF potential.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Set timestep to 0.1
+- Include 4 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,,,,,,0.1,,4,1,1,charge_equilibration; dynamic_variables; conditional_logic,13,45
+in.amorphous.carbon.lammps,data/real_world/research_scripts/ReaxFF.carbon.tests/amorphous.carbon.graphitization/case.density.1.4.amorphous/in.amorphous.carbon.lammps,"Create a reactive molecular dynamics simulation using ReaxFF potential.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Set timestep to 0.1
+- Include 4 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,,,,,,0.1,,4,1,1,charge_equilibration; dynamic_variables; conditional_logic,13,45
+in.spce.lmp,data/real_world/research_scripts/in.spce.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 12.0 12.0 pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,lj/cut/coul/long 12.0 12.0,nvt,,,1.0,2000000.0,0,2,0,particle_mesh_ewald; constraint_dynamics; velocity_initialization; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,14,50
+in.spce.lmp,data/real_world/research_scripts/PACKAGES/fep/ta/in.spce.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 12.0 12.0 pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,lj/cut/coul/long 12.0 12.0,nvt,,,1.0,2000000.0,0,2,0,particle_mesh_ewald; constraint_dynamics; velocity_initialization; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,14,50
+in.stick.lammps,data/real_world/research_scripts/sticking.coefficients/sticking/parametric.study.material.SiO2/in.stick.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,nve,,,${dt},,0,4,0,charge_equilibration; energy_minimization; velocity_initialization; dynamic_variables; conditional_logic; loop_structures; angular_interactions,16,109
+in.equilibrate.lammps,data/real_world/research_scripts/sticking.coefficients/sticking/get.equilibrated.crystal.Si.300K/in.equilibrate.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,,,,${dt},,1,2,1,charge_equilibration; energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; angular_interactions,16,147
+in.equilibrate.lammps,data/real_world/research_scripts/in.equilibrate.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,,,,${dt},,1,2,1,charge_equilibration; energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; angular_interactions,16,147
+in.stick.lammps,data/real_world/research_scripts/in.stick.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,nve,,,${dt},,0,4,0,charge_equilibration; energy_minimization; velocity_initialization; dynamic_variables; conditional_logic; loop_structures; angular_interactions,16,109
+in.equilibrate.lammps,data/real_world/research_scripts/sticking.coefficients/sticking/get.equilibrated.SiO2.300K/in.equilibrate.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,,,,${dt},,1,2,1,charge_equilibration; energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; angular_interactions,16,148
+in.stick.lammps,data/real_world/research_scripts/sticking.coefficients/sticking/parametric.study.material.SiO2.time.dependent/in.stick.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,nve,,,${dt},,0,4,1,charge_equilibration; energy_minimization; velocity_initialization; dynamic_variables; conditional_logic; angular_interactions,16,104
+in.stick.lammps,data/real_world/research_scripts/sticking.coefficients/sticking/parametric.study.material.crystal.Si.time.dependent/in.stick.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,nve,,,${dt},,0,4,1,charge_equilibration; energy_minimization; velocity_initialization; dynamic_variables; conditional_logic; angular_interactions,16,104
+in.stick.lammps,data/real_world/research_scripts/sticking.coefficients/sticking/parametric.study.material.crystal.Si/in.stick.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,nve,,,${dt},,0,4,0,charge_equilibration; energy_minimization; velocity_initialization; dynamic_variables; conditional_logic; loop_structures; angular_interactions,16,109
+in.lammps,data/real_world/research_scripts/PACKAGES/dpd-smooth/2d-diffusion-in-shear-flow/in.lammps,"Set up a rigid body molecular dynamics simulation.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 2D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Set timestep to ${dt}
+- Run for 10,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,micro,sph,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,${dt},10000.0,0,5,1,velocity_initialization; dynamic_variables; conditional_logic,17,62
+in.fdti10.lmp,data/real_world/research_scripts/in.fdti10.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Set timestep to 1.0
+- Run for 100,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid &,npt,,,1.0,100000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,102
+in.fdti01.lmp,data/real_world/research_scripts/in.fdti01.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Set timestep to 1.0
+- Run for 100,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid &,npt,,,1.0,100000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,99
+in.fep10.lmp,data/real_world/research_scripts/in.fep10.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid &,npt,,,1.0,2000000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,84
+in.bar10.lmp,data/real_world/research_scripts/in.bar10.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Set timestep to 1.0
+- Run for 500,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,nvt,,,1.0,500000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,79
+in.bar01.lmp,data/real_world/research_scripts/in.bar01.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Set timestep to 1.0
+- Run for 500,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,nvt,,,1.0,500000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,79
+in.fep01.lmp,data/real_world/research_scripts/in.fep01.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid &,npt,,,1.0,2000000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,86
+in.fep10.lmp,data/real_world/research_scripts/PACKAGES/fep/CH4hyd/fep10/in.fep10.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid &,npt,,,1.0,2000000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,84
+in.fdti01.lmp,data/real_world/research_scripts/PACKAGES/fep/CH4hyd/fdti01/in.fdti01.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Set timestep to 1.0
+- Run for 100,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid &,npt,,,1.0,100000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,99
+in.fdti10.lmp,data/real_world/research_scripts/PACKAGES/fep/CH4hyd/fdti10/in.fdti10.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Set timestep to 1.0
+- Run for 100,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid &,npt,,,1.0,100000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,102
+in.fep01.lmp,data/real_world/research_scripts/PACKAGES/fep/CH4hyd/fep01/in.fep01.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid &,npt,,,1.0,2000000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,86
+in.bar01.lmp,data/real_world/research_scripts/PACKAGES/fep/CH4-CF4/bar01/in.bar01.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Set timestep to 1.0
+- Run for 500,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,nvt,,,1.0,500000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,79
+in.fep10.lmp,data/real_world/research_scripts/PACKAGES/fep/CH4-CF4/fep10/in.fep10.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,npt,,,1.0,2000000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,95
+in.fep01.lmp,data/real_world/research_scripts/PACKAGES/fep/CH4-CF4/fep01/in.fep01.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,npt,,,1.0,2000000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,95
+in.bar10.lmp,data/real_world/research_scripts/PACKAGES/fep/CH4-CF4/bar10/in.bar10.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Set timestep to 1.0
+- Run for 500,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,nvt,,,1.0,500000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions,18,79
+in.deposit.lammps,data/real_world/research_scripts/sticking.coefficients/deposit.CF_x.on.a-SiO2/parametric.study.deposit.CFx.with.C/in.deposit.lammps,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,,nve,,,${dt},,1,5,1,charge_equilibration; energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; angular_interactions,19,148
+in.fep10.lmp,data/real_world/research_scripts/PACKAGES/fep/CC-CO/fep10/in.fep10.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 & pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid lj/cut/coul/long 10.0 10.0 &,npt,,,1.0,2000000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions; dihedral_interactions,19,136
+in.fep01.lmp,data/real_world/research_scripts/PACKAGES/fep/CC-CO/fep01/in.fep01.lmp,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 & pair potential
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,full,hybrid lj/cut/coul/long 10.0 10.0 &,npt,,,1.0,2000000.0,0,4,1,particle_mesh_ewald; constraint_dynamics; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; bonded_interactions; angular_interactions; dihedral_interactions,19,136
+in.deposit.lammps,data/real_world/research_scripts/in.deposit.lammps,"Create a reactive molecular dynamics simulation using ReaxFF potential.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,,,nve,,,${dt},,1,5,1,charge_equilibration; energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; angular_interactions,22,131
+in.deposit.lammps,data/real_world/research_scripts/sticking.coefficients/deposit.CF_x.on.a-SiO2/parametric.study.with.ions.replicates.for.averaging/in.deposit.lammps,"Create a reactive molecular dynamics simulation using ReaxFF potential.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,,,nve,,,${dt},,1,5,1,charge_equilibration; energy_minimization; velocity_initialization; restart_capability; dynamic_variables; conditional_logic; angular_interactions,22,131

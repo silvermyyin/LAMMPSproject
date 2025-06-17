@@ -1,0 +1,53 @@
+# LAMMPS input script for Zr using EAM/FS with hybrid potential
+# Structural analysis using bispectrum components and logistic regression
+
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Read initial structure
+read_data zr_structure.data
+
+# Define potential
+pair_style hybrid eam/fs zero 10.0
+pair_coeff * * eam/fs Zr.eam.fs Zr
+pair_coeff * * zero
+
+# Initialize simulation box
+replicate 2 2 2
+
+# Set timestep
+timestep 0.002
+
+# Initialize velocities at 750 K with random seed
+velocity all create 750.0 12345 mom yes rot yes dist gaussian
+
+# Define and apply the NPT ensemble
+fix 1 all npt temp 750.0 750.0 0.1 iso 0.0 0.0 1.0
+
+# Compute structural descriptors using bispectrum components
+compute bispec all bispectrum/atom 3.0 3 3
+
+# Use logistic regression for dimension reduction
+# Assuming a dummy logistic regression for demonstration
+compute logreg all property/atom c_bispec[*]
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp press pe etotal c_bispec[1] c_bispec[2] c_bispec[3]
+thermo_modify line multi
+
+# Dump bispectrum data for analysis
+dump 1 all custom 100 dump.bispectrum id type x y z c_bispec[*]
+
+# Run the simulation
+run 5000
+
+# Output max and min of structural descriptors
+variable max_bispec equal max(c_bispec[1])
+variable min_bispec equal min(c_bispec[1])
+print "Maximum bispectrum component: ${max_bispec}"
+print "Minimum bispectrum component: ${min_bispec}"
+
+unfix 1

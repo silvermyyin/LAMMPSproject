@@ -1,0 +1,38 @@
+# LAMMPS Input Script for Gold-Saline Electrochemical Cell Simulation
+
+units metal
+dimension 3
+boundary p p p
+atom_style full
+
+# Read settings from external file
+include settings.mod
+
+# Create simulation box and read data
+read_data gold_saline.data
+
+# Define groups for electrodes
+region bottom_elec block INF INF INF INF INF 0.5
+region top_elec block INF INF INF INF 39.5 INF
+group bottom group region bottom_elec
+group top group region top_elec
+
+# Compute properties of interest
+compute temp all temp
+compute pe all pe/atom
+compute ke all ke/atom
+compute charge_bottom bottom property/atom q
+compute charge_top top property/atom q
+
+# Define potential for the electrodes
+fix 1 all electrode/conp bottom -1.0 top 1.0 symmetry yes finite yes
+
+# Output settings
+thermo 50
+thermo_style custom step temp c_temp pe ke etotal
+thermo_modify lost ignore norm no
+
+# Run the simulation
+run 500
+
+This script sets up the simulation environment for modeling an electrochemical cell with gold electrodes and saline solution, using LAMMPS. It includes the use of `fix electrode/conp` to apply constant potentials to the electrodes and specifies the thermodynamic properties to be output during the simulation. The external file `settings.mod` is used to define additional styles, groups, computes, and fixes as required.

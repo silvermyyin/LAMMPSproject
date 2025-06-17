@@ -1,0 +1,58 @@
+# LAMMPS input script for calculating thermal conductivity of LJ fluid using equilibrium method
+
+units lj
+atom_style atomic
+
+# Create simulation box
+lattice fcc 0.6
+region box block 0 10 0 10 0 20
+create_box 1 box
+create_atoms 1 box
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define regions for temperature gradient
+region hot block INF INF INF INF 0 5
+region cold block INF INF INF INF 15 20
+
+# Define groups for regions
+group hot_region region hot
+group cold_region region cold
+
+# Initialize velocities
+velocity all create 1.35 12345
+
+# Equilibrate system with Nosé-Hoover thermostat
+fix 1 all nvt temp 1.35 1.35 0.5
+timestep 0.005
+run 5000
+
+# Switch to microcanonical ensemble
+unfix 1
+fix 2 all nve
+
+# Apply energy exchange to create temperature gradient
+fix hot_exchange hot_region ehex 10.0
+fix cold_exchange cold_region ehex -10.0
+
+# Monitor temperature profile
+compute temp_hot hot_region temp/region hot
+compute temp_cold cold_region temp/region cold
+
+# Average temperature in regions
+fix hot_temp hot_region ave/chunk 10 100 1000 c_temp_hot file temp_hot.dat
+fix cold_temp cold_region ave/chunk 10 100 1000 c_temp_cold file temp_cold.dat
+
+# Output settings
+thermo 1000
+thermo_style custom step temp c_temp_hot c_temp_cold etotal
+variable temp_diff equal c_temp_hot-c_temp_cold
+variable conductivity equal v_temp_diff/(20*10*10*0.6)
+
+# Run the simulation
+run 20000
+
+# Print thermal conductivity
+print "Thermal Conductivity: ${conductivity}"

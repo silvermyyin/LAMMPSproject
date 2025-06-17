@@ -1,0 +1,36 @@
+# LAMMPS input script for simulating XRD and SAED of bulk nickel
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create simulation box
+region box block 0 20 0 20 0 20
+create_box 1 box
+
+# Define lattice and create atoms
+lattice fcc 3.52
+create_atoms 1 box
+
+# Set timestep
+timestep 0.001
+
+# Define computes for XRD and SAED
+compute myXRD all xrd 40 80 0.1
+compute mySAED all saed 3.0 0 0 1
+
+# Set up output for XRD
+fix xrd_output all ave/histo/weight 1 1 1 40 80 0.1 c_myXRD[*] file xrd_output.txt mode vector
+
+# Set up output for SAED
+fix saed_output all saed/vtk c_mySAED[*] saed_output.vtk
+
+# Run for zero timesteps
+run 0
+
+# Write XRD and SAED data
+write_restart nickel_xrd_saed.restart
+
+This script sets up the simulation environment, defines the necessary computes for XRD and SAED analysis, and specifies the output methods for the computed data. The simulation runs for zero timesteps, reflecting a static analysis to gather the crystallographic data.

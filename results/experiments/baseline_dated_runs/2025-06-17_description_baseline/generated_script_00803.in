@@ -1,0 +1,58 @@
+# LAMMPS input script for surface deposition of dimer molecules
+
+units lj
+atom_style molecular
+boundary p p f
+
+# Initialize simulation box
+lattice fcc 0.8442
+region simbox block 0 20 0 20 0 30
+create_box 2 simbox
+
+# Substrate creation
+region substrate block 0 20 0 20 0 2
+create_atoms 1 region substrate
+
+# LJ potential settings
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Bond settings
+bond_style harmonic
+bond_coeff 1 5.0 1.0
+
+# Define groups
+group substrate type 1
+group mobile subtract all substrate
+
+# Set velocities
+velocity all create 1.0 12345
+
+# Define dimer molecule
+molecule dimer {
+  2 atoms
+  1 0.0 0.0 0.0
+  2 1.0 0.0 0.0
+  1 bonds
+  1 1 2
+}
+
+# Fixes
+fix 1 mobile nve
+fix 2 substrate setforce 0.0 0.0 0.0
+fix 3 mobile langevin 1.0 1.0 1.0 12345
+fix 4 all wall/reflect zhi EDGE
+fix 5 mobile rigid/small molecule
+
+# Deposition settings
+region slab block 0 20 0 20 25 30
+fix 6 all deposit 100 2 100 12345 region slab mol dimer vz -1.0 -1.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe etotal press
+dump 1 all custom 500 dump.deposition id type x y z vx vy vz
+
+# Run simulation
+timestep 0.005
+run 10000

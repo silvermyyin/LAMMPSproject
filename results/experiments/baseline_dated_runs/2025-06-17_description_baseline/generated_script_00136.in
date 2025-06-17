@@ -1,0 +1,57 @@
+# LAMMPS input script for a simple rigid body system using Lennard-Jones units and atomic style
+
+units lj
+atom_style atomic
+
+# Read the particle data
+read_data data.rigid
+
+# Define interactions
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Assign velocities
+velocity all create 100.0 12345 dist gaussian
+
+# Define groups for each chain of connected bodies
+group chain1 id 1:10
+group chain2 id 11:20
+group chain3 id 21:30
+group chain4 id 31:40
+group chain5 id 41:50
+group chain6 id 51:60
+group chain7 id 61:70
+group chain8 id 71:80
+group chain9 id 81:90
+
+# Apply fix poems to treat groups as rigid clumps
+fix 1 chain1 poems
+fix 2 chain2 poems
+fix 3 chain3 poems
+fix 4 chain4 poems
+fix 5 chain5 poems
+fix 6 chain6 poems
+fix 7 chain7 poems
+fix 8 chain8 poems
+fix 9 chain9 poems
+
+# Exclude intra-group interactions
+neigh_modify exclude group chain1 chain1
+neigh_modify exclude group chain2 chain2
+neigh_modify exclude group chain3 chain3
+neigh_modify exclude group chain4 chain4
+neigh_modify exclude group chain5 chain5
+neigh_modify exclude group chain6 chain6
+neigh_modify exclude group chain7 chain7
+neigh_modify exclude group chain8 chain8
+neigh_modify exclude group chain9 chain9
+
+# Define timestep
+timestep 0.0001
+
+# Output thermodynamic properties
+thermo 50
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+run 10000

@@ -1,0 +1,38 @@
+# LAMMPS input script for NEB simulation of vacancy hopping in silicon
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Read initial configuration
+read_data initial.sivac
+
+# Define interatomic potential
+pair_style sw
+pair_coeff * * Si.sw Si
+
+# Define regions and groups
+region simbox block 0 4 0 4 0 4 units lattice
+group silicon type 1
+
+# Initial minimization to relax the system
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Setup for NEB calculation
+neb 20
+timestep 0.01
+neb_style fire
+
+# Define NEB parameters
+fix 1 all neb 1.0e-4 2000
+
+# Output settings
+thermo 100
+thermo_style custom step pe etotal
+
+# Run NEB to explore the energy barrier for vacancy migration
+run 2000
+
+# End of input script

@@ -1,0 +1,43 @@
+```lammps
+# LAMMPS input script for BCC Iron with EAM potential and TTM
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define lattice and create simulation box
+lattice         bcc 2.87
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Set mass of iron
+mass            1 55.845
+
+# Define interatomic potential
+pair_style      eam
+pair_coeff      * * Fe_mm.eam.alloy Fe
+
+# Set up TTM model
+fix             1 all ttm/grid 0.1 1000 1.0 1.0 0.1 2.87 2.87 2.87
+
+# Define electron thermal conductivity, ion thermal conductivity, and electron heat capacity
+# These values are placeholders and should be replaced with actual values
+fix_modify      1 e_conductivity 100.0
+fix_modify      1 i_conductivity 1.0
+fix_modify      1 electron_C 1.0
+
+# Define timestep and run parameters
+timestep        0.0001
+thermo_style    custom step temp pe etotal f_1[1] f_1[2]
+thermo          100
+
+# Integrate equations of motion
+fix             2 all nve
+
+# Run the simulation
+run             1000
+```
+
+Note: Ensure that the EAM potential file `Fe_mm.eam.alloy` is available in the working directory or specify the correct path to the file. Additionally, adjust the electron thermal conductivity, ion thermal conductivity, and electron heat capacity parameters (`fix_modify` values) to realistic values for your specific study.

@@ -1,0 +1,38 @@
+# LAMMPS Input Script for Wavepacket Atom Style Simulation
+
+# Initialize simulation
+units         electron
+atom_style    wavepacket
+boundary      p p p
+
+# Create simulation box and read data
+read_data     data.${sname}
+
+# Define pair style and coefficients
+pair_style    awpmd/cut 10.0
+pair_coeff    * * 1.0 1.0
+
+# Define additional parameters for quantum effects
+variable      ermscale equal 1.0
+variable      flex_press equal 1.0
+
+# Processor grid
+processors    1 * *
+
+# Define group for all atoms
+group         all type 1
+
+# Define fixes for time integration and pressure calculation
+fix           1 all nve/awpmd
+compute       1 all stress/atom
+compute       2 all ke/atom
+compute       3 all pe/atom
+compute       4 all reduce sum c_1[1] c_1[2] c_1[3] c_2 c_3
+
+# Define thermo output
+thermo        1
+thermo_style  custom step temp epair etotal c_4[1] c_4[2] c_4[3] c_4[4] c_4[5] press
+
+# Run simulation
+timestep      0.001
+run           10

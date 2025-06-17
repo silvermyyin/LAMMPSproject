@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+## Coding-Response Guidelines
+Follow these directives whenever the user asks for code:
+
+1. **Begin with a step-by-step plan** written in clear pseudocode.
+2. Wait for the user to confirm or adjust the plan.  
+3. After confirmation, produce the full implementation.
+4. Code must be **correct, up-to-date, secure, efficient, and bug-free**.
+5. Favor readability + maintainability: use descriptive names and add inline comments / docstrings.
+6. Deliver a complete solution—no TODOs, placeholders, or missing pieces.
+7. Keep prose concise; focus on code and essential explanations.
+8. If uncertain or impossible, state that clearly instead of guessing.

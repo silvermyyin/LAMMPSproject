@@ -1,0 +1,51 @@
+# LAMMPS Input Script for Salt Crystal Dissolution in Water
+
+units real
+atom_style full
+boundary p p p
+
+# Create simulation box and read initial configuration
+read_data salt_water_system.data
+
+# Define pair styles
+pair_style lj/cut/tip4p/long 1 2 1 1 0.125 12.0
+pair_coeff 1 1 0.16275 3.16435  # O-O
+pair_coeff 1 2 0.0 0.0          # O-H (no LJ interaction)
+pair_coeff 2 2 0.0 0.0          # H-H (no LJ interaction)
+pair_coeff 3 3 0.1094 2.35      # Na-Na
+pair_coeff 4 4 0.149 3.15       # Cl-Cl
+pair_coeff 3 4 0.0 0.0          # Na-Cl (mixing rule)
+
+# Define bond and angle styles
+bond_style harmonic
+bond_coeff 1 450 0.9572         # Water O-H bond
+
+angle_style harmonic
+angle_coeff 1 55 104.52         # Water H-O-H angle
+
+# Apply the SHAKE algorithm for water molecules
+fix shake_water all shake 0.0001 20 0 b 1 a 1
+
+# Define kspace style for long-range electrostatics
+kspace_style pppm/tip4p 1.0e-4
+
+# Define groups
+group water type 1 2
+group ions type 3 4
+
+# Apply NPT ensemble to simulate at constant temperature and pressure
+fix mynpt all npt temp 360.0 360.0 100.0 iso 1.0 1.0 1000.0
+
+# Recenter the salt crystal in the simulation box
+fix recenter_ions ions recenter INIT INIT INIT
+
+# Output settings
+thermo 1000
+thermo_style custom step temp press etotal
+dump mydump all atom 5000 trajectory.lammpstrj
+
+# Run the simulation
+timestep 1.0
+run 25000000
+
+# End of input script

@@ -1,0 +1,38 @@
+# LAMMPS input script for 3D simulation of bcc iron with spin dynamics and magnetic interactions
+
+units metal
+dimension 3
+boundary p p p
+
+# Define lattice and create box
+lattice bcc 3.96
+region simbox block 0 34 0 34 0 1
+create_box 1 simbox
+create_atoms 1 box
+
+# Define mass and initial spin configuration
+mass 1 55.845
+set atom * spin random 0.5
+
+# Pair style for magnetic interactions
+pair_style hybrid/overlay spin/exchange 1 spin/magelec 1 spin/dmi 1
+pair_coeff * * spin/exchange 1.0
+pair_coeff * * spin/magelec 0.1
+pair_coeff * * spin/dmi 0.01
+
+# Spin dynamics setup
+fix 1 all precession 0.1 damping 0.1
+
+# Thermo and dump settings
+timestep 0.0001
+thermo 100
+thermo_style custom step temp pe etotal spmag
+
+dump 1 all custom 50 dump.spins id type x y z sx sy sz
+
+# Minimization of spin configuration
+minimize 1.0e-4 1.0e-6 100 1000
+min_style spin/lbfgs
+
+# Run the simulation
+run 10000

@@ -1,0 +1,46 @@
+# LAMMPS input script for simulating a rigid spherical particle in a pressure-driven flow
+# using lattice-Boltzmann methods
+
+units micro
+dimension 3
+boundary p p f
+
+atom_style sphere
+atom_modify map array
+
+# Read initial particle configuration
+read_data particle_data.txt
+
+# Define Lennard-Jones potential with zero interaction coefficients
+pair_style lj/cut 1.0
+pair_coeff * * 0.0 1.0
+
+# Create lattice-Boltzmann fluid
+fix lb fluid all lb/fluid 4.0 1.0 1.0
+
+# Apply pressure-driven flow in x-direction
+fix press flow all lb/flow 0.1
+
+# Define the rigid particle
+group particles type 1
+fix rigid_particle particles rigid single
+
+# Particle-fluid interaction
+fix viscous_interaction particles lb/viscous lb
+
+# Output settings
+thermo 100
+thermo_style custom step time v_cm[1] v_cm[2] v_cm[3] v_rot[1] v_rot[2] v_rot[3]
+
+# Dump settings for visualization
+dump 1 all custom 100 dump.lammpstrj id type x y z vx vy vz
+dump_modify 1 sort id
+dump 2 all image 100 image.*.jpg type type & 
+     zoom 1.6 adiam 1.0 view 80 -30
+dump_modify 2 pad 5
+
+# Run the simulation
+timestep 0.01
+run 10000
+
+This script sets up a LAMMPS simulation with the specified conditions. The particle data is read from a file, and the fluid is modeled using lattice-Boltzmann methods. The `fix lb/flow` is used to drive the flow, and the `fix rigid` command ensures that the particle behaves as a single entity. The script outputs data for post-processing and visualization in Paraview.

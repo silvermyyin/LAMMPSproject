@@ -1,0 +1,54 @@
+# LAMMPS Input Script for TIP4P/2005 Water with Dissolved NaCl
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Create simulation box and read data
+read_data       water_nacl.data
+
+# Define interaction potentials
+pair_style      lj/cut/coul/long/tip4p/omp 2 1 1 1 0.125 10.0
+pair_coeff      1 1 0.0 0.0
+pair_coeff      2 2 0.155 3.1536
+pair_coeff      3 3 0.1301 3.0
+pair_coeff      4 4 0.0 0.0
+pair_coeff      2 3 0.15 3.0768
+pair_coeff      2 4 0.0 0.0
+pair_coeff      3 4 0.0 0.0
+
+bond_style      harmonic
+bond_coeff      1 450 0.9572
+
+angle_style     harmonic
+angle_coeff     1 55 104.52
+
+kspace_style    pppm/tip4p 1.0e-4
+
+# Constraints for water molecules
+fix             shake_fix all shake 0.0001 20 0 b 1 a 1
+
+# Initial velocities
+velocity        all create 293.15 12345 dist gaussian
+
+# Define groups
+group           water type 1 2 3 4
+group           ions type 5 6
+
+# Thermostat and barostat
+fix             npt_fix all npt temp 293.15 293.15 100 iso 1.0 1.0 1000
+
+# Output settings
+thermo          1000
+thermo_style    custom step temp press etotal
+
+# Equilibration run
+timestep        1.0
+run             100000
+
+# Switch to production run
+reset_timestep  0
+dump            1 all custom 1000 traj.lammpstrj id type x y z vx vy vz
+run             2000000
+
+# End of script

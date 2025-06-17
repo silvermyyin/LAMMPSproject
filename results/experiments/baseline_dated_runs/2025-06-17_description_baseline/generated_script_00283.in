@@ -1,0 +1,32 @@
+# LAMMPS Input Script for Copper using SNAP Neural Network Model
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Initialize simulation box with FCC lattice of Copper
+lattice         fcc 3.615
+region          box block 0 4 0 4 0 4
+create_box      1 box
+create_atoms    1 box
+
+# Specify the mass of Copper
+mass            1 63.546
+
+# Machine Learning Interatomic Potential using SNAP
+pair_style      mlip snap
+pair_coeff      * * Cu.snap.model Cu
+
+# Set initial velocities
+velocity        all create 300.0 12345
+
+# NVE ensemble
+fix             1 all nve
+
+# Thermo settings
+timestep        0.0005
+thermo          10
+thermo_style    custom step temp pe etotal press
+
+# Run the simulation
+run             100

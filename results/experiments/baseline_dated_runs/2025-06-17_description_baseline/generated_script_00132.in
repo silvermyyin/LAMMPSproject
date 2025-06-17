@@ -1,0 +1,43 @@
+# LAMMPS input script for electronic stopping power simulation
+
+units metal
+atom_style atomic
+
+# Create a large cubic simulation box
+lattice fcc 5.43
+region simbox block 0 100 0 100 0 100
+create_box 1 simbox
+
+# Define a smaller central region for electronic stopping
+region stopping_region block 45 55 45 55 45 55
+
+# Create a single silicon atom at the origin with specified velocity
+create_atoms 1 single 0.0 0.0 0.0
+mass 1 28.0855
+
+# Set initial velocity for the silicon atom
+velocity all set 0.0 0.0 5.0
+
+# Define potential (use appropriate potential for silicon)
+pair_style none
+pair_coeff
+
+# Apply electronic stopping in the specified region
+fix 1 all electron/stopping stopping_region 0.5 0.5 0.5
+
+# Integrate equations of motion with NVE
+fix 2 all nve
+
+# Dynamically adjust timestep based on energy conditions
+fix 3 all dt/reset 1 0.0001 0.002 0.01
+
+# Compute kinetic energy of the atom
+compute ke all ke/atom
+
+# Thermodynamic output customization
+thermo 100
+thermo_style custom step f_1 c_ke[1] etotal
+
+# Run the simulation for 10,000 timesteps
+timestep 0.0001
+run 10000

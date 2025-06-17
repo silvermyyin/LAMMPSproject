@@ -1,0 +1,46 @@
+```lammps
+# LAMMPS input script for a 3D SDPD simulation of isothermal fluid behavior
+
+units micro       # Micro-scale units
+dimension 3       # 3D simulation
+boundary p p p    # Periodic boundary conditions
+
+atom_style sdpd   # Smoothed Dissipative Particle Dynamics
+
+# Define lattice and create simulation box
+lattice sc 0.1    # Simple cubic lattice with spacing 0.1 micrometers
+region box block 0 10 0 10 0 10 units lattice
+create_box 1 box
+
+# Create atoms
+create_atoms 1 box
+
+# Set properties for particles
+mass 1 1.0e-12        # Mass of particles: 1 picogram per cubic micrometer
+density 1 1.0e-12     # Density
+
+# Define SDPD parameters
+pair_style hybrid/overlay sdpd/taitwater/isothermal 1.0e-12 10.0
+pair_coeff * * sdpd/taitwater/isothermal 1.0e-12 10.0 300.0
+
+# Define initial velocities
+velocity all create 300.0 12345 dist gaussian
+
+# Time integration
+timestep 0.0005      # Timestep of 0.0005 microseconds
+
+# Fixes
+fix 1 all sph 0.0005
+
+# Thermo settings
+thermo 100
+thermo_style custom step temp pe ke etotal press v_vx v_vy v_vz
+
+# Compute average squared velocities
+variable vx atom vx*vx
+variable vy atom vy*vy
+variable vz atom vz*vz
+
+# Run the simulation
+run 10000
+```

@@ -1,0 +1,51 @@
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data data.sds.gz
+
+# Define pair style and parameters
+pair_style lj/spica/coul/long 15.0
+pair_coeff 1 1 0.200 3.50  # SO4-SO4
+pair_coeff 1 2 0.150 3.75  # SO4-CM
+pair_coeff 1 3 0.120 3.80  # SO4-CT
+pair_coeff 1 4 0.100 3.25  # SO4-SOD
+pair_coeff 1 5 0.180 3.60  # SO4-W
+pair_coeff 2 2 0.210 3.60  # CM-CM
+pair_coeff 2 3 0.180 3.70  # CM-CT
+pair_coeff 2 4 0.140 3.20  # CM-SOD
+pair_coeff 2 5 0.160 3.45  # CM-W
+pair_coeff 3 3 0.220 3.80  # CT-CT
+pair_coeff 3 4 0.130 3.15  # CT-SOD
+pair_coeff 3 5 0.170 3.50  # CT-W
+pair_coeff 4 4 0.110 3.00  # SOD-SOD
+pair_coeff 4 5 0.150 3.30  # SOD-W
+pair_coeff 5 5 0.200 3.40  # W-W
+
+# Set bond and angle styles
+bond_style harmonic
+angle_style spica
+
+# Kspace style for long-range electrostatics
+kspace_style pppm/cg 1.0e-4
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify delay 4
+
+# Define groups (optional, depending on data file)
+# group surfactant type 1 2 3 4
+# group water type 5
+
+# Define temperature control
+velocity all create 310.0 12345
+fix 1 all nvt temp 310.0 310.0 100.0
+
+# Output settings
+thermo 10
+thermo_style custom step temp press pe ke etotal
+
+# Run the simulation
+timestep 1.0
+run 100

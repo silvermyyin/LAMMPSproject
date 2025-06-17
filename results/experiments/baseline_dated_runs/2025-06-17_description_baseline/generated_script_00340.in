@@ -1,0 +1,47 @@
+# LAMMPS input script for silicon in FCC phase using Stillinger-Weber potential with spline modifications
+
+units metal
+boundary p p p
+atom_style atomic
+
+# Define the lattice and create the simulation box
+lattice fcc 4.31
+region box block 0 1 0 1 0 1
+create_box 1 box
+
+# Create atoms in the simulation box
+create_atoms 1 box
+
+# Define the Stillinger-Weber potential with spline modifications
+pair_style meam/sw/spline
+pair_coeff * * Si.sw Si
+
+# Set up the relaxation process
+fix relax all box/relax aniso 0
+
+# Set minimization criteria
+min_style cg
+minimize 1.0e-10 1.0e-10 10000 10000
+
+# Output settings
+thermo 10
+thermo_style custom step pe lx ly lz vol
+
+# Run the minimization
+run 0
+
+# Print final properties to the log file
+variable latconst equal "lx"
+variable energy equal "pe/atoms"
+variable volume equal "vol/atoms"
+
+print "Final lattice constant (Angstroms): ${latconst}"
+print "Final cohesive energy (eV/atom): ${energy}"
+print "Final atomic volume (Angstroms^3/atom): ${volume}"
+
+# Compare to reference values
+print "Reference lattice constant: 4.31 Angstroms"
+print "Reference cohesive energy: -4.63 eV/atom"
+print "Reference atomic volume: 20.45 Angstroms^3/atom"
+
+# End of script

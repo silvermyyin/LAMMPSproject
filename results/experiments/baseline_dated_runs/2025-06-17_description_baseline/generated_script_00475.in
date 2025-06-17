@@ -1,0 +1,46 @@
+# LAMMPS Input Script for Alpha-Alumina using Streitz-Mintmire Potential
+
+units           metal
+atom_style      charge
+
+# Read initial configuration from data file
+read_data       alpha_alumina.data
+
+# Define potential styles
+pair_style      hybrid/overlay coul/wolf 0.3 12.0 eam smd
+pair_coeff      * * coul/wolf
+pair_coeff      * * eam alumina.eam.alloy Al O
+pair_coeff      * * smd alumina.smd
+
+# Set up charge equilibrations
+fix             1 all qeq/slater 1 0.001 predf
+
+# Set up variables for charge assignment
+variable        q_Al equal -1.5
+variable        q_O equal 1.0
+
+# Assign charges ensuring neutrality
+set type 1 charge ${q_Al}
+set type 2 charge ${q_O}
+
+# Initialize temperature
+velocity        all create 300.0 12345
+
+# Set up integration
+fix             2 all nve
+
+# Output settings
+thermo          10
+thermo_style    custom step temp pe ke etotal c_1[1] c_1[2] c_1[3] press
+thermo_modify   line one
+
+# Run the simulation
+timestep        0.0004
+run             100
+
+# End of input script
+
+### Note:
+- Ensure the data file `alpha_alumina.data` is correctly formatted for LAMMPS and located in the same directory.
+- The EAM potential file `alumina.eam.alloy` and the Streitz-Mintmire potential file `alumina.smd` must be available.
+- Adjust parameters such as the cutoff for `coul/wolf` or the charge values as necessary based on the specific system or desired accuracy.

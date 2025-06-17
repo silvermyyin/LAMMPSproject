@@ -1,0 +1,45 @@
+# LAMMPS input script for thermal coupling simulation using AtC package
+units           lj
+dimension       3
+boundary        p p p
+
+atom_style      atomic
+lattice         fcc 1.0
+region          whole block 0 10 0 10 0 10
+create_box      1 whole
+create_atoms    1 region whole
+
+# Define pair style and coefficients
+pair_style      lj/cut 13.5
+pair_coeff      1 1 1.0 1.0 13.5
+
+# Define regions for MD and FEM
+region          md_region block 2 8 2 8 2 8
+group           md_group region md_region
+
+# Initialize velocities
+velocity        all create 20.0 12345
+
+# Set up thermal coupling with AtC
+fix_modify      AtC transfer_type thermal
+fix             atc all AtC region whole fem_domain md_group
+
+# Boundary condition for FEM region
+fix_modify      atc fem_temperature left 40.0
+
+# Apply thermostat to MD region
+fix             nvt md_group temp 20.0 20.0 0.1
+
+# Time integration
+timestep        0.005
+thermo          100
+thermo_style    custom step temp pe ke etotal
+
+# Run the simulation
+run             10000
+
+# Clean up
+unfix           atc
+unfix           nvt
+
+Note: Ensure that the AtC package is installed and properly set up in your LAMMPS environment to run this script successfully. Adjust any specific paths or additional settings as needed based on your simulation environment and requirements.

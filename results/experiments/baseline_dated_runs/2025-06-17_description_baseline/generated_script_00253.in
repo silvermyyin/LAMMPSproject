@@ -1,0 +1,68 @@
+# LAMMPS input script for testing various interaction potentials and wall models
+
+# Initialization
+units real
+atom_style bond
+boundary f p p
+newton on
+
+# Create simulation box
+region box block 0 10 0 10 0 10
+create_box 1 box
+
+# Create atoms
+create_atoms 1 single 5 5 5
+create_atoms 1 single 6 5 5
+
+# Define bonds
+create_bonds single/bond 1 1 2
+
+# Define interaction potentials
+
+# Pair potential settings
+pair_style hybrid/overlay lj/cut 10.0 morse 10.0
+pair_coeff * * lj/cut 0.0 1.0
+pair_coeff * * morse 0.0 1.0 1.0
+
+# Bond potential settings
+bond_style hybrid harmonic morse
+bond_coeff 1 harmonic 0.0 1.0
+bond_coeff 1 morse 0.0 1.0 1.0
+
+# Wall interactions
+fix wall1 all wall/reflect xlo EDGE
+fix wall2 all wall/reflect xhi EDGE
+
+# Group definition
+group all type 1
+
+# Variables for parameter sweeps
+variable stiffness equal "i"
+variable equilibrium_distance equal "1.0 + 0.1*i"
+variable energy_depth equal "0.1*i"
+
+# Test harmonic potential
+label loop_harmonic
+variable i loop 5
+bond_coeff 1 harmonic ${stiffness} ${equilibrium_distance}
+run 1000
+next i
+jump SELF loop_harmonic
+
+# Test Lennard-Jones potential
+pair_coeff * * lj/cut ${energy_depth} ${equilibrium_distance}
+run 1000
+
+# Test Morse potential
+pair_coeff * * morse ${energy_depth} ${equilibrium_distance} 1.0
+run 1000
+
+# Custom wall model (example with harmonic potential)
+fix wall3 all wall/harmonic zlo EDGE 10.0 1.0 1.0
+run 1000
+
+# Reset wall model
+unfix wall3
+
+# Finalize
+write_restart final_restart.lmp

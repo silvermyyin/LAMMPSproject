@@ -1,0 +1,42 @@
+# LAMMPS input script for simulating electrons using EFF model
+
+units metal
+atom_style electron
+
+# Read atomic data
+read_data electron_system.data
+
+# Define interactions
+pair_style eff/cut 11.049221
+pair_coeff * *
+
+# Define thermodynamic output
+thermo 100
+thermo_style custom step temp pe etotal press vol
+compute stress_per_atom all stress/atom virial
+compute ke all ke/eff
+compute pe_pauli all pe/eff pauli
+compute pe_coulomb all pe/eff coulomb
+compute pe_residual all pe/eff residual
+variable eff_temp equal c_ke/(1.5*atoms)
+variable eff_pressure equal c_stress_per_atom
+
+# Initial equilibration with temperature rescaling
+fix 1 all temp/rescale/eff 1 10.0 3000.0 100.0 0.5
+
+# Run equilibration
+timestep 0.001
+run 200
+
+# Switch to NVT ensemble
+unfix 1
+fix 2 all nvt/eff temp 3000.0 3000.0 0.1
+
+# Run NVT simulation
+timestep 0.001
+run 500
+
+# Output properties to a custom dump file
+dump 1 all custom 100 dump.eff id type x y z spin radius
+
+# End of script

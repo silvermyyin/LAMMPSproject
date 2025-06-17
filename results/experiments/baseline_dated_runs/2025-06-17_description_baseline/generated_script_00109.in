@@ -1,0 +1,43 @@
+# LAMMPS Input Script for Sodium Interface Simulation
+
+# Initialization
+units metal
+atom_style full
+boundary p p p
+
+# Read data file
+read_data data.interface
+
+# Define atom masses
+mass * 22.98976928  # Sodium
+
+# Pair style and coefficients
+pair_style eam/fs
+pair_coeff * * Na_MendelevM_2014.eam.fs Na
+
+# Neighbor settings
+neighbor 2.0 bin
+neigh_modify delay 10
+
+# Define computes
+compute entropy_global all entropy/atom
+compute entropy_local all entropy/atom neighbors yes
+compute entropy_global_ave all reduce ave c_entropy_global
+compute entropy_local_ave all reduce ave c_entropy_local
+
+# Thermo settings
+thermo 500
+thermo_style custom step temp press pe ke etotal c_entropy_global_ave c_entropy_local_ave
+
+# Output settings
+dump 1 all custom 500 dump.sodium id type x y z c_entropy_global c_entropy_local
+
+# Timestep
+timestep 0.002
+
+# Fixes
+fix 1 all nph x 0.0 0.0 1.0
+fix 2 all temp/csvr 350.0 350.0 100.0 12345
+
+# Run the simulation
+run 1000

@@ -1,0 +1,62 @@
+# LAMMPS Input Script for Thermal Conductivity of LJ Fluid
+
+# Variables for system dimensions
+variable x_dim equal 10
+variable y_dim equal 10
+variable z_dim equal 40
+
+# Initialize simulation in reduced LJ units
+units lj
+atom_style atomic
+
+# Define simulation box
+lattice fcc 0.6
+region simbox block 0 ${x_dim} 0 ${y_dim} 0 ${z_dim}
+create_box 1 simbox
+create_atoms 1 box
+
+# Define LJ potential with cutoff
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocity
+velocity all create 1.35 12345
+
+# Define groups for hot and cold regions
+region hot block 0 ${x_dim} 0 ${y_dim} 0 5
+region cold block 0 ${x_dim} 0 ${y_dim} 35 ${z_dim}
+group hot_region region hot
+group cold_region region cold
+
+# Thermo settings
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+# Equilibration phase with NVT ensemble
+fix nvt_all all nvt temp 1.35 1.35 1.0
+run 5000
+unfix nvt_all
+
+# NVE integration and thermal gradient setup
+fix nve_all all nve
+
+# Add heat to hot region and remove from cold region
+fix heat_hot hot_region heat 10.0
+fix heat_cold cold_region heat -10.0
+
+# Compute temperatures in hot and cold regions
+compute temp_hot hot_region temp
+compute temp_cold cold_region temp
+
+# Output custom thermodynamic data
+thermo_style custom step temp c_temp_hot c_temp_cold
+
+# Run simulation to establish thermal gradient
+run 20000
+
+# Calculate thermal conductivity (additional post-processing required)
+# The thermal conductivity calculation is generally performed by averaging
+# temperature differences across layers in the z-direction and using
+# Fourier's law. This can be done in post-processing of the output data.
+
+# End of script

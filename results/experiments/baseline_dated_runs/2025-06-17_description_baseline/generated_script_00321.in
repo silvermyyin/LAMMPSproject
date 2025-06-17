@@ -1,0 +1,48 @@
+# LAMMPS input script for simulating the alpha phase of titanium (hcp structure)
+
+# Initialize simulation
+units metal
+atom_style atomic
+boundary p p p
+
+# Define lattice
+variable a equal 2.95  # initial guess for lattice parameter in Angstroms
+variable ca equal 1.587 # initial guess for c/a ratio
+lattice custom $a a1 1.0 0.0 0.0 a2 0.5 sqrt(3.0)/2.0 0.0 a3 0.0 0.0 ${ca} basis 0.0 0.0 0.0 basis 0.33333 0.66667 0.5
+
+# Create simulation box and atoms
+region box block 0 1 0 1 0 1 units lattice
+create_box 1 box
+create_atoms 1 box
+
+# Set mass
+mass 1 47.90
+
+# Define interatomic potential
+pair_style meam/sw/spline
+pair_coeff * * meam/sw/spline Ti.meam Ti
+
+# Set neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the relaxation and minimization
+fix 1 all box/relax aniso 0.0
+
+# Energy minimization
+min_style cg
+minimize 1.0e-12 1.0e-12 10000 10000
+
+# Output cohesive energy, optimized lattice parameter, and c/a ratio
+variable Ecoh equal pe/atoms
+variable alat equal lx
+variable cora equal lz/lx
+
+print "Final cohesive energy per atom (eV/atom): ${Ecoh}"
+print "Optimized lattice parameter a (Angstroms): ${alat}"
+print "Optimized c/a ratio: ${cora}"
+
+# Compare with reference values (if available)
+# print "Reference cohesive energy per atom (eV/atom): <reference_value>"
+# print "Reference lattice parameter a (Angstroms): <reference_value>"
+# print "Reference c/a ratio: <reference_value>"

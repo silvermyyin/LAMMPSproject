@@ -1,0 +1,48 @@
+```lammps
+# LAMMPS Input Script for Argon Molecular Dynamics Simulation
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC lattice and define simulation box
+lattice         fcc 4.05
+region          simbox block 0 60 0 60 0 60 units box
+create_box      2 simbox
+create_atoms    1 box
+
+# Define masses for argon atoms
+mass            1 39.948
+mass            2 39.948
+
+# Lennard-Jones potential parameters
+pair_style      lj/cut 12.0
+pair_coeff      * * 0.238 3.405
+
+# Neighbor list settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Minimization
+min_style       cg
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Velocity initialization and temperature scaling
+velocity        all create 89.0 12345 mom yes dist gaussian
+
+# Apply Nosé-Hoover thermostat
+fix             1 all nvt temp 89.0 89.0 500.0
+
+# Output settings
+thermo          10
+thermo_style    custom step temp pe etotal press
+
+dump            1 all xyz 100 argon_simulation.xyz
+
+# Run simulation
+timestep        0.001
+run             6000
+
+# End of script
+```

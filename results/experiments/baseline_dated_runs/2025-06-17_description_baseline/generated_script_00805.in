@@ -1,0 +1,60 @@
+# LAMMPS Input Script for Carbon Deposition on Silica Substrate
+
+units           metal
+dimension       3
+boundary        p p f
+atom_style      atomic
+
+# Define lattice and region for silicon substrate
+lattice         diamond 5.431
+region          simbox block 0 20 0 20 0 20 units lattice
+create_box      2 simbox
+region          substrate block 0 20 0 20 0 10 units lattice
+create_atoms    1 region substrate
+
+# Define potential
+pair_style      tersoff
+pair_coeff      * * SiC.tersoff Si C
+
+# Group definitions
+group           substrate region substrate
+group           fixed_atoms type 1
+group           mobile_atoms subtract all fixed_atoms
+
+# Fix the bottom layer of the substrate
+region          fixed_layer block INF INF INF INF 0 2 units lattice
+group           fixed_atoms region fixed_layer
+fix             1 fixed_atoms setforce 0.0 0.0 0.0
+
+# Define the carbon deposition region
+region          deposition block 0 20 0 20 18 20 units lattice
+create_atoms    2 region deposition
+
+# Initial velocities for deposition
+variable        energy equal 1.0 # Energy in eV
+variable        angle equal 45.0 # Angle in degrees
+variable        vx equal sqrt(${energy}*2/12.0107)*cos(${angle})
+variable        vy equal sqrt(${energy}*2/12.0107)*sin(${angle})
+velocity        deposition set ${vx} ${vy} 0.0
+
+# Set temperature and run thermal cycles
+velocity        mobile_atoms create 300.0 12345 mom yes dist gaussian
+fix             2 all nvt temp 300.0 800.0 0.1
+run             10000
+
+fix             3 all nvt temp 800.0 800.0 0.1
+run             20000
+
+fix             4 all nvt temp 800.0 300.0 0.1
+run             10000
+
+fix             5 all nvt temp 300.0 300.0 0.1
+run             20000
+
+# Outputs
+thermo          1000
+thermo_style    custom step temp pe ke etotal
+dump            1 all atom 500 dump.carbon_si.lammpstrj
+
+# Run final equilibration
+run             50000

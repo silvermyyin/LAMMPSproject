@@ -1,0 +1,50 @@
+```lammps
+# LAMMPS input script for 3D metal shear simulation of fcc Nickel
+
+units metal
+dimension 3
+boundary s s p
+atom_style atomic
+
+# Create FCC lattice of Nickel
+lattice fcc 3.52
+region simbox block 0 10 0 10 0 10
+create_box 2 simbox
+create_atoms 1 box
+
+# Define potential
+pair_style eam
+pair_coeff * * Ni_u3.eam
+
+# Define groups
+region lower block INF INF INF INF 0 1
+region upper block INF INF INF INF 9 10
+group lower region lower
+group upper region upper
+group boundary union lower upper
+group mobile subtract all boundary
+
+# Set masses (assuming Nickel as element 1)
+mass 1 58.6934
+
+# Initial velocities
+velocity all create 300.0 4928459 rot yes dist gaussian
+
+# Fix boundary atoms
+fix 1 boundary setforce 0.0 0.0 0.0
+
+# Equilibrate mobile atoms
+fix 2 mobile temp/rescale 10 300.0 300.0 0.02 1.0
+fix 3 all nve
+
+# Apply shear deformation
+velocity upper set 0.0 0.0 0.1
+fix 4 mobile addforce 0.0 v_yforce 0.0
+variable yforce equal ramp(0.0, 1.0)
+
+# Run simulation
+thermo 100
+thermo_style custom step temp etotal press
+timestep 0.001
+run 3100
+```

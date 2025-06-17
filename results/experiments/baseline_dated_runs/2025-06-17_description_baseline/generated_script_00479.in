@@ -1,0 +1,42 @@
+# LAMMPS input script for simulating controlled degradation of a nanogel particle
+
+units lj
+atom_style molecular
+
+# Read initial configuration from data file
+read_data nanogel_initial.data
+
+# Define groups for polymer and solvent atoms
+group polymer type 1
+group solvent type 2
+
+# Pair style and coefficients
+pair_style hybrid dpd 1.0 1.0 12345 srp/react 2.5
+pair_coeff * * dpd 1.0 1.0
+pair_coeff * * srp/react 1.0 1.0 2.5
+
+# Bond style and coefficients
+bond_style harmonic
+bond_coeff * 30.0 1.5
+
+# Bond breaking control
+fix bond_break polymer bond/break 500 1 1.2 prob 0.01 12345
+
+# Integration settings
+timestep 0.02
+velocity all create 1.0 4928459 dist gaussian
+
+# Ensemble
+fix 1 all nve
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Output bond-breaking statistics
+fix 2 polymer print 500 "Time: ${step}, Broken Bonds: ${f_bond_break}" file bond_stats.txt screen no
+
+# Run the simulation
+run 10000
+
+Make sure to replace `nanogel_initial.data` with the actual file name containing your initial configuration data. Adjust parameters like `dpd` and `srp/react` coefficients, bond coefficients, and probabilities according to your specific system requirements.

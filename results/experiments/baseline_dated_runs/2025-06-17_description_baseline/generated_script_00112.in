@@ -1,0 +1,45 @@
+# LAMMPS input script for a hBN bilayer with adsorbates using a hybrid potential
+
+units metal
+dimension 3
+boundary p p p
+atom_style charge
+
+# Create the simulation box and atoms
+read_data hbn_bilayer_adsorbates.data
+
+# Define atom types
+# 1: Boron in membrane
+# 2: Nitrogen in membrane
+# 3: Boron in adsorbate
+# 4: Nitrogen in adsorbate
+
+# Hybrid potential definition
+pair_style hybrid/overlay tersoff ilp/graphene/hbn coul/long 10.0
+pair_coeff * * tersoff BNC.tersoff B N NULL NULL
+pair_coeff * * ilp/graphene/hbn ilp_graphene_hbn.parm B N B N
+pair_coeff 1 3 coul/long
+pair_coeff 2 4 coul/long
+
+# Kspace style for long-range Coulombic interactions
+kspace_style pppm 1.0e-4
+
+# Group definitions
+group membrane type 1 2
+group adsorbates type 3 4
+
+# Fix membrane atoms
+fix fix_membrane membrane setforce 0.0 0.0 0.0
+
+# Apply NVE ensemble
+fix integrate all nve
+
+# Timestep
+timestep 0.001
+
+# Thermo settings
+thermo 100
+thermo_style custom step temp etotal pe ke f_1 f_2 f_3
+
+# Run the simulation
+run 1000

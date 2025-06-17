@@ -1,0 +1,43 @@
+# LAMMPS Input Script for Nitroamines System with ReaxFF
+
+units real
+atom_style charge
+boundary p p p
+
+# Read atomic configuration from a data file
+read_data nitroamines.data
+
+# Specify ReaxFF potential
+pair_style reax/c lmp_control
+pair_coeff * * ffield.reax nitroamines C H N O
+
+# Define charge equilibration
+fix qeq all qeq/reax 1 0.0 10.0 1e-6 reax/c
+
+# Output thermo properties every step
+thermo 1
+thermo_style custom step temp pe etotal press
+
+# Define NPT ensemble for equilibration
+fix 1 all npt temp 100.0 100.0 100.0 iso 1.0 1.0 1000.0
+
+# Dump atomic positions to XYZ file every 5000 steps
+dump 1 all xyz 5000 nitroamines_equil.xyz
+
+# Run equilibration for 100000 steps
+timestep 0.2
+run 100000
+
+# Switch to NVT ensemble
+unfix 1
+fix 2 all nvt temp 100.0 100.0 100.0
+
+# Continue dumping atomic positions
+dump 2 all xyz 5000 nitroamines_nvt.xyz
+
+# Run production for another 100000 steps
+run 100000
+
+# End of script
+
+This script initializes a molecular dynamics simulation of a nitroamines system using the ReaxFF reactive force field. It equilibrates the system under NPT conditions before switching to NVT, while monitoring thermodynamic properties and outputting atomic positions at specified intervals.

@@ -1,0 +1,41 @@
+# LAMMPS Input Script for CO2 Simulation using TraPPE Force Field in NVT Ensemble
+
+# Initialize simulation
+units real
+atom_style full
+boundary p p p
+
+# Read data from input file
+read_data ${input_file}
+
+# Define force field parameters
+pair_style lj/cut/coul/long 10.0
+pair_coeff 1 1 0.156 3.758  # C-C interaction
+pair_coeff 2 2 0.156 3.033  # O-O interaction
+pair_coeff 1 2 0.078 3.396  # C-O interaction
+
+bond_style harmonic
+bond_coeff 1 317.0 1.16  # C=O bond
+
+angle_style harmonic
+angle_coeff 1 75.0 180.0  # O=C=O angle
+
+kspace_style pppm 1.0e-4
+
+# Define group
+group CO2 type 1 2
+
+# Set initial velocities
+variable T equal ${temperature}
+velocity all create ${T} 12345 mom yes rot yes dist uniform
+
+# Fix NVT ensemble
+fix 1 all nvt temp ${T} ${T} 100.0
+
+# Output settings
+thermo 1000
+thermo_style custom step temp density pe press
+
+# Run simulation
+timestep 1.0
+run 1100000

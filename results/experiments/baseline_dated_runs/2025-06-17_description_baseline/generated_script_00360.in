@@ -1,0 +1,49 @@
+# LAMMPS input script for silicon FCC phase using MEAM/SW/spline potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create FCC lattice and simulation box
+lattice fcc 4.147
+region box block 0 1 0 1 0 1
+create_box 1 box
+create_atoms 1 box
+
+# Define atomic mass
+mass 1 28.085
+
+# Specify potential
+pair_style meam/spline
+pair_coeff * * Si.meam.spline Si
+
+# Set neighbor list
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Define thermodynamic properties to calculate
+compute E_per_atom all pe/atom
+compute V_per_atom all voronoi/atom
+
+# Output settings
+thermo_style custom step pe c_E_per_atom c_V_per_atom
+thermo 1
+
+# Reference data for validation
+variable ref_energy equal -4.63  # Example reference cohesive energy per atom (eV)
+variable ref_volume equal 20.0   # Example reference atomic volume (Å^3)
+variable ref_lattice equal 4.147 # Reference lattice constant (Å)
+
+# Calculate properties
+run 0
+
+# Print comparison of calculated vs reference
+variable energy_diff equal c_E_per_atom[1]-v_ref_energy
+variable volume_diff equal c_V_per_atom[1]-v_ref_volume
+variable lattice_diff equal 4.147-v_ref_lattice
+
+print "Cohesive Energy per Atom (eV): ${energy_diff}"
+print "Atomic Volume (Å^3): ${volume_diff}"
+print "Lattice Constant (Å): ${lattice_diff}"

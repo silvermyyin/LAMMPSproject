@@ -1,0 +1,43 @@
+# LAMMPS input script for CO2 using TraPPE force field under NVT conditions
+
+units real
+atom_style full
+boundary p p p
+
+# Variables for input file and temperature
+variable infile string "co2_data.lmp"
+variable temp equal 298.15
+
+# Read initial data file
+read_data ${infile}
+
+# Define pair and kspace styles
+pair_style lj/cut/coul/long 15.0
+pair_coeff * * 0.0 0.0  # Placeholder, define specific parameters for CO2
+
+kspace_style pppm 1.0e-4
+
+# Define bond and angle styles
+bond_style harmonic
+angle_style harmonic
+
+# Define bond and angle coefficients (example values)
+# These need to be replaced by TraPPE specific values for CO2
+bond_coeff 1 469.0 1.16  # C=O bond, example values
+angle_coeff 1 100.0 180.0  # O=C=O angle, example values
+
+# Setup groups and fixes
+group co2 type 1 2  # Assuming type 1 and 2 are C and O in CO2
+fix 1 co2 rigid/nvt molecule temp ${temp} ${temp} 100.0
+
+# Define thermo output
+thermo_style custom step temp density pe press
+thermo 1000
+
+# Run the simulation
+timestep 1.0  # Real units, typically 1 fs
+run 60000
+
+# End of script
+
+Make sure to replace the placeholder pair, bond, and angle coefficients with the specific TraPPE force field parameters for CO2.

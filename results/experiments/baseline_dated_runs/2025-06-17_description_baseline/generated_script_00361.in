@@ -1,0 +1,49 @@
+# LAMMPS input script for thermal coupling simulation between MD and FEM regions
+
+units real
+atom_style atomic
+
+# Create simulation domain
+boundary f p p
+region simbox block 0 100 -50 50 -50 50
+create_box 1 simbox
+
+# Define MD region
+region md_region block 10 90 -40 40 -40 40
+create_atoms 1 region md_region
+
+# Set up initial velocities
+velocity all create 20 12345
+
+# Define Lennard-Jones potential
+pair_style lj/cut 13.5
+pair_coeff * * 0.1 3.0 13.5
+
+# Group atoms
+group internal region md_region
+group ghost subtract all internal
+
+# Define fixes
+fix temp_rescale all temp/rescale 1 20 20 0.1 1.0
+fix atc_couple all atc fix_modify temp_rescale
+
+# Set up FEM region and coupling
+fix atc all atc
+fix_modify atc mesh fem_mesh region simbox
+fix_modify atc couple style thermal
+
+# Set left boundary temperature
+region left_wall block 0 10 INF INF INF INF
+fix temp_boundary all temp/rescale 1 40 40 0.1 1.0 region left_wall
+
+# Thermostatting
+unfix temp_rescale
+fix temp_nvt internal nvt temp 20 20 100.0
+
+# Output settings
+thermo 100
+thermo_style custom step time temp pe ke etotal
+
+# Run simulation
+timestep 0.5
+run 5000

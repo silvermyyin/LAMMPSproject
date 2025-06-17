@@ -1,0 +1,32 @@
+# LAMMPS input script for constant potential electrodes with ramping potential difference
+
+units           metal
+dimension       3
+boundary        p p f
+atom_style      charge
+kspace_style    pppm/electrode 1.0e-4
+
+# Read potential and system setup from an external file
+include         settings.mod
+
+# Define electrodes
+group           bottom_electrode type 1
+group           top_electrode type 2
+
+# Constant potential setup
+fix             conp all electrode/conp bottom_electrode top_electrode 0.0
+variable        ramp_volt equal ramp(0.0, 5.0) # Ramping from 0 to 5 volts
+
+# Modify the potential difference over time
+fix             var_potential all electrode/ramp bottom_electrode top_electrode v_ramp_volt
+
+# Slab correction for 2D periodicity
+kspace_modify   slab 3.0
+
+# Output settings
+thermo          1
+thermo_style    custom step v_ramp_volt f_conp[1] f_conp[2] f_conp[3] f_conp[4]
+thermo_modify   format float %12.8f
+
+# Run simulation
+run             10

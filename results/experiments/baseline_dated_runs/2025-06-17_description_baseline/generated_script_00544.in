@@ -1,0 +1,35 @@
+# LAMMPS Input Script for NaPO3 Simulation
+
+units           real
+dimension       3
+boundary        p p p
+atom_style      full
+
+# Read Data File
+read_data       data.NaPO3
+
+# Define Interactions
+pair_style      hybrid/overlay coul/dsf 0.2 10.0 table linear 1000 buck 10.0
+pair_coeff      * * coul/dsf
+pair_coeff      1 2 table table_file Na-P.table Na-P
+pair_coeff      1 3 buck 500.0 0.3 30.0
+pair_coeff      2 3 buck 1500.0 0.2 100.0
+
+# Three-body Interactions
+pair_style      hybrid/overlay nb3b/screened
+pair_coeff      * * nb3b/screened
+
+# Neighbor and Communication Settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Initialize Simulation
+timestep        2.0
+thermo_style    custom step temp press pe density
+thermo          100
+
+# Temperature and Pressure Control
+fix             1 all npt temp 2500.0 2500.0 100.0 iso 1.0 1.0 1000.0
+
+# Run Simulation
+run             10000

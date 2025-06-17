@@ -1,0 +1,65 @@
+# LAMMPS input script for 3D Lennard-Jones Poiseuille flow simulation
+
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Define hcp lattice and create box
+lattice hcp 0.8442
+region box block 0 10 0 10 0 10
+create_box 3 box
+
+# Create atoms
+create_atoms 1 box
+
+# Define regions for boundary conditions
+region lower block INF INF INF INF 0 1
+region upper block INF INF INF INF 9 10
+
+# Group atoms
+group lower region lower
+group upper region upper
+group liquid subtract all lower upper
+
+# Assign atom types
+set group lower type 2
+set group upper type 3
+
+# Set masses
+mass * 1.0
+
+# Define LJ potential
+pair_style lj/cut 1.0
+pair_coeff * * 1.0 1.0 1.0
+
+# Fix boundaries
+fix fix_lower lower setforce 0.0 0.0 0.0
+fix fix_upper upper setforce 0.0 0.0 0.0
+
+# Initial velocities
+velocity lower set 0.0 0.0 0.0
+velocity upper set 0.0 0.0 0.0
+velocity liquid create 1.0 87287
+
+# Apply constant force to liquid group
+fix fix_flow liquid addforce 0.1 0.0 0.0
+
+# Temperature control
+fix fix_temp liquid temp/rescale 100 1.0 1.0 0.02 1.0
+
+# Integrate equations of motion
+fix fix_nve all nve
+
+# Compute momentum
+compute mom_liquid liquid momentum
+compute mom_reduce_liquid liquid reduce sum vx vy vz
+
+# Output settings
+thermo 1000
+thermo_style custom step temp c_mom_liquid[1] c_mom_liquid[2] c_mom_liquid[3] \
+                         c_mom_reduce_liquid[1] c_mom_reduce_liquid[2] c_mom_reduce_liquid[3]
+
+# Run simulation
+timestep 0.003
+run 100000

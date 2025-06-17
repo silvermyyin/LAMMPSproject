@@ -1,0 +1,44 @@
+# Granular flow simulation with composite spherical particles
+
+units		si
+atom_style	granular
+boundary	p p f
+
+# Define simulation box
+region		box block 0 10 0 10 0 20 units box
+create_box	1 box
+
+# Material properties
+variable	k		equal 1.0e5    # Normal stiffness (N/m)
+variable	gamma_n	equal 50.0     # Normal damping (kg/s)
+variable	mu		equal 0.5      # Friction coefficient
+
+# Pair style and coefficients
+pair_style	gran/hooke/history ${k} ${k} ${gamma_n} ${gamma_n} ${mu}
+pair_coeff	* *
+
+# Define wall
+region		wall block INF INF INF INF 0 0.1 units box
+create_atoms	1 region wall
+
+# Define pouring region
+region		pour block 2 8 2 8 15 20 units box
+
+# Fix gravity
+fix		1 all gravity 9.81 vector 0.0 0.0 -1.0
+
+# Fix pour
+fix		2 all pour 1000 1 29494 region pour diam 0.5 1.4 rate 1.0
+
+# Fix particles as rigid bodies
+fix		3 all rigid/small single
+
+# Set timestep
+timestep	0.0001
+
+# Output settings
+thermo		100
+thermo_style	custom step cpu atoms ke
+
+# Run the simulation
+run		50000

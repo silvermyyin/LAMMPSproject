@@ -1,0 +1,27 @@
+# LAMMPS input script for a 2D simple cubic lattice with harmonic bonds and no pair interactions
+
+units lj
+dimension 2
+boundary p f p
+
+atom_style bond
+
+read_data data.simple_cubic
+
+pair_style none
+bond_style harmonic
+bond_coeff 1 30.0 1.0
+
+neighbor 0.5 nsq
+neigh_modify every 1 delay 0 check yes
+
+fix 1 all langevin 0.005 0.005 0.5 12345
+fix 2 all nve
+
+# Phonon analysis fix for vibrational modes
+fix 3 all phonon 50000 file phonon_analysis.dat
+
+thermo 1000
+thermo_style custom step temp epair etotal
+
+run 2000000

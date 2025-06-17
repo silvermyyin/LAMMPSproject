@@ -1,0 +1,43 @@
+# LAMMPS input script for simulating reversible adsorption in a cylindrical nanopore
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial data
+read_data data.nanopore
+
+# Define cylindrical region for nanopore
+region nanopore cylinder z 0.0 0.0 20.0 INF INF side in
+
+# Define potential
+pair_style lj/cut 3.367386145
+pair_coeff * * 0.1 1.0 3.367386145
+
+# Define wall using Lennard-Jones 9-3 potential
+fix wall lj/93 wall/region nanopore lj93 1.0 1.0 20.0
+
+# Define thermostat
+velocity all create 300.0 12345
+fix nvt all nve
+fix temp_control all langevin 300.0 300.0 100.0 12345
+
+# Initial stabilization with a small timestep
+timestep 0.1
+run 10000
+
+# Equilibration and production with larger timestep
+timestep 2.0
+run 100000
+
+# Output settings
+thermo 10000
+thermo_style custom step temp pe ke etotal
+
+# Record adsorption status
+fix adsorb_check all ave/time 10000 1 10000 c_my_adsorption file adsorption_status.txt mode vector
+
+# Define a compute to measure adsorption
+compute my_adsorption all property/local patom
+
+# End of input script

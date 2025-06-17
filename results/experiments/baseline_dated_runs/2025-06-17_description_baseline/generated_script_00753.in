@@ -1,0 +1,70 @@
+# LAMMPS input script for simulating Al2O3 crystal with charge equilibration
+
+units           metal
+dimension       3
+boundary        p p p
+
+# Define custom lattice and create simulation box
+variable        a equal 4.76
+variable        c equal 12.99
+lattice         custom ${a} a1 1 0 0 a2 0 1 0 a3 0 0 ${c} &
+                basis 0.0 0.0 0.0 &
+                basis 0.333 0.333 0.25 &
+                basis 0.667 0.667 0.75 &
+                basis 0.333 0.667 0.5 &
+                basis 0.667 0.333 0.5
+
+region          box block 0 1 0 1 0 1
+create_box      2 box
+create_atoms    1 box basis 1 1 basis 2 1 basis 3 1 basis 4 2 basis 5 2
+
+# Masses
+mass            1 26.9815 # Aluminum
+mass            2 15.999  # Oxygen
+
+# Pair style and coefficients
+pair_style      smtbq 7.0 10.0 1.0e-2
+pair_coeff      * * smtbq.alumina
+
+# Charge equilibration
+fix             1 all qeq/point 1 10 1.0e-6 smtbq/alumina
+
+# Initial velocities
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Neighbor settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Initial Equilibration
+fix             2 all nve
+timestep        0.001
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+run             5000
+
+# Minimize to relax structure
+unfix           2
+min_style       cg
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Calculate and output elastic constants
+fix             3 all box/relax iso 0.0 vmax 0.001
+compute         1 all stress/atom NULL
+compute         2 all reduce sum c_1[1] c_1[2] c_1[3] c_1[4] c_1[5] c_1[6]
+variable        C11 equal c_2[1]/vol
+variable        C22 equal c_2[2]/vol
+variable        C33 equal c_2[3]/vol
+variable        C44 equal c_2[4]/vol
+variable        C55 equal c_2[5]/vol
+variable        C66 equal c_2[6]/vol
+print           "Elastic Constants: C11 ${C11}, C22 ${C22}, C33 ${C33}, C44 ${C44}, C55 ${C55}, C66 ${C66}"
+
+# Output average charge distribution
+compute         charge1 all reduce ave c_1[1]
+compute         charge2 all reduce ave c_1[2]
+variable        avg_charge1 equal c_charge1
+variable        avg_charge2 equal c_charge2
+print           "Average Charges: Al ${avg_charge1}, O ${avg_charge2}"
+
+# End of script

@@ -1,0 +1,28 @@
+# LAMMPS input script for electronic system using electron force field model
+
+# Initialize simulation
+units electron
+atom_style electron
+boundary p p p
+
+# Read data
+variable sname string "system.data"
+read_data ${sname}
+
+# Define pair style and coefficients
+pair_style eff/cut 1.0
+pair_coeff * *
+
+# Compute energy components
+compute energies all pe/eff
+
+# Calculate pressure and stress per atom
+compute stress all stress/atom NULL
+compute pressure all reduce sum c_stress[1] c_stress[2] c_stress[3]
+
+# Thermodynamic settings
+thermo_style custom step temp pe c_energies[1] c_energies[2] c_energies[3] c_energies[4] press c_pressure
+thermo 1
+
+# Run simulation for zero timesteps
+run 0

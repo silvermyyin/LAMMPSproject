@@ -1,0 +1,46 @@
+# LAMMPS input script for a FCC lattice in a triclinic box
+
+# Initialize simulation
+units           lj
+atom_style      atomic
+boundary        p p p
+
+# Define the custom lattice with specific lattice vectors
+lattice         fcc 1.0
+lattice         custom 1.0 &
+                a1 1.0 0.0 0.0 &
+                a2 0.5 0.86602540378 0.0 &
+                a3 0.5 0.28867513459 0.81649658093 &
+                basis 0.0 0.0 0.0 &
+                basis 0.5 0.5 0.0 &
+                basis 0.5 0.0 0.5 &
+                basis 0.0 0.5 0.5
+
+# Define simulation box with triclinic dimensions
+region          box block 0 1 0 1 0 1 units lattice
+create_box      1 box triclinic
+create_atoms    1 box
+
+# Assign mass to atoms
+mass            1 1.0
+
+# Define pair style and coefficients
+pair_style      lj/cut 1.2
+pair_coeff      * * 1.0 1.0 1.2
+
+# Define neighbor list
+neighbor        0.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press pxx pyy pzz pxy pxz pyz
+
+# Dump settings
+dump            positions all atom 100 dump.positions
+
+# Write initial configuration to data file
+write_data      fcc_triclinic.data
+
+# Run the simulation for zero timesteps to initialize
+run             0

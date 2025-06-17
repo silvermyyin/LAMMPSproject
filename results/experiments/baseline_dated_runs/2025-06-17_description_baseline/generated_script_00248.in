@@ -1,0 +1,45 @@
+# LAMMPS input script for SiO2 zeolite with a methane molecule
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read initial configuration from data file
+read_data       zeolite_methane.data
+
+# Define potential styles
+pair_style      hybrid/overlay buck/coul/cut 6.5 lj/cut 6.5
+bond_style      harmonic
+angle_style     harmonic
+
+# SiO2 interaction parameters using Buckingham potential
+pair_coeff      * * buck/coul/cut 1.0 1000.0 0.1 0.0 6.5
+pair_coeff      1 2 buck/coul/cut 18003.7572 0.205204 133.5381 0.0 6.5
+pair_coeff      2 2 buck/coul/cut 1388.7730 0.362319 175.0000 0.0 6.5
+
+# Methane interaction parameters using Lennard-Jones potential
+pair_coeff      3 3 lj/cut 0.294 3.73 6.5
+pair_coeff      3 4 lj/cut 0.068 3.43 6.5
+pair_coeff      4 4 lj/cut 0.030 2.96 6.5
+
+# Define charges for Si and O atoms
+set type 1 charge 2.4
+set type 2 charge -1.2
+
+# Define bonds and angles for methane
+bond_coeff      1 340.0 1.09
+angle_coeff     1 33.0 109.5
+
+# Define group for methane
+group methane type 3 4
+
+# Define integrator
+timestep        0.0001
+fix             1 all nve
+
+# Output settings
+thermo          1
+thermo_style    custom step temp ke pe etotal
+
+# Run the simulation
+run             3

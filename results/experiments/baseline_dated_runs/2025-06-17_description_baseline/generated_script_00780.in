@@ -1,0 +1,65 @@
+# 2D Oxidizing Bar Simulation with Hybrid Rheo/Thermal Bond Atom Style
+
+units lj
+dimension 2
+atom_style hybrid bond
+
+boundary p p f
+
+# Create regions
+region whole block 0 20 0 10 -0.5 0.5
+region left_bar block 0 9 0 8 -0.5 0.5
+region right_bar block 11 20 0 8 -0.5 0.5
+region floor block 0 20 0 1 -0.5 0.5
+
+# Create simulation box and atoms
+create_box 2 whole
+
+# Define lattice and create atoms
+lattice hex 0.8
+create_atoms 1 region left_bar
+create_atoms 2 region right_bar
+
+# Define groups
+group left type 1
+group right type 2
+group floor region floor
+
+# Pair style
+pair_style hybrid/overlay lj/cut 2.5 rheo 1.0
+pair_coeff * * lj/cut 1.0 1.0
+pair_coeff * * rheo 0.5 1.0
+
+# Bond style
+bond_style hybrid spring shell
+bond_coeff * spring 100.0 1.0
+bond_coeff * shell 1.0 0.5
+
+# Gravity
+fix gravity all gravity 0.1 vector 0 -1 0
+
+# Rheological fixes
+fix viscosity all viscous 1.0
+fix thermal all thermal/conductivity 0.5
+fix oxidation right oxidation 1.0
+
+# Additional heat
+fix heat_surface left heat 0.1
+fix heat_floor floor heat 0.1
+
+# Constraints
+fix freeze_floor floor setforce 0.0 0.0 0.0
+
+# Initial velocities
+velocity all create 0.1 12345
+
+# Thermodynamics
+thermo 1000
+thermo_style custom step temp pe ke etotal press
+
+# Time integration
+timestep 0.005
+fix nve all nve
+
+# Run the simulation
+run 40000

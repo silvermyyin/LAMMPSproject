@@ -1,0 +1,45 @@
+# LAMMPS input script for shock-induced chemical reactions in liquid methane
+
+units real
+atom_style full
+boundary p p p
+
+# Create liquid methane structure
+lattice fcc 3.0
+region box block 0 5 0 5 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define potential
+pair_style lj/cut 10.0
+pair_coeff * * 0.294 3.73  # Methane parameters
+
+# Masses
+mass 1 16.04  # Methane
+
+# Equilibration at 110K with quantum thermal bath
+fix 1 all nve
+fix qtb all qtb temp 110 seed 12345
+
+# Timestep
+timestep 0.25
+
+# Output settings
+thermo 100
+thermo_style custom step time temp press etotal vol
+
+# Equilibration run
+run 5000
+
+unfix 1
+unfix qtb
+
+# Shock compression setup
+variable shock_velocity equal 0.122
+fix shock all qbmsst z ${shock_velocity} T_init 110 seed 12345 q 25 mu 0.9 tscale 0.01 damp 200 f_max 0.3 N_f 100 eta 1 beta 400
+
+# Output settings for shock
+thermo_style custom step time temp press etotal vol v_shock_velocity
+
+# Shock simulation
+run 10000

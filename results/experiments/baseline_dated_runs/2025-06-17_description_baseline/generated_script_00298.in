@@ -1,0 +1,26 @@
+# LAMMPS Input Script for Lennard-Jones Fluid PIMD Simulation with Langevin Thermostat
+
+units lj
+atom_style atomic
+boundary p p p
+
+# Read initial atomic configurations from a data file
+variable ibead index 1
+read_data data.pimd.${ibead}
+
+# Define Lennard-Jones potential with a cutoff of 2.8015, shifting the potential to zero at the cutoff
+pair_style lj/cut 2.8015
+pair_coeff 1 1 1.0 1.0 2.8015
+
+# Set the timestep
+timestep 0.00044905847
+
+# Define the PIMD ensemble with a Langevin thermostat using an OBABO integrator
+fix 1 all pimd/langevin 1.00888 1.00888 0.01 48279
+
+# Output thermodynamic properties every 100 steps
+thermo 100
+thermo_style custom step temp vol press
+
+# Run the simulation for 1000 timesteps
+run 1000

@@ -1,0 +1,54 @@
+# LAMMPS input script for granular dynamics in a cylindrical drum with thermal boundaries
+
+units si
+atom_style sphere
+boundary p p f
+newton off
+
+# Define the simulation domain
+region simbox block 0 0.2 0 0.2 0 0.1 units box
+create_box 2 simbox
+
+# Define the cylindrical drum region
+region drum cylinder z 0.1 0.1 0.08 0.0 0.1 units box
+create_atoms 1 random 10000 12345 drum
+
+# Particle properties
+variable dmin equal 0.001
+variable dmax equal 0.002
+variable rhomin equal 2500
+variable rhomax equal 3000
+set type 1 diameter ${dmin} density ${rhomin}
+set type 2 diameter ${dmax} density ${rhomax}
+
+# Pair style and coefficients for granular interactions
+pair_style granular hertz/mindlin
+pair_coeff * *
+
+# Define gravity
+variable g equal 9.81
+fix 1 all gravity ${g} vector 0.0 0.0 -1.0
+
+# Integrate equations of motion
+fix 2 all nve/sphere
+
+# Insert particles using fix pour
+fix pour1 all pour 5000 1 12345 region drum diam ${dmin} ${dmax} density ${rhomin} ${rhomax}
+fix pour2 all pour 5000 2 67890 region drum diam ${dmin} ${dmax} density ${rhomin} ${rhomax}
+
+# Define thermal oscillation on the bottom boundary
+variable temp_amplitude equal 300.0
+variable temp_omega equal 2.0*PI/0.1
+fix 3 all temp/berendsen ${temp_amplitude} 0.1 region lower
+
+# Oscillate the temperature of the lower boundary
+region lower block INF INF INF INF 0 0.01 units box
+fix temp_oscillate all wall/gran region lower zplane 0.0 scale variable temp_amplitude*sin(temp_omega*time)
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+# Time step and run
+timestep 0.0001
+run 10000

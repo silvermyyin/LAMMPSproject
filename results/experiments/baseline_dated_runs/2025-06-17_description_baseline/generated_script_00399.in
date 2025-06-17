@@ -1,0 +1,29 @@
+# LAMMPS Input Script for 3D Simulation of Rounded Cubic Particles
+
+units lj
+dimension 3
+boundary p p p
+
+atom_style body
+read_data rounded_cubic_particles.data
+
+# Replicate the system in a cubic arrangement
+replicate 2 2 2
+
+# Define the pair style for rounded cubic particles
+pair_style body/rounded/polyhedron
+pair_coeff * * normal_damping 0.1 tangential_damping 0.1 friction 0.3 adhesion 0.05
+
+# Initialize velocities with a Gaussian distribution
+velocity all create 1.2 12345 mom yes rot yes dist gaussian
+
+# Define the integration method and apply a constant temperature ensemble
+fix 1 all nvt/body temp 1.2 1.2 0.1
+
+# Set thermo output to monitor system evolution
+thermo 1000
+thermo_style custom step temp ke pe etotal press
+
+# Run the simulation for 10,000 timesteps with a timestep of 0.001
+timestep 0.001
+run 10000

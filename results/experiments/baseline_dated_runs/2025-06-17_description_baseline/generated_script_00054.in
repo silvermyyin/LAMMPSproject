@@ -1,0 +1,50 @@
+# LAMMPS Input Script for 3D Metal Shear Simulation of FCC Nickel
+
+# Initialize simulation
+units metal
+dimension 3
+boundary s s p
+atom_style atomic
+
+# Create FCC lattice and region
+lattice fcc 3.52
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define potential
+pair_style meam
+pair_coeff * * library.meam Ni Ni.meam Ni
+
+# Define groups for boundary and mobile atoms
+region lower block INF INF INF 1 INF INF
+region upper block INF INF 9 INF INF INF
+group lower region lower
+group upper region upper
+group mobile subtract all lower upper
+
+# Set initial velocities and temperature
+velocity all create 300.0 12345
+compute myTemp mobile temp
+velocity mobile scale 300.0
+
+# Apply periodic boundary conditions
+fix 1 all nve
+
+# Apply shear deformation
+velocity upper set 0.0 0.0 0.1 units box
+fix 2 mobile move linear 0.0 0.0 0.1 units box
+
+# Temperature control
+fix 3 all temp/rescale 100 300.0 300.0 0.1 1.0
+
+# Run simulation
+timestep 0.001
+thermo 100
+thermo_style custom step temp pe ke etotal
+run 10000
+
+# Cleanup
+unfix 1
+unfix 2
+unfix 3

@@ -1,0 +1,41 @@
+# LAMMPS input script for 3D microrheology simulation with colloidal particles in LB fluid
+
+units lj
+atom_style molecular
+
+# Read initial configuration
+read_data data.colloids
+
+# Define boundary conditions
+boundary p p p
+
+# Define Lennard-Jones potential for colloidal interactions
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Define groups for colloidal particles
+group colloid type 1
+
+# Setup Lattice-Boltzmann fluid
+fix 1 all lb/fluid 0.1 1.0 1.0 1.0 visc 0.89 density 1.0
+fix lb_force all lb/viscous 1
+
+# Couple LB fluid to colloidal particles
+fix 2 colloid lb/rigid 1 trilinear
+
+# Treat colloidal particles as rigid bodies
+fix 3 colloid rigid/nve single
+
+# Zero total momentum to prevent drift
+fix 4 all momentum 100 linear 1 1 1
+
+# Define output for colloidal particles' central atoms
+dump 1 colloid custom 100 dump.colloids id type x y z
+dump_modify 1 first yes
+
+# Run the simulation
+timestep 0.005
+thermo 100
+run 10000
+
+# End of script

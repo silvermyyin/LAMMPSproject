@@ -1,0 +1,48 @@
+# LAMMPS input script for NEB simulation of vacancy hopping in silicon
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Define the silicon diamond cubic lattice
+lattice diamond 5.431
+region box block 0 10 0 10 0 10
+create_box 1 box
+
+# Read the pre-prepared data file with a silicon crystal and a vacancy
+read_data silicon_with_vacancy.data
+
+# Define the Stillinger-Weber potential for silicon
+pair_style sw
+pair_coeff * * Si.sw Si
+
+# Identify the atoms neighboring the vacancy (assuming atom id of vacancy is known)
+# This section is conceptual; specific atom IDs must be known or calculated
+# group neighbors id 100 101 102 103 104
+
+# Minimize the system to relax it
+minimize 1.0e-4 1.0e-6 100 1000
+
+# NEB calculation setup
+neb 0.0 0.01 2000 100 final final.neb
+
+# Define NEB replicas
+replica 0 box/10
+replica 1 box/10
+replica 2 box/10
+replica 3 box/10
+replica 4 box/10
+
+# NEB run
+neb 0.0 0.01 2000 final final.neb
+
+# Output settings
+thermo 100
+thermo_style custom step pe ke etotal press
+dump 1 all custom 100 dump.neb id type x y z
+
+# Run NEB using FIRE minimization
+min_style fire
+run 2000
+
+Note: The specifics of the neighboring atoms or the starting and ending configurations for the NEB replicas need to be identified and implemented based on the vacancy location and desired path. This script assumes you have a data file named `silicon_with_vacancy.data` that represents your system. Adjust the `replica` commands to match your specific NEB path setup.

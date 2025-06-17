@@ -1,0 +1,50 @@
+# LAMMPS Input Script for SPCE Water System
+
+units           real
+atom_style      full
+
+# Create simulation box and read data
+boundary        p p p
+read_data       water_spce.data
+
+# Define SPCE water model parameters
+pair_style      lj/cut/coul/long 10.0 12.0
+pair_coeff      1 1 0.1553 3.166 # O-O interactions
+pair_coeff      2 2 0.0000 0.000 # H-H interactions
+pair_coeff      1 2 0.0000 0.000 # O-H interactions
+
+bond_style      harmonic
+bond_coeff      1 1000.0 1.0
+
+angle_style     harmonic
+angle_coeff     1 100.0 109.47
+
+kspace_style    pppm 1.0e-4
+
+# Define groups
+group           water type 1 2
+
+# Initialize velocities
+velocity        all create 300.0 12345
+
+# Define fixes
+fix             1 all nvt temp 300.0 300.0 100.0
+fix             2 all fep/ta lambda 0.0 1.0 10000
+
+# Compute surface tension
+variable        Lz equal box/len/zz
+variable        press equal (c_thermo_press[1] - c_thermo_press[3]) * v_Lz / 2.0
+variable        surf_tension equal v_press * 0.1 # Convert from atm to mN/m
+
+thermo_style    custom step temp press etotal v_surf_tension
+thermo          1000
+
+# Output settings
+dump            1 all custom 5000 dump.water id type x y z vx vy vz
+dump_modify     1 format line "%d %d %.5g %.5g %.5g %.5g %.5g %.5g"
+
+# Run the simulation
+timestep        2.0
+run             2300000
+
+# End of script

@@ -1,0 +1,36 @@
+# LAMMPS input script for 2D charged particles with point dipoles
+
+units lj
+atom_style charge
+
+# Read particle configurations from a data file
+read_data datafile.data
+
+# Set simulation box to have fixed boundaries in all directions
+boundary f f f
+
+# Assign random velocities for a target temperature of 1.5 with a specified random seed
+velocity all create 1.5 12345
+
+# Define neighbor list with binning method and no delay
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Dummy pair style for atom sorting
+pair_style zero 2.5
+pair_coeff * *
+
+# Use Scafacos library with P3M method for long-range Coulombic interactions
+kspace_style scafacos p3m 0.001
+
+# Integration with fix nve
+fix 1 all nve
+
+# Set the timestep
+timestep 0.005
+
+# Output thermodynamic data every timestep
+thermo 1
+
+# Run the simulation for a total of 20 steps
+run 20

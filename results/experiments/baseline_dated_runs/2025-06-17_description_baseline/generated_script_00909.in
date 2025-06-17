@@ -1,0 +1,62 @@
+# LAMMPS Input Script for Toy Car in Lattice Boltzmann Fluid
+
+units cgs
+dimension 3
+boundary p p f
+
+# Initialize simulation box dimensions
+variable L equal 100.0  # Base length
+region simbox block 0 ${L} 0 ${L} 0 ${L} units box
+create_box 2 simbox
+
+# Create fluid
+region fluid block 0 ${L} 0 ${L} 0 ${L} units box
+create_atoms 1 region fluid
+
+# Toy car components
+# Prisms for body and wings
+region car_body prism 10 30 10 20 0 5 0 0 0 units box
+region car_wing1 prism 5 10 15 25 0 2 0 0 0 units box
+region car_wing2 prism 30 35 15 25 0 2 0 0 0 units box
+
+# Cylinders for wheels
+region wheel1 cylinder z 15 10 2 0 5 units box
+region wheel2 cylinder z 25 10 2 0 5 units box
+region wheel3 cylinder z 15 20 2 0 5 units box
+region wheel4 cylinder z 25 20 2 0 5 units box
+
+# Create car atoms
+create_atoms 2 region car_body
+create_atoms 2 region car_wing1
+create_atoms 2 region car_wing2
+create_atoms 2 region wheel1
+create_atoms 2 region wheel2
+create_atoms 2 region wheel3
+create_atoms 2 region wheel4
+
+# Define groups for car parts
+group car_body region car_body
+group car_wing1 region car_wing1
+group car_wing2 region car_wing2
+group car_wheels union wheel1 wheel2 wheel3 wheel4
+group toy_car union car_body car_wing1 car_wing2 car_wheels
+
+# Define Lennard-Jones potential
+pair_style lj/cut 1.0
+pair_coeff * * 1.0 1.0 2.5
+
+# Setup lattice Boltzmann fluid interactions
+fix lbm all lb/fluid 2.0 1.0 0.55
+
+# Define rigid body dynamics for toy car
+fix rigid_car toy_car rigid single
+
+# Set timestep and run parameters
+timestep 0.01
+thermo 100
+thermo_style custom step temp etotal
+
+# Run the simulation
+run 20000
+
+This script sets up a LAMMPS simulation for a toy car moving through a lattice Boltzmann fluid, using rigid body dynamics for the car and Lennard-Jones potentials to model interactions. Adjust the parameters as needed for specific studies or conditions.

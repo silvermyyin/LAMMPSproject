@@ -1,0 +1,44 @@
+# LAMMPS Input Script for DNA duplexes using oxDNA2 model
+
+units real
+atom_style hybrid bond ellipsoid oxDNA
+
+# Initialize simulation box and read data file
+read_data dna_duplexes.data
+
+# Define potentials for oxDNA2 model
+pair_style hybrid/overlay oxDNA2/excluded_volume oxDNA2/stacking oxDNA2/hbond oxDNA2/cross_stacking oxDNA2/coaxial_stack oxDNA2/dh
+bond_style fene
+
+# Define pair coefficients (example values, to be adjusted for specific system)
+pair_coeff * * oxDNA2/excluded_volume 1.0
+pair_coeff * * oxDNA2/stacking 1.0
+pair_coeff * * oxDNA2/hbond 1.0
+pair_coeff * * oxDNA2/cross_stacking 1.0
+pair_coeff * * oxDNA2/coaxial_stack 1.0
+pair_coeff * * oxDNA2/dh 1.0
+
+# Define bond coefficients (example values, to be adjusted for specific system)
+bond_coeff * 30.0 1.0 1.0 1.0
+
+# Setup simulation parameters
+neighbor 1.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Apply periodic boundary conditions
+boundary p p p
+
+# Define timestep and run parameters
+timestep 0.01706
+thermo 1000
+thermo_style custom step temp pe ke etotal ebond evdwl epair
+
+# Set up fix for NVE integration
+fix 1 all nve/asphere
+
+# Set up output
+dump 1 all custom 10000 traj.lammpstrj id type x y z vx vy vz fx fy fz
+dump_modify 1 sort id
+
+# Run the simulation
+run 1000000

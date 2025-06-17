@@ -1,0 +1,62 @@
+# LAMMPS input script for 2D water column collapse with TLSPH and ULSPH
+
+units         si
+dimension     2
+boundary      f f p
+
+atom_style    hybrid sphere
+
+# Create simulation box
+region        simbox block 0 100 0 50 -0.1 0.1 units box
+create_box    2 simbox
+
+# Define materials
+group         water type 1
+group         solid type 2
+
+# Create water column
+region        water_region block 1 20 0 40 -0.05 0.05 units box
+create_atoms  1 region water_region
+
+# Create solid objects
+region        solid_region block 25 35 20 30 -0.05 0.05 units box
+create_atoms  2 region solid_region
+
+# Material properties
+mass          1 1000.0     # Water density in kg/m^3
+mass          2 500.0      # Solid density in kg/m^3
+
+# TLSPH and ULSPH settings
+pair_style    sph/tlsph/ulsph 1.0 1.0
+pair_coeff    * *
+
+# Define contact interactions
+pair_style    hertz 1.0
+pair_coeff    1 2 0.1 1.0
+
+# Set elastic properties for solid
+fix           1 solid property/tlsph youngs_modulus 0.5
+fix           2 solid property/tlsph poissons_ratio 0.3
+
+# Set fluid properties for water
+fix           3 water property/ulsph bulk_modulus 2.2
+fix           4 water property/ulsph density 1000.0
+
+# Gravity
+fix           5 all gravity 9.81 vector 0 -1 0
+
+# Integration settings
+timestep      0.001
+fix           6 all nve/sph
+
+# Dynamic time step adjustment
+variable      dt equal 0.001
+fix           7 all dt/reset 10 0.001 0.005 0.5 units box
+
+# Output settings
+thermo        100
+thermo_style  custom step time temp press pe ke etotal
+dump          1 all custom 100 output/dump.lammpstrj id type x y z vx vy vz density stress
+
+# Run the simulation
+run           10000

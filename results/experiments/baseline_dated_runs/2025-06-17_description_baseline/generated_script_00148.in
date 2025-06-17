@@ -1,0 +1,42 @@
+# LAMMPS input script for simulating liquid methane with quantum thermal bath
+
+units real
+atom_style charge
+boundary p p p
+
+# Define a custom lattice for methane
+lattice custom 10.0 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.25 0.25 0.25
+region box block 0 2 0 2 0 2
+create_box 2 box
+
+# Create atoms for methane (CH4)
+create_atoms 1 basis 1
+create_atoms 2 basis 2
+
+# Set masses for carbon and hydrogen
+mass 1 12.01
+mass 2 1.008
+
+# Define interactions using ReaxFF
+pair_style reaxff
+pair_coeff * * ffield.reax C H
+
+# Set up charge equilibration
+fix qeq all qeq/reax 1 0.0 10.0 1e-6 reax/c
+
+# Define simulation parameters
+velocity all create 150.0 12345 dist gaussian
+
+# Apply NVE integration
+fix 1 all nve
+
+# Implement quantum thermal bath
+fix 2 all qtb 150.0
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp press etotal vol
+
+# Run the simulation for 500 femtoseconds
+timestep 0.25
+run 2000

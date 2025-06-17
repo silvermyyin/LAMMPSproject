@@ -1,0 +1,47 @@
+# LAMMPS input script for alchemical transformation of copper to aluminium bronze
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC lattice of copper
+lattice         fcc 3.615
+region          box block 0 10 0 10 0 10
+create_box      2 box
+create_atoms    1 box
+
+# Define potentials
+pair_style      eam/alloy
+pair_coeff      * * CuAl.eam.alloy Cu Al
+
+# Define groups for dual-partition
+group           pure type 1
+group           alloy type 2
+
+# Set initial velocities
+velocity        all create 5000 12345
+
+# Apply alchemical transformation
+variable        ramp equal ramp(0,1)
+fix             alchemy all adapt 1 atomtype 1 v_ramp 2
+
+# Set a fraction of copper atoms to aluminum in the alloy group
+set             group alloy type/fraction 2 0.05 12345
+
+# Define NVT ensemble for temperature equilibration
+fix             1 all nvt temp 5000 500 0.1
+
+# Compute pressure using alchemical approach
+compute         myPress all pressure NULL virial
+compute         myAlchemyPress all pressure/alchemy all myPress
+
+# Define thermo output
+thermo_style    custom step temp c_myAlchemyPress pe ke etotal
+thermo          100
+
+# Run the simulation
+timestep        0.001
+run             10000
+
+This script sets up a simulation where copper atoms are gradually transformed into an aluminium bronze alloy using an alchemical method, with outputs provided to observe the changes.

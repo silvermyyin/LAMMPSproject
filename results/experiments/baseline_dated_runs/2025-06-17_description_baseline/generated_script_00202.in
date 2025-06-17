@@ -1,0 +1,39 @@
+# LAMMPS Input Script for Ionized Methane (CH4) Simulation using Electron Force Field
+
+units           electron
+atom_style      full
+boundary        p p p
+
+read_data       data.ch4_ionized
+
+pair_style      eff/cut 5000.0
+pair_coeff      * *
+
+# Group definition
+group           all type 1 2 3 4 5
+
+# Minimization phase
+min_style       cg
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Define variables for temperature
+variable        T equal 300.0
+
+# Time integration settings
+timestep        0.001
+
+# Define thermo settings
+thermo_style    custom step temp pe ke etotal press
+thermo          100
+
+# Equilibration phase using NVT ensemble
+fix             1 all nvt/eff temp ${T} ${T} 0.1
+run             1000000
+unfix           1
+
+# Transition to microcanonical ensemble with NVE
+fix             2 all nve/eff
+run             1000000
+unfix           2
+
+# End of LAMMPS input script

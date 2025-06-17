@@ -1,0 +1,41 @@
+# LAMMPS Input Script for Overdamped Dynamics of Dipole-Attached Sphere in 2D
+
+units lj
+dimension 2
+boundary p p p
+
+atom_style hybrid sphere dipole
+
+lattice sq 0.01
+region simbox block -30 30 -30 30 -0.1 0.1
+create_box 1 simbox
+
+create_atoms 1 random 100 12345 simbox
+
+# Set initial properties
+set group all diameter 1.0
+set group all mass 1.0
+set group all dipole/random 1.0 12345
+
+# Define pair interaction - no interaction in this simple model
+pair_style none
+
+# Set integrator and timestep
+timestep 0.00001
+
+# Define fixes for overdamped dynamics
+fix 1 all brownian/sphere 5.0 0.7 12345
+
+# Set initial velocities to correspond to a temperature of 1.0
+velocity all create 1.0 12345
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Compute mean square displacement
+compute msd all msd
+fix 2 all ave/time 100 1 100 c_msd[1] c_msd[2] c_msd[3] file msd.dat mode vector
+
+# Run simulation
+run 3000

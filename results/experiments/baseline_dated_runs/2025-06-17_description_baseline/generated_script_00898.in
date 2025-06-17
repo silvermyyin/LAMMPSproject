@@ -1,0 +1,49 @@
+# LAMMPS input script for QM/MM simulation of a water system using PySCF
+
+units real
+atom_style full
+boundary p p p
+
+# Define atom masses
+mass 1 15.9994  # Oxygen
+mass 2 1.00794  # Hydrogen
+
+# Pair style and settings
+pair_style hybrid lj/cut/coul/long 10.0
+pair_coeff * * lj/cut/coul/long 0.0 0.0  # Set to zero as QM calculations will handle this
+
+# Bond and angle styles
+bond_style harmonic
+angle_style harmonic
+
+# Read data file
+read_data water_system.data
+
+# QM/MM setup
+fix qmmm all qmmm mdi/qmmm
+fix_modify qmmm group qm_group
+fix_modify qmmm mdi_port 8021
+fix_modify qmmm mdi_name pyscf
+
+# Remove bonds and angles in QM region
+group qm_group id 1 2 3  # Assuming the first water molecule is atoms ID 1, 2, 3
+group mm_group id 4 5 6  # Assuming the second water molecule is atoms ID 4, 5, 6
+delete_bonds qm_group all
+set group qm_group charge 0.0
+
+# Define timestep and initialize velocities
+timestep 1.0
+velocity all create 300.0 12345
+
+# Long-range electrostatics
+kspace_style pppm 1.0e-4
+
+# Integrate equations of motion
+fix 1 all nve
+
+# Output settings
+thermo_style custom step temp pe ke etotal press
+thermo 1
+
+# Run simulation
+run 5000

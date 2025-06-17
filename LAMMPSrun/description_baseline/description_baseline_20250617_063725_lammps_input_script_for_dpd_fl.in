@@ -1,0 +1,45 @@
+```lammps
+# LAMMPS input script for DPD fluid simulation under isoenthalpic conditions
+
+units metal
+atom_style atomic
+
+# Read data file containing initial configuration
+read_data data.dpd_fluid
+
+# Define atom masses
+mass 1 100.0
+
+# Set up pair style and coefficients
+pair_style dpd/fdt/energy 1.0 1.0 1.0 12345
+pair_coeff * * 1.0 1.0
+
+# Set up neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check no
+
+# Set up the integration scheme
+timestep 0.001
+
+# Set periodic boundary conditions
+boundary p p p
+
+# Compute thermodynamic properties
+compute myPE all pe/atom
+compute myKE all ke/atom
+
+# Define the fixes for integration and isoenthalpic conditions
+fix 1 all shardlow
+fix 2 all nph iso 1.0 1.0 0.1
+fix 3 all eos/cv
+
+# Output thermodynamic information every step
+thermo 1
+thermo_style custom step temp press vol etotal pe ke
+thermo_modify lost ignore
+
+# Run the simulation
+run 100
+```
+
+This script sets up a simulation of a DPD fluid using the specified conditions, with periodic boundaries and constant enthalpy. The `dpd/fdt/energy` pair style models the interactions, and the `fix eos/cv` maintains isoenthalpic conditions. The `fix shardlow` and `fix nph` commands are used for integration and pressure control, respectively.

@@ -1,0 +1,38 @@
+# LAMMPS Input Script for Argon with Two-Temperature Modeling using AtC
+
+units real
+atom_style atomic
+
+# Initialization
+read_data argon_fcc.data
+
+# Define potential
+pair_style lj/cut 13.5
+pair_coeff * * 0.238 3.405 13.5
+
+# Define region and boundary conditions
+region simbox block 0 50 0 50 0 50
+boundary p p f
+
+# AtC package setup
+fix atc all atc two_temperature
+fix_modify atc mesh thermal_mesh.exo
+fix_modify atc material argon_material.mat
+
+# Initialize temperatures
+velocity all create 70.0 12345 mom yes rot no dist gaussian
+fix_modify atc temperature_atoms 70.0
+fix_modify atc temperature_electrons gaussian 150.0 x 25.0 5.0
+
+# Thermal flux control
+fix_modify atc thermal_flux yes
+
+# Run settings
+timestep 1.0
+thermo 10
+thermo_style custom step temp pe f_atc[1] f_atc[2]
+
+# Run the simulation
+run 100
+
+This script sets up a molecular dynamics simulation of argon using a two-temperature model with reflective boundary conditions along the z-axis, as per your requirements. The AtC fix handles the two-temperature dynamics, and the script includes initial conditions and settings for the simulation.

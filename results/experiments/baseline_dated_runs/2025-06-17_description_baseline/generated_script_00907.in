@@ -1,0 +1,50 @@
+# LAMMPS input script for uniaxial strain simulation on fcc copper using EAM potential
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Define lattice and region
+lattice         fcc 3.615
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+create_atoms    1 region simbox
+
+# Define potential
+pair_style      eam
+pair_coeff      * * Cu_u3.eam
+
+# Define groups
+group           all type 1
+region          internal block 1 9 1 9 1 9
+group           internal region internal
+
+# Initialize AtC package
+fix             atc all atc mesh fem create 1.0 1.0 1.0
+fix_modify      atc mesh fem refine 0.1
+fix_modify      atc mesh fem add_element brick 1.0
+
+fix             hardy all atc field mass_density displacement stress internal_energy region all localization_function quartic_cylinder
+fix_modify      hardy field_output file hardy_fields.txt
+
+# Set up simulation parameters
+timestep        0.001
+thermo          100
+thermo_style    custom step temp pe ke etotal
+
+# Equilibrate system
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+fix             nve all nve
+run             5000
+
+# Apply uniaxial strain
+displace_atoms  all move 0.01 0.0 0.0 units box
+
+# Run simulation
+run             20000
+
+# Output results
+dump            1 all custom 100 output.dump id type x y z vx vy vz
+
+This script defines an fcc copper lattice using an EAM potential, creates atoms in a specified region, defines a group for internal atoms, initializes the AtC package to calculate Hardy fields, equilibrates the system, applies uniaxial strain, and outputs the results. The meshing and localization function are set for AtC calculations.

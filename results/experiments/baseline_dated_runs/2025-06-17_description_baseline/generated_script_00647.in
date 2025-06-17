@@ -1,0 +1,36 @@
+# LAMMPS input script for a 3D Lennard-Jones melt simulation
+
+units           lj
+atom_style      atomic
+dimension       3
+
+# Variables for scaling the simulation box dimensions
+variable        x equal 20
+variable        y equal 20
+variable        z equal 20
+
+# Create a face-centered cubic (fcc) lattice and initialize the simulation box
+lattice         fcc 0.8442
+region          box block 0 ${x} 0 ${y} 0 ${z}
+create_box      1 box
+create_atoms    1 box
+
+# Set mass of atoms
+mass            1 1.0
+
+# Define interactions
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5
+
+# Configure neighbor list
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Output settings
+thermo          100
+
+# Rerun settings to process an existing trajectory dump file
+rerun           lj.dump first 200 last 800 every 200 dump x y z vx vy vz
+
+# Run the rerun command to process snapshots
+run             1

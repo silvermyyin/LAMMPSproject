@@ -1,0 +1,46 @@
+# LAMMPS Input Script: Cylindrical Liquid-Vapor Interface with LJ Potential
+
+# Initialize simulation
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create simulation box
+lattice fcc 0.8442
+region box block 0 10 0 10 0 20
+create_box 1 box
+
+# Define cylindrical region for liquid phase
+region liquid_cylinder cylinder z 5 5 3 0 20
+create_atoms 1 region liquid_cylinder
+
+# LJ Potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify delay 5 every 1
+
+# Define groups
+group liquid region liquid_cylinder
+
+# Set initial velocities
+velocity all create 0.65 12345
+
+# Thermostat
+fix 1 all nvt temp 0.65 0.65 0.1
+
+# Compute stress distribution
+compute stress all stress/atom NULL
+compute stress_cyl all reduce sum c_stress[1] c_stress[2] c_stress[3]
+fix stress_avg all ave/time 10 10 100 c_stress_cyl file stress_cylinder.txt
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe etotal press
+
+# Run simulation
+timestep 0.005
+run 1000

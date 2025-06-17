@@ -1,0 +1,42 @@
+# LAMMPS input script for simulating double layer formation on a charged surface
+
+units           real
+dimension       3
+boundary        p p p
+
+atom_style      charge
+
+# Read initial configuration from data file
+read_data       data.initial
+
+# Define interaction style and cutoff
+pair_style      lj/cut 13.0
+pair_coeff      * * 0.1 3.4  # Example Lennard-Jones parameters, adjust as necessary
+
+# Define groups
+group           solvent type 1
+group           charged type 2
+
+# Initialize simulation settings
+dielectric      81.0        # Mimic water-like conditions
+
+# Apply NVT ensemble to solvent
+fix             1 solvent nvt temp 300.0 300.0 100.0
+
+# Define Lennard-Jones 9-3 walls to confine the fluid
+fix             wall all wall/lj93 zlo EDGE 0.1 3.4 13.0 zhi EDGE 0.1 3.4 13.0
+
+# Use AtC module to apply surface charge
+fix             atc all atc control
+fix_modify      atc surface/charge zlo file surface_charge.txt
+
+# Output settings for monitoring
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+dump            1 all atom 100 dump.atom
+
+# Run the simulation
+timestep        0.0005
+run             1000
+
+This script sets up a simulation using the AtC module to study the double layer formation on a charged surface within a water-like fluid environment. The simulation uses Lennard-Jones interactions and maintains the solvent at a constant temperature, while bounding the fluid with Lennard-Jones 9-3 walls.

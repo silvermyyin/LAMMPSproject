@@ -1,0 +1,29 @@
+# LAMMPS input script for a non-interacting particle system using pair_style zero
+
+units metal
+atom_style atomic
+
+# Read the initial atomic configuration from a data file
+read_data latte_cell_0.data
+
+# Define atom types and their masses
+mass 1 1.00
+mass 2 14.00
+mass 3 15.999
+
+# Set up interactions using the zero pair style with a cutoff of 5.7 units
+pair_style zero 5.7
+pair_coeff * *
+
+# Define a custom compute to evaluate coupling coefficients
+compute pace all pace/atc 183 file coupling_coefficients.yace
+
+# Set periodic boundary conditions in all dimensions
+boundary p p p
+
+# Thermodynamic output settings
+thermo 1
+thermo_style custom step temp c_pace
+
+# Run for 0 steps (setup phase)
+run 0

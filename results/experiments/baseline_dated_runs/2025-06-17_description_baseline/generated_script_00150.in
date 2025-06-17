@@ -1,0 +1,67 @@
+# LAMMPS input script for molecular deposition on a SiO2 substrate
+
+units real
+atom_style charge
+boundary p p f
+
+# Create simulation box
+read_data sio2.data
+
+# Define regions
+region bottom block INF INF INF INF INF 10 units box
+region middle block INF INF INF INF 10 20 units box
+region top block INF INF INF INF 20 INF units box
+
+# Group atoms
+group bottom_region region bottom
+group middle_region region middle
+group top_region region top
+
+# Set atom velocities to zero and freeze bottom layer
+set group bottom_region velocity 0.0 0.0 0.0
+fix freeze bottom_region setforce 0.0 0.0 0.0
+
+# Define potentials
+pair_style hybrid/overlay reax/c NULL zbl 0.0 2.0
+pair_coeff * * reax/c ffield.reax.SiO Si O C F
+pair_coeff * * zbl
+
+# Define groups for different ensembles
+group dynamic_region union middle_region top_region
+
+# Set NVT ensemble for middle region
+fix nvt middle_region nvt temp 300.0 300.0 100.0
+
+# Set NVE ensemble for top region
+fix nve top_region nve
+
+# Define deposition parameters
+variable z_height equal 40.0
+variable vx equal random(-1.0,1.0,12345)
+variable vy equal random(-1.0,1.0,67890)
+variable vz equal random(-1.0,-2.0,54321)
+
+# Add deposition fix
+fix deposit_molecules top_region deposit 1 1 1000 12345 region top mol mpi vx ${vx} vy ${vy} vz ${vz} units box
+
+# Thermodynamic output
+thermo 1000
+thermo_style custom step temp pe ke etotal press
+
+# Run multiple deposition simulations
+variable run_index loop 10
+label loop_start
+
+# Reset timestep counter
+reset_timestep 0
+
+# Run the simulation
+run 50000
+
+# Log data
+write_dump all custom dump_${run_index}.lammpstrj id type x y z vx vy vz
+
+next run_index
+jump SELF loop_start
+
+# End of input script

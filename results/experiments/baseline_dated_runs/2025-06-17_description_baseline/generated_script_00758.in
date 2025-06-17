@@ -1,0 +1,63 @@
+# LAMMPS input script for a simple rigid body system using Lennard-Jones units
+
+units lj
+atom_style atomic
+
+# Create simulation box
+region box block 0 10 0 10 0 10
+create_box 1 box
+
+# Create atoms for nine distinct clumps
+# Assuming each clump is a set of atoms, here we create them manually
+create_atoms 1 single 1 1 1
+create_atoms 1 single 2 2 2
+create_atoms 1 single 3 3 3
+create_atoms 1 single 4 4 4
+create_atoms 1 single 5 5 5
+create_atoms 1 single 6 6 6
+create_atoms 1 single 7 7 7
+create_atoms 1 single 8 8 8
+create_atoms 1 single 9 9 9
+
+# Define mass for atoms
+mass 1 1.0
+
+# Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocities
+velocity all create 100.0 12345
+
+# Define groups for clumps
+group clump1 id 1
+group clump2 id 2
+group clump3 id 3
+group clump4 id 4
+group clump5 id 5
+group clump6 id 6
+group clump7 id 7
+group clump8 id 8
+group clump9 id 9
+
+# Exclude self-interactions within clumps
+neigh_modify exclude group clump1 clump1
+neigh_modify exclude group clump2 clump2
+neigh_modify exclude group clump3 clump3
+neigh_modify exclude group clump4 clump4
+neigh_modify exclude group clump5 clump5
+neigh_modify exclude group clump6 clump6
+neigh_modify exclude group clump7 clump7
+neigh_modify exclude group clump8 clump8
+neigh_modify exclude group clump9 clump9
+
+# Fix rigid bodies using an atomfile for each clump
+fix rigidbodies all rigid/nve/small molecule
+
+# Thermodynamic output
+thermo 50
+thermo_style custom step temp epair etotal
+
+# Run the simulation
+timestep 0.0001
+run 10000

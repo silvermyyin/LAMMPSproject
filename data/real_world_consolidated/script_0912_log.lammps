@@ -1,0 +1,34 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2)
+# Axilrod-Teller-Muto potential example
+
+variable        x index 1
+variable        y index 1
+variable        z index 1
+
+variable        xx equal 10*$x
+variable        xx equal 10*1
+variable        yy equal 10*$y
+variable        yy equal 10*1
+variable        zz equal 10*$z
+variable        zz equal 10*1
+
+units           lj
+atom_style      atomic
+
+lattice         fcc 0.65
+Lattice spacing in x,y,z = 1.8325207 1.8325207 1.8325207
+region          box block 0 ${xx} 0 ${yy} 0 ${zz}
+region          box block 0 10 0 ${yy} 0 ${zz}
+region          box block 0 10 0 10 0 ${zz}
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (18.325207 18.325207 18.325207)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (18.325207 18.325207 18.325207)
+  create_atoms CPU = 0.001 seconds
+
+pair_style      hybrid/overlay lj/cut 4.5 atm 4.5 2.5
+ERROR: Unrecognized pair style 'atm' is part of the MANYBODY package which is not enabled in this LAMMPS binary. (src/force.cpp:275)
+Last command: pair_style      hybrid/overlay lj/cut 4.5 atm 4.5 2.5

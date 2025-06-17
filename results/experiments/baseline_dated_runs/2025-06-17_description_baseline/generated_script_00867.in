@@ -1,0 +1,57 @@
+# LAMMPS Input Script for CNT with Water under Longitudinal Stress
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Create simulation box and read data
+read_data       cnt_water.data
+
+# Define potential styles
+pair_style      hybrid airebo 3.0 lj/cut/tip4p/long 1 2 1 1 0.125 8.5
+pair_coeff      * * airebo CH.airebo C
+pair_coeff      1 1 lj/cut/tip4p/long 0.0 0.0 8.5
+pair_coeff      2 2 lj/cut/tip4p/long 0.1852 3.1589 8.5
+
+kspace_style    pppm 1.0e-4
+
+# Define groups
+group           cnt type 1
+group           water type 2 3
+
+# SHAKE for water molecules
+fix             shake_water water shake 0.0001 20 0 b 1 a 2
+
+# Initial NVT equilibration
+velocity        all create 300.0 12345
+fix             nvt_eq all nvt temp 300.0 300.0 100.0
+run             10000
+unfix           nvt_eq
+
+# Grand Canonical Monte Carlo for water insertion
+fix             gcmc_insertion water gcmc 100 50 0 0 29494 300.0 0.0 1.0 1.0 mol tip4p molecule.txt region cnt insert
+
+# Define region for GCMC
+region          cnt cylinder z 0.0 0.0 10.0 -10.0 10.0 units box
+
+# Equilibration after GCMC
+fix             nve_eq all nve
+fix             thermo_eq all temp/berendsen 300.0 300.0 100.0
+run             20000
+unfix           nve_eq
+unfix           thermo_eq
+
+# Switch to NVE for production run
+fix             nve_prod all nve
+fix             temp_prod all temp/berendsen 300.0 300.0 100.0
+run             50000
+
+# Output settings
+thermo_style    custom step temp press pe ke etotal
+thermo          1000
+dump            1 all custom 1000 dump.cnt_water id type x y z
+dump_modify     1 sort id
+
+# End of script
+
+Please ensure you have the necessary data files (`cnt_water.data`, `CH.airebo`, `molecule.txt`) ready for this simulation. The `molecule.txt` should contain the TIP4P water molecule definition. Adjust the `region` dimensions and simulation parameters as needed based on your specific system setup.

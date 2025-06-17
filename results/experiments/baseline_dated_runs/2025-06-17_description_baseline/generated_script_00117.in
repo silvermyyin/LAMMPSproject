@@ -1,0 +1,42 @@
+# LAMMPS Input Script for 2D Hexagonal Lattice using Lennard-Jones Potential
+
+# Initialize simulation
+clear
+units lj
+dimension 2
+boundary p p p
+atom_style atomic
+
+# Define hexagonal lattice
+# Hexagonal lattice vectors for 2D:
+# a1 = (1, 0)
+# a2 = (0.5, sqrt(3)/2)
+lattice custom 1.0 &
+    a1 1.0 0.0 &
+    a2 0.5 0.8660254037844386 &
+    basis  0.0 0.0
+
+# Create simulation box
+region box prism 0 10 0 10 -0.1 0.1 0 0 0 units lattice
+create_box 1 box
+
+# Create atoms
+create_atoms 1 box
+
+# Mass and interaction potential
+mass 1 1.0
+pair_style lj/cut 1.1
+pair_coeff 1 1 1.0 1.0 1.1
+
+# Define settings for output
+thermo 1
+thermo_style custom step temp pe lx ly pxx pyy
+dump 1 all custom 1 dump_positions.lammpstrj id type x y z
+
+# Run simulation
+run 0
+
+# Write data file
+write_data hexagonal_lattice.data
+
+This script sets up a 2D hexagonal lattice in a triclinic box, simulates it with Lennard-Jones interactions, and outputs key thermodynamic quantities. The simulation is set for zero timesteps, and the configuration is saved for analysis.

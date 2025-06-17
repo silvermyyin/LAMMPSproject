@@ -1,0 +1,41 @@
+# LAMMPS Input Script for SPC/E Water Model Simulation
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data spce_water.data
+
+# Define interactions
+pair_style lj/cut/coul/long 10.0 12.0
+pair_coeff 1 1 0.1553 3.166 # O-O interaction parameters
+pair_coeff 2 2 0.0 0.0     # H-H interaction parameters
+pair_coeff 1 2 0.0 0.0     # O-H interaction parameters
+
+# kspace settings for long-range Coulombic interactions
+kspace_style pppm 1.0e-4
+
+# SHAKE algorithm for water molecule constraints
+fix shake_water all shake 0.0001 20 0 b 1 a 1
+
+# Equilibration with NPT ensemble
+timestep 1.0
+fix npt all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Apply shear flow to the system
+fix shear all accelerate/cos 0.1 0.0 0.0
+
+# Compute viscosity using a specialized method
+compute visc all viscosity/cos
+fix avgVisc all ave/time 100 1 100 c_visc[1] file viscosity.dat mode vector
+
+# Output settings
+thermo 100
+thermo_style custom step temp press pe density c_visc[1]
+dump traj all atom 10000 trajectory.lammpstrj
+
+# Run simulation
+run 2000
+
+# End of script

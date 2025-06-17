@@ -1,0 +1,46 @@
+```lammps
+# LAMMPS Input Script for Silicon Simulation using MLIAP
+
+# Initialization
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create a diamond lattice structure for silicon
+lattice         diamond 5.43
+region          box block 0 2 0 2 0 2
+create_box      1 box
+create_atoms    1 box
+
+# Assign mass to silicon atoms
+mass            1 29.0
+
+# Define the neural network based machine learning interatomic potential (MLIAP)
+pair_style      mlip nn
+pair_coeff      * * silicon_nn.mtp
+
+# Define neighbor settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Set initial velocities corresponding to 500 K
+velocity        all create 500.0 4928459 loop geom
+
+# Set the timestep for integration
+timestep        0.0005
+
+# Define the NPT ensemble for maintaining constant temperature and pressure
+fix             1 all npt temp 500.0 500.0 0.1 iso 0.0 0.0 1.0
+
+# Output thermodynamic properties every 10 timesteps
+thermo          10
+thermo_style    custom step temp pe etotal press
+
+# Run the simulation for 5000 timesteps
+run             5000
+
+# End of script
+```
+
+This script sets up a molecular dynamics simulation of silicon using a neural network-based potential, running under NPT conditions at 500 K. Ensure the file `silicon_nn.mtp` is available, as it contains the machine learning potential model parameters. Adjust the simulation box size or the number of timesteps as needed for your specific study.

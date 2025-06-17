@@ -1,0 +1,46 @@
+# LAMMPS input script for Ag-Cu alloy simulation using SMATB potential
+
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Read atomic configuration from data file
+read_data AgCuPancake.data
+
+# Define SMATB potential for Ag-Cu alloy
+pair_style eam/alloy
+pair_coeff * * SMATB_potential_file Ag Cu
+
+# Setup neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Minimize the system to relieve stresses
+min_style cg
+minimize 1.0e-12 1.0e-12 10000 10000
+
+# Initialize velocities at 600 K
+velocity all create 600.0 12345 mom yes rot yes dist gaussian
+
+# Integrate using NVE ensemble
+fix 1 all nve
+
+# Run simulation
+timestep 0.005
+thermo 10
+run 10000
+
+# Uncomment below lines for dumps if needed
+
+# Dump atomistic data
+# dump 1 all atom 100 dump.agcu.lammpstrj
+
+# Dump images
+# dump 2 all image 100 image.*.jpg type type & 
+#   zoom 1.6 adiam 1.5
+
+# Dump movie
+# dump 3 all movie 100 movie.mpg type type adiam 1.5
+
+# End of script

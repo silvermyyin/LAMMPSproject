@@ -1,0 +1,26 @@
+# LAMMPS Input Script for Fe-Ti-C System using MEAM Potential
+
+units metal
+atom_style atomic
+
+# Read data file
+read_data data.fe
+
+# Define interatomic potential
+pair_style meam
+pair_coeff * * library.meam Fe Ti C FeTiC.meam Fe Ti C
+
+# Define boundary conditions
+boundary p p p
+
+# Custom thermodynamic output
+thermo 10
+thermo_style custom step pe etotal fmax fnorm temp press
+thermo_modify format float %.16g
+
+# Minimization parameters using FIRE algorithm
+min_style fire
+min_modify dmax 0.1 ftol 1.0e-8 etol 1.0e-8
+
+# Run energy minimization
+minimize 1.0e-8 1.0e-8 2000 10000

@@ -1,0 +1,49 @@
+# LAMMPS input script for cyclohexane-methane mixture simulation
+
+units           real
+atom_style      template
+
+# Define the simulation box
+lattice         sc 10.0
+region          simbox block 0 10 0 10 0 10
+create_box      2 simbox
+
+# Define atom templates for cyclohexane and methane
+molecule        cyclohexane cyclohexane.mol # Assume you have a molecule file for cyclohexane
+create_atoms    1 random 50 12345 simbox mol cyclohexane 12345
+
+mass            1 84.16    # Mass of cyclohexane (g/mol)
+mass            2 16.04    # Mass of methane (g/mol)
+
+# Create methane atoms randomly distributed in the box
+create_atoms    2 random 200 67890 simbox
+
+# Define interaction potentials
+pair_style      lj/cut 12.0
+pair_coeff      1 1 0.18 3.8  # Cyclohexane-Cyclohexane interaction
+pair_coeff      1 2 0.12 3.5  # Cyclohexane-Methane interaction
+pair_coeff      2 2 0.08 3.15 # Methane-Methane interaction
+
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  harmonic
+
+# Define bonds, angles, dihedrals for cyclohexane (assumed present in cyclohexane.mol)
+read_data       cyclohexane_data.txt # Assumed data file for bonds/angles/dihedrals
+
+# Initial energy minimization
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Initialize velocities
+velocity        all create 100.0 12345
+
+# NVT ensemble from 100 K to 300 K
+fix             1 all nvt temp 100.0 300.0 100.0
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal
+
+# Run the simulation
+timestep        1.0
+run             2500

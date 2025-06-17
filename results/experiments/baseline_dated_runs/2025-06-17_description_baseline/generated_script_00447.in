@@ -1,0 +1,49 @@
+# LAMMPS Input Script for MD Simulation with FEP
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration from data file
+read_data system.data
+
+# Pairwise interaction setup
+pair_style lj/cut/coul/long 10.0 12.0
+pair_coeff * * 0.0 0.0  # Example: Set appropriate coefficients for your system
+
+# Bond and angle styles
+bond_style harmonic
+angle_style harmonic
+
+# Example: Set appropriate bond and angle coefficients for your system
+# bond_coeff <bond_type> <Kb> <r0>
+# angle_coeff <angle_type> <Ka> <theta0>
+
+# Kspace style for long-range Coulombic interactions
+kspace_style pppm 1.0e-4
+
+# Constraint using SHAKE for hydrogen bonds
+fix constrain all shake 0.0001 10 0 b 1 a 1  # Example: Adapt the bond and angle IDs
+
+# Define groups for FEP
+group hydrogen type 1  # Example: Define hydrogen atom types
+group oxygen type 2    # Example: Define oxygen atom types
+
+# Fix for free energy perturbation (FEP)
+fix fep all adapt/fep 10000 1.0 0.0 c group hydrogen
+fix_modify fep energy yes
+
+# Define NPT ensemble for equilibration
+fix npt all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Time integration setup
+timestep 1.0
+
+# Output settings
+thermo 5000
+thermo_style custom step temp press density pe ke etotal
+
+# Run the simulation
+run 2100000
+
+Note: Ensure that the `system.data` file, the specific atom types for hydrogen and oxygen, and the bond and angle coefficients are correctly set according to your specific system configuration. Adjust the pair coefficients and SHAKE constraints as needed. The FEP fix parameters should be defined based on the specific charge adaptation you wish to explore.

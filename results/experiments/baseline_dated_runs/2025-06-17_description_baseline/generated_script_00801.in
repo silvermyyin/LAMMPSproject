@@ -1,0 +1,74 @@
+# LAMMPS Input Script for Colloidal Sphere Diffusion in Fluid
+
+units       lj
+atom_style  atomic
+
+# Parameters
+variable    is_bonded equal 1  # Set to 1 for bonded sphere, 0 for rigid body
+variable    temp equal 300.0
+variable    radius equal 10.0
+variable    density equal 0.8
+variable    lj_epsilon equal 1.0
+variable    lj_sigma equal 1.0
+variable    lj_cutoff equal 2.5
+variable    harmonic_k equal 200.0
+variable    trap_k equal 50.0
+
+# Create spherical region and fill with atoms
+region      simbox block -50 50 -50 50 -50 50
+create_box  2 simbox
+
+region      sphere_reg sphere 0.0 0.0 0.0 ${radius}
+create_atoms 1 random 10000 ${density} sphere_reg 12345
+
+# Initialize velocities
+velocity    all create ${temp} 123456 mom yes rot yes dist gaussian
+
+# Soft potential to initially separate atoms
+pair_style  soft 1.0
+pair_coeff  * * 10.0
+neighbor    0.3 bin
+neigh_modify every 1 delay 0 check yes
+fix         1 all nve
+fix         2 all langevin ${temp} ${temp} 1.0 12345
+
+run         1000
+unfix       1
+unfix       2
+
+# Switch to Lennard-Jones potential for condensation
+pair_style  lj/cut ${lj_cutoff}
+pair_coeff  * * ${lj_epsilon} ${lj_sigma} ${lj_cutoff}
+
+# Anneal the atoms onto the sphere surface
+fix         3 all nvt temp ${temp} ${temp} 1.0
+dump        1 all custom 100 dump.lammpstrj id type x y z
+
+run         5000
+unfix       3
+
+# Bond or rigid body model for the sphere
+if "${is_bonded} == 1" then &
+"bond_style harmonic &
+bond_coeff 1 ${harmonic_k} ${lj_sigma} &
+special_bonds lj/coul 0.0 1.0 1.0" &
+else &
+"fix 4 all rigid single"
+
+# Lattice Boltzmann fluid model for water environment
+fix         5 all lb/flow profile velocity 1.0 0.0 0.0 temperature ${temp}
+
+# Constraint motion along x-axis
+fix         6 all spring/self ${trap_k} x
+
+# Output settings
+thermo      100
+thermo_style custom step temp pe ke etotal press vol
+
+# Run the simulation
+run         10000
+
+# Clean up
+unfix       5
+unfix       6
+if "${is_bonded} == 0" then "unfix 4"

@@ -1,0 +1,22 @@
+# LAMMPS input script for electrostatic interactions in a slab geometry with electrodes
+
+units           real
+dimension       3
+boundary        p p f
+atom_style      charge
+
+# Read additional configurations from an external file
+include         settings.mod
+
+# Define the Ewald summation method for slab geometry
+kspace_style    ewald/electrode 1.0e-8
+kspace_modify   slab 8.0
+
+# Define thermo output to monitor electrostatic properties
+thermo_style    custom step pe v_charge_bottom v_charge_top
+
+# Apply a constant potential difference between electrodes
+fix             conp all conp cg symm
+
+# Run the simulation for zero steps to set up initial conditions
+run             0

@@ -1,0 +1,45 @@
+# LAMMPS input script for a 3D Lennard-Jones melt simulation on an fcc lattice
+
+# Variables
+variable x equal 20
+variable y equal 20
+variable z equal 20
+
+# Initialize simulation
+units lj
+atom_style atomic
+boundary p p p
+
+# Create simulation box
+lattice fcc 0.8442
+region box block 0 ${x} 0 ${y} 0 ${z}
+create_box 1 box
+create_atoms 1 box
+
+# Mass and potential
+mass 1 1.0
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Read atomic configurations and velocities from ADIOS-formatted dump files
+read_dump adios_file_200.bp 200 x y z box yes format adios
+run 0
+
+read_dump adios_file_800.bp 800 x y z box yes format adios
+run 0
+
+read_dump adios_file_600.bp 600 x y z box yes format adios
+run 0
+
+read_dump adios_file_400.bp 400 x y z box yes format adios
+run 0
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+# End of script

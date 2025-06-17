@@ -1,0 +1,32 @@
+# LAMMPS input script for 2D shear flow simulation of granular particles
+
+units lj
+atom_style sphere
+dimension 2
+boundary p p p
+
+read_data data.shear_flow
+
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define potential
+pair_style gran/hooke/history 200.0 NULL 50.0 0.5 0
+pair_coeff * *
+
+# Define multi-neighbor and communication settings
+comm_modify vel yes
+comm_modify mode multi
+
+# Define settings for integration
+fix 1 all nve/sphere
+fix 2 all enforce2d
+fix 3 all deform 1 xy erate 1e-4 units box remap x
+
+# Thermo settings
+thermo 100
+thermo_style custom step time temp pe ke etotal press vol pxy
+
+# Run the simulation
+timestep 0.005
+run 1000

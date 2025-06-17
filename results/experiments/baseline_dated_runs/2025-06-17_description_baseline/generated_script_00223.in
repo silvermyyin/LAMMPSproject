@@ -1,0 +1,35 @@
+# LAMMPS input script for molecular dynamics simulation of a nickel bicrystal system
+
+# Initialize simulation
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Read initial configuration
+read_data       data.sigma5
+
+# Define potential
+pair_style      eam
+pair_coeff      * * Ni_u3.eam
+
+# Group definition for grain boundary
+group           gb type 1
+
+# Define simulation parameters
+timestep        0.001
+
+# Velocity initialization
+velocity        all create 750.0 12345 mom yes rot yes dist gaussian
+
+# Apply NPT ensemble for equilibration at target temperature and pressure
+fix             1 all npt temp 750.0 750.0 0.1 iso 0.0 0.0 1.0
+
+# Apply orientation-dependent energy correction for sigma 5 boundary
+fix             2 gb orient/eco 5
+
+# Output thermodynamic properties
+thermo          100
+thermo_style    custom step temp pe ke etotal press vol f_2
+
+# Run the simulation
+run             1000

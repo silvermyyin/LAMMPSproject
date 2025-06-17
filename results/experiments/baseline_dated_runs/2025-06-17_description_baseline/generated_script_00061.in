@@ -1,0 +1,63 @@
+# LAMMPS input script for drift-diffusion and Schrödinger-Poisson equations in a silicon-vacuum system
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create face-centered cubic lattice
+lattice         fcc 5.43
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+create_atoms    1 box
+
+# Initialize settings
+mass            1 28.0855  # Silicon atomic mass
+velocity        all create 300.0 12345
+
+# Define interatomic potential (example with Stillinger-Weber potential for silicon)
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Electric field setup
+fix             efield all efield 0.1 0.0 0.0
+
+# Initialize AtC package
+fix_modify      AtC all AtC control
+fix             atc all AtC control 
+
+# Create a mesh and define regions
+fix_modify      atc mesh create 1.0 1.0 1.0
+region          wire block 4 6 4 6 4 6
+fix_modify      atc mesh region wire
+fix_modify      atc mesh set_property region wire material silicon
+
+# Apply AtC thermal properties
+fix_modify      atc thermal conductivity 100.0  # Example thermal conductivity for silicon
+
+# Initial electron density and wavefunction
+fix_modify      atc electron_density set 0.0
+fix_modify      atc wavefunction set 0.0
+fix_modify      atc electron_density set_region wire 1e19  # Example initial electron density in wire
+
+# Solve Schrödinger-Poisson equations iteratively
+fix_modify      atc solve schrodinger_poisson
+
+# Define nodesets for constraints
+fix_modify      atc nodeset create boundary_nodeset region wire
+fix_modify      atc nodeset set boundary_nodeset electron_density 0.0
+fix_modify      atc nodeset set boundary_nodeset wavefunction 0.0
+
+# Thermodynamic output
+thermo_style    custom step temp pe ke etotal
+thermo          100
+thermo_modify   lost ignore flush yes
+
+# Run the simulation
+timestep        0.001
+run             10000
+
+# Unfix AtC at the end
+unfix           atc
+
+This script is a simplified example that illustrates the setup of a simulation using the AtC package in LAMMPS for solving drift-diffusion and Schrödinger-Poisson equations in a silicon-vacuum system. Please ensure that the actual LAMMPS installation includes the AtC package and that the script is adjusted for specific material properties, potential files, and simulation requirements.

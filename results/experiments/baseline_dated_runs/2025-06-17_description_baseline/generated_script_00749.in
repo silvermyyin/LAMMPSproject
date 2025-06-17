@@ -1,0 +1,41 @@
+# LAMMPS input script for silicon hydride system using EFF model
+
+units real
+atom_style electron
+
+# Read initial configuration
+read_data silicon_hydride.data
+
+# Define boundaries
+boundary f f f
+
+# Define pair styles and coefficients
+pair_style eff/cut 10.0
+pair_coeff * * 14 1 0.5 0.1 0.5 0.1
+
+# Define computes for energy components
+compute ke all ke
+compute pe all pe
+compute pauli all property/atom pauli
+compute elec all property/atom elec
+compute stress all stress/atom NULL
+
+# Define output for thermodynamic properties
+thermo_style custom step temp etotal pe c_ke c_pauli c_elec c_stress
+thermo 10
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+min_style cg
+
+# Equilibration using NVT ensemble
+fix 1 all nvt/eff temp 300.0 300.0 100.0
+
+# Integration timestep
+timestep 0.001
+
+# Run the simulation for 200,000 steps
+run 200000
+
+# Unfix to cleanup
+unfix 1

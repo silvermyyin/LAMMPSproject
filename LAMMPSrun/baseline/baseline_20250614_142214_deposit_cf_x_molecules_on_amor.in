@@ -1,0 +1,84 @@
+The script you provided is already complete and valid for a LAMMPS molecular dynamics simulation. There were only two placeholders (YYY and XXX) which I have replaced with 12345 which is the random seed for the deposit command, and 10.0 which is the bombard energy for Ar atoms respectively.
+
+Here is your updated script:
+
+```lammps
+# deposit CF_x molecules on amorphous SiO2
+
+dimension      3
+boundary       p p f
+units		   real
+atom_style	   charge
+
+variable       dt equal 0.25 # units=fs
+timestep       ${dt}
+
+variable       box_zh equal 60
+region         sim_box block 0 30 0 30 0 ${box_zh} units box
+create_box     5 sim_box
+read_data	   ../../../SiO2.300K.equilibrated.dat add merge
+
+mass	3 12.0107  # C
+mass	4 18.9984  # F
+mass    5 39.948   # Ar
+
+# freeze the bottom layer
+variable       material_height equal 34.5
+variable       freeze_below_z equal 0.2*v_material_height
+region         freeze_block block INF INF INF INF INF ${freeze_below_z} units box
+region         mobile_block block INF INF INF INF ${freeze_below_z} INF units box
+group		   freeze_group region freeze_block
+group          mobile_group region mobile_block
+fix        1   freeze_group setforce 0.0 0.0 0.0
+
+# NVT for middle region and NVE for top region
+variable       between_nvt_and_nve equal 0.8*v_material_height
+region         middle_nvt_block block INF INF INF INF ${freeze_below_z} ${between_nvt_and_nve} units box
+region         top_nve_block    block INF INF INF INF ${between_nvt_and_nve} INF units box
+group          middle_nvt_group region middle_nvt_block
+group          top_nve_group    region top_nve_block
+
+pair_style	   hybrid reax/c NULL zbl 8.0 10.0
+pair_coeff	   * * reax/c ../../../../potential.reaxFF/ffield.reax.combined.COFSi.v4 Si O C F NULL
+pair_coeff     1 5 zbl 14.0 18.0
+pair_coeff     2 5 zbl  8.0 18.0
+pair_coeff     3 5 zbl  6.0 18.0
+pair_coeff     4 5 zbl  9.0 18.0
+pair_coeff     5 5 zbl 18.0 18.0
+
+neighbor	   2. bin
+neigh_modify   every 10 delay 0 check no
+fix        2   all qeq/reax 1 0.0 10.0 1e-6 reax/c
+
+compute        mobile_temp mobile_group temp
+compute_modify mobile_temp dynamic/dof yes
+
+dump           1 all custom 100 dumpidtype.dat id type x y z
+thermo_style   custom step temp pe ke etotal press vol density
+thermo         100
+thermo_modify  lost warn temp mobile_temp
+
+fix		   3   mobile_group npt temp 300.0 300.0 $(100.0*dt) x 0.0 0.0 $(1000.0*dt) y 0.0 0.0 $(1000.0*dt)
+run		       2000
+unfix      3
+
+fix		   3   middle_nvt_group nvt temp 300.0 300.0 $(100.0*dt)
+fix		   4   top_nve_group nve
+run		       4000
+
+molecule       CFx  ../../../molecules/data.molecule.CF  ../../../molecules/data.molecule.CF2
+
+# deposit CF_x molecules on top of a-SiO2
+variable       num_of_insert_CFx equal 1000
+variable       delta_step_insert_CFx equal 4000 # 1000fs
+variable       CF2_to_CF_flux_ratio equal 2
+variable       randomSeedForDeposit equal 12345
+variable       offset_for_atom_types equal 2
+variable       deposit_slab_zl equal v_material_height+10
+variable       deposit_slab_zh equal v_material_height+15
+
+variable       in_angle_degree equal 0 # degree
+variable       in_energy equal 1 # eV
+variable       in_angle equal v_in_angle_degree/180*3.1415926 # rad
+variable       in_mass_kg_CF equal 1.66054E-27*(12.0107+18.9984)
+variable       in_mass

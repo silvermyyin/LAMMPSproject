@@ -1,0 +1,35 @@
+# LAMMPS input script for SPCE water model simulation
+
+units real
+atom_style full
+
+# Read data file
+read_data data.spce
+
+# Define potential types
+pair_style hybrid/overlay table spline 1000 sw
+
+# Pair coefficients for SPCE model
+pair_coeff * * table spce_table.table O H
+pair_coeff * * sw sw_potential O O H
+
+# Define groups
+group water type 1 2
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes
+
+# Apply NVT ensemble with Nose-Hoover thermostat
+fix 1 all nvt temp 300.0 300.0 200.0
+
+# Set timestep
+timestep 2.0
+
+# Output thermodynamic info
+thermo 100
+
+# Run simulation
+run 1000
+
+# Uncomment the following line to dump atom positions and forces
+# dump 1 all custom 100 dump.spce id type x y z fx fy fz

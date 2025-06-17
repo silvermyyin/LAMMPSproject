@@ -1,0 +1,51 @@
+# LAMMPS input script for DNA duplex simulation using oxDNA2 model
+
+units real
+atom_style hybrid bond ellipsoid oxDNA
+
+boundary p p p
+
+read_data dna_duplex.data
+
+mass * 315.8376
+
+# Pair style and coefficients for oxDNA2
+pair_style oxDNA2
+pair_coeff * * 
+
+bond_style fene
+bond_coeff * 30.0 1.5 1.0
+
+# Parameters specific to the oxDNA2 model
+oxDNA2_coeff ev 1 1 4.0
+oxDNA2_coeff stack 1 1 4.0
+oxDNA2_coeff hb 1 1 4.0
+oxDNA2_coeff xstack 1 1 4.0
+oxDNA2_coeff coax 1 1 4.0
+oxDNA2_coeff dh 1 1 0.2
+
+# Initialize velocities and set temperature
+velocity all create 300.0 4928459 rot yes dist gaussian
+
+# Set up integrator and thermostat
+fix 1 all nve
+fix 2 all langevin 300.0 300.0 1.0 48279
+
+# Compute energies
+compute ke all ke
+compute pe all pe
+compute rot_ke all erotate/sphere
+variable total_energy equal pe + ke + rot_ke
+
+# Output settings
+thermo 10000
+thermo_style custom step temp etotal ke pe rot_ke
+
+# Output trajectory
+dump 1 all custom 10000 dna_trajectory.lammpstrj id type x y z vx vy vz quatw quati quatj quatk
+
+# Run the simulation
+timestep 0.01706
+run 1000000
+
+This script sets up a molecular dynamics simulation for a DNA duplex using the oxDNA2 model, with the specified characteristics and outputs.

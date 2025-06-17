@@ -1,0 +1,47 @@
+# LAMMPS input script for a two-layer hexagonal boron nitride (hBN) system
+
+units metal
+atom_style full
+
+# Define the simulation box with periodic boundary conditions
+boundary p p p
+
+# Read atomic positions and types from data file
+read_data hbn_bilayer.data
+
+# Define atom types
+# Assuming atom type 1 is B and type 2 is N, modify as needed
+group boron type 1
+group nitrogen type 2
+
+# Define hybrid potential
+pair_style hybrid/overlay tersoff ilp/graphene/hbn coul/long 10.0
+pair_coeff * * tersoff BNC.tersoff B N NULL
+pair_coeff * * ilp/graphene/hbn BNC.ilp B N
+pair_coeff 1 2 coul/long
+
+# Kspace settings for Coulombic interactions
+kspace_style ewald 1.0e-4
+
+# Set timestep
+timestep 0.001
+
+# Initialize velocities
+velocity all create 300.0 12345 dist gaussian
+
+# Fix for time integration
+fix 1 all nve
+
+# Compute energy contributions
+compute tersoff_energy all pair tersoff
+compute ilp_energy all pair ilp/graphene/hbn
+compute coulomb_energy all pair coul/long
+
+# Thermo settings
+thermo 100
+thermo_style custom step temp etotal c_tersoff_energy c_ilp_energy c_coulomb_energy
+
+# Run the simulation
+run 1000
+
+# End of script

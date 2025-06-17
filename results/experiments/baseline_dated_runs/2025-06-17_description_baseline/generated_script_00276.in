@@ -1,0 +1,50 @@
+# LAMMPS input script for carbon-water interface simulation
+
+units metal
+atom_style full
+boundary p p p
+
+read_data carbon_water.data
+
+# Define groups
+group carbon type 1
+group water type 2 3
+
+# Define style and potentials
+pair_style hybrid/overlay lj/cut/tip4p/long 1 2 1 1 0.125 12.0 aip/water/2dm/opt 12.0
+bond_style harmonic
+angle_style harmonic
+
+# Pair coefficients
+pair_coeff * * lj/cut/tip4p/long 0.0 0.0  # Zeroed for OH and HH interactions
+pair_coeff 2 2 lj/cut/tip4p/long 0.650 3.1507 # OO interaction
+pair_coeff * * aip/water/2dm/opt C O H
+
+# Bond and angle coefficients
+bond_coeff 1 450 0.9572  # O-H bond
+angle_coeff 1 55 104.52   # H-O-H angle
+
+# Kspace style for long-range electrostatics
+kspace_style pppm/tip4p 1.0e-4
+
+# Neighbor settings
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Fixes
+fix 1 water nve
+fix 2 carbon setforce 0.0 0.0 0.0
+
+# Initial velocities
+velocity water create 300.0 12345 mom yes rot yes dist gaussian
+
+# Compute pair energies
+compute pair_water_water water group/group water pair lj/cut/tip4p/long
+compute pair_carbon_water carbon group/group water pair aip/water/2dm/opt
+
+# Thermodynamic settings
+thermo 100
+thermo_style custom step temp etotal pe ke c_pair_water_water c_pair_carbon_water
+
+# Run the simulation
+run 1000

@@ -1,0 +1,39 @@
+# LAMMPS input script for a metallic system using a hybrid force field approach
+
+units metal
+atom_style full
+boundary p p p
+
+# Read initial configuration from data file
+read_data system.data
+
+# Define the hybrid potential
+pair_style hybrid eam/fs lj/charmm/coul/long 9.0 10.0 momb morse
+bond_style hybrid momb
+
+# Define pair coefficients
+pair_coeff * * eam/fs potentials/FeCu.eam.fs Fe Cu
+pair_coeff 1 2 lj/charmm/coul/long 0.010 3.5 9.0
+pair_coeff 2 3 lj/charmm/coul/long 0.015 3.8 9.0
+pair_coeff 1 1 morse 0.150 2.5 2.0
+pair_coeff 2 2 morse 0.200 2.0 2.0
+
+# Morse bond coefficients
+bond_coeff 1 momb 0.500 2.0
+
+# Kspace style for long-range electrostatics
+kspace_style pppm 1e-5
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Time integration settings
+timestep 0.001
+
+# Thermo output settings
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+# Run the simulation
+run 10000

@@ -1,0 +1,59 @@
+# LAMMPS input script for a simple rigid body system using Lennard-Jones units
+
+units lj
+atom_style atomic
+
+# Create a simulation box
+boundary p p p
+region box block 0 10 0 10 0 10
+create_box 9 box
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Read atoms from file
+read_data data.chains
+
+# Define groups for each chain of particles
+group chain1 id 1:10
+group chain2 id 11:20
+group chain3 id 21:30
+group chain4 id 31:40
+group chain5 id 41:50
+group chain6 id 51:60
+group chain7 id 61:70
+group chain8 id 71:80
+group chain9 id 81:90
+
+# Initialize velocities
+velocity all create 100.0 12345
+
+# Apply fix poems for rigid body dynamics
+fix 1 all poems file chains_connectivity.txt
+
+# Exclude intra-group interactions for computational efficiency
+neigh_modify exclude group chain1 chain1
+neigh_modify exclude group chain2 chain2
+neigh_modify exclude group chain3 chain3
+neigh_modify exclude group chain4 chain4
+neigh_modify exclude group chain5 chain5
+neigh_modify exclude group chain6 chain6
+neigh_modify exclude group chain7 chain7
+neigh_modify exclude group chain8 chain8
+neigh_modify exclude group chain9 chain9
+
+# Set timestep
+timestep 0.0001
+
+# Thermodynamic output
+thermo 50
+
+# Run the simulation
+run 10000
+
+# Uncomment the following lines to enable output for visualization
+# dump 1 all atom 100 dump.chain.lammpstrj
+# dump_modify 1 image yes movie yes
+
+# End of script

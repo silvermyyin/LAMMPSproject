@@ -1,0 +1,46 @@
+```lammps
+# Coarse-Grained Molecular Dynamics Simulation of SPC/E Water
+
+units real
+atom_style atomic
+boundary p p p
+
+# Create simulation box
+region box block 0 50 0 50 0 50
+create_box 1 box
+
+# Create atoms (example coordinates, should be replaced with actual data)
+create_atoms 1 random 100 12345 box
+
+# Mass of particles (example value for SPC/E water)
+mass 1 18.01528
+
+# Pair potentials
+pair_style hybrid/overlay table linear 1000 dpd/ext/tstat 300.0 300.0 10.0 34387
+pair_coeff * * table spce_table 9.0
+pair_coeff * * dpd/ext/tstat 1.0 1.0
+
+# Tabulated potential for SPC/E (example, replace with actual table file path)
+# spce_table.txt should contain tabulated potential data
+pair_modify shift yes
+
+# Initial velocities
+velocity all create 300.0 12345
+
+# Define groups
+group all type 1
+
+# Thermostat setup
+fix 1 all nve
+
+# Output settings
+thermo 100
+thermo_style custom step temp press
+
+# Timestep
+timestep 1.0
+
+# Run simulation
+run_style verlet
+run 1000
+```

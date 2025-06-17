@@ -1,0 +1,52 @@
+# LAMMPS input script for simulating liquid water using SPC/E model
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data water_spce.data
+
+# Define interaction potentials
+pair_style lj/cut/coul/long 10.0
+pair_coeff 1 1 0.1553 3.166 # O-O interaction
+pair_coeff 2 2 0.0 0.0     # H-H interaction (no LJ)
+pair_coeff 1 2 0.0 0.0     # O-H interaction (no LJ)
+
+bond_style harmonic
+bond_coeff 1 450 1.0       # O-H bond in SPC/E model
+
+angle_style harmonic
+angle_coeff 1 55 104.52    # H-O-H angle in SPC/E model
+
+kspace_style pppm 1.0e-4
+
+# Group definitions
+group water type 1 2
+
+# SHAKE constraints
+fix shake_water water shake 0.0001 20 0 b 1 a 1
+
+# Thermostat
+fix nvt_water all nvt temp 300.0 300.0 100.0
+
+# Output settings
+thermo 1000
+thermo_style custom step temp press pe
+
+# RDF calculation
+compute rdf_OO all rdf 100 1 1
+compute rdf_HH all rdf 100 2 2
+compute rdf_OH all rdf 100 1 2
+
+fix rdf_avg all ave/time 100 1 100 c_rdf_OO[*] c_rdf_HH[*] c_rdf_OH[*] file rdf_output.txt mode vector
+
+# ADF calculation
+compute adf_OOO water angle/coefficients 1 1 1
+compute adf_OHO water angle/coefficients 1 2 1
+
+fix adf_avg all ave/time 100 1 100 c_adf_OOO[*] c_adf_OHO[*] file adf_output.txt mode vector
+
+# Run simulation
+timestep 1.0
+run 100000

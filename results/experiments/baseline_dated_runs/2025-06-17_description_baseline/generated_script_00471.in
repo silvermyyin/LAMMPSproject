@@ -1,0 +1,27 @@
+# LAMMPS Input Script for Argon Simulation with Langevin Thermostat
+
+units metal
+atom_style full
+
+# Read initial data and force field parameters
+read_data argon.lmp
+include ff-argon.lmp
+
+# Define neighbor list
+neighbor 1.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initialize velocities
+velocity all create 10.0 12345 mom yes dist gaussian
+
+# Define fixes
+fix 1 all nve
+fix lang all langevin 10.0 10.0 1.0 12345 zero yes
+
+# Define output settings
+thermo 200
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+timestep 0.0001
+run 5000

@@ -1,0 +1,35 @@
+# LAMMPS input script for quartz simulation using Vashishta potential
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Read initial structure
+read_data data.quartz
+
+# Replicate the system
+replicate 4 4 4
+
+# Define pair style and coefficients
+pair_style vashishta/table 100000 0.2
+pair_coeff * * SiO.vashishta Si O
+
+# Define neighbor settings
+neighbor 0.3 bin
+neigh_modify every 10 delay 0 check yes
+
+# Assign initial velocities to achieve a temperature of 2000 K
+velocity all create 2000.0 12345 dist gaussian
+
+# Displace atoms slightly to introduce initial perturbations
+displace_atoms all random 0.01 0.01 0.01 12345
+
+# Integration settings
+fix 1 all nve
+
+# Run settings
+timestep 0.001
+thermo 10
+
+# Run the simulation
+run 100

@@ -1,0 +1,58 @@
+# LAMMPS input script for free energy perturbation (FEP) using a hybrid potential approach
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data system.data
+
+# Define potential styles
+pair_style hybrid/overlay lj/cut/coul/long 10.0 lj/cut/soft 3.0 10.0
+bond_style harmonic
+angle_style harmonic
+
+# Define long-range electrostatics
+kspace_style pppm 1.0e-4
+
+# Define pair coefficients
+# (Example coefficients, replace with actual values for your system)
+pair_coeff * * lj/cut/coul/long 0.15 3.5
+pair_coeff * * lj/cut/soft 0.0 0.0 3.0
+
+# Define bonded interactions
+# (Example coefficients, replace with actual values for your system)
+bond_coeff * 300.0 1.0
+angle_coeff * 40.0 109.5
+
+# Apply SHAKE algorithm to constrain bonds
+fix shake_bonds all shake 0.0001 20 0 b 1 a 1
+
+# Set up the NPT ensemble
+fix npt all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Define FEP settings
+variable lambda equal ramp(1.0,0.0)
+variable soft_a equal 0.0
+variable soft_b equal v_lambda*1.0
+
+# Update pair coefficients for lj/cut/soft
+fix adapt_fep all adapt 1 pair lj/cut/soft a * * v_soft_a v_soft_b
+
+# Output settings
+thermo 5000
+thermo_style custom step temp press etotal pe ke
+
+# Run the simulation
+run 2000000
+
+# Free energy perturbation analysis
+# (If using LAMMPS with appropriate packages, you might want to include fep specific commands)
+# The command below is just an illustrative placeholder
+# compute fep all fep lj/cut/soft
+
+# Write results
+# (Example, replace with actual commands for your system)
+# fix fep_output all ave/time 1 1000 1000 c_fep file fep_results.dat
+
+# End of script

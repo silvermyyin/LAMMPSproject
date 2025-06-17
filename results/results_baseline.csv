@@ -1,0 +1,429 @@
+prompt,generated_script,executable,execution_errors,syntax_valid,syntax_errors,bleu_score
+Create a simple LAMMPS script for a copper system with 1000 atoms,"Below is a simple LAMMPS script for a copper system with 1000 atoms. A few assumptions are made in this script:
+
+1. The copper atoms are modeled using the Embedded Atom Method (EAM) potential.
+2. The system is a 10x10x10 cubic lattice with periodic boundary conditions.
+3. The temperature is maintained at 300 K using a Nose-Hoover thermostat. 
+4. The simulation runs for 10000 steps.
+
+```bash
+# Initialization
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Atom Definition
+lattice fcc 3.615
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+mass 1 63.55
+
+# Potential and Force Field
+pair_style eam
+pair_coeff * * Cu_u3.eam
+
+# Settings
+compute new all pe/atom 
+thermo 100
+thermo_style custom step pe temp
+
+# Velocity and Equilibration
+velocity all create 300.0 12345
+fix 1 all nvt temp 300.0 300.0 0.01
+
+# Simulation
+timestep 0.001
+run 10000
+```
+
+Please note that this script requires the EAM potential file `Cu_u3.eam` for copper. Ensure you have this file in your LAMMPS potentials directory and replace `Cu_u3.eam` with the path to this file in your LAMMPS installation. 
+
+Also, the random number seed in the `velocity` command is arbitrarily chosen as 12345 and you may want to change this for different runs. 
+
+Lastly, the specifics of the simulation (temperature, steps, timestep, etc.) can be modified to suit your specific needs.",False,['LAMMPS execution failed with return code 1'],True,[],1.2587834402582288e-08
+Generate a LAMMPS input for a gold nanoparticle simulation,"Here is an example of a LAMMPS input script for a gold nanoparticle simulation, using the EAM potential. This script assumes that you have an initial configuration file (nanoparticle.data) where the atomic positions of the gold atoms are specified.
+
+```
+# LAMMPS input script for gold nanoparticle simulation
+
+units           metal
+boundary        p p p
+atom_style      atomic
+
+read_data       nanoparticle.data
+
+pair_style      eam
+pair_coeff      * * Au_u3.eam
+
+compute         eng all pe/atom 
+compute         eatoms all reduce sum c_eng
+
+thermo          100
+thermo_style    custom step pe lx ly lz press pxx pyy pzz c_eatoms
+
+dump            id all atom 100 dump.nanoparticle
+
+velocity        all create 300 12345 rot yes mom no
+
+fix             1 all nvt temp 300 300 0.01
+run             10000
+
+unfix           1
+velocity        all scale 300
+
+fix             1 all nve
+run             10000
+```
+
+In this script, the gold atoms are first equilibrated at a temperature of 300 K using the NVT ensemble for 10000 timesteps. Subsequently, the temperature is scaled back to 300 K and the simulation is continued for another 10000 timesteps in the NVE ensemble.
+
+The ""dump"" command is used to write the atomic configurations to a file (dump.nanoparticle) every 100 timesteps.
+
+Please note that you will need to provide your own nanoparticle.data file and the appropriate EAM potential file (Au_u3.eam in this example) for the simulation to run. The above script is a basic template and additional commands might be required based on the specific requirements of your simulation.",False,['Missing required commands: mass'],False,['Missing or invalid timestep'],6.2382513672326315e-12
+Write a LAMMPS script for a silicon crystal structure,"LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator) is a molecular dynamics program from Sandia National Laboratories. Here is an example of a LAMMPS script that creates a silicon crystal structure:
+
+```bash
+# 3d Si lattice
+
+units           metal
+boundary        p p p
+atom_style      atomic
+
+lattice         diamond 5.43
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+mass            1 28.0855
+
+pair_style      tersoff
+pair_coeff      * * Si.tersoff Si
+
+velocity        all create 300.0 4928459 rot yes dist gaussian
+
+fix             1 all npt temp 300.0 300.0 0.5 iso 0.0 0.0 1.0
+fix             2 all enforce2d
+
+thermo          100
+thermo_modify   temp all
+run             1000
+```
+
+This script creates a silicon crystal structure with a diamond lattice. The size of the simulation box is 10x10x10 units, and the lattice constant is 5.43 Angstroms, which is the actual lattice constant for silicon. The script uses the Tersoff potential for silicon (Si.tersoff), which is a good approximation for the interactions between silicon atoms.
+
+The atoms are initially assigned velocities corresponding to a temperature of 300 K (approximately room temperature). The system is then equilibrated at this temperature using the NPT ensemble, which maintains constant number of particles, pressure, and temperature.
+
+The `fix enforce2d` command is used to ensure that the system remains two-dimensional.
+
+Please note that you will need to have the Tersoff potential file (Si.tersoff) in your LAMMPS potentials directory, or specify the full path to the file in the `pair_coeff` command.",False,['LAMMPS execution failed with return code 1'],False,"['Missing required section: timestep', 'Missing or invalid timestep']",3.974367726166044e-12
+Create a LAMMPS input for a water molecule simulation,"LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator) is used to run simulations on molecular dynamics. Here is a basic example of a LAMMPS input script for a water molecule simulation:
+
+```bash
+units real
+dimension 3
+boundary p p p
+
+atom_style full
+bond_style harmonic
+angle_style harmonic
+
+read_data water.data
+
+pair_style lj/cut 2.5
+pair_coeff * * 0.0000 0.0000
+
+neighbor 2.0 bin
+neigh_modify delay 0 every 20 check no
+
+fix 1 all nve
+
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+dump 1 all custom 100 dump.water id type x y z
+
+timestep 1.0
+
+run 10000
+```
+
+This script assumes you have a file named `water.data` in the same directory, which contains the specifications for your water molecules. The script will run a simulation for 10000 timesteps with a timestep size of 1.0, and it will output the id, type, and x, y, z coordinates of all atoms every 100 timesteps to a file named `dump.water`.
+
+Please note this is a very basic example. In a real situation, you would likely need to adjust the parameters and potentially add more commands depending on the specifics of your simulation.",False,['Missing required commands: mass'],True,[],1.434762431811346e-09
+Generate a LAMMPS script for a carbon nanotube system,"Certainly, here is a basic example of a LAMMPS script for a carbon nanotube system. This script can definitely be expanded upon, but it should give you a good starting point.
+
+```
+# 3D carbon nanotube model
+
+units           metal
+boundary        p p p
+atom_style      atomic
+
+# Create atoms
+
+lattice         custom 1.42 a1 1.0 0.0 0.0 a2 0.0 sqrt(3.0) 0.0 a3 0.0 0.0 3.0 &
+                basis 0.0 0.0 0.0 basis 0.5 0.0 0.0 basis 0.0 0.5 0.0 basis 0.5 0.5 0.0
+region          box block 0 100 0 100 0 100
+create_box      1 box
+create_atoms    1 box
+
+# Define interatomic potential
+
+pair_style      tersoff
+pair_coeff      * * SiC.tersoff C
+
+# Set up minimization
+
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Define and perform NVT simulation
+
+velocity        all create 300.0 4928459 rot yes mom yes dist gaussian
+fix             1 all nvt temp 300.0 300.0 0.1
+run             1000
+
+# Output
+
+dump            1 all custom 100 dump.lammpstrj id type x y z
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+```
+
+Please note that this script assumes you have the necessary potential file (SiC.tersoff in this case) available in your working directory. You may need to adjust the parameters and options to suit your specific needs. It is also important to ensure that the dimensions and lattice structure in the ""create_atoms"" section matches your nanotube's structure.",False,['Missing required commands: mass'],False,"['Missing required section: timestep', 'Missing or invalid timestep']",4.274413953168983e-11
+Write a LAMMPS input for a protein structure simulation,"Here's a very basic LAMMPS input script for a protein structure simulation. This script assumes that you have a protein structure file in PDB format, and it uses CHARMM force field parameters for the simulation.
+
+Please note that the actual simulation may involve more complex setups like setting proper simulation box, temperature, pressure, etc. This script is just a basic example.
+
+```lammmps
+# LAMMPS input script for protein structure simulation
+
+units           real
+dimension       3
+boundary        p p p
+
+# read protein structure from PDB file
+read_data       protein.pdb
+
+# define a CHARMM force field
+pair_style      charmm/coul/long 10.0 12.0
+pair_modify     mix geometric
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  charmm
+improper_style  harmonic
+
+# apply the force field parameters
+pair_coeff      * * charmm.prm
+bond_coeff      * charmm.prm
+angle_coeff     * charmm.prm
+dihedral_coeff  * charmm.prm
+improper_coeff  * charmm.prm
+
+# set up neighbor list
+neighbor        2.0 bin
+neigh_modify    delay 10 check yes
+
+# set up the integration parameters
+timestep        1.0  # 1 fs
+thermo          1000
+thermo_style    multi
+
+# run the simulation for 10000 steps
+run             10000
+```
+
+Please replace ""protein.pdb"" and ""charmm.prm"" with your actual protein structure file and CHARMM force field parameter file, respectively. Also, adjust the simulation parameters as necessary for your specific simulation.
+
+This script does not include any temperature or pressure control, which are typically necessary for a realistic simulation. For more complex simulations, you may need to use more advanced features of LAMMPS. Consult the LAMMPS documentation or a LAMMPS expert for more information.",False,"['Missing required commands: atom_style, mass, fix']",False,"['Missing required section: atom_style', 'Missing required section: fix']",3.3308377196966243e-12
+Create a LAMMPS script for a metal alloy system,"Here is an example of a LAMMPS script for a metal alloy system. For this example, we will use a Cu-Ni alloy system:
+
+```sh
+# LAMMPS script for Cu-Ni alloy
+
+# Initialization
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Atom Definition
+lattice         fcc 3.615
+region          box block 0 10 0 10 0 10
+create_box      2 box
+create_atoms    1 box
+lattice         fcc 3.52
+create_atoms    2 box
+
+# Masses
+mass            1 63.55
+mass            2 58.69
+
+# Potential
+pair_style      eam/alloy
+pair_coeff      * * CuNi.eam.alloy Cu Ni
+
+# Settings
+compute         peratom all pe/atom
+dump            1 all custom 100 dump.alloy id type x y z c_peratom
+dump_modify     1 sort id
+velocity        all create 300.0 4928459 rot yes dist gaussian
+
+# Minimization
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Run
+timestep        0.001
+thermo          100
+run             1000
+```
+
+This script initializes a 3D periodic system with a face-centered cubic (fcc) lattice of a Cu-Ni alloy. The masses are set for Cu and Ni, and the embedded atom method (eam) potential is used for the interactions. The system is minimized and then run for 1000 steps.
+
+Please note that the type of potential used (eam/alloy in this case), the lattice parameters, and other simulation parameters should be adjusted according to the specific alloy system and the study requirements.
+
+Also, the potential file 'CuNi.eam.alloy' should be present in the working directory. It contains the specific interaction parameters for the Copper-Nickel alloy and can be obtained from potential databases.",False,['Missing required commands: fix'],False,['Missing required section: fix'],5.5624658381054415e-12
+Generate a LAMMPS input for a graphene sheet simulation,"Below is a simple example of a LAMMPS input script for a graphene sheet simulation:
+
+```bash
+# 2D graphene sheet simulation
+
+units           metal
+boundary        p p s
+atom_style      atomic
+
+# Create Atoms 
+lattice         custom 1.42 a1 1.0 0.0 0.0 a2 0.0 sqrt(3) 0.0 a3 0.0 0.0 3.35 &
+                basis 0.0 0.0 0.0 basis 0.5 0.5 0.0
+region          box block 0 50 0 50 -0.5 0.5
+create_box      2 box
+create_atoms    1 box basis 1 1 basis 2 1
+
+# Define Interatomic Potential
+pair_style      airebo 3.0 1 1
+pair_coeff      * * CH.airebo C
+
+# Define Settings
+compute         peratom all pe/atom 
+thermo          100
+thermo_style    custom step temp epair etotal press
+
+# Minimize Energy
+minimize        1e-4 1e-6 100 1000
+
+# Define Equilibration
+velocity        all create 300.0 12345 mom yes rot no
+fix             1 all nvt temp 300.0 300.0 0.01
+
+# Run Simulation
+timestep        0.001
+run             10000
+```
+
+This script will create a 2D graphene sheet and simulate its behavior at 300K using the AIREBO potential. The simulation will run for 10000 timesteps.
+
+Please note that this is a simple example and may need to be adjusted based on the specific details of your desired simulation. For example, the size of the graphene sheet, the temperature, the desired potential, and the number of timesteps may need to be adjusted.",False,['Missing required commands: mass'],True,[],6.433046069515171e-11
+Write a LAMMPS script for a polymer chain system,"Sure, here is a basic LAMMPS script for setting up a polymer chain system. This script assumes that you have a data file prepared with the coordinates and topologies of the polymer chain.
+
+```bash
+# LAMMPS input script for polymer chain
+
+units lj
+atom_style bond
+boundary p p p
+
+# Read in data file
+read_data polymer.data
+
+# Define interaction potential
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Define bond style
+bond_style harmonic
+bond_coeff 1 1.0 1.0
+
+# Set up neighbor list
+neighbor 0.3 bin
+neigh_modify delay 0 every 20 check no
+
+# Define thermo output
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+# Relaxation
+fix 1 all nve
+run 1000
+
+# Equilibration
+unfix 1
+fix 2 all nvt temp 1.0 1.0 0.1
+run 5000
+
+# Production
+unfix 2
+fix 3 all nve
+run 10000
+
+write_data output.data
+```
+
+This script starts by setting the units, atom style, and boundary conditions. It then reads in a data file called ""polymer.data"" that should contain the initial positions and bond information for the polymer chain. The interaction potential and bond style are then defined, followed by the neighbor list settings.
+
+Thermo output is defined to print out the simulation step, temperature, potential energy, kinetic energy, total energy, and pressure every 100 steps.
+
+The system is then relaxed using the NVE ensemble for 1000 steps, equilibrated using the NVT ensemble for 5000 steps, and a production run is performed using the NVE ensemble for 10000 steps. The final state of the system is then written to ""output.data"".
+
+Please make sure to modify it according to your needs.
+
+The units, atom_style, bond_style, pair_style, and pair_coeff commands may need to be adjusted to match the specifics of your polymer system.",False,['Missing required commands: mass'],False,"['Missing required section: timestep', 'Missing or invalid timestep']",2.245895711178548e-91
+Create a LAMMPS input for a biological membrane simulation,"The creation of a LAMMPS input for a biological membrane simulation involves several steps and can vary depending on the specifics of your simulation. Here is a basic example of an input script for a lipid bilayer simulation:
+
+```bash
+# LAMMPS input file for lipid bilayer simulation
+
+units		real
+dimension	3
+boundary	p p p
+
+# Atom definition
+read_data	lipid.data
+
+# Pair interactions
+pair_style	lj/cut 12.0
+pair_coeff	* * 0.1 3.0 12.0
+
+# Bond interactions
+bond_style	harmonic
+bond_coeff	* 1.0 1.0
+
+# Angle interactions
+angle_style	harmonic
+angle_coeff	* 10.0 120.0
+
+# Dihedral interactions
+dihedral_style	opls
+dihedral_coeff	* 1.0 -1.0 0.0 1.0
+
+# Fix commands
+fix		1 all npt temp 300.0 300.0 0.1 iso 1.0 1.0 1.0
+fix		2 all shake 0.0001 20 0 b 1 a 1
+
+# Timesteps
+timestep	0.001
+run		10000
+
+# Output
+thermo		100
+dump		1 all atom 100 lipid.lammpstrj
+```
+
+This is a simple example of a LAMMPS input script that can be used for a lipid bilayer simulation. It includes a data file (`lipid.data`) that defines the initial configuration of the system. 
+
+The script uses the Lennard-Jones potential (`lj/cut`) for pair interactions, harmonic potentials for bond and angle interactions, and the OPLS potential for dihedral interactions. 
+
+The simulation is run under NPT ensemble with a temperature of 300 K and a pressure of 1 atm. The SHAKE algorithm is used to constrain bond and angle degrees of freedom.
+
+The simulation is run for 10,000 timesteps and the system state is output every 100 timesteps to a file (`lipid.lammpstrj`).
+
+Please note that you will need to modify this script to suit your specific needs. For example, you might need to specify different interaction potentials, use different ensemble conditions, or use a different data file.",False,"['Missing required commands: atom_style, mass']",False,['Missing required section: atom_style'],2.972028260393756e-14

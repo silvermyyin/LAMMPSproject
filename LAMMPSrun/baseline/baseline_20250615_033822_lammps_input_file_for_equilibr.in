@@ -1,0 +1,35 @@
+Sure, here is a simple LAMMPS input script that meets your requirements:
+
+```LAMMPS
+# LAMMPS input file for equilibration run
+
+units       lj
+atom_style  atomic
+boundary    p p p
+
+# Create Atoms
+lattice     fcc 0.8442
+region      box block 0 10 0 10 0 10
+create_box  1 box
+create_atoms 1 box
+
+mass        1 1.0
+
+# Define Interactions
+pair_style  lj/cut 2.5
+pair_coeff  1 1 1.0 1.0 2.5
+
+# Define Computations
+compute     new all temp
+thermo      100
+thermo_style custom step temp epair etotal
+
+# Initialize Velocities
+velocity    all create 1.0 12345 rot yes dist gaussian
+
+# Equilibration
+fix         1 all nve
+run         10000
+```
+
+This script sets up a simple equilibration run with one type of atom over 10000 time steps. The script initializes the velocities of all the atoms and computes the temperature, potential energy, and total energy every 100 steps. The interactions between the atoms are defined using the Lennard-Jones potential.

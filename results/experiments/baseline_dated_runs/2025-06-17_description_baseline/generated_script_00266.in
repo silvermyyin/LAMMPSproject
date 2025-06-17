@@ -1,0 +1,46 @@
+# LAMMPS input script for Argon fcc lattice using Lennard-Jones potential
+
+units           metal
+atom_style      atomic
+boundary        f p p
+
+# Create FCC lattice for Argon
+lattice         fcc 5.26
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define Lennard-Jones potential for Argon
+pair_style      lj/cut 13.0
+pair_coeff      1 1 0.0104 3.4
+
+# Initialize velocities and displacements
+velocity        all create 0.0 87287 loop geom
+displace_atoms  all move 0.0 0.0 0.0
+
+# Atom-to-Continuum (AtC) setup
+fix             atc all atc fix_modify model elastic file elastic.mod
+
+# Mesh and node sets for boundary conditions
+fix             mesh all atc mesh hex 1 1 1
+fix             nodes all atc nodeset region left_nodes x == 0.0
+fix             nodes all atc nodeset region right_nodes x == 52.6
+
+# Boundary conditions
+fix             leftBC all atc set nodeset left_nodes displace 0.0 0.0 0.0
+fix             rightBC all atc set nodeset right_nodes velocity 0.0 0.0 0.0
+
+# Compute properties
+compute         temp all temp
+compute         stress all stress/atom NULL
+compute         pe all pe/atom
+
+# Output settings
+thermo_style    custom step temp pe press
+thermo          100
+
+# Initial run to extend system
+run             1000
+
+# Longer run for equilibrium
+run             10000

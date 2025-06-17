@@ -1,0 +1,32 @@
+# LAMMPS input script for DPD simulation of RDX system
+
+units metal
+atom_style atomic
+
+# Define the lattice and create the simulation box
+lattice hcp 3.0
+region simulation_box block 0 10 0 10 0 10
+create_box 1 simulation_box
+
+# Create atoms on the lattice
+create_atoms 1 box
+
+# Adjust the simulation box dimensions slightly
+change_box all x final 0 30.1 y final 0 30.1 z final 0 30.1 remap
+
+# Define pair style and coefficients
+pair_style multi/lucy 1.0
+pair_coeff * * multi_lucy_table.txt
+
+# Set initial velocities
+velocity all create 300.0 12345 mom yes dist gaussian
+
+# Integration settings
+fix 1 all nve
+
+# Thermodynamic output
+thermo_style custom step temp press vol pe ke etotal
+thermo 1
+
+# Run the simulation
+run 100

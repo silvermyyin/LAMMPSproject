@@ -1,0 +1,35 @@
+# LAMMPS Input Script for Spin Dynamics Simulation in a Simple Cubic Lattice
+
+# Initialize simulation
+units           lj
+atom_style      spin
+dimension       3
+boundary        p p p
+
+# Create lattice and simulation box
+lattice         sc 3.0
+region          box block 0 2 0 2 0 2
+create_box      1 box
+create_atoms    1 box
+
+# Define potential and pair style
+pair_style      spin/exchange 3.1
+pair_coeff      * * 11.254
+
+# Set initial spins
+set atom 1 spin 1.0 0.0 0.0
+set atom 2 spin 0.0 1.0 0.0
+
+# Define simulation parameters
+timestep        0.0001
+
+# Define fixes
+fix             1 all nve/spin
+fix             2 all langevin/spin 0.0 0.0 0.01 12345
+
+# Output settings
+thermo          1000
+thermo_style    custom step temp etotal epair evdwl pe pxx pyy pzz
+
+# Run the simulation
+run             30000

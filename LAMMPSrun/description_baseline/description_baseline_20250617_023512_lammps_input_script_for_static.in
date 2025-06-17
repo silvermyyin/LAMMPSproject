@@ -1,0 +1,34 @@
+```lammps
+# LAMMPS Input Script for Static Analysis with ACE
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Read system configuration
+read_data       ace_compute_struct.data
+
+# Define masses for atom types (assumed based on typical atomic masses)
+mass            1 1.00784  # Hydrogen
+mass            2 14.0067  # Nitrogen
+mass            3 15.999   # Oxygen
+
+# Pair style and cutoff
+pair_style      zero 5.7
+
+# Compute ACE descriptors
+pair_coeff      * *
+compute         ace all ace/atom H_N_O_ccs.yace
+
+# Define output for ACE descriptors
+fix             1 all ave/time 1 1 1 c_ace file desc_out.dat mode vector
+
+# Output thermo information
+thermo          1
+thermo_style    custom step pe pxy
+
+# Run static analysis
+run             0
+```

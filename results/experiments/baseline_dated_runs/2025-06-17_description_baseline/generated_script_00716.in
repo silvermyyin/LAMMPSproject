@@ -1,0 +1,36 @@
+# LAMMPS Input Script for Simulating a Solvated 5-mer Peptide using CHARMM Force Field
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data data.peptide
+
+# Define force field parameters
+pair_style lj/charmm/coul/long 8.0 10.0
+pair_coeff * * 
+
+bond_style harmonic
+angle_style charmm
+dihedral_style charmm
+improper_style charmm
+
+kspace_style pppm 0.0001
+
+# Define groups
+group peptide id 1:6
+
+# Define fixes
+fix 1 all nvt temp 275.0 275.0 100.0
+fix 2 all shake 0.0001 20 0 b 1 a 1
+fix 3 peptide tmd 300 1.0 target_conformation_file.dat
+
+# Timestep and run parameters
+timestep 2.0
+
+# Output settings
+thermo 50
+
+# Run the simulation
+run 300

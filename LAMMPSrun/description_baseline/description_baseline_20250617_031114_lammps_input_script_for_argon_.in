@@ -1,0 +1,40 @@
+```lammps
+# LAMMPS input script for Argon using Lennard-Jones potential on an fcc lattice
+
+# Variable definitions
+variable L equal 10.0
+variable w equal 5.0
+
+# Initialization
+units           metal
+dimension       3
+boundary        f f p
+atom_style      atomic
+
+# Define simulation box
+region          box block 0 ${L} 0 ${L} 0 ${w} units box
+create_box      1 box
+
+# Create fcc lattice and atoms
+lattice         fcc 4.0
+create_atoms    1 box
+
+# Define mass
+mass            1 39.95
+
+# Lennard-Jones potential settings
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.2381 3.405
+
+# Atoms to Continuum (AtC) method setup
+fix             atc all atc
+atc             all kernel gauss mesh_size 2.0
+
+# Run settings
+timestep        0.0
+thermo          1
+thermo_style    custom step cpu temp
+
+# Run simulation for testing setup
+run             10
+```

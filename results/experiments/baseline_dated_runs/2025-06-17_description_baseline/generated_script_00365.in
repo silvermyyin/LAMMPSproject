@@ -1,0 +1,35 @@
+# LAMMPS input script for a bilayer MoS2 system with AA' stacking
+
+units metal
+dimension 3
+boundary p p f
+
+atom_style atomic
+
+# Read atomic data from the input file
+read_data mos2_bilayer.data
+
+# Define masses
+mass 1 32.065  # Sulfur
+mass 2 95.94   # Molybdenum
+
+# Define interatomic potentials
+pair_style hybrid/overlay sw/mod ilp/tmd 16.0
+pair_coeff * * sw/mod MoS2.sw Mo S
+pair_coeff * * ilp/tmd MoS2.ilp Mo S
+
+# Initialize simulation parameters
+timestep 0.001
+
+# Set temperature
+velocity all create 300.0 12345
+
+# Integrate equations of motion
+fix 1 all nve
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp etotal pe ke evdwl ecoul elong
+
+# Run the simulation
+run 1000

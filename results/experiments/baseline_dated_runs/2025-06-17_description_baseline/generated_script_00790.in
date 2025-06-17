@@ -1,0 +1,40 @@
+# LAMMPS input script for a 3D molecular dynamics simulation of a copper block
+# using the EAM potential with eam/opt style and cuu3.eam potential file.
+
+units metal
+dimension 3
+boundary p p p
+
+atom_style atomic
+
+read_data copper_block.data
+
+pair_style eam/opt
+pair_coeff * * cuu3.eam Cu
+
+neighbor 2.0 bin
+neigh_modify delay 10 check yes
+
+timestep 0.002
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes dist gaussian
+
+# Define a Nose-Hoover barostat and thermostat for NPT ensemble
+fix 1 all npt temp 300.0 300.0 0.1 iso 0.0 0.0 1.0 drag 1.0
+
+# Apply a phonon fix for vibrational property analysis
+fix 2 all phonon 1000 100 phonon.out
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke press
+
+# Restart files
+restart 100000 restart1.lmp restart2.lmp
+
+# Run the simulation
+run 6500000
+
+# Write final restart file
+write_restart final_restart.lmp

@@ -1,0 +1,33 @@
+```lammps
+units metal
+atom_style atomic
+boundary p p p
+
+read_restart restart_hcp_cobalt.equil
+
+mass * 58.93
+
+pair_style hybrid eam/alloy spin/exchange 4.0
+pair_coeff * * eam/alloy Co_u3.eam.alloy Co
+pair_coeff * * spin/exchange 1.0 0.0 0.0 1.0
+
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+fix 1 all precession/spin zeeman 0.0 0.0 0.0
+fix 2 all langevin/spin 0.0 300.0 21.0 48279
+fix 3 all nve/spin
+
+timestep 0.0001
+
+thermo 20
+thermo_style custom step time temp pe ke lx ly lz
+compute mag all property/atom smagx smagy smagz
+compute pe_atom all pe/atom
+compute ke_atom all ke/atom
+
+dump 1 all custom 1 spin_trajectory.dump id type xs ys zs c_smagx c_smagy c_smagz
+dump_modify 1 format "%d %d %.5f %.5f %.5f %.5f %.5f %.5f"
+
+run 100
+```

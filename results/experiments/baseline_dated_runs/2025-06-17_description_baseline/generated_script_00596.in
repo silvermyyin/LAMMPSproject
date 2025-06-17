@@ -1,0 +1,45 @@
+# 2D Lennard-Jones Melting and Energy Minimization
+
+units lj
+dimension 2
+atom_style atomic
+
+# Create a 2D square lattice
+lattice sq2 0.8442
+region box block 0 20 0 20 -0.5 0.5
+create_box 1 box
+create_atoms 1 box
+
+# Set mass
+mass 1 1.0
+
+# Define pairwise interaction
+pair_style lj/cut 2.5
+pair_modify shift yes
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Initial velocities
+velocity all create 5.0 12345
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define fixes
+fix 1 all nve
+fix 2 all enforce2d
+
+# Output settings
+thermo 50
+thermo_style custom step temp epair etotal
+
+# Run simulation
+timestep 0.005
+run 1000
+
+# Energy minimization using FIRE algorithm
+min_style fire
+min_modify dmax 0.1 line quadratic
+minimize 1.0e-4 1.0e-6 100 1000
+
+# End of script

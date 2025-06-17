@@ -1,0 +1,46 @@
+# LAMMPS input script for Two-Temperature Model using AtC package
+
+units           metal
+dimension       3
+boundary        p p f
+atom_style      atomic
+
+# Create FCC lattice
+lattice         fcc 4.05
+region          whole block 0 20 0 20 0 20 units lattice
+create_box      1 whole
+create_atoms    1 box
+
+# Define potential
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0103 3.40 13.5
+
+# Define groups for MD and FE regions
+region          md block 0 10 0 20 0 20 units lattice
+region          fe block 10 20 0 20 0 20 units lattice
+
+group           md region md
+group           fe region fe
+
+# Initialize velocities
+velocity        all create 300.0 1234567 dist gaussian
+
+# Thermostat for MD region
+thermo_style    custom step temp pe etotal
+thermo          100
+
+# Time integration
+timestep        5.0
+
+# Define AtC coupling
+fix             atc all atc two_temperature Ar_ttm.mat
+fix_modify      atc temp 300.0
+
+# Output
+dump            dump_all all custom 100 output.lammpstrj id type x y z vx vy vz fx fy fz
+dump_modify     dump_all sort id
+
+# Run simulation
+run             10000
+
+Note: Ensure that the file `Ar_ttm.mat` containing the necessary parameters for the two-temperature model is available in the working directory. Adjust lattice parameters, region sizes, and simulation times according to specific requirements or physical systems being modeled.

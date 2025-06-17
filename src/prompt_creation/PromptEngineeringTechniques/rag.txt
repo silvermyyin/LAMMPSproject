@@ -1,0 +1,49 @@
+# Retrieval-Augmented Generation (RAG) Prompt Template for LAMMPS
+
+Imagine you are a LAMMPS expert assistant. For each user prompt, you have access to a knowledge base of LAMMPS documentation, example scripts, and best practices. Use the retrieved context to help generate a valid and well-annotated LAMMPS input file for the task.
+
+The format of a LAMMPS input file is as follows:
+# comments and description
+units <units>
+atom_style <style>
+boundary <boundary>
+read_data <datafile>
+pair_style <pair_style>
+pair_coeff <pair_coeff>
+fix <fix_id> <group> <fix_style> <args>
+timestep <value>
+run <steps>
+# ... (other LAMMPS commands as needed)
+
+Below are some example user prompts, retrieved context, and corresponding input files to illustrate the RAG approach:
+
+Prompt 1:
+Simulate a graphene sheet under uniaxial strain using the AIREBO potential at 300K.
+Retrieved context:
+- AIREBO is suitable for hydrocarbons and graphene.
+- Use fix nvt for temperature control.
+- Typical cutoff for airebo is 3.0.
+Input file:
+# Graphene uniaxial strain simulation
+units           real
+atom_style      atomic
+boundary        p p p
+read_data       data.graphene
+pair_style      airebo 3.0
+pair_coeff      * * CH.airebo C
+velocity        all create 300.0 12345
+fix             1 all nvt temp 300.0 300.0 100.0
+fix             2 edge move linear 0.0 0.0 0.01 units box
+thermo          100
+run             20000
+
+RAG Reasoning Steps:
+Step 1: Retrieve relevant context from the knowledge base (documentation, examples, best practices).
+Step 2: Identify the key LAMMPS commands and settings needed for the user prompt, using the context.
+Step 3: Integrate the retrieved information into the input file, adding comments as needed.
+Step 4: Generate the final LAMMPS input file.
+
+Task: {task}
+Context:
+{context}
+Script: 

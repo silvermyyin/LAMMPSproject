@@ -1,0 +1,40 @@
+# LAMMPS input script for QM simulation of methane (CH4) using LATTE
+
+# Set up simulation units and atom style
+units metal
+atom_style full
+
+# Define variables for optional replication
+variable xrep equal 1
+variable yrep equal 1
+variable zrep equal 1
+
+# Read initial configuration from data file and replicate
+read_data data.ch4
+replicate ${xrep} ${yrep} ${zrep}
+
+# Set initial velocities to zero with a random seed for reproducibility
+velocity all create 0.0 12345 rot yes dist gaussian
+
+# Define pair style and special bonds (no classical interactions)
+pair_style zero 10.0
+pair_coeff * *
+
+# Initialize LATTE QM package and setup MDI fix
+fix qm all mdi/qm element C H
+
+# Enable virial calculations and set timestep
+fix_modify qm virial yes
+timestep 0.00025
+
+# Apply NVE ensemble for time integration
+fix 1 all nve
+
+# Output settings: log thermodynamic properties every 10 timesteps
+thermo 10
+thermo_style custom step temp pe etotal press
+
+# Run the simulation for 100 timesteps
+run 100
+
+# End of script

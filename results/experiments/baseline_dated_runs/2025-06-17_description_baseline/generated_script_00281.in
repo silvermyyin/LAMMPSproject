@@ -1,0 +1,44 @@
+# LAMMPS Input Script for 3D Lennard-Jones Melt Simulation
+
+units lj
+atom_style atomic
+
+# Create a face-centered cubic (fcc) lattice with density 0.8442
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 2 box
+
+# Create atoms of type 1 in the entire box
+create_atoms 1 box
+
+# Designate a specific region for atoms of type 2
+region region_type2 block 4 6 4 6 4 6
+create_atoms 2 region_type2
+
+# Define LJ potential with different cutoffs for type 2 interactions
+pair_style lj/cut 5.0
+pair_coeff * * 1.0 1.0 2.5
+pair_coeff 2 2 1.0 1.0 5.0
+
+# Initialize velocities for temperature 1.0
+velocity all create 1.0 12345
+
+# Define groups based on atom types
+group fast type 1
+group slow type 2
+
+# Use the NVE ensemble for time integration
+fix 1 all nve
+
+# Apply balance fix for load balancing
+fix 2 all balance 1000 1.0 shift xyz 10 1.0
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Output thermodynamic properties every 50 steps
+thermo 50
+
+# Run the simulation for 250 timesteps
+run 250

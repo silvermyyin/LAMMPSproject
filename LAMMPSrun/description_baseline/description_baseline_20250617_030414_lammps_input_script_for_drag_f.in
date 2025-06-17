@@ -1,0 +1,63 @@
+```lammps
+# LAMMPS Input Script for Drag Force Simulation on Colloidal Particle in LB Fluid
+
+# Initialize simulation
+units nano
+dimension 3
+boundary p p f
+atom_style sphere
+
+# Create simulation box
+region simbox block 0 50 0 50 0 50
+create_box 2 simbox
+
+# Define colloidal particle (single atom or composite)
+variable particle_type string "single" # Options: 'single' or 'composite'
+
+# Create atoms
+if "${particle_type} == single" then &
+  "create_atoms 1 single 25 25 25"
+else &
+  "create_atoms 1 box" &
+  "create_atoms 2 box" &
+  "group particle type 1 2" &
+  "set group particle diameter 1.0" 
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Set mass and diameter for colloidal particle
+mass 1 1.0
+set type 1 diameter 1.0
+
+# Define LB fluid properties
+fix lb fluid all lb/fluid 1.0 1.0 1.0
+fix viscous all lb/viscous 1.0
+
+# External force applied to particle
+variable fx equal 0.1
+variable fy equal "0.05*sin(0.1*step)"
+variable fz equal "0.05*sin(0.1*step)"
+
+fix external_force all addforce v_fx v_fy v_fz
+
+# Integrate motion
+if "${particle_type} == single" then &
+  "fix integrate all nve" &
+else &
+  "fix integrate particle rigid single"
+
+# Output settings
+dump 1 all custom 100 output.lammpstrj id type x y z vx vy vz
+thermo 100
+thermo_style custom step time temp press c_myColloid[1] c_myColloid[2] c_myColloid[3] c_myColloid[4] c_myColloid[5] c_myColloid[6]
+
+# Compute center of mass and velocity of particle
+compute myColloid all com/molecule
+compute myVelocity all property/atom vx vy vz
+
+# Run simulation
+timestep 0.001
+run 10000
+```

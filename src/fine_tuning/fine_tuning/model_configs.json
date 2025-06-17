@@ -1,0 +1,5 @@
+{
+    "model": "gpt-4o",
+    "fine_tuned_model": "ft:gpt-4o-custom",
+    "temperature": 0.7
+}

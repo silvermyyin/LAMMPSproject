@@ -1,0 +1,42 @@
+# LAMMPS input script for simulating an electron system using EFF
+
+# Initialize simulation
+units electron
+atom_style electron
+boundary f f f
+
+# Variable for input data file
+variable sname string "ch4"
+
+# Read atomic data
+read_data ${sname}.data
+
+# Define interaction potential
+pair_style eff/cut 100.0
+pair_coeff * *
+
+# Compute electron radius and spin properties
+compute 1 all eradius
+compute 2 all espin
+
+# Energy minimization
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Assign initial velocities
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define custom effective temperature
+compute myTemp all temp
+compute_modify myTemp dynamic yes
+
+# Set up time integration
+timestep 0.005
+fix 1 all nve/eff
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe press c_myTemp
+
+# Run the simulation
+run 100000

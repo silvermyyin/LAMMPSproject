@@ -1,0 +1,34 @@
+# LAMMPS input script for molecular dynamics simulation of argon
+
+units metal
+atom_style full
+
+# Read in initial configuration
+read_data argon.lmp
+
+# Pair style and coefficients
+include ff-argon.lmp
+
+# Set up neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the simulation box with periodic boundaries
+boundary p p p
+
+# Initialize velocities
+velocity all create 10.0 12345 mom yes dist gaussian
+
+# Apply the Langevin thermostat
+fix 1 all langevin 10.0 10.0 1.0 12345
+
+# Integrate equations of motion
+fix 2 all nve
+
+# Set timestep
+timestep 0.1
+
+# Run the simulation
+thermo 200
+thermo_style custom step temp etotal press
+run 5000

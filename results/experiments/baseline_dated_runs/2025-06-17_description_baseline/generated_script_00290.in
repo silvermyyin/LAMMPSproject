@@ -1,0 +1,27 @@
+# LAMMPS input script for a silicon system using GAP potential
+
+units           metal
+atom_style      atomic
+
+# Read initial configuration from data file
+read_data       data_gap
+
+# Define interatomic potential using GAP with quip
+pair_style      quip
+pair_coeff      * * /path/to/GAP/potential/file.xml "Potential xml_label=GAP_2017_6_17"
+
+# Set up neighbor list
+neighbor        2.0 bin
+neigh_modify    delay 10
+
+# Define the simulation ensemble
+fix             1 all nve
+
+# Set timestep
+timestep        0.001
+
+# Output settings
+thermo          10
+
+# Run the simulation for short 40-timestep to test GAP potential
+run             40

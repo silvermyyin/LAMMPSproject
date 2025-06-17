@@ -1,0 +1,54 @@
+# LAMMPS input script for simulating a simple rigid body system with Lennard-Jones interactions
+
+units lj
+atom_style atomic
+
+# Create simulation box
+region box block 0 10 0 10 0 10
+create_box 1 box
+
+# Create atoms
+create_atoms 1 random 100 12345 box
+
+# Define interaction potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define groups for rigid bodies
+variable nclumps equal 10
+variable natoms_per_clump equal 10
+
+group clump type 1
+
+# Assign atoms to clumps
+set group clump property/atom clump (atom-id-1)/v_natoms_per_clump
+
+# Define neighbor list and exclusions
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+neigh_modify exclude group clump clump
+
+# Set initial velocities
+velocity all create 100.0 12345
+
+# Fix for rigid body dynamics
+fix 1 all rigid/nve custom clump
+
+# Run settings
+timestep 0.0001
+thermo 50
+
+# Run the simulation
+run 10000
+
+# Uncomment below for advanced options
+
+# # Fix for simulating chains of connected bodies
+# # fix 2 all poems
+
+# # Visualization options
+# # dump 1 all image 100 image.*.jpg type type
+# # dump_modify 1 pad 5
+# # dump 2 all movie 100 movie.mpg type type
+
+# End of script

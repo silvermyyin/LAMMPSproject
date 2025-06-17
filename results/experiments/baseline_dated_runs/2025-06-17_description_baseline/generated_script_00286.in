@@ -1,0 +1,42 @@
+# LAMMPS Input Script for Argon-like System with Lennard-Jones Interactions
+
+units           lj
+atom_style      atomic
+
+# Define the simulation box
+variable        xlen equal 10.0
+variable        ylen equal 10.0
+variable        zlen equal 10.0
+region          simbox block 0 ${xlen} 0 ${ylen} 0 ${zlen}
+create_box      1 simbox
+
+# Create atoms in an FCC lattice
+lattice         fcc 0.8442
+create_atoms    1 box
+
+# Define mass for Argon-like atoms
+mass            1 1.0
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5
+
+# Boundary conditions
+boundary        f f p
+
+# Initialize velocities
+velocity        all create 1.0 87287
+
+# Atom-to-Continuum package setup
+fix             atc all atc control file atc_input.txt
+
+# Output settings
+timestep        0.0
+thermo          100
+thermo_style    custom step cpu temp
+
+# Custom dump
+dump            myDump all custom 100 dump.atom id type x y z
+
+# Run setup
+run             0

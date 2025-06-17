@@ -1,0 +1,35 @@
+# LAMMPS input script for a water dimer using the HIPPO polarizable force field
+
+units real
+atom_style amoeba
+
+# Define boundary conditions
+boundary s s s
+
+# Read initial configuration from a data file
+read_data water_dimer.data
+
+# Set up force field parameters
+pair_style hippo
+pair_coeff * *
+
+# Setup special bonds for HIPPO
+special_bonds lj/coul 0.0 0.0 0.5
+
+# Define bond style
+bond_style class2
+
+# Define per-atom properties for HIPPO model
+fix prop1 all property/atom hippo_type
+fix prop2 all property/atom polarize
+fix prop3 all property/atom polarization_axis
+
+# Thermo settings
+thermo 10
+thermo_style custom step temp etotal ke pe evdwl ecoul elong press
+
+# Integrate using NVE
+fix 1 all nve
+
+# Run simulation for 100 timesteps
+run 100

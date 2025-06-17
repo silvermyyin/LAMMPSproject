@@ -1,0 +1,47 @@
+```lammps
+# LAMMPS input script for simulating electronic stopping in a Cu-Al system
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define simulation box
+region          simbox block -10 10 -10 10 -10 10
+create_box      2 simbox
+
+# Lattice and atom creation
+lattice         fcc 4.05
+region          al_region block -8 8 -8 8 -8 8
+create_atoms    1 region al_region
+
+# Add a single Cu atom as the PKA
+create_atoms    2 single 0 0 0
+
+# Define masses
+mass            1 26.9815   # Al
+mass            2 63.546    # Cu
+
+# EAM potential for AlCu system
+pair_style      eam/alloy
+pair_coeff      * * AlCu.eam.alloy Al Cu
+
+# Set initial velocities
+velocity        all create 300.0 87287 loop geom
+
+# Assign high velocity to the PKA
+group           copper id 1
+velocity        copper set 0.0 0.0 10.0
+
+# Fixes for integration and electronic stopping
+fix             1 all nve
+fix             2 all dt/reset 1 0.001 0.01 0.1
+fix             3 all electron/stopping/fit
+
+# Thermodynamic output
+thermo          10
+thermo_style    custom step temp pe ke etotal f_3
+
+# Run the simulation
+run             100
+```

@@ -1,0 +1,33 @@
+# LAMMPS input script for graphene-ionic liquid supercapacitor with constant potential electrodes
+
+units           real
+dimension       3
+boundary        p p f
+atom_style      charge
+
+# Read data file
+read_data       graphene_ionic_liquid.data
+
+# Include settings file for styles, groups, computes, and fixes
+include         settings.lmp
+
+# K-space solver for slab geometry
+kspace_style    pppm 1.0e-5
+kspace_modify   slab 3.0
+
+# Define groups for electrodes
+group           bottom_electrode id 1:100
+group           top_electrode id 101:200
+
+# Apply constant potential to electrodes
+fix             1 bottom_electrode electrode/conp 0 -1.0 top_electrode 1.0 symm on
+
+# Define thermo output
+thermo_style    custom step temp c_myTemp pe etotal f_1[1] f_1[2]
+thermo          100
+
+# Short run for 500 timesteps
+timestep        1.0
+run             500
+
+Ensure that the `graphene_ionic_liquid.data` file contains the necessary atomic coordinates, types, and charges, and the `settings.lmp` file defines any additional settings like pair styles, groups, and computes required for the simulation.

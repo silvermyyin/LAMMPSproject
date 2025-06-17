@@ -1,0 +1,51 @@
+# LAMMPS input script for simulating a partial dislocation in FCC copper
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Create an FCC lattice with specific orientations
+lattice         fcc 3.615 orient x 1 0 0 orient y 0 1 0 orient z 0 0 1
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Apply EAM potential
+pair_style      eam
+pair_coeff      * * Cu_Mishin1.eam
+
+# Define regions to manipulate
+region          delete_plane block INF INF INF INF 5.0 5.1
+group           delete_plane region delete_plane
+
+# Delete a plane of atoms to introduce a partial dislocation
+delete_atoms    region delete_plane
+
+# Define compute for local atomic environments and coordination numbers
+compute         coord all coord/atom cutoff 3.615
+compute         local_env all cluster/atom 3.615
+
+# Define a group for boundary conditions
+region          lower block INF INF INF INF 0 1
+region          upper block INF INF INF INF 9 10
+group           lower region lower
+group           upper region upper
+group           boundary union lower upper
+group           mobile subtract all boundary
+
+# Set up the initial velocities
+velocity        all create 300.0 12345
+
+# Fix for relaxation using Langevin dynamics
+fix             1 all nve
+fix             2 all langevin 300.0 300.0 0.1 45678
+fix             3 boundary setforce 0.0 0.0 0.0
+fix             4 mobile setforce NULL 0.0 NULL
+
+# Output settings
+thermo          100
+thermo_style    custom step temp press pe ke etotal
+
+# Timestep and run
+timestep        0.004
+run             10000

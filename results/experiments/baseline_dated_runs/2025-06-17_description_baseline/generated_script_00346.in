@@ -1,0 +1,48 @@
+# LAMMPS input script for NEMD simulation of SPC/E water using eHEX algorithm
+
+units real
+atom_style full
+boundary p p p
+
+# Read the initial configuration from a data file
+read_data water_spce.data
+
+# Define force field parameters for SPC/E water
+pair_style lj/cut/coul/long 10.0
+pair_coeff 1 1 0.1553 3.166 # O-O interaction
+pair_coeff 2 2 0.0 0.0      # H-H interaction
+pair_coeff 1 2 0.0 0.0      # O-H interaction
+bond_style harmonic
+bond_coeff 1 450 1.0        # OH bond
+angle_style harmonic
+angle_coeff 1 55 104.52     # HOH angle
+
+# Define kspace style for long-range Coulombic interactions
+kspace_style pppm 1.0e-4
+
+# Apply RATTLE algorithm for constraint handling
+fix rattle all rattle 1.0e-4 100 0 b 1 a 1
+
+# Define regions for the NEMD simulation
+region hot block INF INF INF INF INF 10
+region cold block INF INF INF INF 90 INF
+
+group hot_region region hot
+group cold_region region cold
+
+# Initialize velocities for temperature control
+velocity all create 300.0 4928459 rot yes dist gaussian
+
+# Apply fixes for maintaining temperature gradient and integration
+fix NVE all nve
+fix eHEX hot_region heat 10.0
+fix eHEX2 cold_region heat -10.0
+
+# Output settings
+thermo 1000
+thermo_style custom step temp press pe ke etotal
+dump 1 all custom 1000 dump.water id type x y z vx vy vz
+
+# Run the simulation
+timestep 1.0
+run 100000

@@ -1,0 +1,48 @@
+# LAMMPS input script for simulating amorphous carbon with ReaxFF
+
+units real
+atom_style charge
+boundary p p p
+
+# Create simulation box and random distribution of carbon atoms
+lattice none 1.0
+region box block 0 30.53 0 30.53 0 30.53
+create_box 1 box
+create_atoms 1 random 2000 12345 box
+
+# Define masses
+mass 1 12.011  # Carbon
+
+# Specify the ReaxFF potential
+pair_style reax/c lmp_control
+pair_coeff * * ffield.reax C
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify every 10 delay 0 check yes
+
+# Charge equilibration
+fix 1 all qeq/reaxff 1 0.0 10.0 1e-6 reax/c
+
+# High-temperature equilibration at 6000 K
+velocity all create 6000.0 4928459 rot yes dist gaussian
+fix 2 all nvt temp 6000.0 6000.0 100.0
+timestep 0.25
+thermo 100
+thermo_style custom step temp pe etotal press density
+dump 1 all custom 100 dump.6000K id type x y z q
+run 10000
+
+# Cooling phase to 300 K
+unfix 2
+fix 3 all nvt temp 6000.0 300.0 100.0
+run 20000
+
+# Long equilibration at 300 K
+unfix 3
+fix 4 all nvt temp 300.0 300.0 100.0
+run 50000
+
+# Finalize
+unfix 4
+write_data final_structure.data

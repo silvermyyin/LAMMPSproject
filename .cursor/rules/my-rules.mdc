@@ -1,0 +1,72 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+title: LLM4LAMMPS Project Rules
+description: Master rules for baseline, prompt engineering, RAG, and fine-tuning phases.
+priority: 1           # 1 = highest.  Lower numbers override later rules.
+---
+
+## Global Context
+1.  We build a modular, reproducible **benchmark** that tests how well LLMs can generate *valid, executable* **LAMMPS** input scripts (.in files) from natural-language prompts.  
+2.  Four evaluation metrics are mandatory: **F1 score**, **syntax validity**, **executability**, **semantic similarity**.  
+3.  All prompt–script pairs follow a **1 : 1** mapping (one prompt → one reference `.in` file).
+
+---
+
+## Baseline Experiment
+- **No** prompt engineering (plain prompt only).  
+- **No** Retrieval-Augmented Generation.  
+- **No** model fine-tuning.  
+- Use default GPT-4 or Mistral settings from `model_configs.json`.  
+- Compare LLM output to the reference script with the 4 metrics above.
+
+---
+
+## Prompt Engineering Phase
+- Allowed techniques: *Chain-of-Thought (CoT)*, few-shot examples, keyword highlighting.  
+- **Do not** alter model weights.  
+- Measure improvement over baseline with identical metrics.
+
+---
+
+## RAG Phase
+1. **Retrieve** relevant chunks from the indexed LAMMPS manual + example scripts.  
+2. Query pipeline → **RAG-Fusion → Semantic Routing → ColBERT** indexing.  
+3. Append retrieved context to the user prompt, then generate.  
+4. Still **no weight updates**; only prompt augmentation.
+
+---
+
+## Fine-Tuning Phase
+- Two allowed methods  
+  - **SFT** (Supervised Fine-Tuning): full-parameter update.  
+  - **LoRA**: parameter-efficient; preferred when resources are limited.  
+- Train on the prompt–script dataset; evaluate with the same 4 metrics.
+
+---
+
+## Data Rules
+- File types: `.in`, `.lammps`, `in.<suffix>` (e.g., `in.lj`, `in.airebo`).  
+- Each row in `dataset.csv` **must** contain `prompt, lammps_code`.  
+- Keep categories such as NVT, NPT, ReaxFF for analysis.
+
+---
+
+## Output Checklist
+When Cursor answers questions:
+1. Specify whether the context is **baseline / prompt-eng / RAG / fine-tune**.  
+2. If code is provided, ensure it is runnable (include imports, paths).  
+3. Always relate suggestions back to the 4 core metrics.
+
+## File-Safety Rule
+1. Cursor must NOT create, overwrite, delete, or rename project files **without explicit user confirmation**.
+2. Any code example that writes to disk must:
+   - clearly show the target path;
+   - include a comment like “# NOTE: confirm path before running”.
+3. If the user asks to “modify” or “delete” a file, Cursor should first reply with:  
+   *“Are you sure you want to modify <file> ? (yes/no)”*.
+4. When unsure, Cursor must ask before proceeding rather than guessing.
+

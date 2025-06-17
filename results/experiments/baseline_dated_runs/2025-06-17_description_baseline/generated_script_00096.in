@@ -1,0 +1,47 @@
+# LAMMPS input script for hybrid atomistic-continuum (AtC) simulation of argon
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define lattice and create region
+lattice         fcc 0.8442
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define potentials
+pair_style      lj/cut 13.5
+pair_coeff      * * 0.0103 3.4
+
+# Hybrid AtC setup
+fix             atc all atc adapt aveforce momentum
+fix_modify      atc extension on
+
+region          internal block 1 9 1 9 1 9
+region          ghost block 0 10 0 10 0 10
+
+# Load material properties for continuum region
+fix_modify      atc material_file Ar_elastic.mat
+
+# Set initial conditions
+velocity        all set 0.0 0.0 0.0
+displace_atoms  all move 0.0 0.0 0.0
+
+# Boundary conditions
+fix             left all setforce 0.0 0.0 0.0
+fix             right all setforce 0.0 0.0 0.0
+
+group           boundary id 1 2 3 4 5 6 7 8 9 10
+fix             boundary boundary setforce 0.0 0.0 0.0
+
+# Thermo settings
+thermo          100
+thermo_style    custom step temp pe ke etotal
+
+# Short run to extend the system
+run             1000
+
+# Longer run to reach equilibrium
+run             10000
+
+Note: Please ensure the `Ar_elastic.mat` file is placed in the appropriate directory for LAMMPS to access it, and adjust the region size as necessary to match your specific simulation setup.

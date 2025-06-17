@@ -1,0 +1,43 @@
+```lammps
+# LAMMPS Input Script for Silicon Crystal with EDIP Potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create a diamond cubic lattice
+lattice diamond 5.431 orient x 1 0 0 orient y 0 1 0 orient z 0 0 1
+region simbox block 0 4 0 4 0 4
+create_box 1 simbox
+create_atoms 1 box
+
+# Define atomic mass
+mass 1 28.06
+
+# Apply EDIP potential for silicon
+pair_style edip
+pair_coeff * * Si.edip Si
+
+# Define simulation settings
+timestep 1.0e-3
+velocity all create 1800.0 12345 mom yes rot yes dist gaussian
+
+# Create a vacancy by deleting an atom
+delete_atoms id 1
+
+# Set up NVT ensemble
+fix 1 all nvt temp 1800.0 1800.0 0.1
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+run 500
+
+# End of script
+```
+
+Note: Ensure that the file `Si.edip` containing the EDIP potential parameters for silicon is available in the working directory. Adjust the atom ID in the `delete_atoms` command as needed to create the vacancy at the desired location.

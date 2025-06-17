@@ -1,0 +1,50 @@
+# LAMMPS input script for a BCC lattice and bispectrum computation
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create BCC lattice
+lattice bcc 2.0
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Set mass for atoms
+mass 1 55.845  # Example: Iron
+
+# Define potential settings
+pair_style zero 6.0  # Dummy zero potential with cutoff
+pair_coeff * *
+
+# Define ZBL potential for realistic interactions
+pair_style zbl 2.0 3.0  # Inner and outer cutoffs
+pair_coeff 1 1 55.845 55.845  # Example: Iron
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Perturb atoms slightly
+displace_atoms all random 0.1 0.1 0.1 1000
+
+# Setup computes for bispectrum
+compute sna all sna/atom 1 1.0 4.0 0.0
+compute snav all snav/atom 1 1.0 4.0 0.0
+compute snad all snad/atom 1 1.0 4.0 0.0
+
+# Compute reductions
+compute bs_sum all reduce sum c_sna[*]
+
+# Define thermo output
+thermo_style custom step temp pe etotal press pxx pyy pzz c_bs_sum[1] c_bs_sum[2] c_bs_sum[3]
+thermo 100
+
+# Run settings
+timestep 0.001
+run 10000
+
+# End of script
+
+This script sets up a molecular dynamics simulation using a BCC lattice and demonstrates the use of bispectrum computes to analyze local atomic environments. The dummy zero potential and ZBL potential are used to model atomic interactions, and the script outputs a variety of thermodynamic and bispectrum-related properties during the simulation.

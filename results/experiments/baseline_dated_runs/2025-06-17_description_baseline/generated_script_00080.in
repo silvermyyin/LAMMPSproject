@@ -1,0 +1,44 @@
+# LAMMPS Input Script for Silica Glass Formation and Cooling
+
+units metal
+atom_style atomic
+
+# Read initial configuration from data file
+read_data silica_initial.data
+
+# Define interatomic potential
+pair_style tersoff
+pair_coeff * * SiO.tersoff Si O
+
+# Neighbor settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Define timestep
+timestep 0.001
+
+# Equilibration phase at high temperature 5000 K
+velocity all create 5000.0 12345 mom yes rot yes dist gaussian
+fix 1 all nvt temp 5000.0 5000.0 0.1
+thermo 1000
+thermo_style custom step temp pe etotal press
+run 20000
+
+# Cooling phase from 5000 K to 300 K
+unfix 1
+fix 2 all npt temp 5000.0 300.0 0.1 iso 0.0 0.0 1.0
+fix 3 all msd 1000
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe etotal press
+dump 1 all custom 1000 dump.silica id type x y z
+
+# Run cooling phase
+run 4700000
+
+# Final structure output
+write_data silica_cooled.data

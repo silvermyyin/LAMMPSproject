@@ -1,0 +1,31 @@
+# LAMMPS input script for an EFF model simulation with electronic structure focus
+
+units real
+atom_style electron
+
+# Read initial atomic configuration from a data file
+variable sname string "initial_configuration.data"
+read_data ${sname}
+
+# Define pair style and cutoff for electron interactions
+pair_style eff/cut 0.529177249
+pair_coeff * *
+
+# Define computes for energy components
+compute energies all pe/atom
+compute ke all ke/eff
+compute pauli all pair pauli
+compute elec all pair electrostatic
+compute restrain all pair restraint
+
+# Compute stress per atom and pressure
+compute stress all stress/atom NULL
+compute temp_e all temp/eff
+compute press all pressure temp_e
+
+# Define thermo output
+thermo_style custom step time temp pe ke etotal c_temp_e c_press
+thermo 1
+
+# Run for 0 timesteps
+run 0

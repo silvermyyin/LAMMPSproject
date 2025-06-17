@@ -1,0 +1,67 @@
+# LAMMPS Input Script for a Two-Temperature Model (TTM) Simulation
+# Using AtC Package for a Face-Centered Cubic (fcc) Lattice System
+
+units metal
+dimension 3
+boundary p p p
+
+atom_style atomic
+
+# Define lattice and create box
+lattice fcc 5.405
+region whole block 0 10 0 10 0 10
+create_box 1 whole
+create_atoms 1 box
+
+# Define Lennard-Jones potential
+pair_style lj/cut 13.5
+pair_coeff * * 0.0103 3.405
+
+# Initialize velocities
+velocity all create 20.0 12345
+
+# Define groups
+region md block 2 8 2 8 2 8
+group md_region region md
+
+region fe block 0 10 0 10 0 10
+group fe_region region fe
+
+# Define AtC parameters
+fix atc_fix all atc two_temperature model ttm transfer map
+fix_modify atc_fix temperature electron 20.0
+fix_modify atc_fix temperature phonon variable
+fix_modify atc_fix electron_density 1.0e29
+
+# Set boundary conditions
+fix electron_bcs all atc bcs set_electrons left ramp 20.0 40.0
+fix electron_bcs atc right set_electrons 20.0
+fix phonon_bcs atc right set_phonons 20.0
+
+# Thermal rescaling for equilibration
+fix temp_rescale md_region temp/rescale 10 20.0 20.0 0.1 1.0
+
+# Time integration
+timestep 0.001
+fix nve all nve
+
+# Transient run
+run 10000
+
+# Unfix thermal rescaling
+unfix temp_rescale
+
+# Steady-state run and data output
+fix eflux all atc eflux
+run 20000
+
+# Restart capabilities
+write_restart restart.atom
+write_restart restart.fe
+
+# Output settings
+thermo 100
+thermo_style custom step temp epair etotal
+dump atom_dump all atom 1000 dump.atom
+
+This script sets up a two-temperature model simulation using the AtC package, with specified electron and phonon boundary conditions, and manages the thermal response of the material using Lennard-Jones interactions. The script includes a transient run to reach a steady state, and outputs restart files for future runs.

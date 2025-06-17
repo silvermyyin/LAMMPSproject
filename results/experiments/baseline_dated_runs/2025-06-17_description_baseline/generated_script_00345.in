@@ -1,0 +1,34 @@
+# LAMMPS input script for 2D NEB simulation of adatom hopping
+
+# Initialize simulation
+units           lj
+dimension       2
+boundary        p s p
+atom_style      atomic
+
+# Read initial configuration
+read_data       initial.hop2
+
+# Define Lennard-Jones potential with shift
+pair_style      lj/cut 2.5
+pair_modify     shift yes
+pair_coeff      * * 1.0 1.0 2.5
+
+# Define groups
+group           fixed_layer type 1
+group           adatoms type 2
+group           mobile subtract all fixed_layer
+
+# Constrain to 2D
+fix             enforce2d all enforce2d
+
+# Relax the system with energy minimization
+minimize        1.0e-4 1.0e-6 100 1000
+
+# NEB setup
+neb 0.0 1.0 2000 1.0 final final.neb
+thermo_style    custom step pe etotal
+thermo          100
+
+# Run NEB calculation
+run             0

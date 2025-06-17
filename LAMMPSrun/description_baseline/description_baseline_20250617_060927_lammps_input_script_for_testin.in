@@ -1,0 +1,79 @@
+```lammps
+# LAMMPS Input Script for Testing Wall Interaction Models and Bonding Potentials
+units real
+atom_style bond
+
+# Create simulation box
+boundary f p p
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+
+# Create atoms
+create_atoms 1 random 10 12345 simbox
+
+# Define initial molecular structure
+mass 1 1.0
+
+# Define initial pair and bond styles
+pair_style zero 10.0
+pair_coeff * *
+
+bond_style zero
+bond_coeff * *
+
+# Define initial bonds
+create_bonds single/bond 1 1 2 2 3 3
+
+# Set neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define variables for systematic testing
+variable styles index wall/harmonic wall/lj126 wall/morse
+variable bond_styles index harmonic morse
+variable pair_styles index harmonic/cut lj/cut morse
+
+# Loop over wall interaction models
+label loop1
+variable ws equal v_styles
+if "${ws} == wall/harmonic" then "variable wall_params equal 10.0 1.0"
+if "${ws} == wall/lj126" then "variable wall_params equal 1.0 1.0"
+if "${ws} == wall/morse" then "variable wall_params equal 1.0 1.0 1.0"
+
+# Apply wall interaction
+fix 1 all wall/region plane zlo ${ws} ${wall_params}
+fix_modify 1 energy yes
+
+# Loop over bond styles
+label loop2
+variable bs equal v_bond_styles
+
+bond_style ${bs}
+if "${bs} == harmonic" then "bond_coeff * 100.0 1.0"
+if "${bs} == morse" then "bond_coeff * 4.0 2.0 1.0"
+
+# Loop over pair styles
+label loop3
+variable ps equal v_pair_styles
+
+pair_style ${ps}
+if "${ps} == harmonic/cut" then "pair_coeff * * 100.0 1.0 10.0"
+if "${ps} == lj/cut" then "pair_coeff * * 1.0 1.0 10.0"
+if "${ps} == morse" then "pair_coeff * * 4.0 2.0 1.0 10.0"
+
+# Run simulation
+timestep 1.0
+thermo 100
+run 500
+
+next ps
+jump SELF loop3
+
+next bs
+jump SELF loop2
+
+next ws
+jump SELF loop1
+
+# End of script
+```

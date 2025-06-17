@@ -1,0 +1,55 @@
+# LAMMPS input script for pouring cohesive and non-cohesive particles onto a flat wall
+
+units lj
+dimension 3
+boundary p p f
+atom_style sphere
+
+# Define simulation box
+region simbox block 0 20 0 20 0 30
+create_box 2 simbox
+
+# Define materials
+pair_style gran model jkr tangential history # For cohesive particles
+pair_coeff 1 1 10000 0.5 50 # Cohesive particles: stiffness, poisson, damping
+
+pair_style gran model hertz tangential history # For non-cohesive particles
+pair_coeff 2 2 10000 0.5 50 # Non-cohesive particles: stiffness, poisson, damping
+
+# Define gravity
+fix gravity all gravity 10.0 vector 0.0 0.0 -1.0
+
+# Create regions for pouring particles
+region pour1 cylinder z 5 10 1.0 0 30
+region pour2 cylinder z 15 10 1.0 0 30
+
+# Insert cohesive particles
+create_atoms 1 region pour1
+set group all type/fraction 1 0.5 12345
+set group all diameter random 0.5 1.0 12345
+set group all density 1.0
+
+# Insert non-cohesive particles
+create_atoms 2 region pour2
+set group all type/fraction 2 0.5 54321
+set group all diameter random 0.5 1.0 54321
+set group all density 1.0
+
+# Define groups
+group cohesive type 1
+group noncohesive type 2
+
+# Define wall
+region bottom_wall block INF INF INF INF 0 0.1
+fix wall all wall/gran model hertz tangential history 10000 0.5 50 region bottom_wall
+
+# Time integration
+fix integrate all nve/sphere
+
+# Output settings
+thermo 100
+thermo_style custom step atoms ke
+
+# Run simulation
+timestep 0.001
+run 5000

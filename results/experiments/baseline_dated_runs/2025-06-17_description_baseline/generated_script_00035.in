@@ -1,0 +1,39 @@
+# PRD Simulation of a Single Vacancy in Bulk Silicon
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define the lattice and create the simulation box
+lattice         diamond 5.431
+region          simbox block 0 4 0 4 0 4
+create_box      1 simbox
+create_atoms    1 box
+
+# Define the potential
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Delete a single atom to introduce a vacancy
+delete_atoms    random 1 12345
+
+# Set initial velocities
+velocity        all create 1800.0 4928459 dist gaussian
+
+# Define the integration method
+timestep        0.001
+fix             1 all nvt temp 1800.0 1800.0 0.1
+
+# PRD settings
+prd             0.5 10.0
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Run the simulation
+run             100000
+
+# Ensure the PRD method is set up for parallel execution
+# Note: Actual partitioning is controlled at execution time using the LAMMPS -partition command

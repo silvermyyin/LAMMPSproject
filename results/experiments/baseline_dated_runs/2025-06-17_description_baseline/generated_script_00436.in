@@ -1,0 +1,43 @@
+# LAMMPS Input Script for Water-Carbon System using TIP4P Model
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Initialization
+read_data       water_carbon.data
+include         water_carbon_params.in
+
+# Group definitions
+group           water type 1 2 3  # Assuming TIP4P O, H, and M types
+group           carbon type 4    # Assuming carbon is type 4
+
+# Force field settings
+pair_style      lj/cut/coul/long 10.0 12.0
+pair_modify     mix arithmetic
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  opls
+improper_style  harmonic
+kspace_style    pppm/tip4p 1.0e-4
+
+# Neighbor settings
+neighbor        2.0 bin
+neigh_modify    delay 5 every 1 check yes
+
+# Timestep
+timestep        1.0
+
+# Temperature control
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+fix             1 water temp/berendsen 300.0 300.0 100.0 y z
+fix             2 water addforce 0.1 0.0 0.0
+fix             3 carbon momentum 1 linear 1 1 1
+
+# Output settings
+thermo          100
+thermo_style    custom step temp etotal press
+dump            1 all atom 1000 water_carbon_trajectory.lammpstrj
+
+# Run settings
+run             50000

@@ -1,0 +1,54 @@
+# LAMMPS Input Script for Benzene-Water Solution
+
+units           real
+atom_style      molecular
+boundary        p p p
+
+# Read data file
+read_data       benzene_water.data
+
+# Define pair styles
+pair_style      hybrid/overlay table linear 1000 localdensity
+
+# Define pair coefficients
+pair_coeff      * * table benzene_water.pair.table LJ
+pair_coeff      * * localdensity benzene_water.localdensity.table
+
+# Set neighbor list
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Initialize velocities
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define groups
+group           benzene type 1
+group           water type 2
+
+# Thermo settings
+thermo_style    custom step temp ke pe etotal evdwl ecoul elong
+thermo          100
+
+# Minimize energy
+fix             recenter all recenter INIT INIT INIT
+minimize        1.0e-4 1.0e-6 100 1000
+unfix           recenter
+
+# Equilibration using NVE with Langevin thermostat
+fix             nve all nve
+fix             langevin all langevin 300.0 300.0 100.0 69959
+fix             recenter_eq all recenter INIT INIT INIT
+
+timestep        2.0
+run             50000
+
+# Turn off recentering for production
+unfix           recenter_eq
+
+# Production run
+run             100000
+
+# Output trajectory
+dump            1 all custom 1000 traj_benzene_water.lammpstrj id type x y z vx vy vz
+
+This script sets up a simulation of a benzene-water solution with a specified mole fraction, initializes the system, performs minimization, equilibrates the system using NVE ensemble with a Langevin thermostat, and then conducts a production run while monitoring relevant thermodynamic properties.

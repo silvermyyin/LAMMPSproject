@@ -1,0 +1,32 @@
+# LAMMPS Input Script for a Triclinic System
+
+# Initialize simulation
+units lj
+atom_style atomic
+boundary p p p
+
+# Read the triclinic data file
+read_data triclinic_data_file.data
+
+# Assign mass to all atom types
+mass * 1.0
+
+# Define Lennard-Jones potential with a cutoff of 1.2
+pair_style lj/cut 1.2
+pair_coeff * * 1.0 1.0 1.2
+
+# Set neighbor list parameters
+neighbor 0.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Define custom thermo output for triclinic system
+thermo_style custom step pe lx ly lz xy xz yz pxx pyy pzz pxy pxz pyz vol
+thermo 1
+
+# Configure dump file for atom information output
+dump 1 all custom 100 dump.triclinic id type x y z
+
+# Run simulation (0 steps for initial setup and output)
+run 0
+
+This script sets up a LAMMPS simulation with the specified requirements, focusing on initializing a triclinic system and configuring the output for structural and thermodynamic properties without running any dynamics.

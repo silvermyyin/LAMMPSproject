@@ -1,0 +1,42 @@
+# LAMMPS input script for silane (SiH4) using electron force field
+
+units           real
+dimension       3
+boundary        f f f
+atom_style      electron
+
+# Read initial atomic configuration
+read_data       silane.data
+
+# Define pair style and coefficients
+pair_style      eff/cut 10.0
+pair_coeff      * * 28.0855 0.0 0.0 0.0 0.5 0.5 1.0
+
+# Define effective core potential for silicon
+mass            1 28.0855
+
+# Thermodynamic settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press evdwl evdwl evdwl epair
+
+# Output computed quantities for analysis
+compute         ke all ke
+compute         pauli all pair eff/cut pauli
+compute         electrostatic all pair eff/cut electrostatic
+compute         restraint all pair eff/cut restraint
+compute         spin all pair eff/cut spin
+compute         ereff all pe/atom eff
+
+# Setup minimization
+min_style       cg
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Output settings
+dump            1 all xyz 100 silane_minimized.xyz
+dump_modify     1 element Si H
+dump            2 all custom 100 silane_minimized.lammpstrj id type x y z fx fy fz
+
+# Run minimization
+run             0
+
+This script sets up and performs a molecular simulation of silane using the `eff/cut` pair style in LAMMPS, focusing on electronic interactions and structural properties. It reads the initial configuration from a data file, sets boundaries to non-periodic, and uses the `atom_style electron`. Thermodynamic output is customized to track various energies, temperature, and pressure, and the results are outputted in both XYZ and LAMMPS trajectory formats.

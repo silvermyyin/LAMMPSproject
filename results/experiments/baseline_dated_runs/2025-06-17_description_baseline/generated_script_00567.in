@@ -1,0 +1,63 @@
+# Drift Diffusion Coupling in a Metal System using AtC Package
+
+units           metal
+dimension       3
+boundary        f f p
+atom_style      atomic
+
+# Define FCC lattice
+lattice         fcc 5.405
+region          whole block 0 10 0 10 0 20
+create_box      1 whole
+
+# Define regions for simulation
+region          lower_half block 0 10 0 10 0 10
+region          upper_half block 0 10 0 10 10 20
+
+# Create atoms in the lower half of the domain
+create_atoms    1 region lower_half
+
+# Define potential
+pair_style      eam
+pair_coeff      * * Cu_u3.eam
+
+# Set timestep and thermodynamic output
+timestep        0.002
+thermo          100
+
+# Initialize velocities
+velocity        all create 300.0 12345
+
+# AtC package settings
+fix             atc all atc thermal/electronic file Ar_ddm.mat
+
+# Create mesh over the entire domain
+fix_modify      atc mesh create 2 2 4
+
+# Define element sets for wire and gap
+region          wire block 0 5 0 5 INF INF
+region          gap block 5 10 0 5 INF INF
+fix_modify      atc mesh set wire wire
+fix_modify      atc mesh set gap gap
+
+# Set initial conditions
+fix_modify      atc initial temperature 300.0
+fix_modify      atc initial electron_temperature 300.0
+fix_modify      atc initial electron_density 1.0e22
+fix_modify      atc initial electric_potential 0.0
+
+# Set vacuum in the gap region
+fix_modify      atc vacuum gap
+
+# Apply boundary conditions
+fix_modify      atc boundary left electron_temperature constant 300.0
+fix_modify      atc boundary right electron_temperature constant 300.0
+fix_modify      atc boundary left electron_density constant 1.0e22
+fix_modify      atc boundary right electron_density constant 1.0e22
+
+# Run simulation
+run             1000
+
+# Output data in binary format
+dump            1 all custom 100 output.bin id type x y z
+dump_modify     1 binary yes

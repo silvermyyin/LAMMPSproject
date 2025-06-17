@@ -1,0 +1,26 @@
+# LAMMPS input script for biaxial NPT deformation of a WCA fluid
+
+units           lj
+atom_style      atomic
+
+read_data       data.wca
+
+pair_style      lj/cut 1.122562
+pair_coeff      * * 1.0 1.0 1.122562
+
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+timestep        0.005
+
+thermo_style    custom step temp press pxx pyy pzz pe ke etotal
+thermo          100
+
+# Apply biaxial NPT with external deformation in the z-direction
+fix             1 all npt/uef temp 0.722 0.722 1.0 iso 10.0 10.0 1.0 couple xyz zrate 0.5
+
+# Remove linear momentum drift
+fix             2 all momentum 100 linear 1 1 1
+
+# Run the simulation
+run             10000

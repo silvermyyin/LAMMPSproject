@@ -1,0 +1,38 @@
+# LAMMPS input script for a water box simulation using the HIPPO polarizable force field
+
+units real
+atom_style amoeba
+
+# Create simulation box and read data
+boundary p p p
+read_data water_box.data
+
+# Define pair style and read HIPPO parameters
+pair_style hippo
+pair_coeff * * hippo_water.prm
+
+# Define bond and angle styles
+bond_style class2
+angle_style amoeba
+
+# Read in additional force field parameters
+include hippo_water_box.key
+
+# Fix property/atom for necessary HIPPO attributes
+fix prop_atom_1 all property/atom i_atom_type
+fix prop_atom_2 all property/atom i_polarization_axis
+fix prop_atom_3 all property/atom i_extra_attribute1
+fix prop_atom_4 all property/atom i_extra_attribute2
+
+# Compute the virial pressure
+compute myVirial all pressure thermo_temp virial
+
+# Thermodynamic output settings
+thermo 10
+thermo_style custom step temp etotal pe ke press
+
+# Integrate equations of motion
+fix integrate all nve
+
+# Run the simulation
+run 100

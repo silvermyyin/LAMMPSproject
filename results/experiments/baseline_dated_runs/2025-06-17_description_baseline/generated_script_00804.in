@@ -1,0 +1,53 @@
+# LAMMPS input script for a 2D simulation of a circular cluster of particles
+
+# Initialize simulation in LJ units
+units lj
+dimension 2
+atom_style atomic
+
+# Define the simulation box
+region box block 0 50 0 50 -0.1 0.1
+create_box 1 box
+
+# Define a circular region and create atoms on a hexagonal lattice
+lattice hex 0.7
+region circle circle 25 25 10
+create_atoms 1 region circle
+
+# Set mass for particles
+mass 1 1.0
+
+# Define potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define walls using LJ 9-3 potential
+fix walls all wall/lj93 xlo EDGE 1.0 1.0 2.5 xhi EDGE 1.0 1.0 2.5 ylo EDGE 1.0 1.0 2.5 yhi EDGE 1.0 1.0 2.5
+
+# Initialize velocities
+velocity all create 1.0 87287 loop geom
+
+# Define bond style
+bond_style harmonic
+bond_coeff 1 100.0 1.0
+
+# Create bonds between particles to maintain 1-3 and 1-4 interactions
+# Note: In a real scenario, you'd use a separate tool or script to generate bond information
+# For simplicity, assume bonds have been pre-defined in a data file or by some method not shown here
+
+# Set boundary conditions
+boundary f f p
+
+# Define integration style
+fix 1 all nve
+
+# Apply a balance fix for parallel efficiency
+fix 2 all balance 1.0 shift xyz 10 1.1
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe press
+
+# Run the simulation
+timestep 0.001
+run 10000

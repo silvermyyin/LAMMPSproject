@@ -1,0 +1,50 @@
+# LAMMPS input script for a reactive system of H, C, O using ReaxFF
+
+units real
+atom_style charge
+
+# Read data file
+read_data data.CHO
+
+# Define groups based on atom types
+group hydrogen type 1
+group carbon type 2
+group oxygen type 3
+
+# Specify the ReaxFF potential
+pair_style reax/c NULL
+pair_coeff * * ffield.reax.HCO H C O
+
+# Set up charge equilibration method
+fix qeq all qeq/reax 1 0.0 10.0 1e-6 reax/c
+
+# Initialize velocities
+velocity all create 300.0 12345
+
+# Integrate equations of motion
+fix 1 all nve
+
+# Thermodynamic output
+thermo_style custom step temp etotal pe press c_1[1] c_1[2] c_1[3] c_1[4]
+thermo 1
+
+# Compute average charges for each group
+compute charge_h hydrogen property/atom q
+compute charge_c carbon property/atom q
+compute charge_o oxygen property/atom q
+
+# Reduce sum to get total charge
+compute total_charge all reduce sum c_charge_h c_charge_c c_charge_o
+
+# Monitor average charges
+variable avg_charge_h equal c_charge_h/atoms(hydrogen)
+variable avg_charge_c equal c_charge_c/atoms(carbon)
+variable avg_charge_o equal c_charge_o/atoms(oxygen)
+
+# Output average charges
+thermo_style custom step temp etotal pe press v_avg_charge_h v_avg_charge_c v_avg_charge_o c_total_charge
+thermo 1
+
+# Run simulation
+timestep 0.25
+run 10

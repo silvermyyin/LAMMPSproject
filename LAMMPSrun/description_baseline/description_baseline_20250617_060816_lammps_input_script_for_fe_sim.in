@@ -1,0 +1,45 @@
+```lammps
+# LAMMPS input script for FE simulation using AtC package
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define lattice
+lattice         fcc 5.25623
+region          simulation_box block 0 100 0 10 0 10
+create_box      1 simulation_box
+create_atoms    1 box
+
+# Mass and potential
+mass            1 39.948  # Atomic mass of Argon
+
+# AtC package setup
+fix             atc all atc
+atc mesh create brick 0 100 0 10 0 10 nx 25 ny 5 nz 5
+atc mesh apply_periodic y
+atc mesh apply_periodic z
+
+# Read material properties from external file
+atc material cauchy-born linear file material_params.txt
+
+# Initial conditions
+atc set u all 0.0 0.0 0.0
+atc set v all 0.0 0.0 0.0
+
+# Boundary conditions for gradual deformation
+atc fix displacement x set 0.0 0.0 0.0
+atc fix displacement x set 100.0 0.01 0.0 0.0
+
+# Time integration
+timestep        20
+run             3000
+
+# Output settings
+thermo          100
+thermo_style    custom step time temp press vol
+
+# End of script
+```
+
+Note: Ensure that the `material_params.txt` file is present and correctly formatted according to the LAMMPS AtC package requirements for defining the Cauchy-Born linear material model. Additionally, the number of elements in the y and z directions (`ny` and `nz`) are set to 5 to maintain a reasonable element aspect ratio. Adjust these as necessary based on further mesh refinement needs.

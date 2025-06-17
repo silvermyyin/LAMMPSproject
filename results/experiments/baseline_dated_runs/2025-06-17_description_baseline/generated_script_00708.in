@@ -1,0 +1,55 @@
+# LAMMPS Input Script for Rigid Body System using Lennard-Jones Units
+
+units lj
+atom_style atomic
+
+# Read initial configuration
+read_data data.rigid_bodies
+
+# Assign initial velocities at temperature 100.0
+velocity all create 100.0 12345
+
+# Define groups for each rigid body
+group body1 id 1:10
+group body2 id 11:20
+group body3 id 21:30
+group body4 id 31:40
+group body5 id 41:50
+group body6 id 51:60
+group body7 id 61:70
+group body8 id 71:80
+group body9 id 81:90
+
+# Define a variable for group IDs (not typically needed for LAMMPS syntax but included per request)
+variable gid1 equal 1
+variable gid2 equal 2
+variable gid3 equal 3
+variable gid4 equal 4
+variable gid5 equal 5
+variable gid6 equal 6
+variable gid7 equal 7
+variable gid8 equal 8
+variable gid9 equal 9
+
+# Apply the rigid body fix
+fix rigid_bodies body1 body2 body3 body4 body5 body6 body7 body8 body9 rigid single
+
+# Exclude self-interactions within each group
+neigh_modify exclude group body1 body1
+neigh_modify exclude group body2 body2
+neigh_modify exclude group body3 body3
+neigh_modify exclude group body4 body4
+neigh_modify exclude group body5 body5
+neigh_modify exclude group body6 body6
+neigh_modify exclude group body7 body7
+neigh_modify exclude group body8 body8
+neigh_modify exclude group body9 body9
+
+# Set timestep
+timestep 0.0001
+
+# Define output settings
+thermo 50
+
+# Run the simulation
+run 10000

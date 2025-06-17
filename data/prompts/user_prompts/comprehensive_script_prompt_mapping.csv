@@ -1,0 +1,1593 @@
+script_id,script_name,script_path,natural_language_prompt,simulation_type,units,dimension,atom_style,boundary,pair_style,bond_style,angle_style,dihedral_style,kspace_style,ensemble,temperature,pressure,timestep,run_steps,minimize_steps,num_atom_types,num_fixes,num_dumps,num_computes,num_groups,num_variables,special_features,complexity_score,script_length_lines,script_length_chars,has_data_file,has_restart,has_minimization,has_equilibration,has_production
+12,0089_real_world_input.lammps.in,data/real_world_consolidated/0089_real_world_input.lammps.in,"Set up a metal system molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Use tersoff pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to 0.0005
+- Run for 20,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",metal_simulation,metal,,atomic,p p p,tersoff,,,,,nvt,300.0,,0.0005,20000,,0,1,1,0,0,0,,4,21,492,True,False,False,False,True
+78,0018_real_world_in.min.in,data/real_world_consolidated/0018_real_world_in.min.in,"Set up a melting point calculation simulation.
+
+Requirements:
+- Include thermodynamic output
+- Include energy minimization
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",melting,,,,,,,,,,,,,,,,0,0,0,0,0,0,loop_structures; energy_minimization; neighbor_list_optimization; conditional_logic; velocity_initialization,6,45,757,False,False,False,False,False
+80,0053_real_world_sph_heat_conduction_2d.lmp.in,data/real_world_consolidated/0053_real_world_sph_heat_conduction_2d.lmp.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use 2D simulation
+- Apply boundary conditions: f p p
+- Use sph/heatconduction pair potential
+- Set timestep to 0.25e-1
+- Include 1 atom type(s)
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,,2,,f p p,sph/heatconduction,,,,,,,,0.25e-1,0,,1,1,0,2,0,0,conditional_logic; replica_exchange,7,52,1575,False,False,False,False,False
+55,0081_real_world_input.lammps.in,data/real_world_consolidated/0081_real_world_input.lammps.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 2.5 pair potential
+- Set timestep to 0.005
+- Run for 20,000 timesteps
+- Include energy minimization for 1000 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,3,atomic,p p p,lj/cut 2.5,,,,,nve,,,0.005,20000,1000.0,0,2,1,0,0,0,energy_minimization,7,30,702,False,False,True,False,True
+45,0047_real_world_ptm_example.in,data/real_world_consolidated/0047_real_world_ptm_example.in,"Set up a metal system molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Run for 1 timesteps
+- Include 2 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",metal_simulation,metal,3,atomic,p p p,,,,,,,,,,1,,2,0,1,1,2,0,conditional_logic,8,48,1566,False,False,False,False,True
+53,0048_real_world_hma.in,data/real_world_consolidated/0048_real_world_hma.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/smooth/linear 3 pair potential
+- Apply NVT ensemble at 1.0K
+- Set timestep to 0.005
+- Run for 200,000 timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,3,atomic,p p p,lj/smooth/linear 3,,,,,nvt,1.0,,0.005,200000,,1,1,0,3,0,0,conditional_logic; velocity_initialization,8,37,848,False,False,False,False,True
+3,0020_real_world_in.lmp.in,data/real_world_consolidated/0020_real_world_in.lmp.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Use lj/cut 2.8015 pair potential
+- Set timestep to 0.00044905847
+- Run for 1,000 timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,,atomic,p p p,lj/cut 2.8015,,,,,pimd/langevin,1.00888,,0.00044905847,1000,,1,1,0,0,0,1,loop_structures; dynamic_variables; conditional_logic,8,27,662,True,False,False,False,True
+11,0072_real_world_input.lammps.in,data/real_world_consolidated/0072_real_world_input.lammps.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use 2D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 2.5 pair potential
+- Set timestep to 0.005
+- Run for 20,000 timesteps
+- Include energy minimization for 1000 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,2,atomic,p p p,lj/cut 2.5,,,,,nve,,,0.005,20000,1000.0,0,3,1,0,0,0,energy_minimization,8,31,728,False,False,True,False,True
+30,0052_real_world_sph_heat_conduction_3d.lmp.in,data/real_world_consolidated/0052_real_world_sph_heat_conduction_3d.lmp.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Apply boundary conditions: f p p
+- Use sph/heatconduction pair potential
+- Set timestep to 0.25e-1
+- Include 1 atom type(s)
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,,,,f p p,sph/heatconduction,,,,,,,,0.25e-1,0,,1,1,0,2,0,0,neighbor_list_optimization; conditional_logic; replica_exchange; newton_optimization,9,50,1468,False,False,False,False,False
+33,0036_real_world_log.lammps.in,data/real_world_consolidated/0036_real_world_log.lammps.in,"Create an NPT (isothermal-isobaric) ensemble simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to sphere
+- Use 2D simulation
+- Use colloid 20.0 pair potential
+- Apply NPT ensemble at 2.0K
+- Set timestep to 0.005
+- Run for 2,000 timesteps
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",npt_ensemble,lj,2,sphere,,colloid 20.0,,,,,npt,2.0,0.0,0.005,2000,,0,2,0,0,0,0,communication_optimization; loop_structures; newton_optimization; neighbor_list_optimization; conditional_logic; velocity_initialization,9,190,7871,False,False,False,False,True
+25,0033_real_world_log.lammps.in,data/real_world_consolidated/0033_real_world_log.lammps.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,,,,,,,,,,,,,,,,0,0,0,0,0,1,loop_structures; newton_optimization; replica_exchange; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,9,212,11267,False,False,False,False,False
+21,0017_real_world_in.nvt.in,data/real_world_consolidated/0017_real_world_in.nvt.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 13.0 pair potential
+- Apply NVT ensemble at 30.0K
+- Set timestep to 4.0
+- Run for 1,000 timesteps
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,real,3,atomic,p p p,lj/cut 13.0,,,,,nvt,30.0,,4.0,1000,,0,3,0,0,1,0,conditional_logic; replica_exchange; velocity_initialization,9,39,1498,True,False,False,False,True
+88,0068_real_world_log.lammps.in,data/real_world_consolidated/0068_real_world_log.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Set atom_style to atomic
+- Use eim pair potential
+- Apply NPT ensemble at 1400.0K
+- Set timestep to 0.001
+- Run for 500 timesteps
+- Include thermodynamic output
+- Include bonded interactions
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,,,atomic,,eim,,,,,npt,1400.0,0.0,0.001,500,,0,1,0,0,0,0,bonded_interactions; loop_structures; newton_optimization; neighbor_list_optimization; conditional_logic; velocity_initialization,9,115,4519,True,False,False,False,True
+34,0039_real_world_test-spin-precession.in,data/real_world_consolidated/0039_real_world_test-spin-precession.in,"Set up a metal system molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to spin
+- Apply boundary conditions: f f f
+- Use spin/exchange 3.1 pair potential
+- Run for ${RUN} timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",metal_simulation,metal,,spin,f f f,spin/exchange 3.1,,,,,nve/spin,,,,${RUN},,0,2,1,1,0,2,dynamic_variables; conditional_logic; replica_exchange,10,47,1146,False,False,False,False,True
+94,0077_real_world_input.lammps.in,data/real_world_consolidated/0077_real_world_input.lammps.in,"Set up a melting point calculation simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Set timestep to 0.001
+- Run for 100,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",melting,metal,,atomic,p p p,,,,,,nvt,,,0.001,100000,,0,2,1,0,0,5,dynamic_variables; velocity_initialization,11,35,948,False,False,False,False,True
+83,0057_real_world_energy.plane.in,data/real_world_consolidated/0057_real_world_energy.plane.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Use 2D simulation
+- Use lj/smooth/linear 2.5 pair potential
+- Set timestep to 0.0005
+- Run for ${STEPS} timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,2,,,lj/smooth/linear 2.5,,,,,nve,,,0.0005,${STEPS},,0,3,1,0,0,4,dynamic_variables; conditional_logic,12,28,481,True,False,False,False,True
+66,0063_real_world_thylakoid.in,data/real_world_consolidated/0063_real_world_thylakoid.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Apply boundary conditions: f f p
+- Use lj/cut 1.1225 pair potential
+- Run for 25,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,3,,f f p,lj/cut 1.1225,,,,,nve/manifold/rattle,,,,25000000,,0,1,1,0,2,3,constraint_dynamics; dynamic_variables; conditional_logic,12,34,712,True,False,False,False,True
+58,0006_real_world_in.h2bulk.nve.in,data/real_world_consolidated/0006_real_world_in.h2bulk.nve.in,"Create an energy minimization calculation.
+
+Requirements:
+- Use electron units
+- Use eff/cut 30.627847 pair potential
+- Include energy minimization for 10 steps
+- Include thermodynamic output
+- Include energy minimization
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",energy_minimization,electron,,,,eff/cut 30.627847,,,,,,,,,,10.0,0,0,0,1,0,1,communication_optimization; newton_optimization; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,13,49,882,True,False,True,False,False
+40,0005_real_world_in.Li-dendritic.min.in,data/real_world_consolidated/0005_real_world_in.Li-dendritic.min.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: p p p
+- Use eff/cut 50.112 pair potential
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,electron,,,p p p,eff/cut 50.112,,,,,,,,,,,0,0,2,1,0,1,communication_optimization; newton_optimization; energy_minimization; dynamic_variables; conditional_logic; velocity_initialization; restart_capability,13,38,804,True,False,False,False,False
+8,0058_real_world_energy.in,data/real_world_consolidated/0058_real_world_energy.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Use lj/smooth/linear 2.5 pair potential
+- Set timestep to 0.0005
+- Run for ${STEPS} timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,3,,,lj/smooth/linear 2.5,,,,,nve/manifold/rattle,,,0.0005,${STEPS},,0,3,1,0,0,4,constraint_dynamics; dynamic_variables; conditional_logic; load_balancing,13,29,594,False,False,False,False,True
+47,0073_real_world_input.lammps.in,data/real_world_consolidated/0073_real_world_input.lammps.in,"Set up an equilibration molecular dynamics run.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 3.367386145 pair potential
+- Set timestep to 2.0
+- Run for 1,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",equilibration,real,3,full,p p p,lj/cut 3.367386145,,,,,nve,,,2.0,1000000,,0,4,1,1,0,0,conditional_logic; bonded_interactions; newton_optimization,13,54,1299,True,False,False,True,True
+28,0083_real_world_input.lammps.in,data/real_world_consolidated/0083_real_world_input.lammps.in,"Set up a metal system molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use airebo 2.5 1 1 pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to 0.0005
+- Run for 10,000 timesteps
+- Include energy minimization for 100 steps
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Initialize particle velocities
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",metal_simulation,metal,,full,p p p,airebo 2.5 1 1,,,,,nvt,300.0,,0.0005,10000,100.0,1,5,1,0,0,0,conditional_logic; replica_exchange; velocity_initialization; energy_minimization,14,63,1560,False,False,True,False,True
+90,0012_real_world_in.indent.min.in,data/real_world_consolidated/0012_real_world_in.indent.min.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Set atom_style to atomic
+- Use 2D simulation
+- Apply boundary conditions: p s p
+- Use lj/cut 2.5 pair potential
+- Include energy minimization for 1000 steps
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,,2,atomic,p s p,lj/cut 2.5,,,,,,,,,,1000.0,0,5,0,0,0,2,dynamic_variables; neighbor_list_optimization; conditional_logic; energy_minimization,14,81,1749,False,False,True,False,False
+57,0056_real_world_shock2d.lmp.in,data/real_world_consolidated/0056_real_world_shock2d.lmp.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Set atom_style to sph
+- Use 2D simulation
+- Apply boundary conditions: s p p
+- Use hybrid/overlay sph/rhosum 1 sph/idealgas pair potential
+- Set timestep to 0.05
+- Run for 400 timesteps
+- Include 2 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,,2,sph,s p p,hybrid/overlay sph/rhosum 1 sph/idealgas,,,,,,,,0.05,400,,2,2,1,4,0,1,dynamic_variables; neighbor_list_optimization; conditional_logic,14,46,1600,False,False,False,False,True
+89,0064_real_world_2particles.in,data/real_world_consolidated/0064_real_world_2particles.in,"Set up a metal system molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: f f f
+- Use hybrid/overlay lebedeva/z 20 pair potential
+- Run for 1 timesteps
+- Include 2 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",metal_simulation,metal,3,atomic,f f f,hybrid/overlay lebedeva/z 20,,,,,,,,,1,,2,0,1,1,3,2,loop_structures; dynamic_variables; neighbor_list_optimization; conditional_logic,15,64,1414,True,False,False,False,True
+5,0055_real_world_shock3d.lmp.in,data/real_world_consolidated/0055_real_world_shock3d.lmp.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Set atom_style to sph
+- Apply boundary conditions: s p p
+- Use hybrid/overlay sph/rhosum 1 sph/idealgas pair potential
+- Set timestep to 0.05
+- Include 2 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,,,sph,s p p,hybrid/overlay sph/rhosum 1 sph/idealgas,,,,,,,,0.05,0,,2,2,2,4,0,1,dynamic_variables; neighbor_list_optimization; conditional_logic,15,49,1703,False,False,False,False,False
+35,0003_real_world_in.Li-dendritic.nvt.in,data/real_world_consolidated/0003_real_world_in.Li-dendritic.nvt.in,"Create an energy minimization calculation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: p p p
+- Use eff/cut 50.112 pair potential
+- Include energy minimization for 100 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",energy_minimization,electron,,,p p p,eff/cut 50.112,,,,,,,,,,100.0,0,0,2,3,0,1,communication_optimization; newton_optimization; energy_minimization; dynamic_variables; conditional_logic; restart_capability,16,53,1122,True,False,True,False,False
+20,0097_real_world_SiO2.lammps.in,data/real_world_consolidated/0097_real_world_SiO2.lammps.in,"Set up a metal system molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to charge
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use tersoff pair potential
+- Apply NPT ensemble at 300.0K
+- Set timestep to ${dt}
+- Run for 100,000 timesteps
+- Include energy minimization for 100000 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",metal_simulation,metal,3,charge,p p p,tersoff,,,,,npt,300.0,0.0,${dt},100000,100000.0,0,4,1,1,0,1,parallel_decomposition; energy_minimization; dynamic_variables; conditional_logic; restart_capability,16,54,1412,True,False,True,False,True
+38,0009_real_world_in.adamantane_ionized.nve.in,data/real_world_consolidated/0009_real_world_in.adamantane_ionized.nve.in,"Create an energy minimization calculation.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: f f f
+- Use eff/cut 100.0 pair potential
+- Include energy minimization for 10000 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include energy minimization
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",energy_minimization,electron,,,f f f,eff/cut 100.0,,,,,,,,,,10000.0,0,0,4,1,0,0,communication_optimization; newton_optimization; energy_minimization; dynamic_variables; conditional_logic; velocity_initialization; restart_capability,16,52,1032,True,False,True,False,False
+86,0060_real_world_msd.sphere.in,data/real_world_consolidated/0060_real_world_msd.sphere.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Apply boundary conditions: f f f
+- Use none pair potential
+- Run for 25,000 timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,lj,3,,f f f,none,,,,,nve/manifold/rattle,,,,25000,,1,3,0,1,0,5,constraint_dynamics; dynamic_variables; conditional_logic; velocity_initialization,16,28,614,True,False,False,False,True
+95,0011_real_world_in.water.min.in,data/real_world_consolidated/0011_real_world_in.water.min.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to full
+- Use zero 1.0 pair potential
+- Include energy minimization for 500 steps
+- Include thermodynamic output
+- Include energy minimization
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,metal,,full,,zero 1.0,,,,,nve,,,,,500.0,0,2,0,0,0,4,loop_structures; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,16,40,761,True,False,True,False,False
+36,0059_real_world_msd.plane.in,data/real_world_consolidated/0059_real_world_msd.plane.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Use none pair potential
+- Run for 25,000 timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,lj,3,,p p f,none,,,,,nve/manifold/rattle,,,,25000,,1,3,0,1,0,5,constraint_dynamics; dynamic_variables; conditional_logic; velocity_initialization,16,30,589,True,False,False,False,True
+79,0019_real_world_in.ch4.min.in,data/real_world_consolidated/0019_real_world_in.ch4.min.in,"Create an energy minimization calculation.
+
+Requirements:
+- Use electron units
+- Set atom_style to electron
+- Apply boundary conditions: f f f
+- Use eff/cut 100.0 pair potential
+- Include energy minimization for 2000 steps
+- Include thermodynamic output
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",energy_minimization,electron,,electron,f f f,eff/cut 100.0,,,,,,,,,,2000.0,0,0,0,3,0,5,communication_optimization; newton_optimization; energy_minimization; dynamic_variables; conditional_logic,17,32,785,True,False,True,False,False
+59,0061_real_world_msd.cyl.in,data/real_world_consolidated/0061_real_world_msd.cyl.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Apply boundary conditions: f f p
+- Use none pair potential
+- Run for 25,000 timesteps
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,lj,3,,f f p,none,,,,,nve/manifold/rattle,,,,25000,,1,3,1,1,0,5,constraint_dynamics; dynamic_variables; conditional_logic; velocity_initialization,17,31,681,True,False,False,False,True
+61,0038_real_world_log.lammps.in,data/real_world_consolidated/0038_real_world_log.lammps.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use lj/cut 2.5 pair potential
+- Run for 500 timesteps
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,,atomic,,lj/cut 2.5,,,,,nve,,,,500,,0,4,0,1,0,4,loop_structures; load_balancing; parallel_decomposition; newton_optimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,18,233,12231,False,False,False,False,True
+92,0035_real_world_log.lammps.in,data/real_world_consolidated/0035_real_world_log.lammps.in,"Set up a metal system molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Use eam/fs pair potential
+- Set timestep to 0.0001
+- Run for 1,000 timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",metal_simulation,metal,,atomic,p p p,eam/fs,,,,,nve,,,0.0001,1000,,1,2,0,2,0,7,loop_structures; newton_optimization; dynamic_variables; neighbor_list_optimization; conditional_logic,18,114,5375,False,False,False,False,True
+68,0071_real_world_input.lammps.in,data/real_world_consolidated/0071_real_world_input.lammps.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full # molecular + charge
+- Apply boundary conditions: p p p # periodic boundary conditions
+- Use lj/cut/coul/long 10 # cut-off 1 nm pair potential
+- Use pppm 1.0e-4 for long-range electrostatics
+- Set timestep to 1
+- Run for 500 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,real,,full # molecular + charge,p p p # periodic boundary conditions,lj/cut/coul/long 10 # cut-off 1 nm,,,,pppm 1.0e-4,npt,,,1,500,,0,2,1,0,2,3,particle_mesh_ewald; loop_structures; long_range_interactions; replica_exchange; dynamic_variables; conditional_logic; velocity_initialization,20,41,1197,True,False,False,False,True
+91,0080_real_world_input.lammps.in,data/real_world_consolidated/0080_real_world_input.lammps.in,"Create a reactive molecular dynamics simulation using ReaxFF potential.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Use reaxff NULL safezone 3.0 mincap 150 pair potential
+- Set timestep to 0.25
+- Run for 500,000 timesteps
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,real,,full,,reaxff NULL safezone 3.0 mincap 150,,,,,nve,,,0.25,500000,,0,6,0,0,2,0,charge_equilibration; neighbor_list_optimization; conditional_logic,20,44,1046,True,False,False,True,True
+10,0040_real_world_test-spin-precession.in,data/real_world_consolidated/0040_real_world_test-spin-precession.in,"Set up a metal system molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to spin
+- Apply boundary conditions: f f f
+- Use spin/exchange 4.0 pair potential
+- Run for ${Nsteps} timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",metal_simulation,metal,,spin,f f f,spin/exchange 4.0,,,,,nve/spin,,,,${Nsteps},,1,3,0,2,1,9,dynamic_variables; conditional_logic; replica_exchange,20,50,1304,False,False,False,False,True
+54,0076_real_world_input.lammps.in,data/real_world_consolidated/0076_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.105 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Apply NPT ensemble at 360.0K and 1.0 pressure
+- Set timestep to 1.0
+- Run for 25,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 1 2 1 1 0.105 12.0,harmonic,harmonic,,pppm/tip4p 1.0e-4,npt,360.0,1.0,1.0,25000000,,0,3,1,0,2,0,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; constraint_dynamics,20,30,848,True,False,False,False,True
+6,0084_real_world_input.EQUILIBRATE_GRAPHITE.lammps.in,data/real_world_consolidated/0084_real_world_input.EQUILIBRATE_GRAPHITE.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Set timestep to 2.0
+- Run for 5,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut 10.0,harmonic,harmonic,opls,,npt,,,2.0,5000,,0,1,1,0,0,1,improper_interactions; bonded_interactions; angular_interactions; dihedral_interactions; dynamic_variables; conditional_logic,20,31,853,True,False,False,True,True
+51,0034_real_world_log.lammps.in,data/real_world_consolidated/0034_real_world_log.lammps.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Use lj/cut 8.76 pair potential
+- Set timestep to 1.0
+- Run for 10,000 timesteps
+- Include energy minimization for 1000 steps
+- Include thermodynamic output
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,real,,,,lj/cut 8.76,,,,,nve,,,1.0,10000,1000.0,0,5,0,1,2,0,loop_structures; angular_interactions; load_balancing; newton_optimization; replica_exchange; energy_minimization; neighbor_list_optimization; conditional_logic; velocity_initialization,20,154,6750,False,False,True,False,True
+96,0054_real_world_cavity_flow.lmp.in,data/real_world_consolidated/0054_real_world_cavity_flow.lmp.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use si units
+- Set atom_style to sph
+- Use 2D simulation
+- Use hybrid sph/taitwater/morris pair potential
+- Set timestep to 5.0e-5
+- Run for 4,000 timesteps
+- Include 3 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,si,2,sph,,hybrid sph/taitwater/morris,,,,,,,,5.0e-5,4000,,3,3,1,5,4,1,dynamic_variables; conditional_logic; velocity_initialization,21,64,2440,False,False,False,False,True
+49,0042_real_world_in_adapt.lmp.in,data/real_world_consolidated/0042_real_world_in_adapt.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to charge
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long/soft 1.0 0.0 0.0 12.0 12.0 pair potential
+- Use pppm 1.0e-5 for long-range electrostatics
+- Apply NVT ensemble at 300.0K
+- Set timestep to 2.0
+- Run for 2,000 timesteps
+- Include 2 atom type(s)
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,charge,p p p,lj/cut/coul/long/soft 1.0 0.0 0.0 12.0 12.0,,,,pppm 1.0e-5,nvt,300.0,,2.0,2000,,2,2,0,0,0,3,particle_mesh_ewald; long_range_interactions; dynamic_variables; conditional_logic; velocity_initialization,21,57,1163,False,False,False,False,True
+1,0031_real_world_in.lammps.in,data/real_world_consolidated/0031_real_world_in.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 3D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Set timestep to ${dt}
+- Run for 200 timesteps
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,micro,3,sph,,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,,,,,${dt},200,,0,1,0,1,0,17,dynamic_variables; replica_exchange,22,46,1680,False,False,False,False,True
+17,0041_real_world_in_fep_soft.lmp.in,data/real_world_consolidated/0041_real_world_in_fep_soft.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to charge
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long/soft 1.0 0.0 0.0 12.0 12.0 pair potential
+- Use pppm 1.0e-5 for long-range electrostatics
+- Apply NVT ensemble at 300.0K
+- Set timestep to 2.0
+- Run for 2,000 timesteps
+- Include 2 atom type(s)
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,charge,p p p,lj/cut/coul/long/soft 1.0 0.0 0.0 12.0 12.0,,,,pppm 1.0e-5,nvt,300.0,,2.0,2000,,2,1,0,1,0,4,particle_mesh_ewald; long_range_interactions; dynamic_variables; conditional_logic; velocity_initialization,22,59,1224,False,False,False,False,True
+44,0069_real_world_input.lammps.in,data/real_world_consolidated/0069_real_world_input.lammps.in,"Create a molecular dynamics simulation.
+
+Requirements:
+- Set atom_style to sphere
+- Apply boundary conditions: fm fm fm
+- Use granular pair potential
+- Set timestep to 0.0001
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",general_md,,,sphere,fm fm fm,granular,,,,,nve/sphere,,,0.0001,2000000,,0,7,1,1,0,5,communication_optimization; loop_structures; newton_optimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,22,54,2122,False,False,False,False,True
+14,0082_real_world_input.lammps.in,data/real_world_consolidated/0082_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.105 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-5 for long-range electrostatics
+- Run for 20,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 1 2 1 1 0.105 12.0,harmonic,harmonic,,pppm/tip4p 1.0e-5,npt,,100.0,,20000,,0,4,1,0,2,1,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables,23,52,1074,False,False,False,False,True
+39,0092_real_world_input.lammps.in,data/real_world_consolidated/0092_real_world_input.lammps.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 14 pair potential
+- Include harmonic bond interactions
+- Include charmm angle interactions
+- Include charmm dihedral interactions
+- Use pppm 0.0001 for long-range electrostatics
+- Apply NPT ensemble at 300.0K and 10.0 pressure
+- Set timestep to 1.0
+- Run for 20,000 timesteps
+- Include energy minimization for 1000 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,real,,full,p p p,lj/cut/coul/long 14,harmonic,charmm,charmm,pppm 0.0001,npt,300.0,10.0,1.0,20000,1000.0,0,1,1,0,0,0,improper_interactions; bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; dihedral_interactions; energy_minimization,23,26,625,True,False,True,False,True
+43,0065_real_world_lammps.in,data/real_world_consolidated/0065_real_world_lammps.in,"Create an NPT (isothermal-isobaric) ensemble simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use mm3/switch3/coulgauss/long 12.0000 4.0000 pair potential
+- Include harmonic bond interactions
+- Include hybrid cosine/periodic cross harmonic cosine/squared angle interactions
+- Include fourier dihedral interactions
+- Use pppm 0.0000001 # Ewald accuracy for long-range electrostatics
+- Apply NPT ensemble at 300.0K
+- Set timestep to 0.5
+- Run for 10,000 timesteps
+- Include thermodynamic output
+- Include long-range electrostatic interactions
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",npt_ensemble,real,,full,p p p,mm3/switch3/coulgauss/long 12.0000 4.0000,harmonic,hybrid cosine/periodic cross harmonic cosine/squared,fourier,pppm 0.0000001 # Ewald accuracy,npt,300.0,,0.5,10000,,0,1,0,0,0,0,improper_interactions; long_range_electrostatics; bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; replica_exchange; dihedral_interactions; neighbor_list_optimization; conditional_logic; velocity_initialization,24,43,1581,True,False,False,False,True
+87,0091_real_world_input.lammps.in,data/real_world_consolidated/0091_real_world_input.lammps.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 14 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include harmonic dihedral interactions
+- Use pppm 0.0001 for long-range electrostatics
+- Apply NVT ensemble at 300.0K
+- Set timestep to 1.0
+- Run for 50,000 timesteps
+- Include energy minimization for 1000 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,real,,full,p p p,lj/cut/coul/long 14,harmonic,harmonic,harmonic,pppm 0.0001,nvt,300.0,,1.0,50000,1000.0,0,2,1,0,0,0,improper_interactions; bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; dihedral_interactions; energy_minimization,24,25,627,True,False,True,False,True
+56,0066_real_world_lammps.in,data/real_world_consolidated/0066_real_world_lammps.in,"Create an NPT (isothermal-isobaric) ensemble simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use mm3/switch3/coulgauss/long 12.0000 4.0000 pair potential
+- Include mm3 bond interactions
+- Include hybrid cross mm3 angle interactions
+- Include fourier dihedral interactions
+- Use pppm 0.0000001 # Ewald accuracy for long-range electrostatics
+- Apply NPT ensemble at 300.0K
+- Set timestep to 0.5
+- Run for 100 timesteps
+- Include thermodynamic output
+- Include long-range electrostatic interactions
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",npt_ensemble,real,,full,p p p,mm3/switch3/coulgauss/long 12.0000 4.0000,mm3,hybrid cross mm3,fourier,pppm 0.0000001 # Ewald accuracy,npt,300.0,,0.5,100,,0,1,0,0,0,0,improper_interactions; long_range_electrostatics; bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; replica_exchange; dihedral_interactions; neighbor_list_optimization; conditional_logic; velocity_initialization,24,43,1531,True,False,False,False,True
+24,0008_real_world_in.equilibrate.lammps.in,data/real_world_consolidated/0008_real_world_in.equilibrate.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,3,,p p f,,,,,,,,,${dt},,,1,2,1,1,3,5,charge_equilibration; angular_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization; restart_capability,24,147,7022,False,False,False,True,False
+74,0088_real_world_input-for-unwrapped.lammps.in,data/real_world_consolidated/0088_real_world_input-for-unwrapped.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 3 4 1 1 0.105 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Use pppm/tip4p 1.0e-5 for long-range electrostatics
+- Apply NPT ensemble at 300.0K and 1.0 pressure
+- Run for 200 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 3 4 1 1 0.105 12.0,harmonic,harmonic,opls,pppm/tip4p 1.0e-5,npt,300.0,1.0,,200,,0,2,1,0,3,0,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; dihedral_interactions; constraint_dynamics; conditional_logic,25,33,841,True,False,False,False,True
+64,0051_real_world_water_collapse.lmp.in,data/real_world_consolidated/0051_real_world_water_collapse.lmp.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to sph
+- Use 2D simulation
+- Apply boundary conditions: f f p
+- Use hybrid/overlay sph/rhosum 1 sph/taitwater pair potential
+- Run for ${nrun} timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,lj,2,sph,f f p,hybrid/overlay sph/rhosum 1 sph/taitwater,,,,,,,,,${nrun},,0,5,1,4,2,6,parallel_decomposition; newton_optimization; dynamic_variables; neighbor_list_optimization; conditional_logic,25,50,2388,True,False,False,False,True
+48,0021_real_world_in.equilibrate.lammps.in,data/real_world_consolidated/0021_real_world_in.equilibrate.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,3,,p p f,,,,,,,,,${dt},,,1,2,1,1,3,5,charge_equilibration; angular_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization; restart_capability,25,148,7330,True,False,False,True,False
+41,0098_real_world_Ar.on.SiO2.lammps.in,data/real_world_consolidated/0098_real_world_Ar.on.SiO2.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to charge
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Use hybrid tersoff zbl 8.0 10.0 coul/cut 10.0 pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to ${dt}
+- Run for ${run_step} timesteps
+- Include thermodynamic output
+- Include angular interactions
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,metal,3,charge,p p f,hybrid tersoff zbl 8.0 10.0 coul/cut 10.0,,,,,nvt,300.0,,${dt},${run_step},,0,2,0,0,1,14,loop_structures; angular_interactions; parallel_decomposition; dynamic_variables; conditional_logic; velocity_initialization,25,78,2519,True,False,False,False,True
+29,0050_real_world_log.lammps.in,data/real_world_consolidated/0050_real_world_log.lammps.in,"Set up an equilibration molecular dynamics run.
+
+Requirements:
+- Use 2D simulation
+- Apply boundary conditions: p f p
+- Use none pair potential
+- Include harmonic bond interactions
+- Set timestep to 0.005
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",equilibration,,2,,p f p,none,harmonic,,,,nve,,,0.005,2000000,,0,8,1,1,0,3,bonded_interactions; loop_structures; replica_exchange; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,26,20091,982458,True,False,False,True,True
+84,0087_real_world_input.lammps.in,data/real_world_consolidated/0087_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 3 4 1 1 0.105 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Use pppm/tip4p 1.0e-5 for long-range electrostatics
+- Apply NPT ensemble at 300.0K and 1.0 pressure
+- Run for 50,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 3 4 1 1 0.105 12.0,harmonic,harmonic,opls,pppm/tip4p 1.0e-5,npt,300.0,1.0,,50000,,0,4,1,0,3,0,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; dihedral_interactions; constraint_dynamics; conditional_logic,26,62,1606,False,False,False,False,True
+42,0032_real_world_in.lammps.in,data/real_world_consolidated/0032_real_world_in.lammps.in,"Set up a rigid body molecular dynamics simulation.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 2D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Set timestep to ${dt}
+- Run for 10,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,micro,2,sph,,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,,,,,${dt},10000,,0,3,1,0,2,11,dynamic_variables; neighbor_list_optimization; conditional_logic; replica_exchange,27,50,1627,False,False,False,False,True
+16,0079_real_world_input.lammps.in,data/real_world_consolidated/0079_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full # molecular + charge
+- Apply boundary conditions: p p p # periodic boundary conditions
+- Use lj/cut/tip4p/long 1 2 1 1 0.1546 10 # cut-off 1 nm pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Set timestep to 2
+- Run for 1,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full # molecular + charge,p p p # periodic boundary conditions,lj/cut/tip4p/long 1 2 1 1 0.1546 10 # cut-off 1 nm,harmonic,harmonic,,pppm/tip4p 1.0e-4,npt,,,2,1000000,,0,2,1,0,2,2,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; replica_exchange; constraint_dynamics; dynamic_variables; velocity_initialization,27,39,1092,True,False,False,True,True
+69,0090_real_world_input.lammps.in,data/real_world_consolidated/0090_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 12 pair potential
+- Include harmonic bond interactions
+- Include hybrid harmonic charmm angle interactions
+- Include hybrid harmonic charmm dihedral interactions
+- Use pppm 1e-4 for long-range electrostatics
+- Apply NVT ensemble at 300.0K
+- Set timestep to 1.0
+- Run for 100,000 timesteps
+- Include energy minimization for 1000 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Include energy minimization
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/coul/long 12,harmonic,hybrid harmonic charmm,hybrid harmonic charmm,pppm 1e-4,nvt,300.0,1.0,1.0,100000,1000.0,0,3,1,0,0,0,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; replica_exchange; dihedral_interactions; energy_minimization,27,37,875,True,False,True,True,True
+76,0049_real_world_log.lammps.in,data/real_world_consolidated/0049_real_world_log.lammps.in,"Set up an equilibration molecular dynamics run.
+
+Requirements:
+- Use lj units
+- Set atom_style to charge
+- Apply boundary conditions: p p p
+- Use hybrid/overlay dpd 1.0 1.0 245455 coul/slater/long 0.929 3.0 pair potential
+- Use ewald 0.00001 for long-range electrostatics
+- Set timestep to 0.02
+- Run for 100,000 timesteps
+- Include 1 atom type(s)
+- Include thermodynamic output
+- Include long-range electrostatic interactions
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",equilibration,lj,,charge,p p p,hybrid/overlay dpd 1.0 1.0 245455 coul/slater/long 0.929 3.0,,,,ewald 0.00001,nve,,,0.02,100000,,1,7,0,6,0,0,long_range_electrostatics; communication_optimization; loop_structures; long_range_interactions; newton_optimization; neighbor_list_optimization; conditional_logic,27,11226,1405358,False,False,False,True,True
+22,0037_real_world_log.lammps.in,data/real_world_consolidated/0037_real_world_log.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to body rounded/polygon 1 6
+- Use 2D simulation
+- Use body/rounded/polygon 1 1 0.1 0.5 0.5 pair potential
+- Set timestep to 0.001
+- Run for 100,000 timesteps
+- Include thermodynamic output
+- Include bonded interactions
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,lj,2,body rounded/polygon 1 6,,body/rounded/polygon 1 1 0.1 0.5 0.5,,,,,npt/body,0.5,,0.001,100000,,0,6,0,0,0,12,communication_optimization; bonded_interactions; loop_structures; newton_optimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,28,245,12481,True,False,False,False,True
+26,0078_real_world_input.lammps.in,data/real_world_consolidated/0078_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.1546 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 50,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 1 2 1 1 0.1546 12.0,harmonic,harmonic,opls,pppm/tip4p 1.0e-4,nve,,,1.0,50000,,0,3,1,0,4,0,improper_interactions; bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; dihedral_interactions; constraint_dynamics; conditional_logic,28,35,894,True,False,False,False,True
+37,0010_real_world_in.spce.lmp.in,data/real_world_consolidated/0010_real_world_in.spce.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 12.0 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-5 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,lj/cut/coul/long 12.0 12.0,harmonic,harmonic,,pppm 1.0e-5,nvt,,,1.0,2000000,,0,2,0,1,0,2,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; neighbor_list_optimization; dynamic_variables; velocity_initialization,28,50,1050,True,False,False,False,True
+27,0074_real_world_input.lammps.in,data/real_world_consolidated/0074_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.1546 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include harmonic dihedral interactions
+- Use pppm/tip4p 1.0e-5 for long-range electrostatics
+- Apply NVT ensemble at 300.0K
+- Set timestep to 1.0
+- Run for 20,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 1 2 1 1 0.1546 12.0,harmonic,harmonic,harmonic,pppm/tip4p 1.0e-5,nvt,300.0,,1.0,20000,,0,3,2,0,4,0,improper_interactions; bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; dihedral_interactions; constraint_dynamics; conditional_logic,28,70,1415,False,False,False,False,True
+77,0085_real_world_input.PROD.lammps.in,data/real_world_consolidated/0085_real_world_input.PROD.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.105 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 10,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 1 2 1 1 0.105 10.0,harmonic,harmonic,opls,pppm/tip4p 1.0e-4,nvt,,,1.0,10000,,0,3,1,0,3,1,improper_interactions; bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; dihedral_interactions; constraint_dynamics; dynamic_variables,29,34,797,True,False,False,False,True
+75,0095_real_world_polystyrene.SG.lammps.in,data/real_world_consolidated/0095_real_world_polystyrene.SG.lammps.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Apply NPT ensemble at 600.0K and 1.0 pressure
+- Set timestep to ${dt}
+- Run for 1,000,000 timesteps
+- Include energy minimization for 5000 steps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Include energy minimization
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,,,full,p p p,lj/cut 10.0,harmonic,harmonic,opls,,npt,600.0,1.0,${dt},1000000,5000.0,0,3,1,0,0,2,improper_interactions; bonded_interactions; particle_mesh_ewald; loop_structures; angular_interactions; long_range_interactions; dihedral_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization; restart_capability,30,68,1846,True,False,True,False,True
+23,0067_real_world_init.in,data/real_world_consolidated/0067_real_world_init.in,"Set up an equilibration molecular dynamics run.
+
+Requirements:
+- Include 1 atom type(s)
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",equilibration,,,,,,,,,,,,,,,,1,0,0,0,0,24,dynamic_variables; conditional_logic; replica_exchange; velocity_initialization,32,80,2747,False,False,False,True,False
+85,0046_real_world_in-fep10-lj.lmp.in,data/real_world_consolidated/0046_real_world_in-fep10-lj.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 12.0 12.0 lj/cut/soft 2 0.5 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-5 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include energy minimization
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid lj/cut/coul/long 12.0 12.0 lj/cut/soft 2 0.5 12.0,harmonic,harmonic,,pppm 1.0e-5,npt,,,1.0,2000000,,0,4,0,1,0,4,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; energy_minimization; constraint_dynamics; neighbor_list_optimization; dynamic_variables; velocity_initialization,33,73,1912,True,False,False,False,True
+62,0043_real_world_in-fep01-lj.lmp.in,data/real_world_consolidated/0043_real_world_in-fep01-lj.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 12.0 12.0 lj/cut/soft 2 0.5 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-5 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include energy minimization
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid lj/cut/coul/long 12.0 12.0 lj/cut/soft 2 0.5 12.0,harmonic,harmonic,,pppm 1.0e-5,npt,,,1.0,2000000,,0,4,0,1,0,4,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; energy_minimization; constraint_dynamics; neighbor_list_optimization; dynamic_variables; velocity_initialization,33,73,1911,True,False,False,False,True
+71,0030_real_world_in.lammps.in,data/real_world_consolidated/0030_real_world_in.lammps.in,"Set up a rigid body molecular dynamics simulation.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 2D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Set timestep to ${dt}
+- Run for 10,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,micro,2,sph,,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,,,,,${dt},10000,,0,5,1,0,4,13,replica_exchange; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,34,62,2210,False,False,False,False,True
+67,0016_real_world_in.bar01.lmp.in,data/real_world_consolidated/0016_real_world_in.bar01.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 500,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,harmonic,harmonic,,pppm 1.0e-4,nvt,,,1.0,500000,,0,4,1,1,0,7,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,36,79,2424,True,False,False,False,True
+93,0013_real_world_in.bar10.lmp.in,data/real_world_consolidated/0013_real_world_in.bar10.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 500,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,harmonic,harmonic,,pppm 1.0e-4,nvt,,,1.0,500000,,0,4,1,1,0,7,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,36,79,2424,True,False,False,False,True
+18,0075_real_world_input.lammps.in,data/real_world_consolidated/0075_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.1546 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-5 for long-range electrostatics
+- Set timestep to 2.0
+- Run for 100,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 1 2 1 1 0.1546 12.0,harmonic,harmonic,,pppm/tip4p 1.0e-5,nve,,,2.0,100000,,0,5,1,1,0,9,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; newton_optimization; replica_exchange; constraint_dynamics; dynamic_variables; velocity_initialization,36,60,1827,False,False,False,True,True
+60,0086_real_world_input.SOLVATE.lammps.in,data/real_world_consolidated/0086_real_world_input.SOLVATE.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.105 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 200,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,real,,full,p p p,lj/cut/tip4p/long 1 2 1 1 0.105 10.0,harmonic,harmonic,opls,pppm/tip4p 1.0e-4,npt,,1.0,1.0,200000,,0,8,1,3,3,1,improper_interactions; bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; dihedral_interactions; constraint_dynamics; dynamic_variables,37,66,1627,True,False,False,False,True
+31,0001_real_world_in.fep01.lmp.in,data/real_world_consolidated/0001_real_world_in.fep01.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid &,harmonic,harmonic,,pppm/tip4p 1.0e-4,npt,,,1.0,2000000,,0,4,1,1,0,8,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,37,86,2284,True,False,False,False,True
+65,0004_real_world_in.fdti01.lmp.in,data/real_world_consolidated/0004_real_world_in.fdti01.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 100,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid &,harmonic,harmonic,,pppm/tip4p 1.0e-4,npt,,,1.0,100000,,0,4,1,1,0,8,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,37,99,2703,True,False,False,False,True
+63,0007_real_world_in.fep10.lmp.in,data/real_world_consolidated/0007_real_world_in.fep10.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid &,harmonic,harmonic,,pppm/tip4p 1.0e-4,npt,,,1.0,2000000,,0,4,1,1,0,8,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,37,84,2260,True,False,False,False,True
+52,0044_real_world_in-fep01-q.lmp.in,data/real_world_consolidated/0044_real_world_in-fep01-q.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 12.0 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-5 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include energy minimization
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,lj/cut/coul/long 12.0 12.0,harmonic,harmonic,,pppm 1.0e-5,npt,,,1.0,2000000,,0,4,0,1,0,8,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; energy_minimization; constraint_dynamics; neighbor_list_optimization; dynamic_variables; velocity_initialization,37,79,1874,True,False,False,False,True
+19,0045_real_world_in-fep10-q.lmp.in,data/real_world_consolidated/0045_real_world_in-fep10-q.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 12.0 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-5 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include energy minimization
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,lj/cut/coul/long 12.0 12.0,harmonic,harmonic,,pppm 1.0e-5,npt,,,1.0,2000000,,0,4,0,1,0,8,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; energy_minimization; constraint_dynamics; neighbor_list_optimization; dynamic_variables; velocity_initialization,37,77,1850,True,False,False,False,True
+97,0062_real_world_vir.in,data/real_world_consolidated/0062_real_world_vir.in,"Create a Lennard-Jones molecular dynamics simulation.
+
+Requirements:
+- Use lj units
+- Set atom_style to angle
+- Use 3D simulation
+- Apply boundary conditions: f f f
+- Use lj/cut 4.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 0.0001
+- Run for 1,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",lennard_jones,lj,3,angle,f f f,lj/cut 4.0,harmonic,harmonic,,,nvt/manifold/rattle,,,0.0001,1000000,,0,8,1,2,3,11,bonded_interactions; angular_interactions; conditional_logic; constraint_dynamics; neighbor_list_optimization; dynamic_variables,37,76,1478,True,False,False,False,True
+81,0094_real_world_Ar.on.ACL.lammps.in,data/real_world_consolidated/0094_real_world_Ar.on.ACL.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Use hybrid tersoff zbl 8.0 10.0 pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to ${dt}
+- Run for ${run_step} timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include angular interactions
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,metal,3,atomic,p p f,hybrid tersoff zbl 8.0 10.0,,,,,nvt,300.0,,${dt},${run_step},,0,2,1,0,2,27,loop_structures; angular_interactions; parallel_decomposition; dynamic_variables; conditional_logic; velocity_initialization,40,99,3030,True,False,False,False,True
+98,0002_real_world_in.fdti10.lmp.in,data/real_world_consolidated/0002_real_world_in.fdti10.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 100,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid &,harmonic,harmonic,,pppm/tip4p 1.0e-4,npt,,,1.0,100000,,0,4,1,1,0,11,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,40,102,2891,True,False,False,False,True
+9,0028_real_world_in.fep01.lmp.in,data/real_world_consolidated/0028_real_world_in.fep01.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,harmonic,harmonic,,pppm 1.0e-4,npt,,,1.0,2000000,,0,4,1,1,0,12,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,41,95,2924,True,False,False,False,True
+72,0029_real_world_in.fep10.lmp.in,data/real_world_consolidated/0029_real_world_in.fep10.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm 1.0e-4 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,harmonic,harmonic,,pppm 1.0e-4,npt,,,1.0,2000000,,0,4,1,1,0,12,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,41,95,2924,True,False,False,False,True
+32,0093_real_world_C.deposit.on.Si.lammps.in,data/real_world_consolidated/0093_real_world_C.deposit.on.Si.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Use tersoff pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to ${dt}
+- Run for ${run_step} timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include angular interactions
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,metal,3,atomic,p p f,tersoff,,,,,nvt,300.0,,${dt},${run_step},,0,5,2,0,1,27,loop_structures; angular_interactions; parallel_decomposition; dynamic_variables; conditional_logic; velocity_initialization,42,113,3252,False,False,False,False,True
+15,0023_real_world_in.stick.lammps.in,data/real_world_consolidated/0023_real_world_in.stick.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,3,,p p f,,,,,,nve,,,${dt},,,0,4,1,1,3,23,charge_equilibration; angular_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,43,104,4307,True,False,False,True,False
+13,0096_real_world_Ar.on.polystyrene.lammps.in,data/real_world_consolidated/0096_real_world_Ar.on.polystyrene.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Set atom_style to full
+- Apply boundary conditions: p p f
+- Use hybrid lj/cut 10.0 zbl 8.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Set timestep to ${dt}
+- Run for ${run_step} timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Include energy minimization
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,,full,p p f,hybrid lj/cut 10.0 zbl 8.0 10.0,harmonic,harmonic,opls,,nvt,,,${dt},${run_step},,0,3,1,0,2,17,improper_interactions; bonded_interactions; loop_structures; angular_interactions; dihedral_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization; restart_capability,43,110,3672,True,False,False,False,True
+82,0070_real_world_input.lammps.in,data/real_world_consolidated/0070_real_world_input.lammps.in,"Create a water molecular dynamics simulation.
+
+Requirements:
+- Use metal units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid airebo 2.5 1 1 lj/cut/tip4p/long 1 2 1 1 0.1546 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use pppm/tip4p 1.0e-4 # TIP4P/2005 for long-range electrostatics
+- Set timestep to ${dt}
+- Run for 10,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",water_simulation,metal,,full,p p p,hybrid airebo 2.5 1 1 lj/cut/tip4p/long 1 2 1 1 0.1546 12.0,harmonic,harmonic,,pppm/tip4p 1.0e-4 # TIP4P/2005,nve,,,${dt},10000,,0,7,2,1,2,11,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; replica_exchange; constraint_dynamics; dynamic_variables; velocity_initialization,43,82,2568,True,False,False,True,True
+46,0022_real_world_in.stick.lammps.in,data/real_world_consolidated/0022_real_world_in.stick.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,3,,p p f,,,,,,nve,,,${dt},,,0,4,1,1,3,23,charge_equilibration; angular_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,43,104,4305,True,False,False,True,False
+50,0015_real_world_in.stick.lammps.in,data/real_world_consolidated/0015_real_world_in.stick.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,3,,p p f,,,,,,nve,,,${dt},,,0,4,0,1,3,24,charge_equilibration; loop_structures; angular_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,44,109,4311,True,False,False,True,False
+4,0024_real_world_in.stick.lammps.in,data/real_world_consolidated/0024_real_world_in.stick.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,3,,p p f,,,,,,nve,,,${dt},,,0,4,0,1,3,24,charge_equilibration; loop_structures; angular_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization,44,109,4313,True,False,False,True,False
+73,0026_real_world_in.fep01.lmp.in,data/real_world_consolidated/0026_real_world_in.fep01.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Use pppm 1.0e-5 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid lj/cut/coul/long 10.0 10.0 &,harmonic,harmonic,opls,pppm 1.0e-5,npt,,,1.0,2000000,,0,4,1,1,0,18,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; dihedral_interactions; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,51,136,5414,True,False,False,False,True
+7,0027_real_world_in.fep10.lmp.in,data/real_world_consolidated/0027_real_world_in.fep10.lmp.in,"Create a free energy perturbation calculation.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Use pppm 1.0e-5 for long-range electrostatics
+- Set timestep to 1.0
+- Run for 2,000,000 timesteps
+- Include trajectory output
+- Include thermodynamic output
+- Include bonded interactions
+- Include angular interactions
+- Include dihedral interactions
+- Apply constraint dynamics (SHAKE/RATTLE)
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,p p p,hybrid lj/cut/coul/long 10.0 10.0 &,harmonic,harmonic,opls,pppm 1.0e-5,npt,,,1.0,2000000,,0,4,1,1,0,18,bonded_interactions; particle_mesh_ewald; angular_interactions; long_range_interactions; conditional_logic; dihedral_interactions; constraint_dynamics; dynamic_variables; velocity_initialization; restart_capability,51,136,5413,True,False,False,False,True
+70,0025_real_world_in.deposit.lammps.in,data/real_world_consolidated/0025_real_world_in.deposit.lammps.in,"Set up a molecular deposition simulation.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",deposition,,3,,p p f,,,,,,nve,,,${dt},,,1,5,1,1,3,31,charge_equilibration; angular_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization; restart_capability,54,148,7283,True,False,False,True,False
+2,0014_real_world_in.deposit.lammps.in,data/real_world_consolidated/0014_real_world_in.deposit.lammps.in,"Create a reactive molecular dynamics simulation using ReaxFF potential.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type(s)
+- Include trajectory output
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Include angular interactions
+- Include energy minimization
+- Initialize particle velocities
+- Include restart file capability
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,3,,p p f,,,,,,nve,,,${dt},,,1,5,1,1,3,30,charge_equilibration; angular_interactions; energy_minimization; dynamic_variables; neighbor_list_optimization; conditional_logic; velocity_initialization; restart_capability,58,131,5836,True,False,False,True,False

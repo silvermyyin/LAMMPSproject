@@ -1,0 +1,42 @@
+# LAMMPS input script for uniaxial strain simulation on FCC copper using EAM potential
+
+units metal
+atom_style atomic
+dimension 3
+boundary f p p
+
+# Define simulation domain
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+
+# Create FCC lattice and atoms
+lattice fcc 3.615
+region myblock block 0 10 0 10 0 10
+create_atoms 1 region myblock
+
+# Set potential
+pair_style eam
+pair_coeff * * Cu_u3.eam
+
+# Define AtC package
+fix atc all atc field
+atc set atc all mesh hex 3 3 3
+atc set atc all fields displacement stress density energy rotation stretch
+
+# Apply displacement ramp for uniaxial strain along x
+variable disp equal ramp(0,0.1)
+fix deform all deform 1 x variable v_disp
+
+# Set timestep
+timestep 0.001
+
+# Run simulation
+thermo 100
+thermo_style custom step temp pe ke etotal lx ly lz press
+
+run 10000
+
+# Output settings
+dump 1 all custom 100 out.lammpstrj id type x y z vx vy vz fx fy fz
+
+Please ensure that the potential file `Cu_u3.eam` is available in the working directory where the simulation is executed. Adjust the simulation domain size, timestep, and runtime according to your specific study's requirements.

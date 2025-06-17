@@ -1,0 +1,38 @@
+# LAMMPS input script for H-Ga system using MEAM potential
+
+units metal
+dimension 3
+boundary p p p
+
+atom_style atomic
+
+# Define the lattice and simulation box
+lattice fcc 4.646
+region box block 0 3 0 3 0 3
+create_box 2 box
+
+# Create atoms at specific positions
+create_atoms 1 single 0.0 0.0 0.0
+create_atoms 2 single 2.323 2.323 2.323
+
+# Assign masses to atom types
+mass 1 1.008  # Hydrogen
+mass 2 69.723 # Gallium
+
+# MEAM potential configuration
+pair_style meam
+pair_coeff * * library.meam Ga H GaH.meam Ga H
+
+neighbor 2.0 bin
+neigh_modify delay 10 check yes
+
+# Compute properties
+compute pe all pe/atom
+compute stress all stress/atom NULL
+
+# Define output
+dump 1 all custom 1 dump.meam id type x y z fx fy fz c_pe[1] c_stress[1] c_stress[2] c_stress[3] c_stress[4] c_stress[5] c_stress[6]
+
+# Run simulation
+timestep 0.001
+run 1

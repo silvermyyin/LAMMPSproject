@@ -1,0 +1,27 @@
+# LAMMPS Input Script for 3D Granular Material Simulation
+
+units          si
+atom_style     sphere
+
+# Initialize simulation box with periodic boundaries in x and y, open in z
+boundary       p p f
+region         simbox block 0 10 0 10 0 10
+create_box     1 simbox
+
+# Read particle data from external file
+read_data      data.particles
+
+# Define granular pair style with Hertzian contact mechanics and Mindlin tangential forces
+pair_style     granular hertz/mindlin 1e6 0.8 0.4
+pair_coeff     * *
+
+# Define integration settings
+timestep       1e-9
+fix            1 all nve/sphere
+
+# Output settings for kinetic energy analysis
+thermo         1000
+thermo_style   custom step ke
+
+# Run simulation
+run            10000000

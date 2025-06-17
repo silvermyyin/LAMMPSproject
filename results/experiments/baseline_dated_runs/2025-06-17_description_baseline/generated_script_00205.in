@@ -1,0 +1,55 @@
+# LAMMPS input script for molecular dynamics simulation of electrolyte-electrode interface
+
+units real
+atom_style full
+boundary p p f
+
+# Read in the system configuration
+read_data data.graph-il
+
+# Define interatomic potentials
+pair_style lj/cut/coul/long 10.0
+pair_coeff * * 0.1 3.5  # Example LJ parameters
+
+bond_style harmonic
+bond_coeff * 100.0 1.0  # Example harmonic bond parameters
+
+angle_style harmonic
+angle_coeff * 50.0 109.5 # Example harmonic angle parameters
+
+# Long-range electrostatics with electrode boundary conditions
+kspace_style pppm/electrode 1.0e-4
+
+# Define groups
+group electrodes type 1  # Assuming type 1 are electrode atoms
+group electrolyte type 2 3  # Assuming type 2 and 3 are electrolyte components
+group bmi type 4  # Assuming type 4 are BMI atoms
+
+# Define regions for charge computation
+region top_electrode block INF INF INF INF 20.0 30.0 units box
+group top_electrode region top_electrode
+
+region bottom_electrode block INF INF INF INF 0.0 10.0 units box
+group bottom_electrode region bottom_electrode
+
+# Apply temperature control
+velocity electrolyte create 500.0 12345 mom yes dist gaussian
+fix nvt_thermostat electrolyte nvt temp 500.0 500.0 100.0
+
+# Constrain bond lengths and angles within BMI group
+fix shake_bmi bmi shake 0.0001 20 0 b 1 a 1
+
+# Compute charge distribution on electrodes
+compute charge_top top_electrode reduce sum q
+compute charge_bottom bottom_electrode reduce sum q
+
+# Monitor temperature of electrolyte
+compute temp_electrolyte electrolyte temp
+
+# Output settings
+thermo_style custom step temp c_charge_top c_charge_bottom
+thermo 100
+
+# Run the simulation
+timestep 1.0
+run 10000

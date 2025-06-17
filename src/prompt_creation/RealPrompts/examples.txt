@@ -1,0 +1,12 @@
+# Real Prompt Examples for LAMMPS
+
+Generate a LAMMPS input script for an NVT simulation using metal units and atomic atom style.
+Generate a LAMMPS input script for a polymer melt using the Kremer-Grest model at 1.0 reduced temperature.
+Generate a LAMMPS input script for a 2D Poiseuille flow of Lennard-Jones fluid with periodic boundaries.
+Generate a LAMMPS input script for a water box using the TIP3P model at 300K and 1 atm.
+Generate a LAMMPS input script for a gold nanoparticle melting simulation using EAM potential.
+Generate a LAMMPS input script for a tensile test of a copper nanowire at 10K using the Mishin EAM potential.
+Generate a LAMMPS input script for a graphene sheet under uniaxial strain using AIREBO potential.
+Generate a LAMMPS input script for a silica glass quench from 3000K to 300K using BKS potential.
+Generate a LAMMPS input script for a binary Lennard-Jones mixture glass-former at density 1.2.
+Generate a LAMMPS input script for a DPD simulation of surfactant self-assembly in water. 

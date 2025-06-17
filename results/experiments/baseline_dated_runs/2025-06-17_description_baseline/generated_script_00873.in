@@ -1,0 +1,36 @@
+# LAMMPS input script for water simulation using AMOEBA force field
+
+units real
+atom_style amoeba
+bond_style class2
+
+# Read initial configuration from a data file
+read_data water_box.data
+
+# Define pair style and parameters for AMOEBA force field
+pair_style amoeba
+pair_coeff * *
+
+# Special bonds settings for AMOEBA
+special_bonds lj/coul 0.0 0.0 0.5
+
+# Define polarization parameters for AMOEBA
+# These parameters are usually provided in the data file for each atom
+# Example (for illustrative purposes, actual values should be data-driven):
+# set atom 1 dipole 2.0 0.0 0.0
+# set atom 1 polarize 0.5 0.0 0.0
+
+# Compute virial pressure
+compute myPressure all pressure thermo_temp
+
+# Define thermodynamic output
+thermo_style custom step temp pe ke etotal press
+thermo 10
+
+# Integrate equations of motion
+fix 1 all nve
+
+# Run the simulation for 100 timesteps
+run 100
+
+Note: Replace placeholder content (like `pair_coeff` and possible polarization settings) with actual values or ensure they are specified in the data file (`water_box.data`). The data file should contain all necessary definitions for atom types, bonds, angles, dihedrals, and polarization parameters required by the AMOEBA force field.

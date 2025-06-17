@@ -1,0 +1,44 @@
+# LAMMPS input script for Gold-Graphene composite sliding simulation
+
+units           metal
+atom_style      atomic
+boundary        p p f
+
+read_data       composite_system.data
+
+# Define masses for gold and carbon
+mass            1 196.97  # Gold
+mass            2 12.01   # Carbon
+
+# Define groups
+group           gold type 1
+group           graphene type 2
+
+# Set potentials
+pair_style      hybrid/overlay eam rebo saip/metal
+
+# EAM potential for gold
+pair_coeff      * * eam Au_u3.eam
+
+# REBO potential for graphene
+pair_coeff      * * rebo CH.airebo NULL C
+
+# SAIP/metal for interfacial interaction
+pair_coeff      1 2 saip/metal saip_metal.params Au C
+
+# Initial velocities
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Fixes for integration
+fix             1 gold nve
+fix             2 graphene nve
+
+# Time step
+timestep        0.001
+
+# Thermo settings
+thermo          100
+thermo_style    custom step temp etotal pe ke f_1 f_2
+
+# Run simulation
+run             10000

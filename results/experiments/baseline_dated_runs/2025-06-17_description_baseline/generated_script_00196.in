@@ -1,0 +1,38 @@
+# LAMMPS input script for a DNA duplex simulation using oxDNA2 model
+
+units lj
+atom_style hybrid bond ellipsoid oxDNA
+
+boundary p p p
+
+read_data dna_duplex.data
+
+mass * 1.0
+
+pair_style hybrid/overlay oxDNA/excv oxDNA/stack oxDNA/hbond oxDNA/xstack oxDNA/coaxstack oxDNA/dh
+pair_coeff * * oxDNA/excv
+pair_coeff * * oxDNA/stack
+pair_coeff * * oxDNA/hbond
+pair_coeff * * oxDNA/xstack
+pair_coeff * * oxDNA/coaxstack
+pair_coeff * * oxDNA/dh
+
+bond_style fene
+bond_coeff * 30.0 1.5 0.0 1.0
+
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+fix 1 all nve/limit 0.1
+fix 2 all langevin 0.1 0.1 1.0 48279
+
+timestep 1e-5
+
+thermo 1000
+thermo_style custom step time temp pe ke etotal
+
+dump 1 all custom 10000 traj.lammpstrj id type x y z
+
+run 1000000
+
+write_data final_configuration.data

@@ -1,0 +1,48 @@
+# LAMMPS Input Script for 3D Simulation of Rubber Rings Impact using TLSPH
+
+units si
+atom_style sph
+dimension 3
+boundary p p p
+
+# Read initial geometry of a single rubber ring
+read_data rubber_ring.data
+
+# Replicate the ring to create two rings
+replicate 2 1 1
+
+# Assign different types to the two rings
+set type 1 type 1
+set type 2 type 2
+
+# Material properties for the two materials
+# Type 1: Linear elastic
+# Type 2: Elastic-ideal plastic
+
+# Define pair style
+pair_style hybrid/overlay sph/tlsph 1.0 2.0 2.0 0.3 1.0 1.0 NULL
+pair_coeff * * sph/tlsph 1.0 1000.0 2.0e9 0.45 # Density, Young's modulus, Poisson's ratio for type 1
+pair_coeff 2 2 sph/tlsph 1.0 950.0 1.8e9 0.48  # Density, Young's modulus, Poisson's ratio for type 2
+pair_coeff 2 2 sph/tlsph/yield 1.0e8 # Yield stress for type 2
+
+# Set initial velocities towards each other
+velocity all set 0.0 0.0 0.0
+group ring1 type 1
+group ring2 type 2
+velocity ring1 set 0.0 0.0 -5.0 units box
+velocity ring2 set 0.0 0.0 5.0 units box
+
+# Define neighbor list parameters
+neighbor 0.01 bin
+neigh_modify every 1 delay 0 check yes
+
+# Time integration settings
+fix 1 all nve/sph
+fix 2 all smd/adjust_dt 0.0001
+
+# Output settings
+dump 1 all custom 30 dump.rings id type x y z vx vy vz stress/atom[1] stress/atom[2] stress/atom[3] c_plastic_strain neigh
+
+# Run the simulation
+timestep 0.001
+run 5000

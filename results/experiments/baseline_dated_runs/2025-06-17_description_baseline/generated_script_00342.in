@@ -1,0 +1,52 @@
+# LAMMPS Input Script for Two-Temperature System with AtC Package
+
+units real
+atom_style atomic
+dimension 3
+boundary p p p
+
+# Create FCC lattice
+lattice fcc 3.615
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define LJ potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.0103 3.4
+
+# Setup neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define groups
+region md_region block 1 9 1 9 1 9
+group md_group region md_region
+
+region fe_region block 0 10 0 10 0 10
+group fe_group region fe_region
+
+# Initial velocities
+velocity all create 300.0 12345
+
+# AtC settings
+fix modify AtC transferFix transfer all
+fix atc all atc transfer thermal
+fix_modify atc md_group md
+fix_modify atc fe_group fe
+fix_modify atc electron_temperature_initial 300.0
+fix_modify atc phonon_temperature_initial 300.0
+
+# Boundary conditions for electron temperature
+region left block 0 1 0 10 0 10
+region right block 9 10 0 10 0 10
+fix temp_left all atc e_temp ramp region left 300.0 500.0
+fix temp_right all atc e_temp set region right 300.0
+
+# Thermo settings
+thermo 10
+thermo_style custom step temp pe ke etotal
+
+# Run simulation
+timestep 0.1
+run 4000

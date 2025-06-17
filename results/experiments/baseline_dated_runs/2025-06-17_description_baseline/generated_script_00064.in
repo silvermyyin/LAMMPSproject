@@ -1,0 +1,63 @@
+# LAMMPS input script for a bonded particle model simulation with granular Hookean contact
+
+units lj
+dimension 3
+atom_style sphere
+boundary f f f
+
+# Create geometry
+lattice fcc 0.8
+region simbox block 0 50 0 50 0 50 units box
+create_box 2 simbox
+
+# Define regions
+region plate cylinder z 25 25 10 0 10 units box
+region projectile sphere 25 25 45 5 units box
+
+# Create atoms
+create_atoms 1 region plate
+create_atoms 2 region projectile
+
+# Randomize positions slightly to simulate imperfections
+displace_atoms all random 0.1 0.1 0.1 12345
+
+# Set masses and radii
+set type 1 mass 1.0
+set type 1 diameter 1.0
+set type 2 mass 1.0
+set type 2 diameter 1.0
+
+# Define neighbor and communication settings
+neighbor 0.3 bin
+neigh_modify delay 0
+
+# Define pair style and coefficients
+pair_style gran/hooke/history 200.0 NULL 50.0 NULL 0.5
+pair_coeff * *
+
+# Define bond style and coefficients
+bond_style bpm/rotational
+bond_coeff * 100.0 0.1 0.2
+
+# Create bonds within groups
+group plate region plate
+group projectile region projectile
+fix bond_create plate all bond/create 1 1 1 1.5 1
+fix bond_create projectile all bond/create 1 2 2 1.5 1
+
+# Set initial velocity for projectile
+velocity projectile set 0.0 0.0 -5.0
+
+# Set fixes
+fix integration all nve/sphere
+fix bond_break all bond/break 1 0.5
+
+# Output settings
+thermo 100
+thermo_style custom step temp ke pe etotal press pxx pyy pzz c_bondcount
+compute bondcount all property/local bcount
+dump broken_bonds all local 100 broken_bonds.txt index c_bondcount
+
+# Run the simulation
+timestep 0.005
+run 7500

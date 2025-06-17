@@ -1,0 +1,40 @@
+# LAMMPS input script for a solvated ubiquitin molecule using the AMOEBA force field
+
+units real
+atom_style amoeba
+
+# Read data
+read_data ubiquitin.data
+
+# Define force field styles
+bond_style class2
+angle_style amoeba
+dihedral_style fourier
+improper_style amoeba
+pair_style amoeba
+
+# Set special bonds for AMOEBA
+special_bonds lj/coul 0.0 0.0 1.0
+
+# Define per-atom properties specific to AMOEBA
+fix prop1 all property/atom dipole
+fix prop2 all property/atom quadrupole
+fix prop3 all property/atom induced_dipole
+fix prop4 all property/atom polarizability
+
+# Apply torsion and bitorision fixes for polarizable interactions
+fix torsion all amoeba/pitorsion
+fix bitorision all amoeba/bitorsion
+
+# Set pair coefficients from external parameter files
+pair_coeff * * amoeba_params.txt
+
+# Define thermo output
+thermo_style custom step temp etotal pe ke press
+thermo 1
+
+# Integration
+fix integrator all nve
+
+# Run simulation
+run 10

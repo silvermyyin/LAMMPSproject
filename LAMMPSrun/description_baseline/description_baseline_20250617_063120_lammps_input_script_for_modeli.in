@@ -1,0 +1,66 @@
+```lammps
+# LAMMPS input script for modeling drift-diffusion and Schrödinger-Poisson equations in a silicon-vacuum system
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+lattice         fcc 1.0
+region          simbox block 0 10 0 10 0 10
+create_box      2 simbox
+create_atoms    1 box
+
+mass            1 28.085  # Silicon
+mass            2 1.0     # Vacuum (dummy)
+
+# Initialize velocities
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+
+# AtC package setup
+fix             atc all atc
+fix_modify      atc mesh/region block 0 10 0 10 0 10
+
+# Define mesh
+fix_modify      atc mesh create 5 5 5
+
+# Set initial conditions and boundary conditions
+fix_modify      atc set nodal_velocity all 0.0 0.0 0.0
+fix_modify      atc set nodal_temperature all 300.0
+fix_modify      atc set nodal_electron_density all 0.00007
+
+# Define node and element sets
+fix_modify      atc set node_set left_boundary x 0
+fix_modify      atc set node_set right_boundary x 10
+fix_modify      atc set element_set wire_region box 1 9 1 9 1 9
+
+# Apply boundary conditions
+fix_modify      atc set_dirichlet nodal_potential left_boundary 0.0
+fix_modify      atc set_dirichlet nodal_potential right_boundary 1.0
+
+# Iterate to solve Schrödinger-Poisson equations self-consistently
+variable iter loop 25
+label loop_start
+
+# Solve drift-diffusion equations
+run 0 post no
+
+# Solve Schrödinger-Poisson equations
+fix_modify      atc solve schrodinger_poisson wire_region
+
+next iter
+jump SELF loop_start
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal
+fix             ave_energy all ave/time 100 1 100 v_electron_energy v_thermal_energy
+fix             ave_temp all ave/time 100 1 100 temp
+fix             ave_density all ave/time 100 1 100 v_total_electron_density
+
+# Output results
+dump            mydump all custom 500 output.lammpstrj id type x y z v_electron_density v_potential
+dump_modify     mydump sort id
+
+# End of script
+```

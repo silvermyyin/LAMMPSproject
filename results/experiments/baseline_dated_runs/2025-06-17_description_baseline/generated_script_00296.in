@@ -1,0 +1,46 @@
+# LAMMPS Input Script for Ethane-like System using Electron Force Field
+
+units           metal
+atom_style      full
+
+# Read in the data file for ethane configuration
+read_data       ethane.data
+
+# Define pair style and interaction parameters
+pair_style      eff/cut 1000.0
+pair_coeff      * *
+
+# Define computes for energy components and stress per atom
+compute         ke all ke/eff
+compute         pe all pe/eff
+compute         pauli all pauli/eff
+compute         elec all elec/eff
+compute         restrain all restrain/eff
+compute         stress all stress/atom
+
+# Minimize energy using conjugate gradient method
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Define the NVT ensemble for equilibration
+fix             nvt all nvt/eff temp 1.0 2000.0 100.0
+
+# Set up thermodynamic output
+thermo_style    custom step temp etotal pe ke press
+thermo          100
+
+# Define dump for trajectory output
+dump            1 all custom 100 dump.ethane id type x y z fx fy fz
+
+# Run the simulation
+run             5000
+
+# Output computations
+print "Kinetic Energy: ${ke}"
+print "Potential Energy: ${pe}"
+print "Pauli Repulsion Energy: ${pauli}"
+print "Electrostatic Energy: ${elec}"
+print "Restraint Energy: ${restrain}"
+
+# End of script
+
+This script sets up a molecular dynamics simulation for an ethane-like system using LAMMPS, with electron interactions modeled via the electron force field. The script includes energy minimization and NVT ensemble run, with detailed output of atomic properties and energies.

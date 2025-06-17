@@ -1,0 +1,4 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2)
+ÿØÿàÿÄ%&'()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwxyzƒ„…†‡ˆ‰Š’“”•–—˜™š¢£¤¥¦§¨©ª²³´µ¶·¸¹ºÂÃÄÅÆÇÈÉÊÒÓÔÕÖ×ØÙÚáâãäåæçèéêñòóôõö÷øùúÿÄÿÄ$4á%ñ&'()*56789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz‚ƒ„…†‡ˆ‰Š’“”•–—˜™š¢£¤¥¦§¨©ª²³´µ¶·¸¹ºÂÃÄÅÆÇÈÉÊÒÓÔÕÖ×ØÙÚâãäåæçèéêòóôõö÷øùúÿÚ'udb®¥HêÁ¤­ßX€í4j[ÜV}M*Š¤y‘ø>?<gJ_ ¢Š+Cˆ(¢Š˜Š±£M^Ri/VYðÞƒu­LÂ2b8iJäg°¹þ_–}Lð>Ÿn€›_9°Ai¾|óž?!]×ÃÏ
+ERROR: Unmatched single quote in command (src/input.cpp:457)
+Last command: ÿØÿàÿÄ%&'()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwxyzƒ„…†‡ˆ‰Š’“”•–—˜™š¢£¤¥¦§¨©ª²³´µ¶·¸¹ºÂÃÄÅÆÇÈÉÊÒÓÔÕÖ×ØÙÚáâãäåæçèéêñòóôõö÷øùúÿÄÿÄ$4á%ñ&'()*56789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz‚ƒ„…†‡ˆ‰Š’“”•–—˜™š¢£¤¥¦§¨©ª²³´µ¶·¸¹ºÂÃÄÅÆÇÈÉÊÒÓÔÕÖ×ØÙÚâãäåæçèéêòóôõö÷øùúÿÚ'udb®¥HêÁ¤­ßX€í4j[ÜV}M*Š¤y‘ø>?<gJ_ ¢Š+Cˆ(¢Š˜Š±£M^Ri/VYðÞƒu­LÂ2b8iJäg°¹þ_–}Lð>Ÿn€›_9°Ai¾|óž?!]×ÃÏ

@@ -1,0 +1,6 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2)
+# SPH water over dam
+
+atom_style         sph
+ERROR: Unrecognized atom style 'sph' is part of the SPH package which is not enabled in this LAMMPS binary. (src/atom.cpp:745)
+Last command: atom_style         sph

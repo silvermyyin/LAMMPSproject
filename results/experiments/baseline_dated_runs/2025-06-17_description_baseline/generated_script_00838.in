@@ -1,0 +1,56 @@
+# LAMMPS Input Script for Energy-Volume Curve of InP in Zincblende Structure
+
+units           metal
+dimension       3
+boundary        p p p
+
+# Define atomic masses
+mass            1 114.818  # Indium
+mass            2 30.97376 # Phosphorus
+
+# Define lattice and create the simulation box
+lattice         diamond 5.868  # Lattice constant for InP in zincblende structure
+region          box block 0 1 0 1 0 1
+create_box      2 box
+create_atoms    1 box basis 1 1 basis 2 2
+
+# Define the potential
+pair_style      table linear 1000
+pair_coeff      * * vashishta.table InP
+
+# Neighbor list settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Output settings
+thermo          1
+thermo_style    custom step temp pe press vol
+
+# Variables for volume and energy calculation
+variable        a equal 5.868
+variable        nsteps equal 100
+variable        volmin equal 20.0
+variable        volmax equal 29.0
+variable        step equal (v_volmax-v_volmin)/v_nsteps
+variable        v equal v_volmin + step*step
+variable        eng equal pe/atoms
+
+# Loop to calculate energy at different volumes
+variable        i loop ${nsteps}
+label           loop_start
+
+    # Calculate new lattice constant for current volume
+    variable    new_a equal v_a*(v_v/v_volmin)^(1.0/3.0)
+    change_box  all x scale ${new_a} y scale ${new_a} z scale ${new_a} remap
+
+    # Run a single step to output energy for the current configuration
+    run         0
+
+    # Append results to file
+    variable    e_per_atom equal pe/atoms
+    print       "${v} ${e_per_atom}" append evsvol.dat
+
+next            i
+jump            SELF loop_start
+
+# End of script

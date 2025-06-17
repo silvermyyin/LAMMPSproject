@@ -1,0 +1,38 @@
+# LAMMPS input script for crystal system
+# Brute force approach - basic parameters
+
+# Initialization
+units lj
+atom_style atomic
+dimension 3
+boundary p p p
+
+# System setup
+lattice sc 0.920
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Force field
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0
+
+# Settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Equilibration
+velocity all create 1.0 12345 rot yes dist gaussian
+fix 1 all nvt temp 1.0 1.0 0.1
+timestep 0.005
+thermo 100
+run 1000
+
+# Production
+unfix 1
+fix 1 all nvt temp 1.0 1.0 0.1
+dump 1 all custom 100 dump.lammpstrj id type x y z vx vy vz
+run 5000

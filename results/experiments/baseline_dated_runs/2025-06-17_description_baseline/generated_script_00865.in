@@ -1,0 +1,44 @@
+# LAMMPS Input Script for Argon Atoms with Two-Temperature Model
+
+units           metal
+dimension       3
+boundary        p s s
+atom_style      atomic
+
+# Create FCC Lattice and Define Region
+lattice         fcc 5.405
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+create_atoms    1 box
+
+# Lennard-Jones Potential Parameters for Argon
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0103 3.4
+
+# Initialize Velocities
+velocity        all create 40.0 12345
+
+# Define Groups
+group           all region simbox
+
+# AtC Package Initialization
+fix             atc all atc two_temperature model 1
+
+# Set Electron Temperature with Gaussian Distribution
+fix_modify      atc temp_lattice 20.0 temp_electron 20.0
+fix_modify      atc electron_distribution gaussian
+
+# Time Integration Settings
+timestep        0.005
+thermo          100
+
+# Thermostat for AtC
+fix             rescale all temp/rescale 10 20.0 20.0 0.02 1.0
+
+# Output Thermodynamic Properties
+thermo_style    custom step temp pe f_atc[1] f_atc[2]
+
+# Run the Simulation
+run             10000
+
+This script sets up a simulation of argon atoms using a two-temperature model to study thermal transport properties. The AtC package is employed for coupling atomic and continuum scales, simulating the dynamics of electron and lattice temperatures.

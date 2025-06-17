@@ -1,0 +1,39 @@
+# LAMMPS input script for 3D MD simulation of hcp cobalt with spin dynamics
+
+units metal
+atom_style spin
+
+# Initialize simulation box with cobalt lattice
+lattice hcp 2.5075
+region box block 0 5 0 5 0 5
+create_box 1 box
+create_atoms 1 box
+
+# Define masses and spins
+mass 1 58.933195    # Mass of cobalt
+set group all spin random 1.0 0.0 0.0 12345
+
+# Pair styles and coefficients
+pair_style hybrid/overlay eam/alloy spin/exchange
+pair_coeff * * eam/alloy Co.eam.alloy Co
+pair_coeff * * spin/exchange 1.0
+
+# Define neighbor settings
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Set timestep
+timestep 0.0001
+
+# Define fixes for spin dynamics
+fix 1 all precession/spin 0.1
+fix 2 all langevin/spin 300.0 300.0 10.0 12345
+fix 3 all nve/spin
+
+# Output settings
+thermo 50
+thermo_style custom step temp pe ke etotal
+dump 1 all custom 100 dump.spins id type x y z spin
+
+# Run the simulation
+run 10000

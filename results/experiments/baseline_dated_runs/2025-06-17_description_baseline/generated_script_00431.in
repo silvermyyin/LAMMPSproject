@@ -1,0 +1,67 @@
+# LAMMPS Input Script for J-Integral Calculation with a Crack in FCC Gold
+
+# Initialize
+units           metal
+dimension       3
+boundary        p s p
+atom_style      atomic
+
+# Create FCC Lattice for Gold
+lattice         fcc 4.08
+region          whole block 0 20 0 10 0 10 units lattice
+create_box      1 whole
+create_atoms    1 region whole
+
+# Define Potential
+pair_style      lj/smooth/linear 10.0
+pair_coeff      * * 0.167 2.315
+
+# Define Crack Regions
+region          upper block INF INF 5 INF INF INF units lattice
+region          lower block INF INF 0 5 INF INF units lattice
+group           upper region upper
+group           lower region lower
+
+# Define Crack Tip and Evaluation Regions (Concentric Loops)
+region          crack_tip block 9 11 4.5 5.5 4.5 5.5 units lattice
+group           crack_tip region crack_tip
+
+# Define Simulation Settings
+neighbor        2.0 bin
+neigh_modify    delay 5
+
+# Minimization to Relax the System
+reset_timestep  0
+min_style       cg
+minimize        1.0e-12 1.0e-12 10000 10000
+
+# Apply Field-Based Approach for J-Integral Calculation
+fix             1 all atc field eshelby stress internal_energy
+
+# Apply Incremental Strain to Simulate Crack Opening
+variable        strain_rate equal 0.001
+variable        max_steps equal 100
+variable        current_step equal 0
+
+label loop
+variable        current_step equal ${current_step} + 1
+if "${current_step} > ${max_steps}" then "jump SELF post"
+
+# Deform the simulation box incrementally in y-direction
+displace_box    all y delta 0.01 remap
+
+# Run a short simulation to equilibrate after deformation
+run             1000
+
+# Output Forces and Stresses
+thermo          100
+thermo_style    custom step temp pe lx ly lz fmax press pxx pyy pzz
+
+# Jump back to loop
+jump            SELF loop
+
+label post
+unfix           1
+
+# Final Output
+write_data      gold_crack_final.dat

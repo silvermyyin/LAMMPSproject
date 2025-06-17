@@ -1,0 +1,56 @@
+# LAMMPS Input Script for 3D Overdamped Active Brownian Dynamics
+
+units lj
+dimension 3
+atom_style sphere
+
+# Define the simulation box
+boundary p p p
+region simbox block -8 8 -8 8 -8 8
+create_box 1 simbox
+
+# Create atoms in a simple cubic lattice
+lattice sc 0.4
+create_atoms 1 box
+
+# Set particle properties
+set type 1 mass 1.0
+set type 1 diameter 1.0
+set type 1 dipole/random 12345
+
+# Define group for particles
+group particles type 1
+
+# Define velocities according to the temperature
+velocity particles create 1.0 12345
+
+# Set up active Brownian dynamics
+fix propel particles propel/self 4.0
+fix brownian particles brownian/sphere 1.0 3.0 1.0 12345
+
+# Thermodynamic settings
+thermo 100
+thermo_style custom step temp press pe ke etotal
+
+# Compute MSD and pressure
+compute msd particles msd
+compute pressure particles pressure NULL
+
+# Output settings
+dump 1 all custom 100 dump.active id type x y z mux muy muz
+dump_modify 1 format "%d %d %.5f %.5f %.5f %.5f %.5f %.5f"
+
+# Equilibration phase
+timestep 0.001
+run 10000
+
+# Main run for observing MSD and pressure
+timestep 0.01
+fix 1 all ave/time 100 1 100 c_msd[4] c_pressure file msd_pressure.txt
+run 100000
+
+# Optional output for rotational diffusion analysis
+dump 2 all custom 100 dump.rotational id type mux muy muz
+dump_modify 2 format "%d %d %.5f %.5f %.5f"
+
+# End of script

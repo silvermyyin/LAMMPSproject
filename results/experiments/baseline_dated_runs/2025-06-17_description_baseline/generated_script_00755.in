@@ -1,0 +1,38 @@
+# LAMMPS Input Script for Single-Point Energy Calculations of UO2 Clusters using LATTE
+
+units           metal
+atom_style      full
+
+# Loop over cluster sizes
+variable sizes index 2 3 4
+
+label loop_start
+
+# Clear previous simulation state
+clear
+
+# Set up simulation for current cluster size
+variable cluster_size equal ${sizes}
+print "Running single-point energy calculation for UO2 cluster with ${cluster_size} molecules."
+
+# Read data file for the current cluster size
+read_data       uo2_cluster_${cluster_size}.data
+
+# Define neighbor list
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Quantum mechanical interactions using LATTE
+# This assumes appropriate MDI setup and compatible LATTE code
+fix             qm all mdi/qm mode LATTE
+
+# Thermodynamic output
+thermo_style    custom step temp pe etotal press
+thermo          1
+
+# Perform single-point energy calculation
+run             0
+
+# End of loop for different cluster sizes
+next sizes
+jump SELF loop_start

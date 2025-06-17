@@ -1,0 +1,55 @@
+# LAMMPS Input Script for FCC <110> Stress Trajectories
+
+units           lj
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC Lattice
+lattice         fcc 1.4142136 orient x 1 -1 0 orient y 1 1 -2 orient z 1 1 1
+region          simbox block 0 5 0 5 0 5
+create_box      1 simbox
+create_atoms    1 box
+
+# Set Mass and Pair Style
+mass            1 1.0
+pair_style      lj/cubic 2.5
+pair_coeff      1 1 1.0 0.8908987
+
+# Initial Velocities
+velocity        all create 0.1 12345
+
+# Relax the Box Dimensions Anisotropically
+fix             1 all box/relax iso 0.0
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Output Settings
+thermo          100
+thermo_style    custom step temp press vol
+
+# Define a Variable for Stress Output
+variable        stress equal "pxx + pyy + pzz"
+variable        shear equal "pxy"
+
+# Run with Different Thermostatting Methods
+
+# Run 1: No drag
+fix             2 all nvt temp 0.1 0.1 0.5
+dump            1 all custom 100 stress_vs_t.dat id type x y z vx vy vz fx fy fz v_stress v_shear
+run             5000
+unfix           2
+undump          1
+
+# Run 2: With drag
+fix             3 all nvt temp 0.1 0.1 0.5 drag 200.0
+dump            2 all custom 100 stress_vs_t.dat id type x y z vx vy vz fx fy fz v_stress v_shear
+run             5000
+unfix           3
+undump          2
+
+# Run 3: Nose-Hoover Chains
+fix             4 all nvt temp 0.1 0.1 0.5 tchain 3
+dump            3 all custom 100 stress_vs_t.dat id type x y z vx vy vz fx fy fz v_stress v_shear
+run             5000
+unfix           4
+undump          3

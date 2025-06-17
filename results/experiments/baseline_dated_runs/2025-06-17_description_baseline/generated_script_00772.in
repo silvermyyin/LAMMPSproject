@@ -1,0 +1,62 @@
+# LAMMPS input script for electron transport in a metal using AtC package
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Create face-centered cubic (fcc) lattice
+lattice         fcc 3.615
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define potentials
+pair_style      eam
+pair_coeff      * * Cu_u3.eam
+
+# Initialize velocities
+velocity        all create 300.0 12345 mom yes rot no dist gaussian
+
+# AtC package initialization
+fix atc_fix all atc
+
+# Define electron properties
+fix_modify atc_fix atc control thermal
+fix_modify atc_fix atc control electron
+
+# Set electron temperature initial condition
+fix_modify atc_fix atc temperature electron value 300.0
+
+# Define initial electron density with Gaussian profile
+fix_modify atc_fix atc density electron profile gaussian center 5.0 width 1.0
+
+# Set boundary conditions for electron temperature and density
+fix_modify atc_fix atc boundary_temperature electron left fixed 300.0
+fix_modify atc_fix atc boundary_temperature electron right fixed 300.0
+
+fix_modify atc_fix atc boundary_density electron left fixed 1.0
+fix_modify atc_fix atc boundary_density electron right fixed 1.0
+
+# Apply electric potential across the slab
+fix_modify atc_fix atc electric_potential left -0.1
+fix_modify atc_fix atc electric_potential right 0.0
+
+# Set up thermo output
+thermo_style    custom step temp etotal pe ke ebond eangle edihed eimp evdwl ecoul elong press
+thermo          100
+
+# Run the simulation
+timestep        0.001
+run             10000
+
+# Output electron properties
+dump            1 all custom 100 dump.electron id type x y z vx vy vz
+dump_modify     1 format line "%d %d %.5g %.5g %.5g %.5g %.5g %.5g"
+
+# Output thermal data
+fix             avg_temp all ave/time 100 1 100 v_temp file avg_temp.txt
+fix             avg_etemp all ave/time 100 1 100 f_atc_fix[etemp] file avg_etemp.txt
+fix             avg_edensity all ave/time 100 1 100 f_atc_fix[edensity] file avg_edensity.txt
+
+This script uses the AtC package to simulate electron transport in a copper slab with specified boundary conditions and includes commands for initializing and controlling electron properties. The script outputs electron properties and thermal data to provide insights into electron transport mechanisms.

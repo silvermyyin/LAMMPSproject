@@ -1,0 +1,37 @@
+# LAMMPS Input Script for FCC Lattice of Argon with Lennard-Jones Interactions
+
+units           lj
+atom_style      atomic
+
+# Define the simulation box
+boundary        f f p
+region          simbox block -6 6 -6 6 -2 2
+create_box      1 simbox
+
+# Define the lattice and create atoms
+lattice         fcc 5.405
+create_atoms    1 box
+
+# Set mass for argon atoms
+mass            1 39.95
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.5
+pair_coeff      1 1 1.0 1.0 13.5
+
+# Define neighbor list
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Fix for atomistic-continuum coupling
+fix             atc all atc file meshfile.mesh kernel quartic cylinder radius 5.0
+
+# Define timestep and run initial setup
+timestep        0.0
+run             0
+
+# Output settings
+thermo_style    custom step cpu temp
+thermo          1
+
+This script sets up the initial configuration for a molecular dynamics simulation using LAMMPS, focusing on the setup and coupling between atomistic and continuum scales. The `fix atc` command is included for coupling, though it requires an external mesh file (`meshfile.mesh`) for operation. Adjust the `file` parameter in the `fix atc` command as needed to point to the correct mesh file.

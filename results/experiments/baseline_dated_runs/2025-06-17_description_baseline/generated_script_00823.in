@@ -1,0 +1,39 @@
+# LAMMPS Input Script for TATB System using ReaxFF
+
+units           real
+atom_style      charge
+
+# Read initial configuration from data file
+read_data       tatb.data
+
+# Define ReaxFF potential
+pair_style      reaxff
+pair_coeff      * * ffield.reax TATB
+
+# Set timestep size
+timestep        0.0625
+
+# Define computes for energy contributions
+compute reax all reaxff/bond
+compute bond_energy all pe/atom bond
+compute angle_energy all pe/atom angle
+compute vdw_energy all pe/atom vdw
+
+# Define charge equilibration
+fix             1 all qeq/shielded 10 1.0e-6
+
+# Time integration
+fix             2 all nve
+
+# Track bond information
+fix             3 all reaxff/bonds 50 bonds.reax
+
+# Monitor species evolution
+fix             4 all reaxff/species 50 species.out
+
+# Output thermodynamic properties
+thermo          5
+thermo_style    custom step temp press etotal c_reax[1] c_reax[2] c_reax[3]
+
+# Run the simulation
+run             25

@@ -1,0 +1,36 @@
+# LAMMPS input script for SiH4 system using electron force field model
+
+units electron
+atom_style electron
+boundary s s s
+
+# Read in data file
+read_data sih4.data
+
+# Set pair style and coefficients
+pair_style eff/cut 1000.0
+pair_coeff * * SiH4.eff
+
+# Define computes for electronic properties
+compute ke all ke/eff
+compute pauli all pair pauli
+compute elec all pair elec
+compute restraint all pair restraint
+compute stress_atom all stress/atom NULL
+compute pressure all reduce sum c_stress_atom[1] c_stress_atom[2] c_stress_atom[3] c_stress_atom[4] c_stress_atom[5] c_stress_atom[6]
+compute temp_eff all temp/eff
+compute press all pressure temp_eff
+
+# Define thermodynamic output
+thermo_style custom step pe ke c_ke c_pauli c_elec c_restraint temp c_temp_eff press c_press
+thermo 100
+
+# Minimize energy using conjugate gradient
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Output settings
+dump 1 all xyz 100 sih4.xyz
+dump 2 all custom 100 sih4.lammpstrj id type x y z c_spin c_r c_f
+
+# Run the minimization
+run 0

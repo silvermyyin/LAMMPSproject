@@ -1,0 +1,23 @@
+units metal
+atom_style atomic
+boundary p p p
+
+read_data data.dpd
+
+mass 1 100.0
+
+pair_style dpd/fdt 2.0 300.0 10.0 234324
+pair_coeff 1 1 25.0 4.5 1.0
+
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check no
+
+fix 1 all shardlow
+fix 2 all nve
+
+timestep 0.001
+
+thermo_style custom step temp pe ke etotal
+thermo 1
+
+run 100

@@ -1,0 +1,35 @@
+# LAMMPS input script for 2D simulation of rounded polygonal bodies
+
+units lj
+dimension 2
+boundary p p p
+
+atom_style body
+atom_modify map array
+newton off
+
+# Read initial configuration from a data file
+read_data data.polygon
+
+# Replicate the system in a square lattice
+replicate 2 2 1
+
+# Define the body style for rounded polygons with a specified number of vertices
+fix 1 all property/atom btype 1 bmass 1.0 bvolume 1.0
+fix 2 all property/atom vertices 6 0.5 0.5 0.5 0.5 0.5 0.5
+fix 3 all body/rounded/polygon
+
+# Set pair style with damping coefficients and friction
+pair_style body/rounded/polygon 1.0 1.0 0.5 0.1
+pair_coeff * *
+
+# Initialize velocities with a Gaussian distribution at temperature 0.5
+velocity all create 0.5 12345 dist gaussian
+
+# Define the NPT ensemble with xy-plane coupling and fixed point
+fix 4 all npt/body temp 0.5 0.5 1.0 iso 1.0 1.0 1.0 couple xy
+
+# Set thermo output and run the simulation
+thermo 100
+thermo_style custom step temp ke pe etotal press
+run 100000

@@ -1,0 +1,34 @@
+# LAMMPS Input Script for a Biomolecular Simulation with CHARMM Force Fields
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data biomolecular_system.data
+
+# Define force field settings
+bond_style harmonic
+angle_style charmm
+dihedral_style charmm
+improper_style harmonic
+pair_style lj/charmmfsw/coul/charmmfsh 8.0 12.0
+pair_modify mix arithmetic
+
+# Include CMAP correction
+fix cmap_correction all cmap charmm22_cmap.dat
+variable cmap_energy equal f_cmap_correction[1]
+
+# Set initial velocities
+velocity all create 0.0 12345 dist uniform
+
+# Define integration style
+fix 1 all nve
+
+# Thermodynamic output
+thermo 1000
+thermo_style custom step temp pe ke etotal ebond eangle edihed eimp evdwl ecoul v_cmap_energy
+
+# Run simulation
+timestep 2.0
+run 100000

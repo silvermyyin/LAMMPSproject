@@ -1,0 +1,42 @@
+# LAMMPS input script for polymer chain simulation
+
+units lj
+atom_style full
+
+# Create a 3D periodic box
+boundary p p p
+read_data polymer_data.data
+
+# Define bond style
+bond_style harmonic
+bond_coeff 1 30.0 1.0
+
+# Define pair style hybrid with DPD and SRP
+pair_style hybrid dpd 1.0 1.0 12345 srp 1.0 1.0
+
+# Define pair coefficients for DPD
+pair_coeff * * dpd 1.0 1.0
+
+# Define pair coefficients for SRP for specific atom types (example: type 1 and 2)
+pair_coeff 1 2 srp 1.0 1.0
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 10 delay 0 check yes
+
+# Modify communication settings
+comm_modify vel yes
+comm_modify cutoff 2.0
+
+# Integration settings
+fix 1 all nve
+
+# Set timestep
+timestep 0.01
+
+# Run the simulation
+run 1000
+
+# Thermo settings
+thermo 100
+thermo_style custom step temp pe epair press lx ly lz

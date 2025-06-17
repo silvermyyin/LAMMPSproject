@@ -1,0 +1,47 @@
+# LAMMPS input script for liquid argon simulation with electrostatic interactions
+
+units real
+dimension 3
+boundary p p p
+atom_style charge
+
+# Create a simple cubic lattice
+lattice sc 5.719
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/cut/coul/cut 13.0
+pair_coeff 1 1 0.238 3.405  # Lennard-Jones parameters for argon
+dielectric 80.0
+
+# Define masses
+mass 1 39.948
+
+# Define initial velocities
+velocity all create 115.607 12345
+
+# Apply reflective boundary conditions in the x-direction
+fix walls all wall/reflect xlo EDGE xhi EDGE
+
+# Apply Nosé-Hoover thermostat
+fix nvt all nvt temp 115.607 115.607 100.0 drag 0.2
+
+# Set timestep and run parameters
+timestep 4.0
+thermo 100
+thermo_style custom step temp press etotal
+
+# Output settings
+dump myDump all atom 100 dump.argon
+dump_modify myDump scale no
+
+# Run simulation
+run 10000
+
+# Post-processing with AtC
+fix atc all atc mesh 25 1 1
+fix_modify atc mesh velocity mass_density charge_density electric_potential
+
+# End of script

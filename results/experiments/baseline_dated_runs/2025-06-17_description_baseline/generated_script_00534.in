@@ -1,0 +1,48 @@
+# LAMMPS input script for deposition of molecules onto SiO2 substrate
+
+units           real
+atom_style      full
+boundary        p p f
+
+read_data       sio2_substrate.data
+
+pair_style      hybrid/overlay reax/c NULL zbl 0.1 2.0
+pair_coeff      * * reax/c ffield.reax Si O C F
+pair_coeff      * * zbl 14 8 0.1 2.0
+
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Define regions
+region          freeze block INF INF INF INF INF 10 units box
+region          thermostat block INF INF INF INF 10 50 units box
+region          nve block INF INF INF INF 50 100 units box
+region          deposit block INF INF INF INF 100 110 units box
+
+# Group atoms
+group           frozen region freeze
+group           thermo region thermostat
+group           nve_group region nve
+group           all except frozen
+
+# Set initial velocities
+velocity        all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define fixes
+fix             freeze frozen setforce 0.0 0.0 0.0
+fix             nvt_group thermo nvt temp 300.0 300.0 100.0
+fix             nve_group nve_group nve
+
+# Deposit molecules
+fix             deposition all deposit 10 1 1000 12345 region deposit vz -0.1 -0.2 units box
+
+# Remove atoms leaving top of the box
+fix             evaporate all evaporate 1 10 deposit 12345 region deposit
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Run simulation
+timestep        0.25
+run             50000

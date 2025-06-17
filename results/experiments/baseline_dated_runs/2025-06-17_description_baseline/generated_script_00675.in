@@ -1,0 +1,56 @@
+# LAMMPS input script for 3D simulation of colloidal particles under shear flow
+
+units micro
+atom_style sphere
+boundary p p f
+
+# Create simulation box
+region simbox block 0 280 0 280 0 101
+create_box 2 simbox
+
+# Define colloidal particles (10x12x4)
+lattice fcc 1.0
+region colloid_region block 0 10 0 12 0 4
+create_atoms 1 region colloid_region
+
+# Define fluid region (entire simulation box)
+region fluid_region block 0 280 0 280 0 101
+create_atoms 2 region fluid_region
+
+# Group definitions
+group ForceAtoms type 1
+group FluidAtoms type 2
+
+# Pair potentials
+pair_style hybrid/overlay lj/cut 1.122 lb/fluid 0.2
+pair_coeff * * lj/cut 1.0 1.0 1.122
+pair_coeff * * lb/fluid 1.0 1.0 1.0 1.0
+
+# Define lattice-Boltzmann fluid
+fix lb fluid_region lb/fluid 280 280 101 1.0 1.0
+fix_modify lb grid yes
+
+# Set up shear flow
+velocity upper set 0.0 20.0 0.0
+velocity lower set 0.0 -20.0 0.0
+
+# Wall regions and interactions
+region upper_wall block 0 280 0 280 100 101
+region lower_wall block 0 280 0 280 0 1
+group upper type 3
+group lower type 4
+fix walls all wall/region upper_wall lj93 1.0 1.0 1.122
+fix walls all wall/region lower_wall lj93 1.0 1.0 1.122
+
+# Integrate colloidal particles as rigid bodies
+fix rigid_colloids ForceAtoms rigid single
+
+# Run parameters
+timestep 0.01
+thermo 50
+
+# Output settings
+thermo_style custom step temp press pe ke
+
+# Run the simulation
+run 100

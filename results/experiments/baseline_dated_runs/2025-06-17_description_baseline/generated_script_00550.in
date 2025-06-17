@@ -1,0 +1,47 @@
+# LAMMPS input script for Lennard-Jones fluid flowing around a cylindrical obstacle
+
+units       lj
+atom_style  atomic
+dimension   3
+
+# Create simulation box
+lattice     fcc 0.8442
+region      box block 0 10 0 10 0 10
+create_box  2 box
+
+# Create fluid atoms
+create_atoms 1 box
+
+# Define cylindrical obstacle
+region      obstacle cylinder z 5 5 1.0 0 10 side in units box
+group       obstacle region obstacle
+
+# Assign different atom type to the obstacle
+set         group obstacle type 2
+
+# Define Lennard-Jones potential
+pair_style  lj/cut 1.122462
+pair_coeff  * * 1.0 1.0 1.122462
+
+# Neighbor settings
+neighbor    0.3 bin
+neigh_modify delay 5
+
+# Define groups
+group       fluid subtract all obstacle
+
+# Set initial velocities
+velocity    fluid create 1.0 12345
+velocity    obstacle set 0.0 0.0 0.0
+
+# Fixes
+fix         1 fluid nve
+fix         2 fluid wall/flow z 0.0 0.0 1.0 1.0
+
+# Thermodynamic output
+thermo      100
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+timestep    0.005
+run         1000

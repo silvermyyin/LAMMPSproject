@@ -1,0 +1,40 @@
+# LAMMPS input script for a solvated 5-mer peptide simulation
+
+units real
+dimension 3
+atom_style angle
+
+# Read initial configuration and force field parameters
+read_data data.pegc12e8.gz
+
+# Define pair, bond, and angle interactions
+pair_style lj/sdk 15.0
+bond_style harmonic
+angle_style harmonic
+
+# Set special bonds for exclusions
+special_bonds lj 0.0 0.0 1.0
+
+# Define neighbor list settings
+neighbor 3.0 bin
+neigh_modify every 5
+
+# Optimize domain decomposition
+processors * * 1
+
+# Define the thermodynamic output
+thermo 200
+thermo_style multi
+
+# Assign initial velocities
+velocity all create 303.0 12345 dist gaussian
+
+# Define the simulation ensemble
+fix 1 all nvt temp 303.0 303.0 100.0
+
+# Run the simulation
+timestep 1.0
+run 1000
+
+# Unfix and clean up
+unfix 1

@@ -1,0 +1,47 @@
+# LAMMPS input script for water simulation using ReaxFF
+
+units real
+atom_style charge
+boundary p p p
+
+# Read initial configuration
+read_data water_system.data
+
+# Define the ReaxFF force field
+pair_style reaxff NULL
+pair_coeff * * ffield.reax.water O H
+
+# Initialize velocities
+velocity all create 360.0 12345
+
+# Thermostat and barostat for equilibration
+fix 1 all npt temp 360.0 360.0 100.0 iso 1.0 1.0 1000.0
+
+# Equilibration settings
+timestep 0.25
+thermo 100
+thermo_style custom step temp press etotal
+
+# Charge equilibration
+fix 2 all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
+
+# Restrain oxygen atoms
+group oxygens type 1
+fix 3 oxygens spring/self 10.0
+
+# Run equilibration
+run 10000
+
+# Switch to NVE ensemble with Langevin thermostat for production run
+unfix 1
+fix 4 all nve
+fix 5 all langevin 360.0 360.0 100.0 12345
+
+# Production run settings
+timestep 0.25
+run 500000
+
+# Output final configurations
+write_data water_system_final.data
+
+This script sets up a molecular dynamics simulation for a water system using the ReaxFF force field. It begins with an equilibration phase using the NPT ensemble to allow the system to relax, followed by a production phase using the NVE ensemble with a Langevin thermostat to ensure temperature stability. The oxygen atoms are restrained with a self-spring fix to hold their positions during the simulation.

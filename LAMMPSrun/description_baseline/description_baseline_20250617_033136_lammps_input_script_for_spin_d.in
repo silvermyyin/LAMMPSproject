@@ -1,0 +1,38 @@
+```lammps
+# LAMMPS Input Script for Spin Dynamics Simulation on a Simple Cubic Lattice
+
+# Initialize simulation
+units metal
+atom_style spin
+boundary p p p
+dimension 3
+
+# Create simple cubic lattice
+lattice sc 1.0
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Set masses and initial spins
+mass 1 1.0
+set group all spin 1.0 0.0 0.0  # Spins aligned along x-axis
+
+# Define pair style and interaction parameters
+pair_style spin/exchange 1.0 10.0
+pair_coeff * * 1.0
+
+# Define fixes for spin dynamics
+fix 1 all nve/spin
+fix 2 all precession/spin 0.1 0.0 1.0  # Magnetic field along z-axis
+fix 3 all langevin/spin 0.1 0.01 300.0 48279  # Target temperature 300K
+
+# Define output settings
+thermo 100
+thermo_style custom step time temp pe lx ly lz
+variable mz equal "cave(spinz)"
+fix 4 all ave/time 100 1 100 v_mz file spinz_average.txt
+
+# Run the simulation
+timestep 0.001
+run 10000
+```

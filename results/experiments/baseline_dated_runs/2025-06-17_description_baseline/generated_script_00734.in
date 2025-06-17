@@ -1,0 +1,62 @@
+# LAMMPS input script for TAD simulation of a single vacancy in bulk silicon
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create the simulation box and atoms
+lattice diamond 5.431
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style sw
+pair_coeff * * Si.sw Si
+
+# Set up neighbor list
+neighbor 2.0 bin
+neigh_modify delay 5 every 1
+
+# Define groups
+group silicon type 1
+
+# Delete an atom to create a vacancy
+delete_atoms single 500  # Adjust atom ID to create vacancy
+
+# Minimize energy to relax initial structure
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Equilibrate the system at high temperature using Langevin thermostat
+velocity all create 2000.0 12345 mom yes rot no dist gaussian
+fix 1 all nve
+fix 2 all langevin 2000.0 2000.0 0.1 12345
+thermo 100
+thermo_style custom step temp pe press
+run 10000
+
+# Remove center-of-mass motion
+velocity all zero linear
+unfix 2
+
+# Set up TAD simulation
+fix 3 all tad 1800.0 2400.0 0.01 0.1 1.0 2.0 12345
+tad/partition 4  # Assuming 4 partitions for parallel computing
+
+# NEB settings for refining transition states
+neb 0.1 1.0 1000
+tad/neb 1 1.0e-4 1.0e-6 100 1000
+
+# Run TAD simulation
+thermo 1000
+thermo_style custom step temp pe press
+run 100000
+
+# Clean up
+unfix 1
+unfix 3
+
+This script sets up a temperature accelerated dynamics simulation to study atomic diffusion events around a vacancy in silicon using the Stillinger-Weber potential. The system is equilibrated with a Langevin thermostat, and TAD is used to enhance the observation of rare events, leveraging multiple partitions for efficient computation.

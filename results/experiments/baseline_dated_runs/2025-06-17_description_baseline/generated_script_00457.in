@@ -1,0 +1,54 @@
+# LAMMPS input script for 2D granular flow simulation
+
+units           si
+dimension       2
+boundary        f p f
+atom_style      granular
+
+# Define simulation box
+region          box block 0 10 0 10 -0.5 0.5
+create_box      1 box
+
+# Define particle size and material properties
+variable        d equal 0.01
+variable        rho equal 2500
+variable        Ef equal 4000
+
+# Create particles
+region          pour_region block 2 8 8 9 INF INF
+create_atoms    1 random 1000 12345 pour_region
+
+# Set material properties
+set             group all diameter ${d}
+set             group all density ${rho}
+
+# Define pair style and coefficients
+pair_style      gran/hertz/history ${Ef} NULL ${Ef} NULL ${Ef} NULL 0.5
+pair_coeff      * *
+
+# Define gravity
+variable        g equal 9.81
+fix             gravity all gravity ${g} vector 0 -1 0
+
+# Define walls
+region          left_wall block INF 0 -0.5 10 INF INF
+region          right_wall block 10 INF -0.5 10 INF INF
+
+fix             wall_left all wall/gran/hertz/history ${Ef} NULL ${Ef} NULL ${Ef} NULL 0.5 region left_wall
+fix             wall_right all wall/gran/hertz/history ${Ef} NULL ${Ef} NULL ${Ef} NULL 0.5 region right_wall
+
+# Fixes to enforce 2D behavior and introduce particles
+fix             enforce2d all enforce2d
+fix             pour all pour 100 1 100 ${d} 0 0 0 ${g} 0 region pour_region volume 0.8
+
+# Define rigid body motion
+fix             rigid all rigid/small molecule
+
+# Set timestep
+timestep        0.001
+
+# Run the simulation
+run_style       verlet
+thermo_style    custom step time ke pe etotal vol
+thermo          100
+run             10000

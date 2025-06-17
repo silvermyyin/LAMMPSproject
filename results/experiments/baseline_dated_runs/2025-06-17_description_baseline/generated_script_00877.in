@@ -1,0 +1,56 @@
+# LAMMPS input script to calculate average elastic properties of a cubic crystal
+
+# Define variables for elastic constants (example values)
+variable C11 equal 250.0  # GPa
+variable C22 equal 250.0  # GPa
+variable C33 equal 250.0  # GPa
+variable C12 equal 150.0  # GPa
+variable C13 equal 150.0  # GPa
+variable C23 equal 150.0  # GPa
+variable C44 equal 100.0  # GPa
+variable C55 equal 100.0  # GPa
+variable C66 equal 100.0  # GPa
+
+# Compute the average elastic moduli for cubic crystals
+variable C11cubic equal (v_C11 + v_C22 + v_C33) / 3.0
+variable C12cubic equal (v_C12 + v_C13 + v_C23) / 3.0
+variable C44cubic equal (v_C44 + v_C55 + v_C66) / 3.0
+
+# Calculate bulk modulus, shear moduli, and Poisson ratio
+variable K equal (v_C11cubic + 2 * v_C12cubic) / 3.0  # Bulk modulus
+variable G_Voigt equal (v_C11cubic - v_C12cubic + 3 * v_C44cubic) / 5.0  # Voigt shear modulus
+variable G_Reuss equal 5 * (v_C11cubic - v_C12cubic) * v_C44cubic / (4 * v_C44cubic + 3 * (v_C11cubic - v_C12cubic))  # Reuss shear modulus
+variable nu equal (3 * v_K - 2 * v_G_Voigt) / (2 * (3 * v_K + v_G_Voigt))  # Poisson ratio
+
+# Print the individual elastic constants and average properties
+print "Elastic constants (Cij in GPa):"
+print "C11 = ${C11}, C22 = ${C22}, C33 = ${C33}"
+print "C12 = ${C12}, C13 = ${C13}, C23 = ${C23}"
+print "C44 = ${C44}, C55 = ${C55}, C66 = ${C66}"
+
+print "Average elastic moduli for a cubic crystal:"
+print "C11cubic = ${C11cubic} GPa"
+print "C12cubic = ${C12cubic} GPa"
+print "C44cubic = ${C44cubic} GPa"
+
+print "Derived average properties for a cubic crystal:"
+print "Bulk modulus K = ${K} GPa"
+print "Voigt shear modulus G_Voigt = ${G_Voigt} GPa"
+print "Reuss shear modulus G_Reuss = ${G_Reuss} GPa"
+print "Poisson ratio nu = ${nu}"
+
+# Simulation setup summary
+variable num_atoms equal 1000
+variable stress_interval equal 100
+variable stress_samples equal 10
+variable born_interval equal 100
+variable born_samples equal 10
+
+print "Simulation setup summary:"
+print "Number of atoms = ${num_atoms}"
+print "Stress sampling interval = ${stress_interval}"
+print "Stress sample count = ${stress_samples}"
+print "Born sampling interval = ${born_interval}"
+print "Born sample count = ${born_samples}"
+
+# End of LAMMPS input script

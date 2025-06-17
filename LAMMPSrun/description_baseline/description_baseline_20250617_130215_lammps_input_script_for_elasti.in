@@ -1,0 +1,66 @@
+```lammps
+# LAMMPS input script for elastic wave propagation in a thermoelastic system
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create fcc lattice and box
+variable        a equal 4.05  # lattice constant for fcc (in Angstroms)
+lattice         fcc ${a}
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define interatomic potential
+pair_style      lj/cut 2.5
+pair_coeff      1 1 0.0103 3.40  # Lennard-Jones parameters for LJ potential
+
+# Define masses
+mass            1 63.55  # mass of Copper atom in g/mol
+
+# Initialize velocities and temperature
+velocity        all create 20.0 12345 mom yes rot yes dist gaussian
+fix             temp_control all temp/rescale 100 20.0 20.0 0.02 1.0
+
+# Set thermo output
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Time settings
+timestep        0.001  # fs
+
+# Atom-to-Continuum (AtC) coupling setup
+fix             atc all atc thermal_mesh 1 1 1 region box
+fix_modify      atc mesh potential lj/cut state_variable temperature
+
+# Boundary conditions for wave propagation
+fix             boundary all setforce 0.0 0.0 NULL
+fix             wave all nve
+
+# Initial conditions
+displace_atoms  all move 0.0 0.0 0.0
+velocity        all set 0.0 0.0 0.0
+
+# Run the simulation to reach equilibrium
+run             5000
+
+# Measure stress, temperature, and achieve equilibrium
+fix             stress all ave/spatial 1 100 100 z lower 0.1 v_stress file stress.profile
+fix             temp_profile all ave/spatial 1 100 100 y lower 0.1 v_temp file temp.profile
+
+# Simulate wave propagation
+run             10000
+
+# Unfixing all the fixes
+unfix           temp_control
+unfix           atc
+unfix           boundary
+unfix           wave
+unfix           stress
+unfix           temp_profile
+
+# Final output
+print           "Simulation completed successfully."
+```

@@ -1,0 +1,35 @@
+# LAMMPS Input Script for BCC Silicon with MEAM/SW/Spline Potential
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create a BCC lattice for Silicon
+lattice         bcc 3.245
+region          simbox block 0 1 0 1 0 1
+create_box      1 simbox
+create_atoms    1 box
+
+# Specify the potential
+pair_style      meam/sw/spline
+pair_coeff      * * Si.b.meam.sw.spline Si
+
+# Define a variable for the reference lattice constant
+variable        a0 equal 3.245
+variable        ref_cohesive_energy equal -4.63  # Hypothetical reference cohesive energy in eV/atom
+variable        ref_atomic_volume equal 20.57    # Hypothetical reference atomic volume in Å^3/atom
+
+# Compute the cohesive energy, volume, and lattice constant
+compute         peatom all pe/atom
+compute         pe all reduce sum c.peatom
+variable        cohesive_energy equal c_pe/atoms
+variable        atomic_volume equal vol/atoms
+variable        lattice_constant equal lx
+
+# Output the calculated properties
+thermo_style    custom step v_cohesive_energy v_atomic_volume v_lattice_constant
+thermo          1
+
+# Run the simulation for 0 timesteps to only evaluate initial properties
+run             0

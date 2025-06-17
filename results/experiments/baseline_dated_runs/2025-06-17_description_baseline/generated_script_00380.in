@@ -1,0 +1,43 @@
+# LAMMPS input script for molecular dynamics simulation using CHARMM force field
+
+units real
+atom_style full
+boundary p p p
+
+# Initialize the simulation box from a data file
+read_data system.data
+
+# Replicate the system to increase the simulation size
+replicate 3 3 3
+
+# Include force field parameters
+include forcefield.params
+
+# Define non-bonded interactions with Lennard-Jones and long-range Coulombic interactions
+pair_style lj/charmm/coul/long 14.0 14.0
+bond_style harmonic
+angle_style charmm
+dihedral_style charmm
+improper_style harmonic
+
+# Set the kspace style for long-range interactions
+kspace_style pppm 1.0e-4
+
+# Energy minimization to relax the structure
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Define the timestep and run parameters
+timestep 1.0
+thermo 100
+
+# Define the NPT ensemble to control temperature and pressure
+fix 1 all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Output settings
+dump 1 all atom 1000 trajectory.lammpstrj
+
+# Run the simulation
+run 20000
+
+# Write the final configuration to a data file
+write_data final_configuration.data

@@ -1,0 +1,41 @@
+# LAMMPS input script for spin dynamics of bcc iron
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p f
+atom_style atomic
+
+# Create simulation box
+lattice bcc 2.8665
+region box block 0 5 0 5 0 5
+create_box 1 box
+create_atoms 1 box
+
+# Set atomic masses
+mass 1 55.845
+
+# Define magnetic properties
+atom_style spin
+set group all spin random 2.2 12345
+
+# Pair style and coefficients for spin interactions
+pair_style spin/exchange 3.5
+pair_coeff * * 1.0 0.0 0.0 0.0 0.0 0.0 0.0 # Example coefficients
+
+# Define integrator for spin dynamics
+fix 1 all precession/spin 0.0 0.0 1.0 anisotropy 0.1
+
+# Set timestep
+timestep 0.0001
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal lx ly lz press spx spy spz
+dump 1 all custom 100 spin_traj.lammpstrj id type x y z sx sy sz
+
+# Spin minimization
+minimize 1e-6 1e-8 1000 10000
+
+# Run simulation for spin dynamics
+run 10000

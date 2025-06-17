@@ -1,0 +1,68 @@
+```lammps
+# 2D Indentation Simulation with Energy Minimization
+
+units lj
+dimension 2
+boundary p s p
+atom_style atomic
+
+# Define a hexagonal lattice
+lattice hex 0.9
+region box block 0 20 0 20 -0.5 0.5
+create_box 1 box
+create_atoms 1 box
+
+# Assign mass to atoms
+mass 1 1.0
+
+# Define Lennard-Jones potential with a cutoff of 2.5
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define groups
+region lower block INF INF INF 1.0 INF INF
+group lower region lower
+group mobile subtract all lower
+
+# Apply constraints
+fix 1 lower setforce 0.0 0.0 0.0
+fix 2 all enforce2d
+
+# Define indenter properties
+variable indenter_radius equal 1.0
+variable k equal 100.0
+variable k1 equal 200.0
+
+# Simulation settings
+timestep 0.001
+thermo 100
+
+# Energy minimization parameters
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Indentation loop
+variable step loop 10
+label loop_start
+
+  # Update indenter position and apply spherical indenter potential
+  variable z_pos equal v_indenter_radius*${step}
+  fix 3 mobile indent ${k} sphere 10.0 ${z_pos} 0.0 ${indenter_radius} units box
+
+  # Minimize energy
+  minimize 1.0e-4 1.0e-6 100 1000
+
+  # Output the minimized energy and structure
+  dump 1 all custom 100 dump.indent_${step}.lammpstrj id type x y z
+  dump_modify 1 sort id
+
+  # Increment indenter stiffness
+  variable k equal ${k1}
+
+next step
+jump SELF loop_start
+
+# End script
+unfix 3
+undump 1
+```

@@ -1,0 +1,50 @@
+# LAMMPS Input Script for MD Simulation with Hybrid Potential
+
+units real
+atom_style full
+boundary p p p
+
+# Create a cubic lattice and define simulation box
+lattice bcc 5.0
+region box block 0 10 0 10 0 10
+create_box 2 box
+
+# Create atoms with different types
+create_atoms 1 box
+create_atoms 2 box
+
+# Masses and charges
+mass 1 12.011
+mass 2 12.011
+
+# Pair potentials and coefficients
+pair_style hybrid lj/cut/coul/long/soft 12.0
+pair_coeff * * lj/cut/coul/long/soft 0.0 0.0 0.0
+
+# Define groups for different types
+group type1 type 1
+group type2 type 2
+
+# Set initial charges (these will be adapted)
+set group type1 charge 0.0
+set group type2 charge 0.0
+
+# Long-range electrostatics
+kspace_style pppm 1.0e-5
+
+# Define FEP (Free Energy Perturbation) adaptation
+fix 1 all adapt/fep 1 pair lj/cut/coul/long/soft lambda 0.0 1.0 1000
+fix 2 all adapt/fep 1 pair lj/cut/coul/long/soft charge 0.0 1.0 1000
+
+# Thermostat
+fix 3 all nvt temp 300.0 300.0 100.0
+
+# Timestep
+timestep 2.0
+
+# Compute thermodynamic properties
+thermo_style custom step temp etotal ke pe f_1 f_2
+thermo 200
+
+# Run simulation
+run 10000

@@ -1,0 +1,53 @@
+# LAMMPS input script for zero-temperature EOS calculation
+
+units electron
+atom_style atomic
+boundary p p p
+
+# Calculate lattice constant for given atomic volume (in bohr^3)
+variable atomic_volume equal 121.6
+variable lattice_constant equal (4 * v_atomic_volume)^(1/3)
+
+# Create a 5x5x5 bcc lattice
+lattice bcc ${lattice_constant}
+region box block 0 5 0 5 0 5
+create_box 1 box
+create_atoms 1 box
+
+# Set potential using MGPT for tantalum
+pair_style mgpt
+pair_coeff * * Ta_mgpt.params
+
+# Set neighbor list settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initialize atom velocities to zero
+velocity all set 0.0 0.0 0.0
+
+# Define the NVE ensemble
+fix 1 all nve
+
+# Set the timestep for the simulation
+timestep 0.001
+
+# Output settings
+thermo 10
+thermo_style custom step vol temp pe etotal press
+thermo_modify norm no
+
+# Conversion factors
+variable e2ryd equal 1/13.6056980659
+variable p2gpa equal 29421.02648438959
+
+# Run the simulation for zero timesteps
+run 0
+
+# Compute and print key quantities
+variable total_energy_per_atom equal etotal/atoms
+variable pressure_gpa equal press*v_p2gpa
+
+print "Number of atoms: ${atoms}"
+print "Atomic volume (bohr^3): ${atomic_volume}"
+print "Total energy per atom (Ry): ${total_energy_per_atom}*${e2ryd}"
+print "Pressure (GPa): ${pressure_gpa}"

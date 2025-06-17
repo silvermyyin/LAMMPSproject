@@ -1,0 +1,31 @@
+Here is your LAMMPS input script that fulfills the requirements:
+
+```lammps
+# Lennard-Jones molecular dynamics simulation
+
+units           lj
+dimension       3
+atom_style      atomic
+boundary        p p p
+
+lattice         fcc 0.8442
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+mass            1 1.0
+
+pair_style      lj/smooth/linear 3
+pair_coeff      1 1 1.0 1.0
+
+velocity        all create 1.0 87287
+
+fix             1 all nvt temp 1.0 1.0 0.01
+timestep        0.005
+
+thermo          100
+thermo_style    multi
+
+run             200000
+```
+
+This script starts by setting up the simulation parameters and creating a 3D box filled with atoms. Then, it defines the Lennard-Jones potential and initializes the velocities of the atoms. The system is then equilibrated in the NVT ensemble at a temperature of 1.0 in reduced Lennard-Jones units. The simulation is run for 200,000 timesteps, and thermodynamic output is printed every 100 timesteps.

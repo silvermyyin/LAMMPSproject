@@ -1,0 +1,29 @@
+# LAMMPS input script for Fe/O/H system using ReaxFF potential
+
+units real
+atom_style charge
+
+# Read the initial atomic configuration and charges from the data file
+read_data data.FeOH3
+
+# Define the ReaxFF potential with the specified force field file
+pair_style reaxff
+pair_coeff * * ffield.reax.FeOH Fe O H
+
+# Define the charge equilibration fix
+fix 1 all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
+
+# Integrate the equations of motion using the NVE ensemble
+fix 2 all nve
+
+# Apply the Berendsen thermostat to control the temperature at 500 K
+fix 3 all temp/berendsen 500.0 500.0 100.0
+
+# Set the timestep for the simulation
+timestep 0.25
+
+# Output thermodynamic information every 100 steps
+thermo 100
+
+# Run the simulation for a total of 3000 steps
+run 3000

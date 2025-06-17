@@ -1,0 +1,37 @@
+# LAMMPS Input Script for NEB Simulation of Vacancy Hopping in Silicon
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define lattice and create simulation box
+lattice         diamond 5.431
+region          box block 0 10 0 10 0 10
+create_box      1 box
+
+# Read initial configuration and introduce vacancy
+read_data       silicon.data
+
+# Define interatomic potential
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Delete an atom to create a vacancy (assume atom id 100)
+group           vac id 100
+delete_atoms    group vac
+
+# Minimize the structure using FIRE algorithm
+min_style       fire
+minimize        1e-12 1e-12 10000 10000
+
+# Perform NEB to explore vacancy migration
+neb 0.0 0.1 2000 1e-6 1e-6 100 final final.neb
+timestep        0.01
+thermo          100
+
+# Run NEB calculation
+run             2000
+
+Make sure to replace `silicon.data` and `Si.sw` with the actual paths to your data file and potential file, respectively. Also, ensure the atom id for deletion matches the desired vacancy location.

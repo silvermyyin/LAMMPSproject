@@ -1,0 +1,45 @@
+# LAMMPS input script for Lennard-Jones system with harmonic bonds and ATC coupling
+
+units lj
+atom_style molecular
+boundary p p p
+
+# Read initial configuration
+read_data data.lj
+
+# Define Lennard-Jones potential and harmonic bonds
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+bond_style harmonic
+bond_coeff 1 100.0 1.0
+
+# Define neighbor settings
+neighbor 0.3 bin
+neigh_modify every 5 delay 0 check yes
+
+# ATC Package: Define mesh region and field variables
+fix atc all atc field mesh 10 10 10
+fix_modify atc mesh define_field mass/density energy/stress
+
+# Define simulation settings
+timestep 0.005
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe etotal press
+dump 1 all atom 10000 dump.atom
+
+# Equilibrate system using NPT ensemble
+fix 1 all npt temp 1.0 1.0 0.5 iso 0.1 0.1 1.0
+
+# Run simulation
+run 400
+
+# Output field variables
+fix atc_out all atc output mass/density energy/stress file atc_output.dat
+
+# Clean up
+unfix atc
+unfix 1
+
+This script sets up a molecular dynamics simulation in LAMMPS with the specified conditions, utilizing the Lennard-Jones potential, harmonic bonds, and the ATC package for coupled field calculations. Adjust the `data.lj` file and the mesh size in the ATC fix as needed for your specific system and analysis.

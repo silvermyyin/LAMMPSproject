@@ -1,0 +1,49 @@
+# LAMMPS Input Script for 2D Potts Model with Strain Coupling
+
+units lj
+dimension 2
+atom_style atomic
+boundary p p p
+
+# Create a 50x50 square lattice with 2500 sites
+lattice sq 1.0
+region box block 0 50 0 50 -0.5 0.5
+create_box 1 box
+create_atoms 1 box
+
+# Define Potts model parameters
+variable T equal 1.0
+variable sweeps equal 10
+
+# Define neighbor list with 8 neighbors
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Pair style and coefficients for Potts model with strain coupling
+# Assuming a custom pair style "potts/strain" is available
+pair_style potts/strain 8
+pair_coeff * * 1.0
+
+# Define Monte Carlo settings
+fix 1 all mc move 1.0 prob 0.5 seed 12345
+fix_modify 1 temp $T
+
+# Define tree-based solve style
+solve_style tree
+
+# Run simulation in increments of 10 sweeps
+variable step equal 0
+label loop
+variable step equal ${step}+1
+
+run $sweeps
+
+# Output diagnostics for each step
+thermo_style custom step temp pe mc_accept mc_reject
+thermo 1
+
+if "${step} < 100" then "jump SELF loop"
+
+unfix 1
+
+Note: This script assumes the existence of a custom pair style "potts/strain" appropriate for the Potts model with strain coupling. The `fix mc` command is employed for Monte Carlo moves, and the script runs for 100 sweeps in increments of 10. Ensure LAMMPS supports all specified commands and styles or modify them as per available features.

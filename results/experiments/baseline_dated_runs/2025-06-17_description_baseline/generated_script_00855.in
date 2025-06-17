@@ -1,0 +1,40 @@
+# LAMMPS Input Script for Silicon Crystal using Stillinger-Weber Potential
+# with TTM for electron-ion thermal interactions
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define a cubic simulation box
+region          simbox block 0 10 0 10 0 10 units box
+create_box      1 simbox
+
+# Create a diamond lattice structure for silicon
+lattice         diamond 5.431
+create_atoms    1 box
+
+# Specify the Stillinger-Weber potential for silicon
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Define masses
+mass            1 28.0855
+
+# Define the simulation timestep
+timestep        0.0001
+
+# Temperature control using fix ttm/mod
+fix             1 all ttm/mod 300.0 0.1 0.01 0.0 0.0 1.0
+
+# Integrate the equations of motion using the NVE ensemble
+fix             2 all nve
+
+# Customize thermodynamic output
+thermo          100
+thermo_style    custom step temp etotal f_1[1] f_1[2] f_1[3] f_1[4]
+
+# Run the simulation
+run             1000
+
+This script sets up a molecular dynamics simulation of a silicon crystal using the Stillinger-Weber potential and a two-temperature model to study electron-ion thermal interactions. The simulation is conducted in a periodic cubic box with a diamond lattice configuration, and the `nve` ensemble is employed to integrate the equations of motion. Thermodynamic properties, including specific outputs from the two-temperature model, are monitored throughout the simulation.

@@ -1,0 +1,53 @@
+# LAMMPS input script for a peridynamic simulation of a cylindrical target impacted by a spherical projectile
+
+units           si
+atom_style      atomic
+dimension       3
+boundary        p p p
+
+# Define the target material properties
+variable        density equal 7800  # kg/m^3 for steel
+variable        volume equal 1.0e-9  # m^3 (arbitrary small volume for cubic lattice)
+variable        bulk_modulus equal 160e9  # Pa
+
+# Define the peridynamic parameters
+variable        horizon equal 0.001
+variable        s00 equal 3.0
+
+# Create target
+region          target_reg cylinder y 0.0 0.0 0.005 0.0 0.01 units box
+create_box      1 target_reg
+create_atoms    1 region target_reg
+
+# Set mass and compute peridynamic density
+mass            1 ${density} * ${volume}
+
+# Define projectile
+region          projectile_reg sphere 0.0 0.02 0.0 0.002 units box
+create_atoms    1 region projectile_reg
+
+# Set projectile mass
+mass            2 7850
+
+# Set initial velocities
+velocity        all set 0.0 -100.0 0.0 sum yes
+
+# Define peridynamic potential
+pair_style      peri/pmb ${horizon} ${s00}
+pair_coeff      * * ${bulk_modulus} ${density}
+
+# Define time integration
+timestep        1.0e-7
+
+# Define output settings
+thermo          100
+
+# Define damage monitoring
+compute         damage all damage/atom
+dump            1 all custom 100 dump.damage id type xs ys zs c_damage
+
+# Time integration
+fix             1 all nve
+
+# Run the simulation
+run             1000

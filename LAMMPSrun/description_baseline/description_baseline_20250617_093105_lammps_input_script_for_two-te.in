@@ -1,0 +1,64 @@
+```lammps
+# LAMMPS input script for two-temperature model simulation in a cylindrical region
+
+units real
+atom_style atomic
+boundary p p f
+
+# Create FCC lattice for Argon
+lattice fcc 5.26
+region myCylinder cylinder z 0 0 10 0 20 units box
+create_box 1 myCylinder
+create_atoms 1 region myCylinder
+
+# Define Lennard-Jones potential for Argon
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.238 3.405
+
+# Define masses
+mass 1 39.95
+
+# Reflective boundary condition in z direction
+boundary p p f
+
+# Define regions
+region internal cylinder z 0 0 5 0 10 side in units box
+region ghost cylinder z 0 0 5 10 20 side out units box
+
+# Set initial velocities for atoms
+velocity all create 300.0 12345
+
+# Define groups
+group internal_region region internal
+group ghost_region region ghost
+
+# Read mesh for computational geometry
+fix mesh internal_region atc mesh read file mesh_file.msh
+
+# Apply two-temperature model
+fix ttm internal_region atc ttm element 1 \
+    control_volume 1 \
+    temp_electron 300.0 \
+    temp_atom 300.0 \
+    electron_density 1.0e28 \
+    electron_specific_heat 3.0 \
+    electron_thermal_conductivity 400.0
+
+# Thermostat for atomic system
+fix thermostat internal_region temp/rescale 1 300.0 300.0 0.1 1.0
+
+# Time integration
+timestep 0.001
+fix nve all nve
+
+# Modify mesh for output
+fix_modify mesh output myOutput.msh
+
+# Setup output
+thermo 100
+thermo_style custom step temp pe etotal
+dump myDump all atom 500 dump.atom
+
+# Run simulation
+run 5000
+```

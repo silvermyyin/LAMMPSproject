@@ -1,0 +1,59 @@
+# LAMMPS input script for rigid body dynamics of unconnected clumps
+
+units lj
+atom_style atomic
+
+# Read initial configuration from data file
+read_data rigid_clumps.data
+
+# Define groups for each clump
+group clump1 id 1 2 3
+group clump2 id 4 5 6
+group clump3 id 7 8 9
+group clump4 id 10 11 12
+group clump5 id 13 14 15
+group clump6 id 16 17 18
+group clump7 id 19 20 21
+group clump8 id 22 23 24
+group clump9 id 25 26 27
+
+# Assign initial velocities at temperature 100.0 with random seed
+velocity all create 100.0 12345
+
+# Define rigid bodies using fix rigid/nve
+fix 1 clump1 rigid/nve group 9
+fix 2 clump2 rigid/nve group 9
+fix 3 clump3 rigid/nve group 9
+fix 4 clump4 rigid/nve group 9
+fix 5 clump5 rigid/nve group 9
+fix 6 clump6 rigid/nve group 9
+fix 7 clump7 rigid/nve group 9
+fix 8 clump8 rigid/nve group 9
+fix 9 clump9 rigid/nve group 9
+
+# Exclude self-interactions within each clump
+neigh_modify exclude group clump1 clump1
+neigh_modify exclude group clump2 clump2
+neigh_modify exclude group clump3 clump3
+neigh_modify exclude group clump4 clump4
+neigh_modify exclude group clump5 clump5
+neigh_modify exclude group clump6 clump6
+neigh_modify exclude group clump7 clump7
+neigh_modify exclude group clump8 clump8
+neigh_modify exclude group clump9 clump9
+
+# Set time step
+timestep 0.0001
+
+# Thermodynamic output every 50 timesteps
+thermo 50
+
+# Run the simulation
+run 10000
+
+# Uncomment below for connected body configurations
+# fix 10 all rigid/nve/small molecule
+
+# Uncomment below for visualization options
+# dump myDump all atom 100 dump.rigid
+# dump_modify myDump scale no

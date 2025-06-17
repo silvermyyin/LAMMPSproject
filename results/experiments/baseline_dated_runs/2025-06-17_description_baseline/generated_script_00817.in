@@ -1,0 +1,44 @@
+# LAMMPS Input Script for Simulating a 5-mer Peptide with CHARMM Force Field
+
+# Initialize simulation
+units           real
+atom_style      full
+boundary        p p p
+
+# Read data file
+read_data       data.peptide
+
+# Define force field settings
+pair_style      lj/charmm/coul/long 8.0 10.0
+bond_style      harmonic
+angle_style     charmm
+dihedral_style  charmm
+improper_style  harmonic
+kspace_style    pppm 0.0001
+
+# Define groups (example)
+group peptide type 1 2 3 4 5
+group solvate type 6 7 8
+
+# Fixes for simulation
+fix 1 all nvt temp 275.0 275.0 100.0 tchain 1
+fix 2 all shake 0.0001 20 0 b 1 a 1
+
+# Collective variable analysis
+fix 3 peptide colvars colvars.in
+
+# Set timestep
+timestep        2.0
+
+# Output settings
+thermo          100
+thermo_style    custom step temp etotal pe ke epair
+
+# Run simulation in stages
+run 100
+run 100
+run 100
+
+# End of script
+
+Please ensure to prepare the `colvars.in` file for the collective variable analysis and specify the correct atom types and IDs in the groups for your specific system. Adjust the `fix shake` command parameters as needed based on the specific bonds and angles you wish to constrain.

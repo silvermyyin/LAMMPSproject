@@ -1,0 +1,34 @@
+# LAMMPS input script for a 2D square lattice setup with Lennard-Jones interactions
+
+# Initialize simulation
+units lj
+dimension 2
+boundary p p p
+atom_style atomic
+
+# Define lattice and simulation box
+lattice sq2 1.1
+region box block 0 1 0 1 -0.5 0.5
+create_box 1 box
+create_atoms 1 box
+
+# Assign mass to atoms
+mass 1 1.0
+
+# Define interaction potential
+pair_style lj/cut 1.1
+pair_coeff 1 1 1.0 1.0 1.1
+
+# Neighbor settings
+neighbor 0.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Output settings
+thermo_style custom step pe lx ly lz pxx pyy pzz xcm(1) ycm(1)
+thermo 100
+
+# Dump configuration
+dump 1 all custom 100 dump.lammpstrj id type x y z
+
+# Run initialization
+run 0

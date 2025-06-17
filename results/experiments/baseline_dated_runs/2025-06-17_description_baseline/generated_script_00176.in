@@ -1,0 +1,30 @@
+# LAMMPS Input Script for Water Simulation using HDNNP
+
+units metal
+atom_style full
+boundary p p p
+
+# Read initial configuration from data file
+read_data water_system.data
+
+# Load the HDNNP potential
+pair_style     nnp dir potential_data_directory cutoff 6.36
+pair_coeff     * * conversion_length 1.0 conversion_energy 13.6056980659
+
+# Define settings for the simulation
+timestep       0.0005
+
+# Integrate using NVE ensemble
+fix            1 all nve
+
+# Uncomment the following line to enable atomistic output
+# dump           1 all atom 10 dump.water_nve
+
+# Thermodynamic output every timestep
+thermo         1
+thermo_style   custom step temp pe ke etotal
+
+# Run the simulation
+run            10
+
+# End of script

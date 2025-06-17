@@ -1,0 +1,41 @@
+units real
+atom_style full
+boundary p p p
+
+read_data tiny_epoxy.data
+
+pair_style lj/class2 10.0
+bond_style class2
+angle_style class2
+dihedral_style class2
+improper_style class2
+
+pair_coeff * * 0.0 0.0
+
+neighbor 2.0 bin
+neigh_modify delay 5 every 1 check yes
+
+velocity all create 300.0 12345 dist gaussian
+
+fix 1 all nvt temp 300.0 300.0 100.0
+
+# Define the bond/react fix for crosslinking
+fix crosslink all bond/react \
+    molecule yes \
+    first react_1.mol react_1.map \
+    second react_2.mol react_2.map \
+    first/bond 1 2 1 2 \
+    second/bond 2 3 1 2 \
+    first/single 1 1 1 2 \
+    second/single 1 1 1 2 \
+    first/check yes \
+    second/check yes \
+    every 200 \
+    skip 100 \
+    probability 0.5 0.5
+
+thermo 50
+thermo_style custom step temp f_crosslink[1] f_crosslink[2] f_crosslink[3] f_crosslink[4]
+
+timestep 1.0
+run 2000

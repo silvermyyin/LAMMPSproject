@@ -1,0 +1,44 @@
+# LAMMPS input script for 3D Lennard-Jones melt with varying densities
+
+units lj
+atom_style atomic
+
+# Loop over different densities
+variable density loop 3
+label loop_start
+
+if "${density} == 1" then "variable rho equal 0.7"
+if "${density} == 2" then "variable rho equal 0.8"
+if "${density} == 3" then "variable rho equal 0.9"
+
+# Read corresponding data file for current density
+read_data data.lj_rho${rho}
+
+# Define Lennard-Jones potential with a cutoff of 2.5
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Initialize simulation
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Displace atoms randomly to introduce thermal fluctuations
+displace_atoms all random 0.1 0.1 0.1 12345
+
+# Compute pressure using virial method
+compute myPressure all pressure NULL virial
+
+# Output settings
+thermo_style custom step temp pe c_myPressure[1] c_myPressure[2] c_myPressure[3]
+thermo 1
+
+# Perform a zero-time-step run to calculate properties
+run 0
+
+# Write dump file with atom positions and forces
+dump 1 all custom 1 dump.lj_rho${rho} id type x y z fx fy fz
+dump_modify 1 append yes
+
+# Next iteration
+next density
+jump SELF loop_start

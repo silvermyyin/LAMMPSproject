@@ -1,0 +1,55 @@
+# LAMMPS input script for simulating a mixture of H2O and CO2
+
+units real
+atom_style hybrid template charge
+
+# Create simulation box
+boundary p p p
+region simbox block 0 50 0 50 0 50
+create_box 2 simbox
+
+# Define molecular templates
+molecule h2o_template water.txt
+molecule co2_template co2.txt
+
+# Create atoms
+create_atoms 1 random 100 12345 simbox mol h2o_template 1
+create_atoms 2 random 50 67890 simbox mol co2_template 2
+
+# Define force field parameters
+pair_style lj/cut/coul/long 12.0
+pair_coeff 1 1 0.1553 3.1536  # H2O O-O
+pair_coeff 1 2 0.0 0.0        # H2O O-CO2 O
+pair_coeff 2 2 0.0 0.0        # CO2 O-O
+
+bond_style harmonic
+bond_coeff 1 450 0.9572       # H2O O-H
+bond_coeff 2 800 1.16         # CO2 C-O
+
+angle_style harmonic
+angle_coeff 1 55 104.52       # H2O H-O-H
+angle_coeff 2 120 180.0       # CO2 O-C-O
+
+# Define simulation settings
+kspace_style pppm 1.0e-4
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Apply constraints
+fix constrain_water all shake 0.0001 20 0 b 1 a 1
+
+# Initialize velocities
+velocity all create 300.0 4928459 rot yes dist gaussian
+
+# Define simulation ensemble
+fix nve all nve
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+timestep 1.0
+run 2500
+
+Note: This script assumes the existence of the molecular template files `water.txt` and `co2.txt`, which define the structure and charges of the water and carbon dioxide molecules, respectively. You need to prepare these files according to your molecular models.

@@ -1,0 +1,48 @@
+# LAMMPS input script for a hybrid system of spherical particles and a mesh structure
+
+units real
+dimension 3
+boundary p p p
+atom_style sphere
+
+# Create a simple cubic lattice
+lattice sc 1.0
+region box block 0 10 0 10 0 10
+create_box 2 box
+
+# Define spherical particles
+region central block 4 6 4 6 4 6
+create_atoms 1 region central
+set type 1 diameter 1.0
+
+# Import mesh structure from STL file
+fix mesh all mesh/surface file mesh.stl type 2
+
+# Define interaction potentials
+pair_style hybrid lj/cut 2.5
+pair_coeff * * lj/cut 0.1 1.0 2.5
+pair_coeff 1 2 lj/cut 0.1 1.0 2.5
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initialize velocities
+velocity all create 300.0 12345
+
+# Define integration and constraints
+fix move_particles all nve
+fix constrain_x all momentum 1 linear 1.0 0.0 0.0
+
+# Balance the workload
+fix balance all balance 10 1.1 shift xyz 10 1.1
+
+# Rotate the mesh structure
+fix rotate_mesh all mesh/surface rotate 0.0 0.0 1.0 10.0
+
+# Compute temperature
+compute myTemp all temp
+thermo_style custom step temp ke
+thermo 100
+
+# Run simulation
+timestep 1.0
+run 5000

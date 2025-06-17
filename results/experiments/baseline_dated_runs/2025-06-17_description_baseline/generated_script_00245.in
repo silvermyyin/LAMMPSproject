@@ -1,0 +1,56 @@
+# LAMMPS Input Script for 3D Lennard-Jones Melt with Python Scripting
+
+units lj
+atom_style atomic
+
+# Create a cubic simulation box
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial conditions
+mass 1 1.0
+velocity all create 1.44 87287 loop geom
+
+# Define fixes
+fix 1 all nve
+
+# Python scripting for advanced control
+python myfactorial input 1
+def myfactorial(n):
+    if n < 0:
+        raise ValueError("Negative input for factorial")
+    elif n == 0:
+        return 1
+    else:
+        return n * myfactorial(n-1)
+end python
+
+variable fact equal "python myfactorial 5"
+print "Factorial of 5 is ${fact}"
+
+# Python function for a controlled run loop
+python run_loop input 1
+def run_loop(steps, increment):
+    total_steps = 0
+    while total_steps < steps:
+        run increment
+        total_steps += increment
+        print(f"Ran {total_steps} steps")
+end python
+
+# Run the simulation using the custom loop
+variable total_steps equal 1000
+variable increment equal 100
+python run_loop v_total_steps v_increment
+
+# Output settings
+thermo 100
+dump 1 all atom 100 dump.lj
+
+This LAMMPS input script sets up a 3D Lennard-Jones melt simulation, initializes velocities for the desired temperature, and integrates the equations of motion using the `fix nve` command. Custom Python functions are included to calculate a factorial and perform a run loop, demonstrating LAMMPS's scripting capabilities with Python.

@@ -1,0 +1,38 @@
+# LAMMPS input script for molecular dynamics simulation using MM3 force field
+
+units           real
+atom_style      molecular
+boundary        p p p
+
+# Read initial configuration from a data file
+read_data       data.molecular_system
+
+# Define force field styles
+pair_style      mm3/switch3/coulgauss/long 12.0 4.0
+bond_style      mm3
+angle_style     mm3
+dihedral_style  fourier
+improper_style  distharm
+
+# Define pair_modify options
+pair_modify     mix arithmetic
+
+# Set up electrostatics with PPPM
+kspace_style    pppm 1e-5
+
+# Neighbor settings with multi-style searching
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Define simulation settings
+timestep        0.5
+
+# Define the NPT ensemble
+fix             1 all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Define output settings
+thermo          10
+thermo_style    custom step temp etotal ke pe press
+
+# Run the simulation
+run             100

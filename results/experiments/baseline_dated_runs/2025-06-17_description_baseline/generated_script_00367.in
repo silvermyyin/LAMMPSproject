@@ -1,0 +1,48 @@
+# LAMMPS input script for overdamped dynamics of a dipole-attached sphere
+
+# Initialization
+units lj
+atom_style hybrid sphere dipole
+boundary p p p
+
+# Create simulation box
+region box block -8 8 -8 8 -8 8
+create_box 1 box
+
+# Create atoms
+create_atoms 1 random 1 12345 box
+set atom 1 mass 1.0
+set atom 1 diameter 1.0
+
+# Assign random dipole moments
+set atom 1 dipole/random 12345
+
+# Pair style and coefficients (LJ potential)
+pair_style none
+
+# Set neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check no
+
+# Disable Newton's 3rd law
+newton off
+
+# Define groups
+group mySphere type 1
+
+# Set Langevin thermostat for Brownian motion
+fix 1 mySphere langevin 1.0 1.0 1.0 12345 zero yes
+
+# Apply overdamped dynamics using fix brownian/sphere
+fix 2 mySphere brownian/sphere 1.0 5.0 0.7 12345
+
+# Output settings
+thermo 100
+thermo_style custom step temp ke pe epair msd
+
+# Compute Mean Squared Displacement
+compute msd mySphere msd
+
+# Run the simulation
+timestep 0.00001
+run 3000

@@ -1,0 +1,48 @@
+# LAMMPS input script for heat conduction using SPH
+
+units si
+atom_style atomic
+boundary f p p
+
+# Create a simple cubic lattice
+lattice sc 0.01
+region mybox block 0 100 0 10 0 10
+create_box 1 mybox
+create_atoms 1 box
+
+# Define mass and SPH properties
+mass 1 1.0e-5
+set group all density 10.0
+
+# Define regions for temperature gradient
+region left block 0 50 INF INF INF INF
+region right block 50 100 INF INF INF INF
+
+group left_region region left
+group right_region region right
+
+set group left_region internal 1.0
+set group right_region internal 2.0
+
+# Pair style and coefficients for SPH heat conduction
+pair_style sph/heatconduction 1.0e-4 2.0e-2
+pair_coeff * *
+
+# Neighbor settings
+neighbor 0.2e-2 bin
+neigh_modify delay 0 every 20
+
+# Compute internal energy and total energy
+compute int_energy all pe/atom
+compute total_energy all reduce sum c_int_energy
+
+# Output thermodynamic data
+thermo 10
+thermo_style custom step temp c_total_energy
+
+# Integrate using fix sph/stationary
+fix 1 all sph/stationary
+
+# Run the simulation
+timestep 0.025
+run 1000

@@ -1,0 +1,39 @@
+# LAMMPS input script for simulating magnetic properties of fcc cobalt
+
+units           metal
+atom_style      spin
+
+# Define the lattice and simulation box
+lattice         hcp 2.507  # approximate lattice constant for Co in angstroms
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Set up spin lattice model
+spin            1 1 1  # Initialize spins with random orientations
+set             group all spin random 12345
+
+# Define the potential and interactions
+pair_style      spin/exchange 1.0
+pair_coeff      * * 1.0 1.0 1.0  # Example exchange parameters
+
+# Set up the integrator and thermostat
+fix             1 all nve/spin
+fix             2 all langevin/spin 300.0 300.0 1.0 12345  # Langevin thermostat for spins
+
+# Zero Zeeman field
+fix             3 all addforce/spin 0.0 0.0 0.0
+
+# Define the timestep
+timestep        0.0001
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal
+dump            1 all custom 1 spin_dump.* id type x y z sx sy sz
+
+# Run the simulation
+run             10000
+
+# Write restart file
+write_restart   cobalt_spins.restart

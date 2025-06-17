@@ -1,0 +1,46 @@
+# LAMMPS Input Script for Silicon Simulation using Stillinger-Weber Potential
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create a custom lattice for silicon
+lattice custom 5.431 & 
+    a1 1.0 0.0 0.0 &
+    a2 0.0 1.0 0.0 &
+    a3 0.0 0.0 1.0 & 
+    basis 0.0 0.0 0.0 &
+    basis 0.25 0.25 0.25
+
+# Define region and create atoms
+region          simbox block 0 1 0 1 0 1
+create_box      1 simbox
+create_atoms    1 box
+
+# Replicate the unit cell to create a system with approximately 250 atoms
+replicate       3 3 3
+
+# Define interatomic potential
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Define simulation settings
+timestep        0.000766
+
+# Define thermostats for temperature control
+velocity        all create 1477 123457 mom yes dist gaussian
+fix             1 all langevin 1477 1477 0.01 123457
+
+# Define time integration
+fix             2 all nve
+
+# Output settings
+thermo_style    custom step temp pe press density
+thermo          100
+
+# Run the simulation
+run             15000
+
+# End of the script

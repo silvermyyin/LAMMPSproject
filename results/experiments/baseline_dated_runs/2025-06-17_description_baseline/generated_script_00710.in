@@ -1,0 +1,51 @@
+# LAMMPS Input Script for Nylon Polymerization Reaction
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configurations from a data file
+read_data nylon_initial.data
+
+# Define force field styles
+pair_style lj/class2/coul/long 8.5
+bond_style class2
+angle_style class2
+dihedral_style class2
+improper_style class2
+kspace_style pppm 1.0e-4
+
+# Pair coefficients (example values, should be replaced with actual parameters)
+pair_coeff * * 0.1 3.5
+
+# Define molecule templates for monomers and polymer
+molecule monomerA monomerA.mol
+molecule monomerB monomerB.mol
+molecule nylon_polymer nylon_polymer.mol
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define groups for monomers
+group MonomerA type 1
+group MonomerB type 2
+
+# Specify the bond/react fix for polymerization
+fix 1 all bond/react \
+    species 2 1 1 monomerA 2 monomerB 3 nylon_polymer \
+    react 1 100 100 prob 0.5 12345 \
+    map all
+
+# Set up the NVT ensemble
+fix 2 all nvt temp 300.0 300.0 100.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp press density f_1[1] f_1[2] f_1[3] f_1[4]
+dump 1 all custom 100 dump.nylon id type x y z
+
+# Run the simulation
+timestep 1.0
+run 1000
+
+This script sets up a molecular dynamics simulation for the polymerization of nylon with the specified conditions and styles. It initializes the system from a data file, applies the required force field styles, and includes a bond/react fix to model the reaction process. The simulation maintains a constant temperature using the NVT ensemble and outputs relevant thermodynamic data.

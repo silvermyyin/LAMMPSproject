@@ -1,0 +1,41 @@
+# LAMMPS Input Script for 3D Lennard-Jones Fluid Simulation in NVT Ensemble
+
+units           lj
+atom_style      atomic
+
+# Read the pre-equilibrated configuration from a restart file
+read_restart    pre_equilibrated.restart
+
+# Set the simulation parameters
+variable        rho equal 0.8
+variable        temp equal 1.0
+variable        thermo_interval equal 1000
+variable        damping equal 100.0
+
+# Define the Lennard-Jones potential
+pair_style      lj/cut 2.5
+pair_coeff      * * 1.0 1.0 2.5
+
+# Set neighbor list parameters
+neighbor        0.3 bin
+neigh_modify    every 20 delay 0 check yes
+
+# Define the NVT ensemble using Nose-Hoover thermostat
+fix             1 all nvt temp ${temp} ${temp} ${damping}
+
+# Define thermo output
+thermo          ${thermo_interval}
+thermo_style    custom step temp pe press
+
+# Equilibration phase
+timestep        0.005
+run             100000
+
+# Production phase
+reset_timestep  0
+run             100000
+
+# Output averaged thermodynamic properties to a file
+fix             2 all ave/time 100 1 100 ${thermo_interval} temp pe press file thermo_average.txt
+
+# End of the script

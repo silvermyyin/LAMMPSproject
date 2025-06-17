@@ -1,0 +1,45 @@
+# LAMMPS input script for simulating the melting behavior of Ca-O system
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      charge
+
+# Create lattice and define simulation box
+lattice         fcc 4.8
+region          box block 0 10 0 10 0 10
+create_box      2 box
+create_atoms    1 box
+
+# Shift oxygen atoms to represent ionic structure
+displace_atoms  all move 0.5 0.5 0.5
+
+# Set masses
+mass            1 40.08   # mass of Calcium
+mass            2 16.00   # mass of Oxygen
+
+# Assign charges
+set             type 1 charge 1.2   # Ca2+
+set             type 2 charge -1.2  # O2-
+
+# Define pair style and interactions
+pair_style      hybrid/overlay coul/long 12.0 pedone 12.0
+pair_coeff      * * coul/long
+pair_coeff      1 2 pedone 0.0 0.0 0.0 0.0 0.0
+
+# KSpace style for long-range interactions
+kspace_style    pppm 1.0e-4
+
+# Initial velocity
+velocity        all create 6000.0 12345 mom yes rot yes dist gaussian
+
+# Define fixes
+fix             1 all nvt temp 3000.0 3000.0 0.1
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Run the simulation
+timestep        0.002
+run             1000

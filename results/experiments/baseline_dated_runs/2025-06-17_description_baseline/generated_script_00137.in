@@ -1,0 +1,39 @@
+# LAMMPS Input Script for 3D Lennard-Jones Melt with QM Coupling via MDI
+
+units lj
+atom_style atomic
+
+# Read data file
+read_data data.lj
+
+# Define LJ potential
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Setup neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initialize velocities
+velocity all create 1.0 12345
+
+# Define integration style
+fix 1 all nve
+
+# Quantum mechanical correction through MDI
+fix 2 all mdi/qm 100
+
+# Output settings
+thermo 100
+thermo_style custom step temp epair etotal press
+
+# Dump settings
+dump 1 all custom 100 dump.lj id type x y z fx fy fz
+
+# Run the simulation
+timestep 0.005
+run 10000
+
+# End of input script
+
+This script sets up a 3D Lennard-Jones system, integrates molecular dynamics with quantum mechanical corrections using MDI, and outputs necessary data for analysis.

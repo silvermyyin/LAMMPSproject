@@ -1,0 +1,57 @@
+# LAMMPS input script for validation of descriptor gradients using SNAP in a BCC metallic system
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create a BCC lattice with lattice parameter 2.0
+lattice         bcc 2.0
+region          box block 0 10 0 10 0 10
+create_box      2 box
+create_atoms    1 box
+
+# Define masses for two atom types
+mass            1 55.845  # Example: Iron
+mass            2 58.933  # Example: Cobalt
+
+# Slight random displacement for thermal vibrations
+displace_atoms  all random 0.01 0.01 0.01 12345
+
+# Pair style and potential
+pair_style      hybrid/overlay zero 10.0 zbl 0.0 2.0
+pair_coeff      * * zero
+pair_coeff      * * zbl 0.1 0.2
+
+# SNAP potential settings
+pair_style      snap
+pair_coeff      * * snap.snapcoeff Al Al
+pair_coeff      1 1 snap.snapparam snap.param coeffs 1.0 1.0 1.0 1.0
+
+# Define SNAP compute
+compute         mySnap all snap 2.0
+compute         mySnapGrad all snap dgradflag 1
+
+# Run simulation to extract descriptor gradients
+timestep        0.001
+run             0
+
+# Switch SNAP compute to not extract gradients
+uncompute       mySnapGrad
+compute         mySnapGrad all snap dgradflag 0
+
+# Run simulation to compare descriptor gradients
+run             0
+
+# Output data for analysis
+write_dump      all custom snap_gradients.dump id type c_mySnap[*] c_mySnapGrad[*]
+variable        snap_diff atom "c_mySnap[*] - c_mySnapGrad[*]"
+compute         myForceDiff all reduce sum v_snap_diff
+thermo_style    custom step pe ke etotal c_myForceDiff
+thermo          1
+
+# Run to output final results
+run             0
+
+Note: This script assumes the presence of SNAP parameter files (`snap.snapcoeff` and `snap.param`) and specifies example atomic masses for elements like Iron and Cobalt. You may need to adjust parameters and include the actual SNAP parameter files suitable for your specific system.

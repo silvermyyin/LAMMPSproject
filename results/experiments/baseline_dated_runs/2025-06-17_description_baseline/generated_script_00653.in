@@ -1,0 +1,54 @@
+# LAMMPS input script for a 2D binary mixture of colloidal and LJ particles
+
+units		lj
+dimension	2
+boundary	p p p
+atom_style	granular
+
+# Define the lattice and simulation box
+lattice		sq 0.5
+region		box block 0 60 0 60 -0.5 0.5
+create_box	2 box
+
+# Create small LJ particles
+create_atoms	1 box
+
+# Define masses and diameters
+set		type 1 mass 1
+set		type 1 diameter 1
+set		type 2 mass 400
+set		type 2 diameter 20
+
+# Remove particles to create voids for large colloidal particles
+region		colloid1 sphere 15 15 0 10
+region		colloid2 sphere 45 45 0 10
+delete_atoms	region colloid1
+delete_atoms	region colloid2
+
+# Create large colloidal particles
+create_atoms	2 single 15 15 0
+create_atoms	2 single 45 45 0
+
+# Define neighbor style and pair style for efficiency
+neighbor	0.3 multi
+neigh_modify	delay 0 check yes
+
+# Define interaction potentials
+pair_style	gran/hooke/history 10000.0 10000.0 50.0 NULL 0.5
+pair_coeff	* * 
+
+# Enforce 2D dynamics
+fix		1 all enforce2d
+
+# Apply NPH ensemble with isotropic pressure control
+fix		2 all nph iso 1.0 1.0 1.0
+
+# Apply shear deformation
+fix		3 all deform 1 xy erate 0.001
+
+# Run the simulation
+timestep	0.005
+thermo		100
+thermo_style	custom step temp epair etotal press vol
+
+run		2000

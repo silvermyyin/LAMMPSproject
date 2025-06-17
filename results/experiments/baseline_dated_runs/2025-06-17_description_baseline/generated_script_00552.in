@@ -1,0 +1,41 @@
+# LAMMPS input script for a dielectric system with polarization at interfaces
+
+units         real
+atom_style    full
+boundary      p p p
+
+# Read initial configuration from data file
+read_data     dielectric_system.data
+
+# Define groups
+group         interface type 1
+group         ions type 2 3
+
+# Set pair style with Lennard-Jones and Coulombic interactions with dielectric effects
+pair_style    lj/cut/coul/cut/dielectric 10.0 12.0
+pair_coeff    * * 0.0 0.0 0.0  # Example coefficients, adjust for your system
+
+# Variables for polarization methods
+variable      polarization_method string direct
+
+# Fix for polarization calculation
+variable      bem_gmres equal "fix polar interface polarize bem/gmres 1e-5 1000"
+variable      bem_icc equal "fix polar interface polarize bem/icc 1e-5 1000"
+variable      direct_opt equal "fix polar interface polarize direct 1e-5 1000"
+
+if "${polarization_method} == 'bem_gmres'" then "${bem_gmres}"
+if "${polarization_method} == 'bem_icc'" then "${bem_icc}"
+if "${polarization_method} == 'direct'" then "${direct_opt}"
+
+# Integrate ions with constant energy dynamics
+fix           1 ions nve
+
+# Define thermo output to include energy components
+thermo_style  custom step temp pe ke etotal evdwl ecoul elong
+thermo        100
+
+# Run setup phase without dynamics
+run           0
+
+# Unfix polarization calculation after setup
+unfix         polar

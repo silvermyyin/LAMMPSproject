@@ -1,0 +1,58 @@
+# LAMMPS Input Script for Regression Tests of Three-Body Potential Models
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create cubic diamond lattice
+lattice         diamond 5.431
+region          box block 0 4 0 4 0 4
+create_box      8 box
+create_atoms    1 box
+
+# Define potential for initial equilibration
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Define thermodynamic output
+thermo          10
+thermo_style    custom step temp pe etotal press
+
+# Equilibrate at 1800 K
+velocity        all create 1800.0 12345
+fix             1 all nvt temp 1800.0 1800.0 0.1
+timestep        0.001
+run             100
+
+# Test Stillinger-Weber potential on mixed system of Cd, Te, Zn, Se, Hg, S
+unfix           1
+pair_style      sw
+pair_coeff      * * mixed_system.sw Cd Te Zn Se Hg S
+fix             1 all nvt temp 1800.0 1800.0 0.1
+run             100
+
+# Test Vashishta potential for InP
+unfix           1
+pair_style      vashishta
+pair_coeff      * * InP.vashishta In P
+fix             1 all nvt temp 1800.0 1800.0 0.1
+run             100
+
+# Test Tersoff potential for B, N, and C
+unfix           1
+pair_style      tersoff
+pair_coeff      * * BNC.tersoff B N C
+fix             1 all nvt temp 1800.0 1800.0 0.1
+run             100
+
+# Test Tersoff/ZBL potential for SiC with scaled simulation box
+unfix           1
+change_box      all scale 0.6
+pair_style      tersoff/zbl
+pair_coeff      * * SiC.tersoff.zbl Si C
+fix             1 all nvt temp 1800.0 1800.0 0.1
+run             100
+
+# End of script

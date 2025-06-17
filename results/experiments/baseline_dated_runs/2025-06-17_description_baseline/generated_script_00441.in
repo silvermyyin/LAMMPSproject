@@ -1,0 +1,40 @@
+# LAMMPS input script for 2D simulation of point dipoles with Lennard-Jones units
+
+units lj
+dimension 2
+atom_style charge
+
+# Read initial configuration
+read_data initial_configuration.data
+
+# Define boundary conditions
+boundary p p f
+
+# Initialize velocities
+velocity all create 1.5 12345 dist gaussian
+
+# Define neighbor list
+neighbor 0.3 bin
+neigh_modify delay 0 every 1 check yes
+
+# Pair style for atom sorting
+pair_style zero 2.5
+pair_coeff * *
+
+# Uncomment the following lines to use LAMMPS native Coulombic interactions
+# pair_style coul/long 2.5
+# kspace_style pppm 1.0e-4
+
+# Using Scafacos for long-range interactions
+fix 1 all scafacos/coul/p2nfft 1.0e-4
+
+# Integrate equations of motion
+fix 2 all nve
+
+# Output settings
+thermo 1
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation for a short duration
+timestep 0.005
+run 1000

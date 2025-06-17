@@ -1,0 +1,49 @@
+# LAMMPS input script for 3D heat conduction using eDPD in a cubic domain
+
+# Initialize the simulation
+units lj
+atom_style dpd
+
+# Create a cubic simulation box with periodic boundaries
+region box block 0 20 0 20 0 20
+create_box 1 box
+
+# Create particles
+create_atoms 1 random 16000 12345 box
+
+# Define particle properties
+mass 1 1.0
+set type 1 temp 1.0
+set type 1 cv 1.0e5
+
+# Define eDPD pair style with temperature-dependent properties
+pair_style dpd/tstat 1.0 1.0 1.0 12345
+pair_coeff 1 1 4.5 0.5 1.0
+
+# Initialize velocities with a Gaussian distribution
+velocity all create 1.0 12345 dist gaussian
+
+# Define regions for heat sources and sinks
+region upper block INF INF INF INF 18 20
+region lower block INF INF INF INF 0 2
+
+# Apply heat sources and sinks
+fix heat_upper all addforce 0.0 0.0 10.0 region upper
+fix heat_lower all addforce 0.0 0.0 -10.0 region lower
+
+# Define computes for temperature and output
+compute temp_profile all temp
+fix temp_output all ave/spatial 1 10 10 z 0.5 10.0 c_temp_profile file temp_profile.dat
+
+# Set timestep and run the simulation
+timestep 0.01
+thermo 100
+
+# First simulation run
+run 500
+
+# Reset timestep and continue simulation
+reset_timestep 0
+run 500
+
+# End of input script

@@ -1,0 +1,51 @@
+# LAMMPS Input Script for SPC/E Water Model with Hybrid/Overlay Pair Style
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read data file
+read_data       data.spce
+
+# Define pair style with a hybrid/overlay
+pair_style      hybrid/overlay lj/cut 10.0 python 1
+pair_coeff      * * lj/cut 0.0 0.0  # Zero LJ for lj/cut component
+pair_coeff      * * python spce_python lj
+
+# Define the Python potential
+python          spce_python init one
+python          spce_python command "from lammps import lammps"
+python          spce_python command "lj = lammps()"
+python          spce_python command "lj.command('pair_style lj/cut 10.0')"
+python          spce_python command "lj.command('pair_coeff * * 0.1553 3.166')"
+python          spce_python invoke force
+
+# Kspace style for long-range Coulombic interactions
+kspace_style    pppm 1.0e-6
+
+# Bonding potentials
+bond_style      harmonic
+angle_style     harmonic
+
+# SPC/E water model bond and angle coefficients
+bond_coeff      1 450.0 1.0
+angle_coeff     1 55.0 104.52
+
+# Use SHAKE to constrain bonds and angles in water molecules
+fix             shake_fix all shake 0.0001 20 0 b 1 a 1
+
+# Equilibrate system with NVT at 300 K
+fix             nvt_fix all nvt temp 300.0 300.0 100.0
+
+# Thermodynamic settings
+thermo_style    custom step temp press pe ke etotal
+thermo          10
+
+# Run the simulation
+run             100
+
+# Clean up
+unfix           shake_fix
+unfix           nvt_fix
+
+This script initializes a molecular dynamics simulation of water using the SPC/E model with a hybrid/overlay pair style that combines long-range electrostatics via PPPM and a Python-based Lennard-Jones potential. It uses the SHAKE algorithm to maintain the rigidity of water molecules and runs the simulation for 100 timesteps with thermodynamic outputs every 10 steps.

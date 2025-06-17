@@ -1,0 +1,38 @@
+# LAMMPS input script for water simulation using ACKS2 ReaxFF potential
+
+# Define units and atom style
+units real
+atom_style charge
+
+# Read the initial configuration from data file
+read_data data.water
+
+# Replicate the system
+variable xrep equal 1
+variable yrep equal 1
+variable zrep equal 1
+replicate ${xrep} ${yrep} ${zrep}
+
+# Define the ReaxFF potential with ACKS2
+pair_style reax/c lmp_control
+pair_coeff * * ffield.reax.acks2 O H
+
+# Setup neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initial velocities
+velocity all create 300.0 12345 dist gaussian
+
+# Define the Nose-Hoover thermostat
+fix 1 all nvt temp 300.0 300.0 100.0
+
+# Time integration
+timestep 0.5
+
+# Output thermodynamic properties
+thermo 10
+thermo_style custom step temp press density vol
+
+# Run the simulation
+run 20

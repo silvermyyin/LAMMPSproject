@@ -1,0 +1,44 @@
+# LAMMPS input script for 3D bcc iron system with spin dynamics
+
+units metal
+atom_style spin
+boundary p p f
+
+# Define lattice and region
+lattice bcc 3.96
+region box block 0 34 0 34 0 5
+create_box 1 box
+create_atoms 1 box
+
+# Set mass and spin for atoms
+mass 1 1.0
+set group all spin random 2.50 12345
+
+# Define pair styles and coefficients for spin dynamics
+pair_style hybrid/overlay spin/exchange 3.0 spin/magelec 3.0 spin/dmi 3.0
+pair_coeff * * spin/exchange 1.0
+pair_coeff * * spin/magelec 0.1
+pair_coeff * * spin/dmi 0.05
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify every 10 delay 0 check yes
+
+# Spin precession fix
+fix 1 all precession/spin 1.0 0.0 0.0
+
+# Set timestep
+timestep 0.0001
+
+# Output settings
+thermo 50
+thermo_style custom step temp pe ke lx ly lz spx spy spz
+
+# Spin-conjugate gradient minimization
+min_style spin/cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Run the simulation
+run 10000
+
+This script sets up a LAMMPS simulation for a bcc iron system focusing on spin dynamics. The script includes a hybrid overlay of magnetic interaction pair styles, sets up the simulation environment, and outputs relevant thermodynamic data.

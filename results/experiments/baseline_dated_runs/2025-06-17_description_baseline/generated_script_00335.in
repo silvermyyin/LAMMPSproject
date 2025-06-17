@@ -1,0 +1,43 @@
+# LAMMPS Input Script for a Water Dimer using AMOEBA Force Field
+
+units real
+atom_style amoeba
+
+# Define simulation box and boundary conditions
+boundary s s s
+
+# Read data file containing initial configuration
+read_data water_dimer.data
+
+# Define bond and angle styles
+bond_style class2
+angle_style amoeba
+
+# Pair interactions using AMOEBA force field
+pair_style amoeba
+pair_coeff * * amoeba_params.prm amoeba_keys.key
+
+# Special bond scaling factors
+special_bonds lj/coul 0.0 0.0 0.5
+
+# Define necessary per-atom properties for AMOEBA
+fix prop1 all property/atom i_type
+fix prop2 all property/atom i_polarize
+fix prop3 all property/atom i_polarize_axis
+
+# Compute virial pressure for thermodynamic output
+compute pressure all pressure thermo_temp
+
+# Define thermodynamic output
+thermo 10
+thermo_style custom step temp pe ke etotal press
+
+# Integrate equations of motion
+fix integrate all nve
+
+# Run the simulation for 100 timesteps
+run 100
+
+Note:
+- You must provide the `water_dimer.data`, `amoeba_params.prm`, and `amoeba_keys.key` files with appropriate configurations and parameter settings for the AMOEBA force field.
+- Ensure that your LAMMPS installation supports the AMOEBA force field, as this requires specific packages compiled and available.

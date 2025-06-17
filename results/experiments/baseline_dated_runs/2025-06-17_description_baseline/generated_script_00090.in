@@ -1,0 +1,37 @@
+# LAMMPS input script for overdamped Brownian dynamics of non-interacting particles
+
+units lj
+atom_style atomic
+
+# Define the simulation box
+boundary p p p
+region box block -8 8 -8 8 -8 8
+create_box 1 box
+
+# Create atoms on a simple cubic lattice
+lattice sc 0.4
+create_atoms 1 box
+
+# Set masses
+mass 1 1.0
+
+# Set pair style to none for non-interacting particles
+pair_style none
+
+# Define Brownian dynamics parameters
+fix 1 all langevin 5.0 5.0 1.0 198098
+
+# Set up the integration
+fix 2 all nve
+
+# Compute mean squared displacement
+compute msd all msd
+
+# Output settings
+thermo 100
+thermo_style custom step temp c_msd[4]
+dump 1 all custom 100 dump.brownian id type x y z
+
+# Run the simulation
+timestep 0.00001
+run 3000

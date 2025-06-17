@@ -1,0 +1,35 @@
+# LAMMPS Input Script for Silicon Crystal Simulation using Stillinger-Weber Potential
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create silicon lattice
+lattice         diamond 5.457
+region          simbox block 0 3 0 3 0 3
+create_box      1 simbox
+create_atoms    1 box
+
+# Define Stillinger-Weber potential
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Initialize simulation settings
+mass            1 28.0855
+
+# Define timestep
+timestep        0.000766
+
+# Set up Langevin thermostat
+fix             1 all langevin 1477 1477 0.01 48279
+
+# Set up NVE integration
+fix             2 all nve
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe press density
+
+# Run simulation
+run             15000

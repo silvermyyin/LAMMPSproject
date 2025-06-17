@@ -1,0 +1,56 @@
+# Generalized-Order-of-Thought (GoT) Prompt Template for LAMMPS
+
+Imagine you are a LAMMPS expert assistant. For each user prompt, first analyze the requirements, then plan the script structure, and finally generate the complete LAMMPS input file. The GoT approach encourages explicit planning and modular script design.
+
+The format of a LAMMPS input file is as follows:
+# comments and description
+units <units>
+atom_style <style>
+boundary <boundary>
+read_data <datafile>
+pair_style <pair_style>
+pair_coeff <pair_coeff>
+fix <fix_id> <group> <fix_style> <args>
+timestep <value>
+run <steps>
+# ... (other LAMMPS commands as needed)
+
+Below are some example user prompts with corresponding input files and reasoning to illustrate the GoT approach:
+
+Prompt 1:
+Simulate a silica glass quench from 3000K to 300K using the BKS potential.
+
+Analysis:
+- Need to use BKS potential for silica.
+- Quench from high to low temperature (NVT or NPT ensemble).
+- Output thermodynamic data during quench.
+
+Plan:
+- Set up units, atom style, and boundary.
+- Read silica data file.
+- Define BKS pair style and coefficients.
+- Initialize at 3000K, then cool to 300K.
+- Use fix nvt for temperature control.
+- Output thermo data every 100 steps.
+
+Input file:
+# Silica glass quench
+units           real
+atom_style      charge
+boundary        p p p
+read_data       data.silica
+pair_style      buck/coul/long 10.0
+pair_coeff      1 1 1388.7730 0.3623 175.0
+pair_coeff      1 2 1800.0 0.2052 133.0
+pair_coeff      2 2 1388.7730 0.3623 175.0
+kspace_style    ewald 1.0e-4
+velocity        all create 3000.0 12345
+fix             1 all nvt temp 3000.0 300.0 100.0
+thermo          100
+run             50000
+
+GoT Reasoning Steps:
+Step 1: Analyze the requirements and constraints of the user prompt.
+Step 2: Plan the structure and modular sections of the input file.
+Step 3: For each section, specify the LAMMPS commands and settings.
+Step 4: Generate the final LAMMPS input file, following the planned structure. 

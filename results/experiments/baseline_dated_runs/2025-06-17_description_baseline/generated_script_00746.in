@@ -1,0 +1,48 @@
+# LAMMPS Input Script for Carbon-Water Interface Simulation
+
+units metal
+atom_style full
+boundary p p p
+
+read_data carbon_water_data.lmp
+
+# Define groups
+group carbon type 1
+group water type 2 3 4
+
+# Pair potentials
+pair_style hybrid/overlay lj/cut/tip4p/long 1 2 1 1 0.1546 12.0 aip/water/2dm 10.0
+pair_coeff * * lj/cut/tip4p/long 0.0 0.0
+pair_coeff 2 2 lj/cut/tip4p/long 0.6502 3.1656
+pair_coeff 2 3 lj/cut/tip4p/long 0.0 0.0
+pair_coeff 3 3 lj/cut/tip4p/long 0.0 0.0
+
+# AIP potential for carbon-water interactions
+pair_coeff * * aip/water/2dm C O H
+
+# Bond and angle potentials for water
+bond_style harmonic
+bond_coeff 1 450 0.9572
+
+angle_style harmonic
+angle_coeff 1 55 104.52
+
+# Kspace style for long-range interactions
+kspace_style pppm 1.0e-4
+
+# Neighbor settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Fixes
+fix 1 all nve
+fix 2 carbon setforce 0.0 0.0 0.0
+
+# Initial velocities
+velocity water create 300.0 12345 dist gaussian
+
+# Timestep and run
+timestep 1.0
+thermo 100
+thermo_style custom step time temp etotal pe ke
+run 1000

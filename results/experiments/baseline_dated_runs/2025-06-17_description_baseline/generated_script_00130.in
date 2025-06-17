@@ -1,0 +1,40 @@
+# LAMMPS Input Script for 2D NEB Simulation of Atom Transition
+
+units           lj
+dimension       2
+boundary        p s p
+atom_style      atomic
+
+# Define lattice and system
+lattice         hex 0.9
+read_data       initial_configuration.data
+
+# Interatomic potentials
+pair_style      lj/cut 2.5
+pair_coeff      * * 1.0 1.0
+
+# Relax surface via energy minimization
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Group definitions
+region          lower_surface block INF INF INF 0.5 INF INF
+group           surface_atoms region lower_surface
+group           mobile_atoms subtract all surface_atoms
+
+# Setup NEB
+fix             1 all neb 1.0 parallel ideal spring 1.0
+neb             2000 1.0e-6 100 100
+
+# Constraints and integration
+fix             2 all enforce2d
+timestep        0.05
+
+# Output settings
+thermo          100
+dump            1 all custom 100 neb_output.dump id type x y z
+
+# Run NEB
+run             2000
+
+# Write final configuration
+write_data      final_configuration.data

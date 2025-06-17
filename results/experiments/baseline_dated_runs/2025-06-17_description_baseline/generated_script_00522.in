@@ -1,0 +1,53 @@
+# LAMMPS Input Script for 2D Simulation of Liquid Droplet Propagation in Glass Matrix
+
+units lj
+dimension 2
+boundary p p p
+
+atom_style atomic
+
+# Read pre-equilibrated glass configuration
+read_data glass_configuration.data
+
+# Define Lennard-Jones potential with a polynomial softening
+pair_style lj/polysoft 2.5
+pair_coeff * * 1.0 1.0
+
+# Define spherical region for liquid bubble
+region bubble sphere 10 10 0 5 side in units box
+group bubble region bubble
+
+# Define output settings
+thermo 100
+thermo_style custom step temp press pe ke etotal
+dump 1 all custom 1000 traj.lammpstrj id type x y z
+
+# Initial minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Annealing stage: NPT ensemble to rapidly expand the system
+fix 1 all npt temp 0.1 1.0 1.0 iso 0.0 1.0 10.0
+run 5000
+unfix 1
+
+# Replicate the system to increase size
+replicate 2 2 1
+
+# Freeze particles outside the bubble to form a liquid cavity
+group frozen subtract all bubble
+fix 2 frozen setforce 0.0 0.0 0.0
+
+# Equilibrate the liquid bubble using NVT ensemble
+fix 3 bubble nvt temp 1.0 1.0 1.0
+run 10000
+unfix 3
+
+# Study propagation: NVT ensemble with bubble dynamics
+fix 4 all nvt temp 1.0 1.5 1.0
+run 20000
+
+# Cleanup
+unfix 2
+unfix 4
+
+This script sets up a 2D LAMMPS simulation to explore the behavior of a liquid droplet (bubble) within a glass matrix. The simulation uses a Lennard-Jones potential with polynomial softening (`lj/polysoft`) and follows the described stages to study the droplet's propagation dynamics. The script includes steps to read the initial configuration, define potential interactions, create and track the bubble region, and apply thermal and pressure conditions according to the specified protocol.

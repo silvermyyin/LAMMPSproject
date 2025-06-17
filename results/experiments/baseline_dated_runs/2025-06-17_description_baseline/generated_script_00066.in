@@ -1,0 +1,43 @@
+# LAMMPS input script for a simple water model using LATTE for QM calculations
+
+# Specify units and atom style
+units metal
+atom_style full
+
+# Read the initial configuration from a data file
+read_data data.water
+
+# Variables for replication
+variable xrep equal 1
+variable yrep equal 1
+variable zrep equal 1
+
+# Replicate the system
+replicate ${xrep} ${yrep} ${zrep}
+
+# Set initial velocities to zero using a specific random seed
+velocity all create 0.0 12345 mom yes rot yes dist gaussian
+
+# Define interactions
+pair_style zero 10.0
+pair_coeff * *
+
+# QM calculations using LATTE
+fix 1 all mdi/qm virial yes elements O H
+
+# Time step for the simulation
+timestep 0.00025
+
+# Integration method
+fix 2 all nve
+
+# Output thermodynamic information
+thermo 10
+thermo_style custom step temp pe etotal press
+
+# Run the simulation for 100 timesteps
+run 100
+
+# Clean up
+unfix 1
+unfix 2

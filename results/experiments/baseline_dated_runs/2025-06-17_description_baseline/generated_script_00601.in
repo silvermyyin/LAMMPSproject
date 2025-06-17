@@ -1,0 +1,54 @@
+# LAMMPS input script for HfO2 simulation using COMB potential
+
+units metal
+atom_style charge
+
+# Read data file
+read_data hafnium_oxide.data
+
+# Define groups
+group hafnium type 1
+group oxygen type 2
+
+# COMB potential settings
+pair_style comb
+pair_coeff * * ffield.comb Hf O
+
+# Compute average charges
+compute charge_hafnium hafnium property/atom q
+compute charge_oxygen oxygen property/atom q
+compute charge all property/atom q
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe etotal press
+thermo_modify flush yes
+
+# Time step
+timestep 0.00020
+
+# NVT ensemble at 300 K
+fix 1 all nvt temp 300.0 300.0 0.1
+
+# Charge equilibration
+fix 2 all qeq/comb 10 0.0001
+
+# Initial equilibration
+run 10000
+
+# Unfix NVT and apply anisotropic box relaxation
+unfix 1
+fix 3 all box/relax aniso 0.0 vmax 0.001
+
+# Minimize energy
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Output for visualization (commented out)
+# dump 1 all atom 100 dump.hfo2
+# dump 2 all image 100 image.*.jpg type type &
+#   axes yes 0.8 0.02 view 60 -30
+# dump_modify 2 pad 5
+# dump 3 all movie 100 movie.mpg type type
+
+# End of the script

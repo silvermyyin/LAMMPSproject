@@ -1,0 +1,40 @@
+# LAMMPS Input Script for Toluene with Drude Polarizability
+
+units real
+atom_style full
+boundary p p p
+
+# Create a box and read data
+read_data toluene.data
+
+# Define force fields
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+improper_style fourier
+pair_style hybrid/overlay lj/cut/coul/long 12.0 thole 0.2
+kspace_style pppm 1.0e-4
+
+# Define Drude polarizability
+fix drude all drude 0.005 0.05 10.0 1.0
+
+# SHAKE algorithm for constraints
+fix constrain all shake 0.0001 20 0 b 1 a 1
+
+# Thermostat for core and Drude particles
+fix nvt_core core-group nvt temp 298.0 298.0 100.0
+fix nvt_drude drude-group nvt temp 1.0 1.0 100.0
+
+# Initialize velocities
+velocity core-group create 298.0 12345 dist gaussian
+velocity drude-group create 1.0 23456 dist gaussian
+
+# Output settings
+thermo_style custom step temp pe ke etotal press
+thermo 100
+
+# Run the simulation
+timestep 0.5
+run 2000
+
+# End of script

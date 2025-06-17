@@ -1,0 +1,32 @@
+# LAMMPS input script for 2D simulation of point dipoles using ScaFaCoS with FMM
+
+units lj
+dimension 2
+atom_style charge
+boundary f f f
+
+read_data data.hammersley_sphere
+
+# Initialize velocities
+velocity all create 1.5 49893
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify delay 0
+
+# Zero pair style for atom sorting; ScaFaCoS handles long-range interactions
+pair_style zero 10.0
+pair_coeff * *
+
+# Long-range Coulombic interactions using ScaFaCoS with Fast Multipole Method (FMM)
+kspace_style scafacos 1e-4
+
+# Integrate using NVE ensemble
+fix 1 all nve
+
+# Output settings
+thermo 1
+
+# Run the simulation for 20 timesteps
+timestep 0.005
+run 20

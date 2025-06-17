@@ -1,0 +1,37 @@
+# LAMMPS input script to calculate the cohesive energy of a single silicon atom
+
+units metal
+atom_style atomic
+
+# Create a large simulation box with free boundaries
+boundary f f f
+lattice sc 100.0
+region box block 0 1 0 1 0 1
+create_box 1 box
+
+# Define the mass of silicon
+mass 1 28.085
+
+# Create a single silicon atom at the origin
+create_atoms 1 single 0.0 0.0 0.0
+
+# Define the Stillinger-Weber potential with spline modifications
+pair_style meam/sw/spline
+pair_coeff * * Si.sw.spline Si
+
+# Compute potential energy
+compute pe_atom all pe/atom
+variable cohesion_energy equal c_pe_atom / count(all)
+
+# Output the calculated cohesive energy
+thermo_style custom step pe v_cohesion_energy
+thermo 1
+
+# Run the simulation for 0 steps to only compute energy
+run 0
+
+# Print a comparison with reference value
+print "Calculated Cohesive Energy per atom: ${v_cohesion_energy} eV/atom"
+print "Reference Cohesive Energy per atom: 0 eV/atom"
+
+Ensure that the `Si.sw.spline` file is in the working directory and contains the appropriate parameters for the Stillinger-Weber potential with spline modifications for silicon.

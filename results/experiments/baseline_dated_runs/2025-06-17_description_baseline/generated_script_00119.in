@@ -1,0 +1,83 @@
+# LAMMPS Input Script for Water-Ethanol-Salt Mixture
+
+# Initialization
+units real
+atom_style full
+boundary p p p
+
+# Create simulation box
+region box block 0 50 0 50 0 50
+create_box 3 box
+
+# Define force field parameters
+pair_style lj/cut/tip4p/long 1 2 1 1 0.125 10.0
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+
+# Create atoms and molecules
+# Note: Molecule templates and coordinates should be predefined in separate files
+# Load TIP4P/2005 water model
+molecule water tip4p2005_water.txt
+# Load OPLS parameters for ethanol
+molecule ethanol opls_ethanol.txt
+
+# Create water molecules
+create_atoms 1 random 2000 12345 box mol water 253
+# Create ethanol molecules
+create_atoms 2 random 1000 12346 box mol ethanol 254
+# Create sodium ions
+create_atoms 3 random 50 12347 box mol ion_sodium
+# Create chloride ions
+create_atoms 3 random 50 12348 box mol ion_chloride
+
+# Assign charges
+set type 3 charge 1.0  # Sodium
+set type 4 charge -1.0 # Chloride
+
+# Define groups
+group water type 1
+group ethanol type 2
+group ions type 3 4
+group mixture type 1 2 3 4
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Define special bonds
+special_bonds lj/coul 0.0 0.0 0.5
+
+# Define kspace style for long-range electrostatics
+kspace_style pppm/tip4p 1.0e-4
+
+# Define SHAKE constraints for water
+fix shake_water water shake 0.0001 20 0 b 1 a 1
+
+# Initial velocities
+velocity mixture create 300.0 12345
+
+# Equilibration with nve/limit and Berendsen thermostat
+fix nve_limit all nve/limit 0.01
+fix temp_berendsen all temp/berendsen 300.0 300.0 100.0
+
+# Run initial equilibration
+timestep 1.0
+thermo 100
+run 10000
+
+# Remove initial fixes
+unfix nve_limit
+unfix temp_berendsen
+
+# Equilibration with npt ensemble
+fix npt_eq all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Run further equilibration
+timestep 1.0
+thermo 1000
+thermo_style custom step temp press pe ke etotal
+dump 1 all custom 1000 traj.lammpstrj id type x y z vx vy vz
+run 50000
+
+# End of script

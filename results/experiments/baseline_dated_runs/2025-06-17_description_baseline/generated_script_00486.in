@@ -1,0 +1,43 @@
+# LAMMPS input script for a thylakoid-like structure using Lennard-Jones interactions
+
+units lj
+atom_style molecular
+
+# Read initial configuration
+read_data thylakoid.data
+
+# Define boundary conditions
+boundary f f p
+
+# Pair style and coefficients
+pair_style lj/cut/shift 1.1225
+pair_coeff * * 1.0 1.0
+
+# Reseeding random number generator
+variable seed equal 12345
+
+# Assign type 2 to approximately 100 particles within a spherical region
+region sphere1 sphere 0.0 0.0 0.0 5.0 units box
+group sphere_group region sphere1
+group type2_group type 2
+group modify_group intersect sphere_group type2_group
+set group modify_group type 2
+
+# Porosity operation: Remove 20% of type 1 particles
+group type1_group type 1
+variable remove_atoms equal count(type1_group)*0.2
+delete_atoms porosity type1_group 0.2 ${seed}
+
+# Define the integration scheme
+fix 1 all nve/manifold/rattle
+
+# Output settings
+thermo_style custom step temp pe ke etotal
+thermo 2500
+
+# Dump atomic trajectories
+dump 1 all atom 10000 trajectory.lammpstrj
+
+# Run the simulation
+timestep 0.005
+run 25000000

@@ -1,0 +1,79 @@
+# LAMMPS input script for CO2 and water in graphite using TIP4P and TRAPPE models
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Define regions and create simulation box
+region          box block 0 50 0 50 0 50
+create_box      3 box  # 1: CO2, 2: Water, 3: Graphite
+
+# Define lattice for CO2 and water placement
+lattice         fcc 5.0
+region          co2_region block 0 25 0 25 0 25
+region          water_region block 25 50 0 25 0 25
+region          graphite_region block 0 50 25 50 0 50
+
+# Create CO2 molecules
+create_atoms    1 region co2_region
+molecule        co2 co2_molecule.txt
+
+# Create water molecules
+create_atoms    2 region water_region
+molecule        water tip4p.txt
+
+# Create graphite structure
+create_atoms    3 region graphite_region
+molecule        graphite graphite.txt
+
+# Define force fields
+pair_style      lj/cut/coul/long 10.0 12.0
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  opls
+improper_style  harmonic
+kspace_style    pppm 1.0e-4
+
+# Define force field parameters (assumed predefined file)
+include         forcefield_parameters.txt
+
+# Set masses
+mass            1 44.01  # CO2
+mass            2 18.015 # Water
+mass            3 12.01  # Graphite
+
+# Set groupings
+group           co2 type 1
+group           water type 2
+group           graphite type 3
+
+# Apply constraints
+fix             freeze_graphite graphite setforce 0.0 0.0 0.0
+fix             shake_water water shake 0.0001 20 0 b 1 a 1
+
+# Initialize velocities
+velocity        all create 300.0 12345
+
+# Thermostat setup
+fix             temp_co2 co2 temp/berendsen 300.0 300.0 100.0
+fix             temp_water water temp/berendsen 300.0 300.0 100.0
+
+# NVE Equilibration
+timestep        1.0
+fix             nve all nve
+run             5000
+
+# Switch to NPT ensemble
+unfix           nve
+fix             npt all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Output settings
+thermo          100
+thermo_style    custom step temp press pe ke etotal
+dump            1 all atom 1000 dump.lammpstrj
+dump_modify     1 sort id
+
+# Run simulation
+run             10000
+
+# End of script

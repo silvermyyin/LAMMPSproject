@@ -1,0 +1,58 @@
+units metal
+dimension 3
+boundary p p p
+
+atom_style atomic
+
+lattice fcc 5.405
+region simbox block -14 14 -3 3 -3 3
+create_box 1 simbox
+create_atoms 1 box
+
+mass 1 39.95
+
+# Define finite element region
+region fe_region block -5 5 -1 1 -1 1
+group fe_group region fe_region
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes rot no dist gaussian
+
+# Define pair style and potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.0103 3.4
+
+# Setup AtC package
+fix_modify AtC all AtC control file Cu_ttm.mat
+fix atc all AtC control file Cu_ttm.mat
+
+# Define initial conditions for electron temperature
+fix gauss all AtC control set_temperature node_value gaussian 100 0.0 0.0 0.0
+
+# Thermo settings for output
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Initial relaxation
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Heating phase with electron temperature manipulation
+variable temp_e equal 1000
+fix boundary_temp all AtC set temperature node_value boundary $temp_e
+
+timestep 0.002
+run 5000
+
+# Final relaxation
+unfix boundary_temp
+variable temp_e equal 300
+fix boundary_temp all AtC set temperature node_value boundary $temp_e
+run 5000
+
+unfix atc
+unfix boundary_temp
+
+write_restart two_temp_coupling_restart
+
+print "Simulation completed successfully."

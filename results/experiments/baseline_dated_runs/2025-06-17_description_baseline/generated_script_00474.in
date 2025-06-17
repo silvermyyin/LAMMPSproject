@@ -1,0 +1,39 @@
+# LAMMPS Input Script for NEB Simulation of Vacancy Hopping in Silicon
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Define lattice and read initial configuration
+lattice diamond 5.43
+read_data silicon_initial.data
+
+# Define potential
+pair_style sw
+pair_coeff * * Si.sw Si
+
+# Create a group for the vacancy site and delete an atom to create a vacancy
+group vacancy_site id 1000  # Assume ID 1000 is the atom to be removed
+delete_atoms group vacancy_site
+
+# Group for surrounding atoms for analysis
+group surrounding_atoms region surrounding_region  # Define the region based on the vacancy location
+
+# Apply random displacement to all atoms
+displace_atoms all random 0.01 0.01 0.01 12345
+
+# Minimize the energy before starting NEB
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# NEB setup
+neb 0.0 1.0 2000 1.0e-6 final final_path_file
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step pe ke etotal press temp
+
+# Run NEB simulation
+run 2000
+
+Note: This script assumes that you have a valid `silicon_initial.data` file and a suitable `Si.sw` file for the Stillinger-Weber potential. Additionally, the atom ID and the surrounding region should be adapted to your specific setup. Make sure to define the `surrounding_region` appropriately for your system.

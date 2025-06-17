@@ -1,0 +1,26 @@
+# LAMMPS input script for electrostatic interactions in a slab geometry
+# with PPPM/electrode k-space style and specific boundary conditions.
+
+units          real
+atom_style     full
+boundary       p p f
+
+# Read in settings from an external file
+include        settings.mod
+
+# Define k-space style with slab correction
+kspace_style   pppm/electrode 1.0e-10
+kspace_modify  slab 8.0
+
+# Define the thermo output to monitor the desired properties
+thermo_style   custom step pe c_myChargeBottom c_myChargeTop
+thermo         100
+
+# Apply constant potential to electrodes with symmetry enabled
+fix            conp all electrode/conp bottom electrode 0.0 top electrode 5.0 symmetry yes
+fix_modify     conp file inversion inv.csv vector vec.csv
+
+# Run the simulation for 0 timesteps to initialize setup
+run            0
+
+Note: The script assumes that `settings.mod` correctly defines the necessary computes, groups, and other settings such as `c_myChargeBottom` and `c_myChargeTop`. Adjust the electrode potential and any other parameters as necessary for your specific simulation setup.

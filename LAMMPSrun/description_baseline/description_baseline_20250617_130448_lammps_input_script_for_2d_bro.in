@@ -1,0 +1,40 @@
+```lammps
+# LAMMPS input script for 2D Brownian dynamics of non-interacting particles
+
+# Initialize simulation
+units       lj
+dimension   2
+atom_style  atomic
+boundary    p p f
+
+# Create simulation box
+region      box block -30 30 -30 30 -0.1 0.1
+create_box  1 box
+
+# Create atoms on a square lattice
+lattice     sq 0.4
+create_atoms 1 box
+
+# Set mass and initial velocities
+mass        1 1.0
+velocity    all create 1.0 12345 mom yes rot no dist gaussian
+
+# Define pair style with no interactions
+pair_style  none
+
+# Set up Brownian dynamics
+fix         brownian all langevin 5.0 5.0 1.0 198098
+
+# Define timestep
+timestep    0.00001
+
+# Compute mean square displacement
+compute     myMSD all msd
+
+# Output settings
+thermo      100
+thermo_style custom step temp ke pe c_myMSD
+
+# Run the simulation
+run         3000
+```

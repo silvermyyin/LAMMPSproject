@@ -1,0 +1,26 @@
+# LAMMPS input script for AIMD simulation of 2 UO2 molecules using LATTE via MDI
+
+units metal
+atom_style full
+
+# Read initial configuration from data file
+read_data data.2uo2
+
+# Assign initial velocities for all atoms to simulate a temperature of 300 K
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Define the timestep
+timestep 0.00025
+
+# Integrate equations of motion with NVE ensemble
+fix 1 all nve
+
+# Quantum mechanical forces and virial stress calculation using MDI
+fix 2 all mdi/qm virial yes elements U O
+
+# Set up thermodynamic output
+thermo_style custom step temp pe etotal press
+thermo 5
+
+# Run the simulation in 20-step iterations
+run 20

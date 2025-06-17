@@ -1,0 +1,49 @@
+# LAMMPS Input Script for Lithium Dendritic System Simulation
+
+# Initialize simulation
+units metal
+atom_style electron
+
+# Define variables
+variable sname string "lithium_dendritic_system.data"
+
+# Read in data
+read_data ${sname}
+
+# Define pair style and coefficients
+pair_style eff/cut 50.112
+pair_coeff * *
+
+# Set boundary conditions
+boundary p p p
+
+# Create custom compute to track electron properties
+compute spin all property/atom spin
+compute radius all property/atom radius
+
+# Minimize energy of the system
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Define the ensemble for the simulation
+fix 1 all nvt/eff temp 300.0 300.0 100.0
+
+# Define timestep
+timestep 0.001
+
+# Output settings
+thermo 10
+thermo_style custom step temp pe ke etotal
+thermo_modify lost warn
+
+# Trajectory output
+dump 1 all custom 100 trajectory.lammpstrj id type x y z
+dump_modify 1 sort id
+dump 2 all xyz 100 trajectory.xyz
+
+# Run simulation
+run 10000
+
+# Clean up
+unfix 1
+undump 1
+undump 2

@@ -1,0 +1,42 @@
+```lammps
+# LAMMPS input script for a 2D SRD fluid system with a low-density lattice and SRD particles
+
+units lj
+atom_style atomic
+dimension 2
+boundary p p f
+
+# Define 2D square lattice with low density
+lattice sq 0.4
+region box block 0 30 0 30 -0.5 0.5
+create_box 1 box
+
+# Create SRD particles in a high-density plane region
+lattice sq 85.0
+region srd_plane block 5 25 5 25 -0.1 0.1
+create_atoms 1 region srd_plane
+
+# Set mass and initial velocities
+mass 1 0.01
+velocity all create 1.0 12345
+
+# Define interactions (no pair style needed for SRD)
+pair_style none
+pair_coeff
+
+# Define SRD dynamics
+fix 1 all srd 0.5 0.2 0.2 1 12345
+
+# Apply slip boundary conditions
+fix 2 all enforce2d
+
+# Set timestep
+timestep 0.02
+
+# Output settings
+thermo_style custom step temp etotal press f_1[1] f_1[2] f_1[3] f_1[4]
+thermo 100
+
+# Run the simulation
+run 5000
+```

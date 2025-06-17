@@ -1,0 +1,56 @@
+# LAMMPS input script for 2D fluid interacting with a rigid spherical particle using SDPD
+
+units micro  # Set units to micrometers and picograms
+dimension 2  # 2D simulation
+
+atom_style hybrid sphere sdpd  # Use hybrid style to define spherical and SDPD particles
+
+# Define variables for convenience
+variable radius sphere equal 0.5
+variable spacing equal ${radius}/5.0
+variable cutoff equal 4.5*${spacing}
+
+# Create the simulation box
+region domain block 0 10 0 10 -0.5 0.5 units box
+create_box 2 domain  # Two types: fluid and particle
+
+# Create fluid particles on a square lattice
+lattice sq ${spacing}
+region fluidReg block 0 10 0 10 -0.5 0.5 units box
+create_atoms 1 region fluidReg
+
+# Define masses and radii of particles
+set type 1 mass 1.0  # Fluid particles
+set type 1 diameter ${spacing}  # Effective diameter for SDPD
+set type 2 mass 100.0  # Mass for the rigid particle (arbitrary large mass)
+set type 2 diameter 1.0  # Diameter of the rigid particle
+
+# Define pair styles and coefficients
+pair_style hybrid/overlay sdpd/taitwater ${cutoff} 1.0 100.0 1.0 123456
+pair_coeff * * sdpd/taitwater 1.0 1.0 1.0
+
+# Create a rigid spherical particle
+region sphereReg sphere 5 5 0 ${radius} units box
+create_atoms 2 single 5 5 0
+
+# Define the rigid body for the spherical particle
+group rigidSphere type 2
+fix rigidFix rigidSphere rigid single
+
+# Set neighbor settings for efficiency
+neighbor 0.3 bin
+neigh_modify delay 0 every 1 check yes
+
+# Define initial velocities for fluid particles
+velocity all create 0.0 12345 dist gaussian
+
+# Set the timestep
+timestep 0.001
+
+# Output settings
+thermo 100
+thermo_style custom step time temp press
+dump myDump all custom 100 dump_fluid.* id type x y z vx vy vz
+
+# Run the simulation
+run 10000

@@ -1,0 +1,64 @@
+# LAMMPS input script for 2D fluid flow through a pipe using Lennard-Jones interactions
+
+units lj
+dimension 2
+boundary p p f
+
+# Define lattice for wall atoms
+lattice sq2 1.0
+region domain block 0 50 0 20 -0.5 0.5
+create_box 3 domain
+
+# Create wall atoms
+region top_wall block INF INF 18 20 INF INF
+region bottom_wall block INF INF 0 2 INF INF
+create_atoms 1 region top_wall
+create_atoms 1 region bottom_wall
+
+# Define Lennard-Jones potential for interactions
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+pair_coeff 2 2 1.0 1.0 2.5
+pair_coeff 1 2 1.0 1.0 2.5
+
+# Create fluid atoms
+region fluid block INF INF 2 18 INF INF
+create_atoms 2 region fluid
+
+# Define groups
+group wall type 1
+group fluid type 2
+
+# Set masses
+mass 1 1.0
+mass 2 1.0
+
+# Set velocities
+velocity fluid create 2.0 12345
+
+# Integrate with Nosé-Hoover thermostat for equilibration
+fix 1 all nvt temp 2.0 2.0 1.0
+
+# Equilibration
+timestep 0.005
+thermo 100
+run 10000
+
+# Apply streaming velocity
+velocity fluid set 1.0 0.0 0.0
+
+# Gaussian thermostat for steady-state
+fix 2 fluid temp/gauss 2.0 2.0 1.0
+
+# Data collection for analysis
+fix 3 all ave/spatial 10 100 1000 y 0.0 20.0 vx vy vz density/number file velocity_profile.txt
+fix 4 all ave/spatial 10 100 1000 y 0.0 20.0 stress/atom NULL NULL NULL pxx pyy pxy file stress_profile.txt
+
+# Stabilization run
+run 20000
+
+# Clean up
+unfix 1
+unfix 2
+unfix 3
+unfix 4

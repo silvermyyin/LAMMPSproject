@@ -1,0 +1,41 @@
+# LAMMPS Input Script for Electron Gas System using EFF Model
+
+# Initialization
+units electron
+atom_style electron
+boundary p p p
+newton on
+
+# Atom Definition
+read_data data.ch4
+
+# Pair Style and Coefficients
+pair_style eff/cut 100.0
+pair_coeff * *
+
+# Compute Definitions
+compute ke all ke
+compute pe all pe
+compute temp all temp
+compute pauli all property/atom spin
+compute eradius all property/atom radius
+compute eforce all property/atom fz
+
+# Variable Definitions for Energy Components
+variable etotal equal etotal
+variable epotential equal pe
+variable ekinetic equal ke
+variable pauli_energy equal c_pauli
+variable coulombic_energy equal c_pe
+variable residual_energy equal etotal - (c_pe + c_ke + c_pauli)
+
+# Output Settings
+thermo_style custom step v_etotal v_epotential v_ekinetic temp v_pauli_energy v_coulombic_energy v_residual_energy
+thermo 1
+
+# Minimization Setup
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Additional Outputs
+dump 1 all custom 1 dump.electron id type x y z c_pauli c_eradius c_eforce

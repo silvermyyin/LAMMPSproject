@@ -1,0 +1,43 @@
+# LAMMPS input script for a 3D Lennard-Jones melt simulation
+
+# Initialize simulation
+units lj
+atom_style atomic
+
+# Define variables for box dimensions
+variable a equal 5.0  # Lattice constant
+variable density equal 0.8442
+variable vol equal v_a^3/v_density
+variable lx equal v_vol^(1.0/3.0)
+variable ly equal v_lx
+variable lz equal v_lx
+
+# Create simulation box
+region box block 0 ${lx} 0 ${ly} 0 ${lz}
+create_box 1 box
+
+# Create atoms in an fcc lattice
+lattice fcc ${density}
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocity distribution
+velocity all create 1.44 12345
+
+# Define neighbor list
+neighbor 0.3 bin
+neigh_modify every 20 delay 0 check yes
+
+# Define simulation settings
+fix 1 all nve
+
+# Output settings
+thermo 100
+dump 1 all atom 100 dump.lj
+dump_modify 1 scale no
+
+# Run the simulation
+run 1000

@@ -1,0 +1,41 @@
+Sure, here's a basic example of a LAMMPS input script that should fulfill your requirements:
+
+```bash
+# LAMMPS input script
+
+units lj
+dimension 3
+boundary f f p
+
+atom_style atomic
+neighbor 0.3 bin
+neigh_modify delay 0 every 20 check no
+
+# create atoms
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+mass 1 1.0
+
+# define interaction
+pair_style lj/cut 1.1225
+pair_coeff 1 1 1.0 1.0 1.1225
+
+# define SHAKE/RATTLE
+fix 1 all shake 0.0001 20 0 m 1.0 a 1
+
+# define thermo output
+thermo 1000
+thermo_style custom step temp epair etotal press
+
+# define trajectory output
+dump 1 all custom 10000 dump.lammpstrj id type x y z
+
+# setup and run simulation
+velocity all create 1.0 87287
+fix 2 all nve
+run 25000000
+```
+
+Please replace the sections for creating atoms and defining interactions with your own parameters. The script assumes a simple monatomic system (like Argon) with FCC lattice structure. The SHAKE/RATTLE constraint is applied on all atoms. The thermodynamic and trajectory outputs are set to print every 1000 and 10000 steps respectively. The simulation is run with NVE ensemble for 25,000,000 steps.

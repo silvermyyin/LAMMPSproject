@@ -1,0 +1,40 @@
+# LAMMPS input script for a binary polymer blend system
+
+units lj
+atom_style angle
+
+# Read initial configuration from a data file
+read_data polymer_blend.data
+
+# Define LJ potential with enhanced attraction between different chain types
+pair_style lj/cut 1.1224620483
+pair_coeff * * 1.0 1.0 1.1224620483
+pair_coeff 1 2 1.1 1.0 1.1224620483
+
+# Define FENE bond style
+bond_style fene
+bond_coeff * 30.0 1.5 1.0 1.0
+
+# Define cosine angle style
+angle_style cosine
+angle_coeff * 1.0
+
+# Define groups for the two types of chains
+group type1 type 1
+group type2 type 2
+
+# Setup Langevin thermostat and NVE integrator
+fix 1 all langevin 1.0 1.0 1.0 48279
+fix 2 all nve
+
+# Apply molecular swap to accelerate equilibration
+fix 3 all swap 100 type1 type2
+
+# Output settings
+thermo 1000
+thermo_style custom step temp etotal press 
+compute type1_count type1 property/atom type
+compute type2_count type2 property/atom type
+
+# Run the simulation
+run 50000

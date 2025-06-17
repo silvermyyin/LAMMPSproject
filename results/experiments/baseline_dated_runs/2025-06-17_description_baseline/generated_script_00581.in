@@ -1,0 +1,36 @@
+# LAMMPS Input Script for SNAP Descriptors on a BCC Lattice
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define the BCC lattice
+lattice         bcc 3.316
+region          box block 0 5 0 5 0 5
+create_box      1 box
+create_atoms    1 box
+
+# Assign mass to the atomic type
+mass            1 180.88
+
+# Define a zero potential pair style
+pair_style      zero 10.0
+pair_coeff      * *
+
+# Define computes for SNAP descriptors
+compute         sna_atom all sna/atom 1 2.0 3.0 3.0
+compute         sna_grid all sna/grid 1 2.0 3.0 3.0 10 10 10
+
+# Output atomic bispectrum components
+dump            1 all custom 1 atom_snap.txt id type c_sna_atom[*]
+
+# Output grid bispectrum components
+dump            2 all custom 1 grid_snap.txt id type c_sna_grid[*]
+
+# Calculate RMSE between atomic and grid-based descriptors
+variable        rmse equal sqrt(c_sna_grid[1] - c_sna_atom[1])^2
+print           "RMSE: ${rmse}"
+
+# Write computed results to files
+run             0

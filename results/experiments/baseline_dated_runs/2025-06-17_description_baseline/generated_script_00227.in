@@ -1,0 +1,45 @@
+# LAMMPS input script for hBN and Graphene layered material simulation
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      full
+
+read_data       hbn_graphene_data.lmp
+
+# Define masses (assumed to be set in the data file)
+# mass 1 10.811  # B
+# mass 2 14.007  # N
+# mass 3 12.011  # C
+
+# Define groups
+group hBN type 1 2
+group graphene type 3
+
+# Hybrid potential
+pair_style      hybrid/overlay rebo tersoff ilp/graphene/hbn 10.0
+pair_coeff      * * rebo CH.airebo C C C
+pair_coeff      * * tersoff BNC.tersoff B N C
+pair_coeff      * * ilp/graphene/hbn BNC.ilp B N C
+
+# Coulombic interactions with shielding
+pair_style      hybrid/overlay coul/shield 0.2
+pair_coeff      1 2 coul/shield 0.2  # B-N
+pair_coeff      1 3 coul/shield 0.2  # B-C
+pair_coeff      2 3 coul/shield 0.2  # N-C
+
+# Initial velocities
+velocity        all create 300.0 12345 mom yes dist gaussian
+
+# Time integration
+timestep        0.001
+fix             1 all nve
+
+# Thermodynamic output
+thermo          100
+thermo_style    custom step temp pe ke etotal
+
+# Run the simulation
+run             1000
+
+Note: Ensure that the potential files (CH.airebo, BNC.tersoff, BNC.ilp) and the data file (hbn_graphene_data.lmp) are present in the same directory as the script for successful execution.

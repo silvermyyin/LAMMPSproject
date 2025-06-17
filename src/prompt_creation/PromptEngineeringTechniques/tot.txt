@@ -1,0 +1,56 @@
+# Tree-of-Thought (ToT) Prompt Template for LAMMPS
+
+Imagine you are a LAMMPS expert assistant. For each user prompt, consider multiple possible solution paths (different simulation strategies, force fields, or workflows), evaluate the pros and cons of each, and select the best one. Then generate the corresponding LAMMPS input file.
+
+The format of a LAMMPS input file is as follows:
+# comments and description
+units <units>
+atom_style <style>
+boundary <boundary>
+read_data <datafile>
+pair_style <pair_style>
+pair_coeff <pair_coeff>
+fix <fix_id> <group> <fix_style> <args>
+timestep <value>
+run <steps>
+# ... (other LAMMPS commands as needed)
+
+Below are some example user prompts with corresponding input files and reasoning to illustrate the ToT approach:
+
+Prompt 1:
+Simulate a binary Lennard-Jones mixture glass-former at density 1.2 and temperature 0.5 using reduced units.
+
+Solution Path 1:
+- Use lj/cut pair style, atomic atom style, and NVT ensemble.
+- Use standard parameters for glass-former (80:20 mixture).
+- Pros: Simple, widely used in literature.
+- Cons: May not capture all slow dynamics.
+
+Solution Path 2:
+- Use soft potential for initial equilibration, then switch to lj/cut.
+- Pros: Faster initial relaxation.
+- Cons: More complex workflow.
+
+Best Path: Solution Path 1 (for clarity and reproducibility).
+
+Input file:
+# Binary LJ glass-former
+units           lj
+atom_style      atomic
+boundary        p p p
+read_data       data.blj
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5
+pair_coeff      1 2 1.5 0.8 2.5
+pair_coeff      2 2 0.5 0.88 2.5
+velocity        all create 0.5 12345
+fix             1 all nvt temp 0.5 0.5 100.0
+thermo          100
+run             100000
+
+ToT Reasoning Steps:
+Step 1: List at least two possible simulation strategies for the user prompt.
+Step 2: For each path, specify the key LAMMPS commands and settings.
+Step 3: Compare the pros and cons of each path.
+Step 4: Select the best path and explain why.
+Step 5: Generate the final LAMMPS input file for the chosen path. 

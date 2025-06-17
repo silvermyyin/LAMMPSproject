@@ -1,0 +1,49 @@
+units real
+atom_style full
+boundary p p p
+
+# Initialize simulation from data file
+read_data ethylene_glycol.data
+
+# Define force field styles
+pair_style hybrid/overlay lj/cut/coul/long 10.0 10.0 thole 10.0
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+kspace_style pppm 1.0e-5
+
+# Define atom groups
+group atoms type 1 2 3 # example atom types for ethylene glycol
+group cores type 1 2   # example core atoms
+group drudes type 3    # example Drude particles
+
+# Define pair coefficients
+pair_coeff * * lj/cut/coul/long 0.0 0.0
+pair_coeff 1 1 lj/cut/coul/long 0.15 3.5
+pair_coeff 1 2 lj/cut/coul/long 0.10 3.0
+pair_coeff 2 2 lj/cut/coul/long 0.20 3.5
+pair_coeff * * thole 0.02 10.0
+
+# Define bond coefficients
+bond_coeff 1 harmonic 450.0 1.09
+
+# Define angle coefficients
+angle_coeff 1 harmonic 60.0 109.5
+
+# Define dihedral coefficients
+dihedral_coeff 1 opls 0.0 1.0 0.0 -1.0
+
+# Drude oscillator settings
+fix drude cores drude 1.0 0.2 1000.0
+
+# Thermostat and barostat
+fix npt1 atoms npt temp 298.0 298.0 100.0 iso 1.0 1.0 1000.0
+fix nvt_drude drudes nvt temp 1.0 1.0 100.0
+
+# Run parameters
+timestep 1.0
+thermo 100
+thermo_style custom step temp etotal ke pe
+
+# Run simulation
+run 500

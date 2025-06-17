@@ -1,0 +1,36 @@
+# LAMMPS input script for a bulk hydrogen system using electron force field
+
+# Initialize simulation
+units electron
+atom_style electron
+boundary p p p
+
+# Variable for data file
+variable sname string "hydrogen_data"
+
+# Read data file
+read_data ${sname}
+
+# Define interactions
+pair_style eff/cut 30.627847
+pair_coeff * *
+
+# Set up output
+thermo 100
+thermo_style custom step pe temp press vol density
+dump 1 all xyz 100 hydrogen_output.xyz
+dump_modify 1 element H
+dump 2 all custom 100 hydrogen_properties.dump id type x y z spin radius
+
+# Minimize energy using conjugate gradient method
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Assign initial velocities
+velocity all create 20000.0 12345 rot yes dist gaussian
+
+# Apply NPT ensemble
+fix 1 all npt/eff temp 20000.0 20000.0 100.0 iso 1e9 1e9 1000.0
+
+# Run the simulation
+timestep 0.001
+run 10000

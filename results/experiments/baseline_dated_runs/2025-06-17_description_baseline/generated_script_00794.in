@@ -1,0 +1,21 @@
+units metal
+atom_style atomic
+boundary p p p
+
+read_data data.dpd_fluid
+
+pair_style dpd/fdt 300.0 10.0 234324
+pair_coeff * * 25.0 4.5 1.0
+
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+timestep 0.001
+
+thermo 1
+thermo_style custom step temp press vol pe ke etotal enthalpy lx ly lz
+
+fix 1 all nph iso 0.0 0.0 1000.0
+fix 2 all shardlow
+
+run 100

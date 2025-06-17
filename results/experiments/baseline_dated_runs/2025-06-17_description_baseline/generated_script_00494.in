@@ -1,0 +1,55 @@
+# LAMMPS Script to Calculate Elastic Constants Using Stress Fluctuation Method
+
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Read atomic structure
+read_data data.material
+
+# Define interatomic potential
+pair_style eam/alloy
+pair_coeff * * potential_file Al
+
+# Define computes for thermodynamic properties
+compute myTemp all temp
+compute myPress all pressure myTemp
+
+# Compute stress tensor components
+compute stressTensor all stress/atom NULL
+compute stress all reduce sum c_stressTensor[1] c_stressTensor[2] c_stressTensor[3] c_stressTensor[4] c_stressTensor[5] c_stressTensor[6]
+
+# Compute Born matrix for Born term
+compute myBorn all born/matrix
+
+# Time averaging for stress tensor components
+fix aveStress all ave/time 1 1000 1000 c_stress[1] c_stress[2] c_stress[3] c_stress[4] c_stress[5] c_stress[6] file stress_tensor.dat
+
+# Time averaging for Born matrix components
+fix aveBorn all ave/time 1 1000 1000 c_myBorn[1] c_myBorn[2] c_myBorn[3] c_myBorn[4] c_myBorn[5] c_myBorn[6] file born_matrix.dat
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe press density
+thermo_modify format float %14.6f
+
+# Relaxation
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Equilibration
+fix nvt all nvt temp 300.0 300.0 100.0
+
+# Run simulation
+timestep 0.002
+run 20000
+
+# Post-processing for elastic constants (to be done via external script or analysis tool)
+# The script will analyze the output files "stress_tensor.dat" and "born_matrix.dat"
+# to compute the elastic constants using the appropriate relations.
+
+unfix nvt
+unfix aveStress
+unfix aveBorn
+
+# End of LAMMPS script

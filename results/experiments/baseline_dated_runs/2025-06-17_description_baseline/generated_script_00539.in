@@ -1,0 +1,38 @@
+# LAMMPS Input Script for BCC Crystal Steinhardt-Nelson Order Parameters
+
+# Initialize simulation
+units           lj
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create BCC lattice and simulation box
+lattice         bcc 0.8442
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define mass and interatomic potential
+mass            1 1.0
+pair_style      lj/cut 3.0
+pair_coeff      1 1 1.0 1.0 3.0
+
+# Define neighbor list
+neighbor        0.3 bin
+neigh_modify    delay 0 every 1 check yes
+
+# Compute Steinhardt-Nelson bond orientational order parameters
+compute         myOrientOrder all orientorder/atom degrees 4 6 nn 14 norm yes
+
+# Set up output
+thermo_style    custom step temp pe etotal c_myOrientOrder[1] c_myOrientOrder[2] c_myOrientOrder[3] c_myOrientOrder[4]
+thermo          1
+
+# Run simulation without dynamics
+run             0
+
+# Output orientation order parameters to a file
+dump            1 all custom 1 orientorder.dump id type c_myOrientOrder[*]
+dump_modify     1 format "%d %d %.6f %.6f %.6f %.6f"
+
+# End of script

@@ -1,0 +1,48 @@
+units real
+atom_style atomic
+boundary p p p
+
+# Read the initial configuration from a restart file
+read_restart post_eq.init
+
+# Define the pair style and cutoff
+pair_style lj/cut 13.5
+pair_coeff * * 0.238 3.405
+
+# Define the lattice and simulation box
+lattice fcc 3.615
+region box block 0 10 0 10 0 10 units box
+create_box 1 box
+
+# Define groups for internal and ghost regions
+region internal block 1 9 1 9 1 9 units box
+group internal_region region internal
+region ghost block 0 10 0 10 0 10 units box side out
+group ghost_region region ghost
+
+# Define AtC coupling using the fix atc command
+fix atc all atc mesh tetra/3d 0.5 0.5 0.5 &
+    element_type FEM_NODE &
+    field_type FEM_INTERPOLATION &
+    mesh_information MeshInfo &
+    periodic 1 1 1
+
+# Apply the viscosity parameter file
+fix_modify atc viscosity_file Ar_viscosity.mat
+
+# Shear flow setup
+fix shear_flow all addforce 0 v_shear 0
+variable v_shear equal "0.1 * y"
+
+# Set mesh periodicity and element sets for boundary conditions
+fix mesh_params all atc mesh_parameters periodic
+fix boundary_conditions all atc boundary_conditions set face 1 2 3 4 5 6 type symmetric
+
+# Run the simulation
+timestep 1.0
+thermo 100
+thermo_style custom step temp pe ke etotal press
+
+run 2000
+
+This script sets up a LAMMPS simulation with AtC coupling to study shear flow using Lennard-Jones interactions, reading initial conditions from a provided restart file and applying shear flow through a specified viscosity parameter file. The setup includes necessary group definitions and mesh settings for the AtC implementation.

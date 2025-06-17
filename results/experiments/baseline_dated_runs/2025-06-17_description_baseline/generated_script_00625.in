@@ -1,0 +1,47 @@
+# LAMMPS input script for Argon system using AtC approach
+
+units           metal
+atom_style      atomic
+boundary        f p p
+
+# Create simulation box
+lattice         fcc 0.02186  # Argon density in metal units
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+create_atoms    1 box
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.0
+pair_coeff      1 1 0.0104 3.4  # Lennard-Jones parameters for Argon
+
+# Initialize velocities and displacements
+velocity        all create 0.0 12345 mom yes rot yes dist gaussian
+
+# Define hybrid AtC model
+fix             atc all atc mesh hex 1 1 1 domain simbox
+fix_modify      atc fields velocity displacement
+
+# Set boundary conditions for AtC
+fix             bc all atc boundary velocity displacement
+fix_modify      bc edge x constant 0.0  # Fixed displacement in x
+fix_modify      bc edge y constant 0.0  # Zero velocity in y
+fix_modify      bc edge z constant 0.0  # Zero velocity in z
+
+# Define compute for thermodynamic output
+compute         thermo_temp all temp
+compute         thermo_press all pressure thermo_temp
+
+# Output settings
+thermo_style    custom step temp pe ke etotal press vol
+thermo          100
+
+# Simulation stages
+# Stage 1: Extend system
+timestep        0.005
+run             1000
+
+# Stage 2: Equilibration
+timestep        0.005
+run             5000
+
+# End of script

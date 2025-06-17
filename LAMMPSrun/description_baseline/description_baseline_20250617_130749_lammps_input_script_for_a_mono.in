@@ -1,0 +1,39 @@
+```lammps
+# LAMMPS Input Script for a Monolayer MoS2 System using ReaxFF Potential
+# Simulation of dynamic behavior and stability of MoS2 monolayer
+
+# Initialize simulation
+units           real
+dimension       3
+boundary        p p f
+atom_style      charge
+
+# Read data file
+read_data       single_layer_MoS2.data
+
+# Define atomic masses
+mass            1 32.06   # Mass of Sulfur
+mass            2 95.94   # Mass of Molybdenum
+
+# Specify ReaxFF potential
+pair_style      reax/c NULL
+pair_coeff      * * ffield.reax Mo S
+
+# Define timestep
+timestep        0.001
+
+# Generate initial velocities
+velocity        all create 300.0 4928459 dist gaussian
+
+# Define the NVE ensemble
+fix             1 all nve
+
+# Output thermodynamic properties
+thermo          500
+thermo_style    custom step temp pe ke etotal
+
+# Run the simulation
+run             5000
+
+# End of script
+```

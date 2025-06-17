@@ -1,0 +1,70 @@
+# LAMMPS input script for a 2D simulation of liquid front propagation in a glass system
+
+units lj
+dimension 2
+boundary p p p
+atom_style charge
+
+# Read initial configuration
+read_data initial_glass_configuration.data
+
+# Define regions
+region liquid_front block INF INF INF 0.5 INF
+region glass block INF INF 0.5 INF INF
+
+# Create dynamic groups
+group liquid_front region liquid_front
+group glass region glass
+
+# Define pair style and coefficients
+pair_style lj/polysoft 9.0
+pair_coeff * * 1.0 1.0
+
+# Set neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Thermo settings
+thermo 100
+thermo_style custom step temp press pe
+
+# Variables for tracking pressure and temperature
+variable t_liquid equal temp(liquid_front)
+variable t_glass equal temp(glass)
+variable p_liquid equal press(liquid_front)
+variable p_glass equal press(glass)
+
+# Output thermodynamic data
+thermo_style custom step v_t_liquid v_t_glass v_p_liquid v_p_glass
+
+# Initialize velocities
+velocity all create 0.1 12345 mom yes rot yes dist gaussian
+
+# Fixes for NPT ensemble
+fix 1 all npt temp 0.1 0.5 0.1 iso 0.0 1.0 0.5
+
+# Run initial equilibration
+run 5000
+
+# Freeze glass region
+fix freeze glass setforce 0.0 0.0 0.0
+
+# Equilibrate liquid front region with NVT
+unfix 1
+fix 2 liquid_front nvt temp 0.5 0.5 0.1
+
+# Run equilibration for liquid front
+run 5000
+
+# Study liquid front propagation
+unfix 2
+fix 3 all npt temp 0.5 0.5 0.1 iso 1.0 1.0 0.5
+
+# Output settings
+dump 1 all custom 1000 trajectory.lammpstrj id type x y z vx vy vz
+
+# Run simulation to study liquid front propagation
+run 20000
+
+# End of simulation
+write_restart final_state.restart

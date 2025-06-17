@@ -1,0 +1,42 @@
+# LAMMPS Input Script for SiC System using eff/cut potential
+
+units           metal
+atom_style      hybrid charge electron
+
+# Read data file with initial configuration
+read_data       sic_system.data
+
+# Define pair style and coefficients
+pair_style      eff/cut 20.0
+pair_coeff      * * SiC.eff
+
+# Define neighbor list settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes page 100000 one 20000
+
+# Set periodic boundary conditions
+boundary        p p p
+
+# Compute properties
+compute         ke all ke/atom
+compute         pauli all pair eff/pauli
+compute         coul all pair eff/coul
+compute         residual all reduce sum c_1
+
+# Output settings
+thermo_style    custom step temp pe ke c_pauli c_coul c_residual
+thermo          100
+
+# Energy minimization
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Dump settings for output
+dump            1 all xyz 1000 sic_output.xyz
+dump_modify     1 format "%6d %8.4f %8.4f %8.4f %8.4f %8.4f"
+
+dump            2 all custom 1000 sic_output.lammpstrj id type x y z
+
+# Run the minimization
+run             0
+
+This script initializes the simulation using the specified `eff/cut` pair style with a 20.0 cutoff, reads the initial configuration from a data file, and sets up the necessary computation of electronic properties. The simulation employs periodic boundary conditions, a detailed neighbor list configuration, and outputs the results in both XYZ and LAMMPS trajectory formats.

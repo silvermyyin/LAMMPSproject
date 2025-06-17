@@ -1,0 +1,49 @@
+# LAMMPS Input Script for Argon-Mesh Interaction Simulation
+
+units           lj
+atom_style      atomic
+
+# Define simulation box
+boundary        p p p
+lattice         sc 0.8442
+region          simbox block 0 10 0 10 0 10
+create_box      2 simbox
+
+# Create mobile argon atoms
+region          mobile_region block 1 9 1 9 5 9
+create_atoms    1 region mobile_region
+
+# Import mesh from STL and create mesh atoms
+fix             mesh_fix all mesh/surface stl mesh_file.stl type 2
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 2.5
+pair_coeff      * * 1.0 1.0 2.5
+
+# Group definitions
+group           mobile type 1
+group           mesh type 2
+
+# Apply forces
+region          cylinder_region cylinder z 5 5 3 0 10
+fix             gravity mobile addforce 0.0 0.0 -0.1 region cylinder_region
+
+# Fix the mesh in space
+fix             static_mesh mesh setforce 0.0 0.0 0.0
+
+# Optimize load balancing
+fix             balance all balance 1000 1.1 shift xyz 20 1.1
+
+# Integrate motion using NVE
+velocity        mobile create 1.0 12345
+fix             integrate mobile nve
+
+# Minimize energy of the system
+minimize        1.0e-4 1.0e-6 100 1000
+
+# Output settings
+thermo          1000
+thermo_style    custom step temp pe ke etotal
+
+# Run the simulation
+run             10000

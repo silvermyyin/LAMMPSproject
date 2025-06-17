@@ -1,0 +1,63 @@
+```lammps
+# LAMMPS input script for alchemical transformation of water into ions
+
+units real
+atom_style full
+boundary p p p
+
+# Create simulation box and define regions
+region simbox block 0 30 0 30 0 30
+create_box 2 simbox
+
+# Create initial water molecules
+# Note: Atom IDs and positions should be set according to initial configuration
+create_atoms 1 single 5 5 5 mol water
+create_atoms 1 single 10 10 10 mol water
+
+# Fill the rest of the box with water
+create_atoms 1 random 100 12345 simbox mol water
+
+# Define masses for water and ions
+mass 1 1.008  # Hydrogen
+mass 2 15.999 # Oxygen
+
+# Define pair style and coefficients
+pair_style lj/cut/coul/cut 10.0
+pair_coeff 1 1 0.0 0.0 10.0  # H-H
+pair_coeff 1 2 0.0 0.0 10.0  # H-O
+pair_coeff 2 2 0.1554 3.166 10.0 # O-O
+
+# Define bond style and coefficients
+bond_style harmonic
+bond_coeff 1 450 0.9572  # OH bond in water
+
+# Define angle style and coefficients
+angle_style harmonic
+angle_coeff 1 55 104.52  # HOH angle in water
+
+# Define initial groupings
+group water molecule <> 1 2
+group ions molecule <> 3 4
+
+# Define thermostats and barostats
+fix 1 all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Define variable for alchemical transformation
+variable lambda equal ramp(0.0,1.0)
+
+# Fix for alchemical transformation
+fix alchemy all adapt 0.1 & 
+    pair_coeff 1 2 v_lambda*0.1554 (1-v_lambda)*0.0 3.166 10.0 & 
+    bond_coeff 1 v_lambda*450 (1-v_lambda)*0.0 0.9572 & 
+    angle_coeff 1 v_lambda*55 (1-v_lambda)*0.0 104.52
+
+# Thermodynamic output
+thermo 100
+thermo_style custom step temp etotal press f_alchemy
+
+# Run the simulation
+timestep 1.0
+run 20000
+
+# End of script
+```

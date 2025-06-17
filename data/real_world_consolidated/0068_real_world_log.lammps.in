@@ -1,0 +1,114 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# NaCl test problem for embedded atom method (EIM) potential
+
+units		metal
+atom_style      atomic
+
+boundary	p p p
+
+lattice         diamond 5.0
+Lattice spacing in x,y,z = 5 5 5
+read_data       data.eim
+Reading data file ...
+  orthogonal box = (-0.5 -0.5 -0.5) to (35.540001 35.540001 35.540001)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  2000 atoms
+  reading velocities ...
+  2000 velocities
+  read_data CPU = 0.005 seconds
+
+pair_style      eim
+pair_coeff      * * Na Cl ffield.eim Na Cl
+Reading potential file ffield.eim with DATE: 2010-08-31
+
+neighbor	0.3 bin
+neigh_modify	delay 0
+
+timestep        0.001
+thermo_style    custom step pe pxx pyy pzz temp
+thermo          50
+
+velocity        all create 1400.0 43454 dist gaussian mom yes
+fix             int all npt temp 1400.0 300.0 0.1 aniso 0.0 0.0 0.1
+
+#dump		id all atom 100 dump.eim
+
+#dump		2 all image 25 image.*.jpg element element #		axes yes 0.8 0.02 view 60 -30
+#dump_modify	2 pad 3 element Na Cl
+
+#dump		3 all movie 25 movie.mpg element element #		axes yes 0.8 0.02 view 60 -30
+#dump_modify	3 pad 3 element Na Cl
+
+run             500
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Your simulation uses code contributions which should be cited:
+
+- Type Label Framework: https://doi.org/10.1021/acs.jpcb.3c08419
+
+@Article{Gissinger24,
+ author = {Jacob R. Gissinger, Ilia Nikiforov, Yaser Afshar, Brendon Waters, Moon-ki Choi, Daniel S. Karls, Alexander Stukowski, Wonpil Im, Hendrik Heinz, Axel Kohlmeyer, and Ellad B. Tadmor},
+ title = {Type Label Framework for Bonded Force Fields in LAMMPS},
+ journal = {J. Phys. Chem. B},
+ year =    2024,
+ volume =  128,
+ number =  13,
+ pages =   {3282–-3297}
+}
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7.906
+  ghost atom cutoff = 7.906
+  binsize = 3.953, bins = 10 10 10
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair eim, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.499 | 3.499 | 3.499 Mbytes
+   Step         PotEng          Pxx            Pyy            Pzz            Temp     
+         0  -5660.4738     -118151.29     -117613.39     -118064.41      1400         
+        50  -5773.9041      875.00695      882.55323      693.45661      891.34854    
+       100  -5742.8817      839.75379      799.17716      878.92397      838.50968    
+       150  -5738.814      -377.50217     -381.59074     -142.15319      900.30051    
+       200  -5704.2892     -249.10514     -555.83612     -727.69025      834.55048    
+       250  -5724.5221      490.48831      629.37357      528.4972       965.96185    
+       300  -5718.6342      431.15707      196.72827      721.28688      934.70368    
+       350  -5722.7929     -319.14336     -384.50054      77.368983      865.05922    
+       400  -5743.7551      24.217564      114.74471     -377.22439      840.60131    
+       450  -5751.2719     -490.131       -403.29309      206.37573      743.0645     
+       500  -5780.5448     -706.21391     -755.14466     -1697.6771      712.71494    
+Loop time of 1.80004 on 1 procs for 500 steps with 2000 atoms
+
+Performance: 23.999 ns/day, 1.000 hours/ns, 277.772 timesteps/s, 555.543 katom-step/s
+98.2% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.5637     | 1.5637     | 1.5637     |   0.0 | 86.87
+Neigh   | 0.203      | 0.203      | 0.203      |   0.0 | 11.28
+Comm    | 0.008581   | 0.008581   | 0.008581   |   0.0 |  0.48
+Output  | 0.00023488 | 0.00023488 | 0.00023488 |   0.0 |  0.01
+Modify  | 0.022315   | 0.022315   | 0.022315   |   0.0 |  1.24
+Other   |            | 0.002228   |            |       |  0.12
+
+Nlocal:           2000 ave        2000 max        2000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           4198 ave        4198 max        4198 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          99457 ave       99457 max       99457 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 99457
+Ave neighs/atom = 49.7285
+Neighbor list builds = 90
+Dangerous builds = 10
+Total wall time: 0:00:01

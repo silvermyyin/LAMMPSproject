@@ -1,0 +1,41 @@
+# LAMMPS Input Script for Heptane Insertion Using FEP
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data data.init_conf_with_heptane
+
+# Define hybrid pair style for FEP
+pair_style hybrid/overlay lj/class2/coul/long 10.0 lj/class2/coul/long/soft 10.0
+pair_coeff * * lj/class2/coul/long
+pair_coeff * * lj/class2/coul/long/soft 10.0 10.0
+
+# Define class2 force field parameters
+bond_style class2
+angle_style class2
+dihedral_style class2
+improper_style class2
+
+# Kspace settings for long-range electrostatics
+kspace_style pppm 1.0e-4
+
+# Define the FEP fix to adapt charges and lambda parameter
+fix 1 all adapt/fep 100 lambda 0.0 1.0 100000 &
+    pair lj/class2/coul/long/soft a 1 1 0.0 1.0 &
+    pair lj/class2/coul/long/soft b 1 1 0.0 1.0
+
+# Thermostat to maintain constant temperature
+fix 2 all nvt temp 300.0 300.0 100.0
+
+# Output settings to monitor thermodynamic properties
+thermo 100
+thermo_style custom step temp press vol etotal f_1[1] f_1[2]
+
+# Run the simulation
+timestep 1.0
+run 100000
+
+# Write final configuration
+write_data final_conf.data

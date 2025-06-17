@@ -1,0 +1,55 @@
+# LAMMPS Input Script for Binary Polymer System
+
+units lj
+atom_style angle
+
+# Read initial configuration from data file
+read_data polymer_system.data
+
+# Define interaction potentials
+pair_style lj/cut 1.1224620483
+pair_coeff * * 1.0 1.0 1.1224620483
+pair_coeff 1 2 1.02 1.0 1.1224620483
+
+bond_style fene
+bond_coeff * 30.0 1.5 1.0 1.0
+
+angle_style cosine
+angle_coeff * 1.5
+
+# Special bonds settings
+special_bonds lj 0.0 1.0 1.0
+
+# Define groups
+group type1 type 1
+group type2 type 2
+
+# Initialize velocities
+velocity all create 1.0 12345
+
+# Set up the Langevin thermostat
+fix 1 all langevin 1.0 1.0 1.0 48279
+fix 2 all nve
+
+# Use fix mol/swap to facilitate equilibration
+fix 3 all mol/swap 100 0.5 1000 48279
+
+# Thermodynamic output
+thermo 1000
+thermo_style custom step temp pe ke etotal press
+compute 1 all property/atom type
+compute 2 type1 reduce count
+compute 3 type2 reduce count
+
+# Output chain type distribution
+variable ntype1 equal c_2
+variable ntype2 equal c_3
+thermo_modify line one format float %14.8g
+thermo_modify custom step temp pe ke etotal press v_ntype1 v_ntype2
+
+# Run the simulation
+timestep 0.005
+run 50000
+
+# Output final configuration
+write_data polymer_final.data

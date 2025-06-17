@@ -1,0 +1,48 @@
+# LAMMPS input script for a 3D Lennard-Jones melt simulation with MDI
+
+units lj
+atom_style atomic
+
+# Variables for box dimensions
+variable x equal 5
+variable y equal 5
+variable z equal 5
+
+# Create simulation box
+lattice fcc 0.8442
+region mybox block 0 ${x} 0 ${y} 0 ${z}
+create_box 1 mybox
+create_atoms 1 box
+
+mass 1 1.0
+
+# Assign initial velocities
+velocity all create 1.44 87287 dist gaussian
+
+# Define neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# MDI setup
+fix qm all mdi
+
+# Integration
+timestep 0.005
+fix 1 all nve
+# Uncomment below for NPT ensemble
+# fix 1 all npt temp 1.44 1.44 0.5 iso 0.0 0.0 1.0
+
+# Thermodynamic output
+thermo 1
+thermo_style custom step temp pe etotal press vol
+
+# Run the simulation in segments to allow MDI interactions
+variable tstep loop 100
+label loop
+run 10
+next tstep
+jump SELF loop

@@ -1,0 +1,37 @@
+# LAMMPS input script to calculate the cohesive energy of Argon using OpenKIM
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Define lattice and region
+lattice fcc 5.2485
+region box block 0 1 0 1 0 1
+create_box 1 box
+create_atoms 1 box
+
+# Initialize the KIM potential
+kim_init model LJ_Shifted_Bernardes_1958MedCutoff_Ar__MO_126566794224_004 metal
+
+# Define group for all atoms
+group all type 1
+
+# Set masses
+mass 1 39.948  # Argon atomic mass
+
+# Run a 0-step simulation to evaluate potential energy
+run 0
+
+# Compute potential energy per atom
+variable pe_atom equal pe/atoms
+
+# Output results using KIM property dump
+kim_property_initialize
+kim_property_set species Ar
+kim_property_set lattice_constant 5.2485
+kim_property_set basis_atoms 0.0 0.0 0.0
+kim_property_set space_group Fm-3m
+kim_property_set cohesive_energy ${pe_atom}
+kim_property_dump results.edn
+
+# End of script

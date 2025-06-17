@@ -1,0 +1,40 @@
+# LAMMPS Input Script for Cyclohexane-Methane Mixture Simulation
+
+# Initialize simulation
+units real
+atom_style molecular
+boundary p p p
+
+# Read data
+read_data cyclohexane_methane.data
+
+# Pair interactions
+pair_style lj/cut 12.0
+pair_modify mix geometric tail yes
+
+# Define atom types
+# Assuming atom types are defined in the data file
+
+# Bond, angle, dihedral potentials
+bond_style harmonic
+angle_style harmonic
+dihedral_style harmonic
+
+# Group definitions (if needed)
+# group cyclohexane type <atom_types_for_cyclohexane>
+# group methane type <atom_types_for_methane>
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Temperature control
+timestep 1.0
+fix 1 all nvt temp 300.0 300.0 100.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp epair emol etotal press
+
+# Run the simulation
+run 2000

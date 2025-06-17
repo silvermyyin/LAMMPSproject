@@ -1,0 +1,1345 @@
+script_id,script_name,script_path,natural_language_prompt,simulation_type,units,dimension,atom_style,pair_style,bond_style,angle_style,ensemble,temperature,pressure,timestep,run_steps,minimize_steps,num_atom_types,num_fixes,num_dumps,num_computes,num_variables,has_minimization,has_equilibration,has_production,special_features,complexity_score,script_length_lines,script_size_bytes
+4,in_3.lammps,data/organized_scripts/in_3.lammps,"Set up a rigid body molecular dynamics simulation with constrained molecular motion.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 2D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Use sq lattice structure
+- Set timestep to ${dt}
+- Run molecular dynamics for 10,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,micro,2.0,sph,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,,,${dt},10000,,0,3,1,0,11,False,False,True,conditional_logic; dynamic_variables,25,50,1627
+15,in.Li-dendritic.nvt,data/organized_scripts/in.Li-dendritic.nvt,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: p p p
+- Use eff/cut 50.112 pair potential
+- Include energy minimization
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,electron,,,eff/cut 50.112,,,,,,,,100.0,0,0,2,3,1,True,False,False,dynamic_variables; conditional_logic; restart_capability; energy_minimization,16,53,1122
+77,energy.plane.in,data/organized_scripts/energy.plane.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Use 2D simulation
+- Use lj/smooth/linear 2.5 pair potential
+- Set timestep to 0.0005
+- Run molecular dynamics for ${STEPS} timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,2.0,,lj/smooth/linear 2.5,,,nve,,,0.0005,${STEPS},,0,3,1,0,4,False,False,True,conditional_logic; dynamic_variables,16,28,481
+96,energy.in,data/organized_scripts/energy.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Use lj/smooth/linear 2.5 pair potential
+- Set timestep to 0.0005
+- Run molecular dynamics for ${STEPS} timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,3.0,,lj/smooth/linear 2.5,,,nve/manifold/rattle,,,0.0005,${STEPS},,0,3,1,0,4,False,False,True,conditional_logic; dynamic_variables; constraint_dynamics,17,29,594
+78,lammps_1.in,data/organized_scripts/lammps_1.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use mm3/switch3/coulgauss/long 12.0000 4.0000 pair potential
+- Include mm3 bond interactions
+- Include hybrid cross mm3 angle interactions
+- Include fourier dihedral interactions
+- Apply NPT ensemble at 300.0K
+- Set timestep to 0.5
+- Run molecular dynamics for 100 timesteps
+- Include thermodynamic output
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,mm3/switch3/coulgauss/long 12.0000 4.0000,mm3,hybrid cross mm3,npt,300.0,,0.5,100,,0,1,0,0,0,False,False,True,particle_mesh_ewald; pressure_control; dihedral_interactions; angular_interactions; bonded_interactions; improper_interactions; conditional_logic; long_range_electrostatics; velocity_initialization,20,43,1531
+24,in.stick_2.lammps,data/organized_scripts/in.stick_2.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Include charge equilibration (QEQ)
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,3.0,,,,,nve,,,${dt},,,0,4,1,1,23,False,False,False,dynamic_variables; energy_minimization; angular_interactions; charge_equilibration; conditional_logic; velocity_initialization,44,104,4307
+43,input_12.lammps,data/organized_scripts/input_12.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 2.5 pair potential
+- Set timestep to 0.005
+- Include energy minimization
+- Run molecular dynamics for 20,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Use Langevin dynamics for temperature control
+- Include energy minimization
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,3.0,atomic,lj/cut 2.5,,,nve,,,0.005,20000,1000.0,0,2,1,0,0,True,False,True,stochastic_dynamics; energy_minimization,13,30,702
+93,in.voronoi.data,data/organized_scripts/in.voronoi.data,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 2D simulation
+- Apply boundary conditions: f f p
+- Use lj/cut 2.5 pair potential
+- Use hex lattice structure
+- Include 1 atom type
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,2.0,atomic,lj/cut 2.5,,,,,,,0,,1,0,3,4,4,False,False,False,conditional_logic; dynamic_variables,20,84,1877
+99,input_6.lammps,data/organized_scripts/input_6.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.1546 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Use sc lattice structure
+- Set timestep to 2.0
+- Run molecular dynamics for 100,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/tip4p/long 1 2 1 1 0.1546 12.0,harmonic,harmonic,nve,,,2.0,100000,,0,5,1,1,9,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; velocity_initialization; berendsen_thermostat,33,60,1827
+28,in_1.lammps,data/organized_scripts/in_1.lammps,"Set up a rigid body molecular dynamics simulation with constrained molecular motion.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 2D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Use sq lattice structure
+- Set timestep to ${dt}
+- Run molecular dynamics for 10,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include wall or surface interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,micro,2.0,sph,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,,,${dt},10000,,0,5,1,0,13,False,False,True,conditional_logic; wall_interactions; dynamic_variables; velocity_initialization,33,62,2210
+94,in.nvt,data/organized_scripts/in.nvt,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 13.0 pair potential
+- Use fcc lattice structure
+- Apply NVT ensemble at 30.0K
+- Set timestep to 4.0
+- Run molecular dynamics for 1,000 timesteps
+- Include thermodynamic output
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,3.0,atomic,lj/cut 13.0,,,nvt,30.0,,4.0,1000,,0,3,0,0,0,False,False,True,conditional_logic; velocity_initialization,12,39,1498
+62,in.indent.min,data/organized_scripts/in.indent.min,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Set atom_style to atomic
+- Use 2D simulation
+- Apply boundary conditions: p s p
+- Use lj/cut 2.5 pair potential
+- Include energy minimization
+- Include thermodynamic output
+- Include energy minimization
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,2.0,atomic,lj/cut 2.5,,,,,,,,1000.0,0,5,0,0,2,True,False,False,conditional_logic; indentation_simulation; dynamic_variables; energy_minimization,17,81,1749
+52,input-for-unwrapped.lammps,data/organized_scripts/input-for-unwrapped.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 3 4 1 1 0.105 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Apply NPT ensemble at 300.0K and 1.0 pressure
+- Run molecular dynamics for 200 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/tip4p/long 3 4 1 1 0.105 12.0,harmonic,harmonic,npt,300.0,1.0,,200,,0,2,1,0,0,False,False,True,particle_mesh_ewald; dihedral_interactions; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics,22,33,841
+80,in.stick.lammps,data/organized_scripts/in.stick.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include thermodynamic output
+- Include energy minimization
+- Include charge equilibration (QEQ)
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,3.0,,,,,nve,,,${dt},,,0,4,0,1,24,False,False,False,dynamic_variables; energy_minimization; angular_interactions; charge_equilibration; loop_structures; conditional_logic; velocity_initialization,45,109,4311
+102,log_3.lammps,data/organized_scripts/log_3.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use hybrid/overlay lj/cut 4.5 atm 4.5 2.5 pair potential
+- Use fcc lattice structure
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,,atomic,hybrid/overlay lj/cut 4.5 atm 4.5 2.5,,,,,,,,,0,0,0,0,9,False,False,False,dynamic_variables,16,35,1220
+64,in_fep_soft.lmp,data/organized_scripts/in_fep_soft.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to charge
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long/soft 1.0 0.0 0.0 12.0 12.0 pair potential
+- Use bcc lattice structure
+- Apply NVT ensemble at 300.0K
+- Set timestep to 2.0
+- Run molecular dynamics for 2,000 timesteps
+- Include 2 atom types
+- Include thermodynamic output
+- Include long-range electrostatic interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,charge,lj/cut/coul/long/soft 1.0 0.0 0.0 12.0 12.0,,,nvt,300.0,,2.0,2000,,2,1,0,1,4,False,False,True,dynamic_variables; particle_mesh_ewald; conditional_logic; long_range_electrostatics; velocity_initialization,19,59,1224
+12,sph_heat_conduction_3d.lmp,data/organized_scripts/sph_heat_conduction_3d.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Apply boundary conditions: f p p
+- Use sph/heatconduction pair potential
+- Set timestep to 0.25e-1
+- Include 1 atom type
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,,,sph/heatconduction,,,,,,0.25e-1,0,,1,1,0,2,0,False,False,False,conditional_logic,11,50,1468
+30,input_20.lammps,data/organized_scripts/input_20.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 14 pair potential
+- Include harmonic bond interactions
+- Include charmm angle interactions
+- Include charmm dihedral interactions
+- Apply NPT ensemble at 300.0K and 10.0 pressure
+- Set timestep to 1.0
+- Include energy minimization
+- Run molecular dynamics for 20,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/coul/long 14,harmonic,charmm,npt,300.0,10.0,1.0,20000,1000.0,0,1,1,0,0,True,False,True,particle_mesh_ewald; dihedral_interactions; energy_minimization; angular_interactions; bonded_interactions; improper_interactions; long_range_electrostatics,21,26,625
+1,in.deposit_1.lammps,data/organized_scripts/in.deposit_1.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include 1 atom type
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Include charge equilibration (QEQ)
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,3.0,,,,,nve,,,${dt},,,1,5,1,1,31,False,False,False,dynamic_variables; energy_minimization; angular_interactions; charge_equilibration; conditional_logic; restart_capability; velocity_initialization,55,148,7283
+50,SiO2.lammps,data/organized_scripts/SiO2.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to charge
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use tersoff pair potential
+- Apply NPT ensemble at 300.0K
+- Set timestep to ${dt}
+- Include energy minimization
+- Run molecular dynamics for 100,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,3.0,charge,tersoff,,,npt,300.0,0.0,${dt},100000,100000.0,0,4,1,1,1,True,False,True,dynamic_variables; conditional_logic; restart_capability; energy_minimization,19,54,1412
+75,in_adapt.lmp,data/organized_scripts/in_adapt.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to charge
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long/soft 1.0 0.0 0.0 12.0 12.0 pair potential
+- Use bcc lattice structure
+- Apply NVT ensemble at 300.0K
+- Set timestep to 2.0
+- Run molecular dynamics for 2,000 timesteps
+- Include 2 atom types
+- Include thermodynamic output
+- Include long-range electrostatic interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,charge,lj/cut/coul/long/soft 1.0 0.0 0.0 12.0 12.0,,,nvt,300.0,,2.0,2000,,2,2,0,0,3,False,False,True,dynamic_variables; particle_mesh_ewald; conditional_logic; long_range_electrostatics; velocity_initialization,18,57,1163
+10,input_3.lammps,data/organized_scripts/input_3.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use 2D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 2.5 pair potential
+- Set timestep to 0.005
+- Include energy minimization
+- Run molecular dynamics for 20,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Use Langevin dynamics for temperature control
+- Include energy minimization
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,2.0,atomic,lj/cut 2.5,,,nve,,,0.005,20000,1000.0,0,3,1,0,0,True,False,True,stochastic_dynamics; energy_minimization,14,31,728
+33,Ar.on.SiO2.lammps,data/organized_scripts/Ar.on.SiO2.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to charge
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Use hybrid tersoff zbl 8.0 10.0 coul/cut 10.0 pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to ${dt}
+- Run molecular dynamics for ${run_step} timesteps
+- Include thermodynamic output
+- Include wall or surface interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,3.0,charge,hybrid tersoff zbl 8.0 10.0 coul/cut 10.0,,,nvt,300.0,,${dt},${run_step},,0,2,0,0,14,False,False,True,dynamic_variables; velocity_initialization; wall_interactions; angular_interactions; conditional_logic; loop_structures,29,78,2519
+38,2particles.in,data/organized_scripts/2particles.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: f f f
+- Use hybrid/overlay lebedeva/z 20 pair potential
+- Run molecular dynamics for 1 timesteps
+- Include 2 atom types
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,3.0,atomic,hybrid/overlay lebedeva/z 20,,,,,,,1,,2,0,1,1,2,False,False,True,conditional_logic; dynamic_variables; loop_structures,18,64,1414
+36,input_16.lammps,data/organized_scripts/input_16.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 3 4 1 1 0.105 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Apply NPT ensemble at 300.0K and 1.0 pressure
+- Run molecular dynamics for 50,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/tip4p/long 3 4 1 1 0.105 12.0,harmonic,harmonic,npt,300.0,1.0,,50000,,0,4,1,0,0,False,False,True,particle_mesh_ewald; dihedral_interactions; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; berendsen_thermostat,25,62,1606
+26,log_4.lammps,data/organized_scripts/log_4.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Set atom_style to sphere
+- Use 2D simulation
+- Use colloid 20.0 pair potential
+- Use sq lattice structure
+- Apply NPT ensemble at 2.0K
+- Set timestep to 0.005
+- Run molecular dynamics for 2,000 timesteps
+- Include thermodynamic output
+- Include wall or surface interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,2.0,sphere,colloid 20.0,,,npt,2.0,0.0,0.005,2000,,0,2,0,0,0,False,False,True,conditional_logic; wall_interactions; loop_structures; velocity_initialization,12,190,7871
+76,lammps.in,data/organized_scripts/lammps.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use mm3/switch3/coulgauss/long 12.0000 4.0000 pair potential
+- Include harmonic bond interactions
+- Include hybrid cosine/periodic cross harmonic cosine/squared angle interactions
+- Include fourier dihedral interactions
+- Apply NPT ensemble at 300.0K
+- Set timestep to 0.5
+- Run molecular dynamics for 10,000 timesteps
+- Include thermodynamic output
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,mm3/switch3/coulgauss/long 12.0000 4.0000,harmonic,hybrid cosine/periodic cross harmonic cosine/squared,npt,300.0,,0.5,10000,,0,1,0,0,0,False,False,True,particle_mesh_ewald; pressure_control; dihedral_interactions; angular_interactions; bonded_interactions; improper_interactions; conditional_logic; long_range_electrostatics; velocity_initialization,20,43,1581
+34,test-spin-precession_1.in,data/organized_scripts/test-spin-precession_1.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to spin
+- Apply boundary conditions: f f f
+- Use spin/exchange 4.0 pair potential
+- Use sc lattice structure
+- Run molecular dynamics for ${Nsteps} timesteps
+- Include 1 atom type
+- Include thermodynamic output
+- Use Langevin dynamics for temperature control
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,,spin,spin/exchange 4.0,,,nve/spin,,,,${Nsteps},,1,3,0,2,9,False,False,True,conditional_logic; dynamic_variables; stochastic_dynamics,25,50,1304
+65,in-fep10-lj.lmp,data/organized_scripts/in-fep10-lj.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 12.0 12.0 lj/cut/soft 2 0.5 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include thermodynamic output
+- Include energy minimization
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid lj/cut/coul/long 12.0 12.0 lj/cut/soft 2 0.5 12.0,harmonic,harmonic,npt,,,1.0,2000000,,0,4,0,1,4,False,False,True,dynamic_variables; particle_mesh_ewald; energy_minimization; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; velocity_initialization,26,73,1912
+95,input_8.lammps,data/organized_scripts/input_8.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Use none lattice structure
+- Set timestep to 0.001
+- Run molecular dynamics for 100,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,,atomic,,,,nvt,,,0.001,100000,,0,2,1,0,5,False,False,True,dynamic_variables; velocity_initialization,16,35,948
+39,in.amorphous.carbon.lammps,data/organized_scripts/in.amorphous.carbon.lammps,"Create a reactive molecular dynamics simulation using reactive force fields.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Set timestep to 0.1
+- Include 4 atom types
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,3.0,,,,,,,,0.1,,,4,1,1,0,0,False,False,False,charge_equilibration; conditional_logic,14,37,1024
+11,in.fdti10.lmp,data/organized_scripts/in.fdti10.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 100,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid &,harmonic,harmonic,npt,,,1.0,100000,,0,4,1,1,11,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,34,102,2891
+16,C.deposit.on.Si.lammps,data/organized_scripts/C.deposit.on.Si.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Use tersoff pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to ${dt}
+- Run molecular dynamics for ${run_step} timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include wall or surface interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,3.0,atomic,tersoff,,,nvt,300.0,,${dt},${run_step},,0,5,2,0,27,False,False,True,dynamic_variables; velocity_initialization; wall_interactions; angular_interactions; conditional_logic; loop_structures,47,113,3252
+92,input_4.lammps,data/organized_scripts/input_4.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/cut 3.367386145 pair potential
+- Set timestep to 2.0
+- Run molecular dynamics for 1,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include wall or surface interactions
+- Use Langevin dynamics for temperature control
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,3.0,full,lj/cut 3.367386145,,,nve,,,2.0,1000000,,0,4,1,1,0,False,False,True,bonded_interactions; conditional_logic; wall_interactions; stochastic_dynamics,16,54,1299
+86,water_collapse.lmp,data/organized_scripts/water_collapse.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Set atom_style to sph
+- Use 2D simulation
+- Apply boundary conditions: f f p
+- Use hybrid/overlay sph/rhosum 1 sph/taitwater pair potential
+- Run molecular dynamics for ${nrun} timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,2.0,sph,hybrid/overlay sph/rhosum 1 sph/taitwater,,,,,,,${nrun},,0,5,1,4,6,False,False,True,conditional_logic; dynamic_variables,26,50,2388
+67,input_2.lammps,data/organized_scripts/input_2.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full # molecular + charge
+- Apply boundary conditions: p p p # periodic boundary conditions
+- Use lj/cut/coul/long 10 # cut-off 1 nm pair potential
+- Set timestep to 1
+- Run molecular dynamics for 500 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include wall or surface interactions
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full # molecular + charge,lj/cut/coul/long 10 # cut-off 1 nm,,,npt,,,1,500,,0,2,1,0,3,False,False,True,dynamic_variables; particle_mesh_ewald; wall_interactions; loop_structures; conditional_logic; long_range_electrostatics; velocity_initialization,21,41,1197
+57,ptm_example.in,data/organized_scripts/ptm_example.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use fcc lattice structure
+- Run molecular dynamics for 1 timesteps
+- Include 2 atom types
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,3.0,atomic,,,,,,,,1,,2,0,1,1,0,False,False,True,conditional_logic,13,48,1566
+108,thylakoid.in,data/organized_scripts/thylakoid.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Apply boundary conditions: f f p
+- Use lj/cut 1.1225 pair potential
+- Run molecular dynamics for 25,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,3.0,,lj/cut 1.1225,,,nve/manifold/rattle,,,,25000000,,0,1,1,0,3,False,False,True,conditional_logic; dynamic_variables; constraint_dynamics,16,34,712
+84,in.rigid.nve,data/organized_scripts/in.rigid.nve,"Set up a rigid body molecular dynamics simulation with constrained molecular motion.
+
+Requirements:
+- Set timestep to 0.0001
+- Include thermodynamic output
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",rigid_body,,,,,,,rigid/nve,,,0.0001,,,0,1,0,0,0,False,False,False,conditional_logic; velocity_initialization,9,82,1909
+101,in.lmp,data/organized_scripts/in.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Use lj/cut 2.8015 pair potential
+- Set timestep to 0.00044905847
+- Run molecular dynamics for 1,000 timesteps
+- Include 1 atom type
+- Include thermodynamic output
+- Use Langevin dynamics for temperature control
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,,atomic,lj/cut 2.8015,,,pimd/langevin,1.00888,,0.00044905847,1000,,1,1,0,0,1,False,False,True,dynamic_variables; temperature_control; conditional_logic; loop_structures; stochastic_dynamics,14,27,662
+45,shock3d.lmp,data/organized_scripts/shock3d.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Set atom_style to sph
+- Apply boundary conditions: s p p
+- Use hybrid/overlay sph/rhosum 1 sph/idealgas pair potential
+- Use sc lattice structure
+- Set timestep to 0.05
+- Include 2 atom types
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,,sph,hybrid/overlay sph/rhosum 1 sph/idealgas,,,,,,0.05,0,,2,2,2,4,1,False,False,False,conditional_logic; dynamic_variables,19,49,1703
+27,in.h2bulk.nve,data/organized_scripts/in.h2bulk.nve,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use electron units
+- Use eff/cut 30.627847 pair potential
+- Include energy minimization
+- Include thermodynamic output
+- Include energy minimization
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,electron,,,eff/cut 30.627847,,,,,,,,10.0,0,0,0,1,1,True,False,False,conditional_logic; dynamic_variables; velocity_initialization; energy_minimization,12,49,882
+85,in.bar01.lmp,data/organized_scripts/in.bar01.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 500,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,harmonic,harmonic,nvt,,,1.0,500000,,0,4,1,1,7,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,30,79,2424
+19,sph_heat_conduction_2d.lmp,data/organized_scripts/sph_heat_conduction_2d.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use 2D simulation
+- Apply boundary conditions: f p p
+- Use sph/heatconduction pair potential
+- Set timestep to 0.25e-1
+- Include 1 atom type
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,2.0,,sph/heatconduction,,,,,,0.25e-1,0,,1,1,0,2,0,False,False,False,conditional_logic,11,52,1575
+17,in-fep01-lj.lmp,data/organized_scripts/in-fep01-lj.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 12.0 12.0 lj/cut/soft 2 0.5 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include thermodynamic output
+- Include energy minimization
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid lj/cut/coul/long 12.0 12.0 lj/cut/soft 2 0.5 12.0,harmonic,harmonic,npt,,,1.0,2000000,,0,4,0,1,4,False,False,True,dynamic_variables; particle_mesh_ewald; energy_minimization; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; velocity_initialization,26,73,1911
+97,input.SOLVATE.lammps,data/organized_scripts/input.SOLVATE.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.105 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Use sc lattice structure
+- Set timestep to 1.0
+- Run molecular dynamics for 200,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/tip4p/long 1 2 1 1 0.105 10.0,harmonic,harmonic,npt,,1.0,1.0,200000,,0,8,1,3,1,False,False,True,dynamic_variables; particle_mesh_ewald; dihedral_interactions; constraint_dynamics; angular_interactions; bonded_interactions; improper_interactions; conditional_logic; long_range_electrostatics; berendsen_thermostat,36,66,1627
+87,Ar.on.ACL.lammps,data/organized_scripts/Ar.on.ACL.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Use hybrid tersoff zbl 8.0 10.0 pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to ${dt}
+- Run molecular dynamics for ${run_step} timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include wall or surface interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,3.0,atomic,hybrid tersoff zbl 8.0 10.0,,,nvt,300.0,,${dt},${run_step},,0,2,1,0,27,False,False,True,dynamic_variables; velocity_initialization; wall_interactions; angular_interactions; conditional_logic; loop_structures,44,99,3030
+9,input_14.lammps,data/organized_scripts/input_14.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj/cut/tip4p/long 1 2 1 1 0.105 10.0 pair potential
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,,,lj/cut/tip4p/long 1 2 1 1 0.105 10.0,,,,,,,,,0,3,0,2,0,False,False,False,dynamic_variables; particle_mesh_ewald; dihedral_interactions; constraint_dynamics; angular_interactions; bonded_interactions; improper_interactions; conditional_logic; long_range_electrostatics; berendsen_thermostat,21,45,1032
+54,msd.sphere.in,data/organized_scripts/msd.sphere.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Apply boundary conditions: f f f
+- Use none pair potential
+- Run molecular dynamics for 25,000 timesteps
+- Include 1 atom type
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Use Langevin dynamics for temperature control
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,3.0,,none,,,nve/manifold/rattle,,,,25000,,1,3,0,1,5,False,False,True,dynamic_variables; constraint_dynamics; conditional_logic; velocity_initialization; stochastic_dynamics,21,28,614
+72,in_2.lammps,data/organized_scripts/in_2.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use micro units
+- Set atom_style to sph
+- Use 3D simulation
+- Use sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed pair potential
+- Use sc lattice structure
+- Set timestep to ${dt}
+- Run molecular dynamics for 200 timesteps
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,micro,3.0,sph,sdpd/taitwater/isothermal $T ${mu} 76787 # temperature viscosity random_seed,,,,,,${dt},200,,0,1,0,1,17,False,False,True,dynamic_variables,26,46,1680
+2,log_6.lammps,data/organized_scripts/log_6.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use lj/cut 2.5 pair potential
+- Use fcc lattice structure
+- Run molecular dynamics for 500 timesteps
+- Include thermodynamic output
+- Include wall or surface interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,,atomic,lj/cut 2.5,,,nve,,,,500,,0,4,0,1,4,False,False,True,dynamic_variables; velocity_initialization; wall_interactions; conditional_logic; loop_structures,20,233,12231
+35,in.fep10_1.lmp,data/organized_scripts/in.fep10_1.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid lj/cut/coul/long 10.0 10.0 &,harmonic,harmonic,npt,,,1.0,2000000,,0,4,1,1,18,False,False,True,dynamic_variables; particle_mesh_ewald; dihedral_interactions; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,43,136,5413
+91,input_13.lammps,data/organized_scripts/input_13.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.105 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Run molecular dynamics for 20,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/tip4p/long 1 2 1 1 0.105 12.0,harmonic,harmonic,npt,,100.0,,20000,,0,4,1,0,1,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics,23,52,1074
+82,in.stick_3.lammps,data/organized_scripts/in.stick_3.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include thermodynamic output
+- Include energy minimization
+- Include charge equilibration (QEQ)
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,3.0,,,,,nve,,,${dt},,,0,4,0,1,24,False,False,False,dynamic_variables; energy_minimization; angular_interactions; charge_equilibration; loop_structures; conditional_logic; velocity_initialization,45,109,4313
+31,in.fep10.lmp,data/organized_scripts/in.fep10.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid &,harmonic,harmonic,npt,,,1.0,2000000,,0,4,1,1,8,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,31,84,2260
+3,input.EQUILIBRATE_GRAPHITE.lammps,data/organized_scripts/input.EQUILIBRATE_GRAPHITE.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Set timestep to 2.0
+- Run molecular dynamics for 5,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut 10.0,harmonic,harmonic,npt,,,2.0,5000,,0,1,1,0,1,False,False,True,dynamic_variables; dihedral_interactions; angular_interactions; bonded_interactions; improper_interactions; conditional_logic,19,31,853
+70,input_19.lammps,data/organized_scripts/input_19.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 14 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include harmonic dihedral interactions
+- Apply NVT ensemble at 300.0K
+- Set timestep to 1.0
+- Include energy minimization
+- Run molecular dynamics for 50,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/coul/long 14,harmonic,harmonic,nvt,300.0,,1.0,50000,1000.0,0,2,1,0,0,True,False,True,particle_mesh_ewald; dihedral_interactions; energy_minimization; angular_interactions; bonded_interactions; improper_interactions; long_range_electrostatics,22,25,627
+55,in.spce.lmp,data/organized_scripts/in.spce.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 12.0 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/coul/long 12.0 12.0,harmonic,harmonic,nvt,,,1.0,2000000,,0,2,0,1,2,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; velocity_initialization,21,50,1050
+100,in.fep01_2.lmp,data/organized_scripts/in.fep01_2.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,harmonic,harmonic,npt,,,1.0,2000000,,0,4,1,1,12,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,35,95,2924
+88,log_1.lammps,data/organized_scripts/log_1.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Use lj/cut 8.76 pair potential
+- Use sc lattice structure
+- Set timestep to 1.0
+- Include energy minimization
+- Run molecular dynamics for 10,000 timesteps
+- Include thermodynamic output
+- Include wall or surface interactions
+- Include energy minimization
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,,lj/cut 8.76,,,nve,,,1.0,10000,1000.0,0,5,0,1,0,True,False,True,velocity_initialization; wall_interactions; energy_minimization; angular_interactions; conditional_logic; loop_structures,22,154,6750
+83,input.PROD.lammps,data/organized_scripts/input.PROD.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.105 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 10,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/tip4p/long 1 2 1 1 0.105 10.0,harmonic,harmonic,nvt,,,1.0,10000,,0,3,1,0,1,False,False,True,dynamic_variables; particle_mesh_ewald; dihedral_interactions; constraint_dynamics; angular_interactions; bonded_interactions; improper_interactions; conditional_logic; long_range_electrostatics,27,34,797
+56,in.water.min,data/organized_scripts/in.water.min,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to full
+- Use zero 1.0 pair potential
+- Include energy minimization
+- Include thermodynamic output
+- Include energy minimization
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,,full,zero 1.0,,,nve,,,,,500.0,0,2,0,0,4,True,False,False,dynamic_variables; velocity_initialization; energy_minimization; conditional_logic; loop_structures,17,40,761
+63,in.stick_1.lammps,data/organized_scripts/in.stick_1.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Set timestep to ${dt}
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Include charge equilibration (QEQ)
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,3.0,,,,,nve,,,${dt},,,0,4,1,1,23,False,False,False,dynamic_variables; energy_minimization; angular_interactions; charge_equilibration; conditional_logic; velocity_initialization,44,104,4305
+59,msd.cyl.in,data/organized_scripts/msd.cyl.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Apply boundary conditions: f f p
+- Use none pair potential
+- Run molecular dynamics for 25,000 timesteps
+- Include 1 atom type
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Use Langevin dynamics for temperature control
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,3.0,,none,,,nve/manifold/rattle,,,,25000,,1,3,1,1,5,False,False,True,dynamic_variables; constraint_dynamics; conditional_logic; velocity_initialization; stochastic_dynamics,22,31,681
+25,input.lammps,data/organized_scripts/input.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Set atom_style to sphere
+- Apply boundary conditions: fm fm fm
+- Use granular pair potential
+- Set timestep to 0.0001
+- Run molecular dynamics for 2,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include wall or surface interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,,sphere,granular,,,nve/sphere,,,0.0001,2000000,,0,7,1,1,5,False,False,True,dynamic_variables; velocity_initialization; wall_interactions; conditional_logic; loop_structures,25,54,2122
+61,init.in,data/organized_scripts/init.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use custom lattice structure
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,,,,,,,,,,,,0,0,0,0,24,False,False,False,conditional_logic; dynamic_variables; velocity_initialization; temperature_control,34,80,2747
+48,shock2d.lmp,data/organized_scripts/shock2d.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Set atom_style to sph
+- Use 2D simulation
+- Apply boundary conditions: s p p
+- Use hybrid/overlay sph/rhosum 1 sph/idealgas pair potential
+- Use sq lattice structure
+- Set timestep to 0.05
+- Run molecular dynamics for 400 timesteps
+- Include 2 atom types
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,2.0,sph,hybrid/overlay sph/rhosum 1 sph/idealgas,,,,,,0.05,400,,2,2,1,4,1,False,False,True,conditional_logic; dynamic_variables,18,46,1600
+51,in.amorphous.carbon_2.lammps,data/organized_scripts/in.amorphous.carbon_2.lammps,"Create a reactive molecular dynamics simulation using reactive force fields.
+
+Requirements:
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Set timestep to 0.1
+- Include 4 atom types
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include charge equilibration (QEQ)
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,3.0,,,,,,,,0.1,,,4,1,1,0,1,False,False,False,charge_equilibration; dynamic_variables; conditional_logic,16,45,1287
+20,input_1.lammps,data/organized_scripts/input_1.lammps,"Create a reactive molecular dynamics simulation using reactive force fields.
+
+Requirements:
+- Use metal units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid airebo 2.5 1 1 lj/cut/tip4p/long 1 2 1 1 0.1546 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to ${dt}
+- Run molecular dynamics for 10,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,metal,,full,hybrid airebo 2.5 1 1 lj/cut/tip4p/long 1 2 1 1 0.1546 12.0,harmonic,harmonic,nve,,,${dt},10000,,0,7,2,1,11,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; velocity_initialization; berendsen_thermostat,40,82,2568
+44,output.lammps,data/organized_scripts/output.lammps,"Create a reactive molecular dynamics simulation using reactive force fields.
+
+Requirements:
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",reactive_md,,,,,,,,,,,,,0,0,1,0,0,False,False,False,dynamic_variables,8,34,1258
+7,msd.plane.in,data/organized_scripts/msd.plane.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Use 3D simulation
+- Apply boundary conditions: p p f
+- Use none pair potential
+- Run molecular dynamics for 25,000 timesteps
+- Include 1 atom type
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Use Langevin dynamics for temperature control
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,3.0,,none,,,nve/manifold/rattle,,,,25000,,1,3,0,1,5,False,False,True,dynamic_variables; constraint_dynamics; conditional_logic; velocity_initialization; stochastic_dynamics,21,30,589
+21,in.Li-dendritic.min,data/organized_scripts/in.Li-dendritic.min,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: p p p
+- Use eff/cut 50.112 pair potential
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,electron,,,eff/cut 50.112,,,,,,,,,0,0,2,1,1,False,False,False,dynamic_variables; energy_minimization; conditional_logic; restart_capability; velocity_initialization,15,38,804
+74,input_17.lammps,data/organized_scripts/input_17.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to atomic
+- Apply boundary conditions: p p p
+- Use tersoff pair potential
+- Apply NVT ensemble at 300.0K
+- Set timestep to 0.0005
+- Run molecular dynamics for 20,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,,atomic,tersoff,,,nvt,300.0,,0.0005,20000,,0,1,1,0,0,False,False,True,,8,21,492
+37,in.adamantane_ionized.nve,data/organized_scripts/in.adamantane_ionized.nve,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use electron units
+- Apply boundary conditions: f f f
+- Use eff/cut 100.0 pair potential
+- Include energy minimization
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,electron,,,eff/cut 100.0,,,,,,,,10000.0,0,0,4,1,0,True,False,False,dynamic_variables; energy_minimization; conditional_logic; restart_capability; velocity_initialization,16,52,1032
+18,in.fdti01.lmp,data/organized_scripts/in.fdti01.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 100,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid &,harmonic,harmonic,npt,,,1.0,100000,,0,4,1,1,8,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,31,99,2703
+103,in.fep01_1.lmp,data/organized_scripts/in.fep01_1.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid lj/cut/coul/long 10.0 10.0 &,harmonic,harmonic,npt,,,1.0,2000000,,0,4,1,1,18,False,False,True,dynamic_variables; particle_mesh_ewald; dihedral_interactions; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,43,136,5414
+40,input_5.lammps,data/organized_scripts/input_5.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/tip4p/long 1 2 1 1 0.1546 12.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include harmonic dihedral interactions
+- Apply NVT ensemble at 300.0K
+- Set timestep to 1.0
+- Run molecular dynamics for 20,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/tip4p/long 1 2 1 1 0.1546 12.0,harmonic,harmonic,nvt,300.0,,1.0,20000,,0,3,2,0,0,False,False,True,particle_mesh_ewald; dihedral_interactions; constraint_dynamics; angular_interactions; bonded_interactions; improper_interactions; conditional_logic; long_range_electrostatics,27,70,1415
+5,in.fep01.lmp,data/organized_scripts/in.fep01.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid & pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid &,harmonic,harmonic,npt,,,1.0,2000000,,0,4,1,1,8,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,31,86,2284
+13,polystyrene.SG.lammps,data/organized_scripts/polystyrene.SG.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Apply NPT ensemble at 600.0K and 1.0 pressure
+- Set timestep to ${dt}
+- Include energy minimization
+- Run molecular dynamics for 1,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,,full,lj/cut 10.0,harmonic,harmonic,npt,600.0,1.0,${dt},1000000,5000.0,0,3,1,0,2,True,False,True,dynamic_variables; particle_mesh_ewald; dihedral_interactions; energy_minimization; angular_interactions; bonded_interactions; loop_structures; improper_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,30,68,1846
+90,test-spin-precession.in,data/organized_scripts/test-spin-precession.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use metal units
+- Set atom_style to spin
+- Apply boundary conditions: f f f
+- Use spin/exchange 3.1 pair potential
+- Use sc lattice structure
+- Run molecular dynamics for ${RUN} timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Use Langevin dynamics for temperature control
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,metal,,spin,spin/exchange 3.1,,,nve/spin,,,,${RUN},,0,2,1,1,2,False,False,True,conditional_logic; dynamic_variables; stochastic_dynamics,15,47,1146
+47,input_10.lammps,data/organized_scripts/input_10.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full # molecular + charge
+- Apply boundary conditions: p p p # periodic boundary conditions
+- Use lj/cut/tip4p/long 1 2 1 1 0.1546 10 # cut-off 1 nm pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 2
+- Run molecular dynamics for 1,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full # molecular + charge,lj/cut/tip4p/long 1 2 1 1 0.1546 10 # cut-off 1 nm,harmonic,harmonic,npt,,,2,1000000,,0,2,1,0,2,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; velocity_initialization,23,39,1092
+29,log_8.lammps,data/organized_scripts/log_8.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use 2D simulation
+- Apply boundary conditions: p f p
+- Use none pair potential
+- Include harmonic bond interactions
+- Set timestep to 0.005
+- Run molecular dynamics for 2,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Use Langevin dynamics for temperature control
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,2.0,,none,harmonic,,nve,,,0.005,2000000,,0,8,1,1,3,False,False,True,dynamic_variables; velocity_initialization; bonded_interactions; conditional_logic; loop_structures; stochastic_dynamics,26,20091,982458
+22,hma.in,data/organized_scripts/hma.in,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use lj units
+- Set atom_style to atomic
+- Use 3D simulation
+- Apply boundary conditions: p p p
+- Use lj/smooth/linear 3 pair potential
+- Use fcc lattice structure
+- Apply NVT ensemble at 1.0K
+- Set timestep to 0.005
+- Run molecular dynamics for 200,000 timesteps
+- Include 1 atom type
+- Include thermodynamic output
+- Create initial atomic configuration
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,lj,3.0,atomic,lj/smooth/linear 3,,,nvt,1.0,,0.005,200000,,1,1,0,3,0,False,False,True,conditional_logic; velocity_initialization,13,37,848
+23,in.fep10_2.lmp,data/organized_scripts/in.fep10_2.lmp,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Set timestep to 1.0
+- Run molecular dynamics for 2,000,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Apply molecular constraints (SHAKE/RATTLE)
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,hybrid lj/cut/coul/long 10.0 10.0 lj/cut/coul/long/soft 1 0.5 10.0 10.0 10.0,harmonic,harmonic,npt,,,1.0,2000000,,0,4,1,1,12,False,False,True,dynamic_variables; particle_mesh_ewald; constraint_dynamics; angular_interactions; bonded_interactions; conditional_logic; long_range_electrostatics; restart_capability; velocity_initialization,35,95,2924
+8,input_18.lammps,data/organized_scripts/input_18.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Use real units
+- Set atom_style to full
+- Apply boundary conditions: p p p
+- Use lj/cut/coul/long 12 pair potential
+- Include harmonic bond interactions
+- Include hybrid harmonic charmm angle interactions
+- Include hybrid harmonic charmm dihedral interactions
+- Apply NVT ensemble at 300.0K
+- Set timestep to 1.0
+- Include energy minimization
+- Run molecular dynamics for 100,000 timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include energy minimization
+- Include long-range electrostatic interactions
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,real,,full,lj/cut/coul/long 12,harmonic,hybrid harmonic charmm,nvt,300.0,1.0,1.0,100000,1000.0,0,3,1,0,0,True,False,True,particle_mesh_ewald; dihedral_interactions; energy_minimization; angular_interactions; bonded_interactions; long_range_electrostatics,21,37,875
+53,Ar.on.polystyrene.lammps,data/organized_scripts/Ar.on.polystyrene.lammps,"Create a free energy perturbation calculation for thermodynamic analysis.
+
+Requirements:
+- Set atom_style to full
+- Apply boundary conditions: p p f
+- Use hybrid lj/cut 10.0 zbl 8.0 10.0 pair potential
+- Include harmonic bond interactions
+- Include harmonic angle interactions
+- Include opls dihedral interactions
+- Set timestep to ${dt}
+- Run molecular dynamics for ${run_step} timesteps
+- Include trajectory output for visualization
+- Include thermodynamic output
+- Include wall or surface interactions
+- Include energy minimization
+- Read initial configuration from data file
+
+Generate a complete and syntactically correct LAMMPS input script that fulfills these requirements.",free_energy_perturbation,,,full,hybrid lj/cut 10.0 zbl 8.0 10.0,harmonic,harmonic,nvt,,,${dt},${run_step},,0,3,1,0,17,False,False,True,dynamic_variables; wall_interactions; dihedral_interactions; energy_minimization; angular_interactions; bonded_interactions; loop_structures; improper_interactions; conditional_logic; restart_capability; velocity_initialization,44,110,3672

@@ -1,0 +1,58 @@
+# LAMMPS input script for electrochemical systems with electrode interfaces
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p f
+atom_style      charge
+
+# Create simulation box and read atoms
+read_data       data.electrodes
+
+# Include modular settings for styles, computes, groups, and fixes
+include         settings.in
+
+# K-space style for long-range electrostatics with electrode surfaces
+kspace_style    ewald/electrode 1.0e-8
+
+# Define groups for electrodes
+group           bottom_electrode region bottom_region
+group           top_electrode region top_region
+
+# Define custom per-atom property
+fix             prop_deta all property/atom d_eta
+
+# Set custom property value for electrode atoms
+set             group bottom_electrode d_eta 2.0
+set             group top_electrode d_eta 2.0
+
+# Apply fix to maintain charge neutrality and symmetry between electrodes
+fix             1 all electrode/conp bottom_electrode top_electrode \
+                file_inversion inversion.csv file_vector vector.csv
+
+# Thermo settings
+thermo_style    custom step temp pe c_thermo_charge_bottom c_thermo_charge_top
+thermo          100
+
+# Initialize simulation with zero-step run
+run             0
+
+# End of script
+
+Contents of `settings.in`:
+
+# Settings file for styles, computes, groups, and fixes
+
+# Define styles
+pair_style      lj/cut 10.0
+pair_modify     tail yes
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Define computes for thermodynamic properties
+compute         thermo_charge_bottom bottom_electrode property/atom q
+compute         thermo_charge_top top_electrode property/atom q
+
+# Other settings or fixes can be added here as needed
+
+This script sets up the simulation environment for electrochemical systems with electrode interfaces using LAMMPS, adhering to the specified requirements. Ensure you have the appropriate `data.electrodes` file and define the regions `bottom_region` and `top_region` in your simulation setup.

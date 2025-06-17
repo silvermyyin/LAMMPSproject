@@ -1,0 +1,38 @@
+Sure, here is an example of a LAMMPS input script that fulfills your requirements:
+
+```LAMMPS
+# LAMMPS Input Script
+
+units metal
+atom_style charge
+dimension 3
+boundary p p f
+
+# Initialize system
+lattice fcc 4.05
+create_box 1 box
+create_atoms 1 box
+mass 1 58.69
+
+# Define pair style
+pair_style hybrid tersoff zbl 8.0 10.0 coul/cut 10.0
+pair_coeff * * tersoff Si.tersoff Si
+
+# Define interactions
+include angular.interactions
+
+# Set up ensemble
+velocity all create 300.0 4928459 rot yes mom yes dist gaussian
+fix 1 all nvt temp 300.0 300.0 0.1
+
+# Set timestep
+timestep ${dt}
+
+# Run simulation
+thermo 100
+run ${run_step}
+```
+
+Please replace `${dt}` and `${run_step}` with the required numerical values. Also, if you have a specific file for "angular.interactions", replace that with the actual filename.
+
+This script assumes you are simulating a system of silicon atoms (Si) using a Tersoff potential with a ZBL mixing and a Coulomb cutoff. You may need to adjust the script to suit your specific system and interactions. The script also assumes that you are using a face-centered cubic (fcc) lattice with a lattice constant of 4.05 Å, which is typical for metal atoms. The atom mass is set to that of Nickel (Ni) with an atomic mass of 58.69 u. Please adjust these parameters to suit your specific system.

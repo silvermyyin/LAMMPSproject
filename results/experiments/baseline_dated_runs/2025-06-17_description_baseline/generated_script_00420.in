@@ -1,0 +1,43 @@
+# LAMMPS input script for alpha-alumina with Streitz-Mintmire potential
+
+units metal
+atom_style charge
+boundary p p p
+
+# Read initial configuration from a data file
+read_data alpha_alumina.data
+
+# Define atom types and charges
+group type1 type 1
+group type2 type 2
+set group type1 charge +1.5
+set group type2 charge -1.5
+
+# Pair style and coefficients for Streitz-Mintmire with EAM
+pair_style hybrid/overlay coul/streitz ewald 1.0e-4 eam
+pair_coeff * * eam Al2O3.eam.alloy Al O
+
+# Uncomment the following lines to use Wolf summation instead of Ewald
+# pair_style hybrid/overlay coul/streitz wolf 0.3 eam
+# pair_coeff * * eam Al2O3.eam.alloy Al O
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initial velocity setup
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Charge equilibration
+fix 1 all qeq/slater 10 1.0e-3
+
+# Integrate equations of motion
+fix 2 all nve
+
+# Thermodynamic output
+thermo 10
+thermo_style custom step temp pe ke etotal press
+
+# Time step and run
+timestep 0.0004
+run 100

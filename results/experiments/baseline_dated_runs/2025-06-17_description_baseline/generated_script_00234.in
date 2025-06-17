@@ -1,0 +1,44 @@
+# LAMMPS input script for simulating a nylon melt system with reactive MD
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data nylon_melt.data
+
+# Pair style and coefficients
+pair_style lj/class2/coul/long 8.5
+pair_modify tail yes mix sixthpower
+kspace_style pppm 1.0e-4
+
+# Bond, angle, dihedral, improper styles
+bond_style class2
+angle_style class2
+dihedral_style class2
+improper_style class2
+
+# Define groups
+group all type 1 2 3 4 5 6 7 8 9 10  # Assuming 10 atom types for illustration
+
+# Initial velocities
+velocity all create 800.0 123456 mom yes rot yes dist gaussian
+
+# Equilibration using NVT ensemble
+fix 1 all nvt temp 800.0 800.0 100.0
+
+# Reactive MD setup
+fix 2 all bond/react \
+    template1 reactant1.data template2 reactant2.data \
+    product1 product1.data product2 product2.data \
+    stabilize yes mapping yes
+
+# Customize thermodynamic output
+thermo_style custom step temp press pe ke etotal f_2[1]  # Including reaction count
+thermo 100
+
+# Run the simulation
+timestep 1.0
+run 200
+
+Note: This script assumes the existence of specific data files (e.g., `nylon_melt.data`, `reactant1.data`, etc.) that define the atomic structure and reactive templates. Adjust the file names and parameters according to your specific system needs.

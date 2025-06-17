@@ -1,0 +1,32 @@
+# LAMMPS Input Script for XRD and SAED Analysis of Bulk Nickel
+
+# Initialize simulation
+clear
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create FCC lattice and simulation box
+lattice fcc 3.52
+region box block 0 32 0 32 0 32
+create_box 1 box
+create_atoms 1 box
+
+# Set atom mass
+mass 1 58.71
+
+# Specify no pair style (focus on structural analysis)
+pair_style none
+
+# Define computes for XRD and SAED
+compute xrd all xrd 40 80 1 0.01
+compute saed all saed 0.85 1 0.01 zone_axis 1 0 0
+
+# Define fixes for output
+fix 1 all ave/time 1 1 1 c_xrd[*] file xrd_output.txt mode vector
+fix 2 all ave/time 1 1 1 c_saed[*] file saed_output.txt mode vector
+
+# Run simulation
+timestep 0.001
+run 0

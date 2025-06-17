@@ -1,0 +1,32 @@
+# LAMMPS input script for NEB simulation of vacancy hopping in silicon
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Read initial configuration with a vacancy
+read_data initial.sivac
+
+# Define the lattice and potential
+lattice diamond 5.431
+pair_style sw
+pair_coeff * * Si.sw Si
+
+# Define the group of atoms involved in the NEB process
+group neb_atoms type 1
+
+# Set NEB parameters
+neb 0.0 0.1 2000 1.0e-4
+neigh_modify every 1 delay 0 check yes
+
+# Fix to apply NEB with quickmin minimization
+fix 1 neb_atoms neb 10 quickmin
+
+# Run NEB simulation
+thermo 100
+thermo_style custom step pe ke etotal
+run 2000
+
+# Clean up
+unfix 1
+write_data final_neb_configuration.data

@@ -1,0 +1,74 @@
+# LAMMPS Input Script for Kawasaki Dynamics on LJ System
+
+units lj
+atom_style atomic
+
+# Define simulation box
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 2 box
+
+# Create atoms
+create_atoms 1 box
+mass 1 50.0
+mass 2 50.0
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.0
+pair_coeff 1 1 1.0 1.0 2.0
+pair_coeff 2 2 1.0 1.0 2.0
+pair_coeff 1 2 1.0 1.0 2.0
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Group atoms by type
+group type1 type 1
+group type2 type 2
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal press vol
+
+# Voronoi tessellation settings
+compute voro all voronoi/atom
+
+# Test: Verify Voronoi cell volumes sum to simulation cell volume
+variable total_voronoi_vol equal c_voro[1]
+variable box_vol equal vol
+print "Total Voronoi volume: ${total_voronoi_vol}"
+print "Box volume: ${box_vol}"
+
+# Group specific Voronoi analysis
+compute voro_type1 type1 voronoi/atom
+compute voro_type2 type2 voronoi/atom
+
+# Test: Voronoi cell volumes for specific groups
+variable type1_voronoi_vol equal c_voro_type1[1]
+variable type2_voronoi_vol equal c_voro_type2[1]
+print "Type 1 Voronoi volume: ${type1_voronoi_vol}"
+print "Type 2 Voronoi volume: ${type2_voronoi_vol}"
+
+# Edge histogram analysis for different lattice structures
+compute edge_hist all voronoi/atom edge_histogram 100 0.0 5.0
+fix histo all ave/histo 1 1000 1000 0.0 5.0 100 c_edge_hist file edge_histogram.txt
+
+# Occupation analysis
+compute occupancy all voronoi/atom occupation
+variable n_vacancies equal count(occupancy < 0.5)
+variable n_interstitials equal count(occupancy > 1.5)
+print "Number of vacancies: ${n_vacancies}"
+print "Number of interstitials: ${n_interstitials}"
+
+# Test: Voronoi cell volume calculations in triclinic box
+region tribox prism 0 10 0 10 0 10 0.5 0.5 0.5 units box
+change_box all triclinic
+compute voro_triclinic all voronoi/atom
+variable triclinic_voronoi_vol equal c_voro_triclinic[1]
+print "Triclinic Voronoi volume: ${triclinic_voronoi_vol}"
+
+# Run the simulation
+run 1000
+
+# End of script

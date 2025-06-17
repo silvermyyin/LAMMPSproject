@@ -1,0 +1,75 @@
+```lammps
+# LAMMPS input script for 2D dimer and small particles simulation using rigid body dynamics and SRD
+
+units lj
+atom_style hybrid sphere srd
+dimension 2
+boundary p p p
+
+# Read initial configuration of dimer particles
+read_data dimers.data
+
+# Define groups for dimers and small particles
+group dimers type 1
+group small type 2
+
+# Set mass for dimers and small particles
+mass 1 1.0
+mass 2 0.1
+
+# Define pair styles and coefficients
+pair_style hybrid soft 0.0 lj/cut 1.12246
+pair_coeff * * soft 1.0 1.0
+pair_coeff 1 2 lj/cut 1.0 1.0 1.12246
+pair_coeff 2 2 none
+
+# Define initial integration settings for dimers
+fix 1 dimers nvt temp 1.0 1.0 1.0
+
+# Gradually increase soft potential prefactor
+variable ramp equal ramp(0.0, 50.0)
+fix 2 dimers adapt 1 pair soft a * * v_ramp
+
+# Rigid body dynamics for dimers
+fix 3 dimers rigid/nve/small molecule
+fix_modify 3 temp temp/dim
+
+# Equilibrate system
+timestep 0.001
+run 10000
+
+# Unfix equilibration fixes
+unfix 1
+unfix 2
+
+# Introduce small particles on a high-density lattice
+lattice sq2 0.7
+region small_particles block 0 50 0 50 -0.1 0.1 units box
+create_atoms 2 region small_particles
+
+# Remove overlapping small particles
+delete_atoms overlap 0.5 all all
+
+# Re-define groups after atom creation
+group dimers type 1
+group small type 2
+
+# Define SRD settings for small particles
+fix 4 small srd 0.1 0.25 12345
+
+# Reset integration for dimers with SRD
+fix 5 dimers nve
+fix 6 dimers langevin 1.0 1.0 1.0 12345
+
+# Set timestep for production run
+timestep 0.0005
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Run simulation for dynamics
+run 50000
+
+# End of input script
+```

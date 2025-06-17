@@ -1,0 +1,51 @@
+# LAMMPS input script for 2D Lennard-Jones liquid viscosity calculation using Muller-Plathe method
+
+units lj
+dimension 2
+atom_style atomic
+
+# Create a 2D simulation box
+lattice sq2 0.6
+region box block 0 20 0 20 -0.5 0.5
+create_box 1 box
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set up neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define simulation settings
+mass 1 1.0
+velocity all create 1.0 12345 dist gaussian
+
+# Apply Langevin thermostat for temperature control
+fix 1 all langevin 1.0 1.0 1.0 12345
+fix 2 all nve
+
+# Equilibration run
+thermo 100
+thermo_style custom step temp etotal press
+run 10000
+
+# Apply Muller-Plathe method for viscosity calculation
+fix 3 all viscosity 100 x y 20
+variable v_profile equal c_vx[1]
+compute layers all chunk/atom bin/1d x lower 1.0
+fix avedensity all ave/chunk 100 10 1000 layers v_profile file velocity_profile.dat
+
+# Data collection run for viscosity calculation
+reset_timestep 0
+thermo 100
+thermo_style custom step temp etotal press f_3[1]
+run 20000
+
+# Unfix commands and clean up
+unfix 1
+unfix 2
+unfix 3
+
+This script sets up a 2D Lennard-Jones liquid simulation to measure viscosity using the Muller-Plathe method. It equilibrates the system and then applies shear to calculate viscosity, outputting relevant data for analysis.

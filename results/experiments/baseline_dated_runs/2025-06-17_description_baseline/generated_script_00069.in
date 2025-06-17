@@ -1,0 +1,46 @@
+# LAMMPS input script for S12S surfactant system
+
+units lj
+atom_style full
+
+# Read initial configuration
+read_data s12s_data_file.data
+
+# Define pair styles
+pair_style hybrid/overlay lj/cut 1.122462 coul/long 10.0 gauss/cut 1.0
+pair_coeff * * lj/cut 1.0 1.0
+pair_coeff * * gauss/cut 0.5 0.1 0.5
+
+# Kspace style for long-range electrostatics
+kspace_style pppm 1.0e-4
+dielectric 78.5
+
+# Bond and angle potentials
+bond_style harmonic
+bond_coeff * 300.0 1.0
+
+angle_style harmonic
+angle_coeff * 50.0 120.0
+
+# Dihedral potential
+dihedral_style opls
+dihedral_coeff * 0.0 1.0 0.5 0.0
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define the simulation box
+boundary p p p
+
+# Time integration settings
+timestep 0.002
+
+# Fixes for dynamics
+fix 1 all nve/limit 0.1
+fix 2 all langevin 1.0 1.0 1.0 48279
+
+# Run the simulation
+thermo 500
+thermo_style custom step temp pe ke etotal
+run 2000

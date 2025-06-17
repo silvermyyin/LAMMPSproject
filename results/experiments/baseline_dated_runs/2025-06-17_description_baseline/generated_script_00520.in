@@ -1,0 +1,35 @@
+# LAMMPS input script for a 3D molecular dynamics simulation of an fcc lattice system
+
+units           metal
+dimension       3
+boundary        p p p
+
+atom_style      atomic
+read_data       fcc_lattice.data
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.0
+pair_coeff      * * 1.0 1.0 13.0
+
+# Define simulation parameters
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Define the AtC package settings
+fix             atc all atc control
+fix_modify      atc fields mass_density energy stress temperature kinetic_thermal_energy thermal_energy
+
+# Set up Nose-Hoover thermostat
+fix             nvt all nvt temp 30.0 30.0 10.0 drag 0.2
+
+# Output settings
+thermo_style    custom step temp etotal ke pe press vol
+thermo          100
+
+# AtC output settings
+compute         hardy all atc hardy
+fix             atc_output all atc output textfilename=hardy_output.txt every=100
+
+# Run parameters
+timestep        4.0
+run             1000

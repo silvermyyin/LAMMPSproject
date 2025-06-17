@@ -1,0 +1,48 @@
+# LAMMPS Input Script for 2D LJ Liquid Simulation to Study Diffusion
+
+units lj
+dimension 2
+atom_style atomic
+
+# Create a 2D LJ liquid
+lattice sq2 0.6
+region box block 0 40 0 40 -0.25 0.25
+create_box 1 box
+create_atoms 1 box
+
+# Define interactions
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocities
+velocity all create 1.0 12345
+
+# Define simulation settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define fixes
+fix 1 all enforce2d
+fix 2 all nve
+fix 3 all langevin 1.0 1.0 1.0 12345
+
+# Run equilibration
+thermo 1000
+thermo_style custom step temp press
+run 5000
+
+# Unfix the Langevin thermostat for production run
+unfix 3
+
+# Compute mean-squared displacement and VACF
+compute msd all msd
+compute vacf all vacf
+
+# Output settings
+thermo_style custom step temp c_msd[4] c_vacf[1]
+dump 1 all custom 1000 dump.lammpstrj id type x y vx vy
+
+# Run production phase
+run 100000
+
+# End of script

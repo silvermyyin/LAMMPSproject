@@ -1,0 +1,52 @@
+# LAMMPS Input Script for Pt Surface Dynamics with Hyperdynamics
+
+units metal
+dimension 3
+boundary p p f
+
+atom_style atomic
+
+# Create fcc lattice structure
+lattice fcc 3.92
+region box block 0 10 0 10 0 10
+create_box 2 box
+
+# Define regions for substrate and adatoms
+region substrate block INF INF INF INF 0 5
+region adatoms block INF INF INF INF 5 10
+
+# Create atoms in the substrate and adatom regions
+create_atoms 1 region substrate
+create_atoms 2 region adatoms
+
+# Define EAM potential for Pt
+pair_style eam
+pair_coeff * * Pt_u3.eam
+
+# Grouping atoms
+group substrate region substrate
+group adatoms region adatoms
+
+# Fix the substrate atoms (frozen)
+fix freeze substrate setforce 0.0 0.0 0.0
+
+# NVE integration for adatoms
+fix integrate adatoms nve
+
+# Langevin thermostat for the adatoms
+fix temp_control adatoms langevin 400.0 400.0 0.1 48279
+
+# Set up hyperdynamics
+fix hyper all hyper/global 0.5 1.0 0.1 1.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal
+dump 1 all image 500 image.*.jpg type type & 
+    zoom 1.2 adatoms yes substrate yes
+
+# Run the simulation
+timestep 0.001
+run 10000
+
+This script sets up a simulation box for a Pt crystal using EAM potentials, initializes the lattice and geometry, applies the NVE ensemble with a Langevin thermostat to control temperature, and uses hyperdynamics to enhance sampling of rare events. Visualization outputs are generated to monitor the system's dynamics.

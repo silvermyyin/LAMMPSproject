@@ -1,0 +1,46 @@
+# LAMMPS Input Script for Calculating Thermal Conductivity of LJ Liquid using Muller-Plathe Method
+
+units lj
+atom_style atomic
+
+# Create simulation box and atoms
+lattice fcc 0.6
+region box block 0 10 0 10 0 20
+create_box 1 box
+create_atoms 1 box
+
+mass 1 1.0
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocities
+velocity all create 1.35 12345
+
+# Equilibration phase using NVT ensemble
+timestep 0.005
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+fix 1 all nvt temp 1.35 1.35 0.5
+run 10000
+unfix 1
+
+# Switch to NVE ensemble for production run
+fix 2 all nve
+
+# Apply Muller-Plathe method for thermal conductivity calculation
+compute myTemp all temp
+variable dT equal 0.0
+fix 3 all thermal/conductivity 100 z 20 swap 1
+fix 4 all ave/chunk 10 100 1000 c_myTemp file temp_profile.txt
+
+# Run the simulation
+run 30000
+
+# Compute thermal conductivity
+variable Tdiff equal f_3[1]
+variable kappa equal -(v_Tdiff)/(2.0*0.5*step*0.005*10*10*20)
+
+print "Thermal conductivity (kappa) = ${kappa} in LJ units"

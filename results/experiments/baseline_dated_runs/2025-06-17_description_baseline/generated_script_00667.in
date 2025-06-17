@@ -1,0 +1,44 @@
+# LAMMPS input script for spin dynamics simulation with spin/exchange model
+
+units           lj
+atom_style      spin
+
+# Create a simple cubic lattice
+lattice         sc 1.0
+region          box block 0 1 0 1 0 1
+create_box      1 box
+create_atoms    1 box
+
+# Set initial spins and masses
+set             group all spin 1.0 0.0 0.0
+mass            1 1.0
+
+# Define spin/exchange potential
+pair_style      spin/exchange 1.0
+pair_coeff      * *
+
+# Add a Zeeman term with magnetic field along z-axis
+fix             zeeman all addforce 0.0 0.0 10.0
+
+# Integrate spin dynamics using fix nve/spin
+fix             1 all nve/spin
+
+# Add spin precession using fix precession/spin
+fix             2 all precession/spin
+
+# Apply Langevin thermostat to maintain temperature
+fix             3 all langevin/spin 0.0 0.0 0.01 12345
+
+# Run simulation
+timestep        0.1
+thermo          50000
+thermo_style    custom step temp vol pe etotal
+run             1000000
+
+# Compute average spin properties and magnetic energy
+compute         spin_avg all property/atom mux muy muz
+compute         mag_energy all reduce sum c_spin_avg[1] c_spin_avg[2] c_spin_avg[3]
+
+# Output spin properties and magnetic energy to a file
+fix             avg_spin all ave/time 50000 1 50000 c_spin_avg[1] c_spin_avg[2] c_spin_avg[3] file spin_avg.txt
+fix             mag_energy_out all ave/time 50000 1 50000 c_mag_energy file mag_energy.txt

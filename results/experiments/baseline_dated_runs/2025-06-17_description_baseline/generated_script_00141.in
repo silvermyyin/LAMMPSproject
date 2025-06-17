@@ -1,0 +1,49 @@
+# LAMMPS input script for 3D Lennard-Jones melt simulation
+
+units lj
+atom_style atomic
+dimension 3
+boundary p p p
+
+# Create atoms in an fcc lattice
+lattice fcc 0.8442
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+# Define velocity
+velocity all create 3.0 12345
+
+# Generate Lennard-Jones potential table using Python
+shell python -c "
+import numpy as np
+
+with open('lj_table.txt', 'w') as f:
+    f.write('# Lennard-Jones potential table\\n')
+    f.write('N 1000 R 1.0 3.0\\n')
+    for i in range(1000):
+        r = 1.0 + i * (3.0 - 1.0) / 999
+        lj = 4 * ((1/r)**12 - (1/r)**6)
+        lj_prime = 24 * ((2/r**14) - (1/r**8))
+        f.write(f'{i+1} {r:.6f} {lj:.6f} {lj_prime:.6f}\\n')
+"
+
+# Use tabulated potential for efficiency
+pair_style table linear 1000
+pair_coeff * * lj_table.txt LJ
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 20 delay 0 check yes
+
+# Define simulation settings
+fix 1 all nve
+
+# Thermodynamic output
+thermo 50
+
+# Run the simulation
+run 250
+
+# Clean up
+shell rm lj_table.txt

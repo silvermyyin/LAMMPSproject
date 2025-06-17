@@ -1,0 +1,47 @@
+# LAMMPS input script for DNA duplexes using the oxDNA2 model
+
+units lj
+atom_style hybrid bond ellipsoid oxdna
+
+# Read the initial configuration from a data file
+read_data dna_duplexes.data
+
+# Define simulation box with periodic boundary conditions
+boundary p p p
+
+# Define interaction potentials for oxDNA2 model
+pair_style hybrid/overlay oxdna2/fene oxdna2
+bond_style fene
+
+# Pair coefficients for oxDNA2 interactions
+pair_coeff * * oxdna2/fene
+pair_coeff * * oxdna2
+
+# Bond coefficients for FENE potential
+bond_coeff * 30.0 1.5 1.0 1.0
+
+# Set the temperature
+variable temp equal 300.0
+
+# Define groups
+group all type 1 2 3 4 5 6 7 8
+
+# Initialize velocities
+velocity all create ${temp} 87287 loop geom
+
+# Fix for Langevin thermostat to maintain temperature
+fix 1 all langevin ${temp} ${temp} 1.0 904297
+
+# Integration using NVE for aspherical particles
+fix 2 all nve/asphere
+
+# Output settings
+thermo 1000
+thermo_style custom step temp etotal ke eng pe evdwl ebond ecoul elong
+
+# Dump trajectory data for further analysis
+dump 1 all custom 1000 trajectory.lammpstrj id type x y z ix iy iz
+
+# Run the simulation
+timestep 0.01
+run 100000

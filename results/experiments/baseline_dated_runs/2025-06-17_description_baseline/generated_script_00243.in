@@ -1,0 +1,48 @@
+# LAMMPS input script for simulating ethane-like system using eFF model
+
+# Initialization
+units       metal
+atom_style  electron
+boundary    p p p
+
+# Variables
+variable    sname string "ethane.data"
+
+# Read data
+read_data   ${sname}
+
+# Specify pair style and cutoff
+pair_style  eff/cut 529.177249
+pair_coeff  * *
+
+# Neighbor settings
+neighbor    2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define computes for energy components and pressure
+compute     ke all ke/eff
+compute     pe all pe/eff
+compute     stress all stress/atom NULL
+compute     pauli all pe/eff pauli
+compute     electro all pe/eff electro
+compute     restraint all pe/eff restraint
+
+# Minimize energy using conjugate gradient method
+min_style   cg
+minimize    1.0e-4 1.0e-6 100 1000
+
+# Equilibration using NVT ensemble
+fix         1 all nvt/eff temp 5000.0 5000.0 0.1
+
+# Timestep
+timestep    0.001
+
+# Output settings
+thermo      100
+thermo_style custom step temp etotal c_ke c_pe c_pauli c_electro c_restraint press
+
+# Run the simulation
+run         10000
+
+# Unfix the NVT ensemble
+unfix       1

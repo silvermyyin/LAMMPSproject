@@ -1,0 +1,46 @@
+# 2D Granular Flow Simulation with Hertzian Contact Mechanics
+
+units           si
+dimension       2
+atom_style      granular
+boundary        f p f
+
+newton          off
+communicate     single vel yes
+
+# Create the simulation box
+region          simbox block 0 10 0 10 -0.5 0.5
+create_box      1 simbox
+
+# Define Hertzian contact with history
+pair_style      gran/hertz/history 1.0e5 NULL 50.0 0.5 0.1 0.0
+pair_coeff      * *
+
+# Define gravity
+fix             gravity all gravity 9.81 vector 0.0 -1.0 0.0
+
+# Fix for enforcing 2D dynamics
+fix             enforce2d all enforce2d
+
+# Create walls for the container
+region          left_wall block INF 0 INF INF INF INF
+region          right_wall block 10 INF INF INF INF INF
+fix             wall_left all wall/gran 1.0e5 NULL 50.0 0.5 0.1 0.0 region left_wall
+fix             wall_right all wall/gran 1.0e5 NULL 50.0 0.5 0.1 0.0 region right_wall
+
+# Particle insertion
+region          pour_region block 4 6 9 10 INF INF
+fix             pour all pour 10000 1 100 region pour_region diam 0.5 1.0 rate 1000
+
+# Integration
+fix             integrator all nve/sphere
+
+# Timestep
+timestep        0.001
+
+# Thermodynamics
+thermo          100
+thermo_style    custom step ke erot vol
+
+# Run simulation
+run             25000

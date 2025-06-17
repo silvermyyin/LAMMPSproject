@@ -1,0 +1,36 @@
+# LAMMPS input script for calculating cohesive energy of a single titanium atom
+
+# Initialize simulation
+units metal
+atom_style atomic
+boundary f f f
+
+# Create simulation box
+region box block -100 100 -100 100 -100 100
+create_box 1 box
+
+# Create a single titanium atom at the origin
+create_atoms 1 single 0.0 0.0 0.0
+
+# Set atomic mass for titanium
+mass 1 47.90
+
+# Define potential
+pair_style meam/spline
+pair_coeff * * Ti.meam.spline Ti
+
+# Compute energy
+compute pe all pe/atom
+
+# Output settings
+thermo_style custom step temp pe 
+thermo 1
+
+# Run the simulation to calculate energy
+run 0
+
+# Calculate and print cohesive energy
+variable cohesive_energy equal "c_pe[1]"
+print "Cohesive energy per atom: ${cohesive_energy} eV/atom"
+
+Ensure you have the appropriate potential file `Ti.meam.spline` in your working directory for this script to function correctly. Adjust the path or filename in `pair_coeff` if necessary.

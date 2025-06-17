@@ -1,0 +1,61 @@
+```lammps
+# LAMMPS Input Script for Electrostatic and Concentration Dynamics Simulation
+
+units real
+dimension 3
+boundary p p p
+
+atom_style full
+
+# Read initial configuration from data file
+read_data system.data
+
+# Define atom groups based on charge
+group neutral type 1
+group positive type 2
+group negative type 3
+
+# Pair interactions: Lennard-Jones with Coulombic interactions
+pair_style lj/cut/coul/cut 10.0 10.0
+pair_coeff * * 0.1 3.5  # Example LJ parameters, adjust as needed
+
+# Set dielectric constant
+dielectric 80.0
+
+# Define masses for each atom type
+mass 1 1.0
+mass 2 1.0
+mass 3 1.0
+
+# Assign charges to groups
+set group neutral charge 0.0
+set group positive charge 1.0
+set group negative charge -1.0
+
+# Initialize Atomistic-to-Continuum (AtC) package
+fix atc all atc control
+fix_modify atc mesh create_box
+fix_modify atc species add_group positive
+fix_modify atc species add_group negative
+
+# Define mesh for concentration control
+fix concentration_control all atc mesh create_box
+fix_modify concentration_control species concentration_control 0.1 0.1  # Example control parameters
+
+# Timestep for integration
+timestep 4.0
+
+# Thermodynamic output settings
+thermo 100
+thermo_style custom step temp etotal pe ke press vol
+
+# Run the simulation
+run 10000
+
+# Output configuration data for post-processing
+dump 1 all custom 1000 dump.system id type x y z
+dump_modify 1 sort id
+
+# Write final configuration
+write_data final_configuration.data
+```

@@ -1,0 +1,52 @@
+# LAMMPS input script for toluene system with Drude polarizability
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data toluene_data.lmp
+
+# Pair style and settings
+pair_style lj/cut/thole/long 10.0
+pair_coeff * * 0.0 0.0
+
+# Drude polarizability settings
+atom_modify sort 0 0.0
+special_bonds lj/coul 0.0 0.0 1.0
+
+# Bond, angle, dihedral, and improper styles
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+improper_style fourier
+
+# KSpace style
+kspace_style pppm 1.0e-4
+
+# Groups for core and Drude particles
+group cores type 1 2 3 4 5
+group drudes type 6
+
+# Set temperature controls
+fix 1 cores langevin 300.0 300.0 100.0 48279
+fix 2 drudes langevin 1.0 1.0 1.0 48279
+
+# Fix Drude oscillators
+fix 3 all drude 1.0
+
+# SHAKE constraints
+fix 4 all shake 0.0001 20 0 b 1 2
+
+# Integrate using NVE ensemble
+fix 5 all nve
+
+# Thermodynamic output
+thermo_style custom step temp etotal pe ke ebond eangle edihed eimp epair evdwl ecoul elong temp/drude
+thermo 100
+
+# Run the simulation
+timestep 0.5
+run 2000
+
+This script sets up a molecular dynamics simulation for a toluene system with Drude polarizability. It employs the Langevin thermostat for temperature control and uses the SHAKE algorithm to constrain specific bonds. The simulation is conducted over 2000 steps with a timestep of 0.5 fs, producing detailed thermodynamic output.

@@ -1,0 +1,40 @@
+# LAMMPS Input Script for MSD of Spherical Particles
+
+units lj
+dimension 3
+atom_style sphere
+
+# Read particle data
+read_data msd.sphere.data
+
+# Set mass for particles
+set group all mass 1.0
+
+# Define manifold-based integration with RATTLE constraints
+fix 1 all nve/manifold/rattle sphere 8.0 tol 1e-4
+
+# Langevin thermostat to maintain temperature
+fix temp all langevin 1.0 1.0 1.0 12345
+
+# Initialize velocities
+velocity all create 1.0 12345
+
+# Compute Mean Squared Displacement
+compute msd all msd
+
+# Define analytical MSD function (assuming a simple diffusion model)
+variable D equal 0.1  # Example diffusion coefficient
+variable time equal step*dt
+variable msd_analytical equal 6*${D}*v_time
+
+# Output settings
+thermo_style custom step temp pe ke etotal c_msd[4]
+thermo 1000
+
+# Output MSD data
+variable out_file string "msd.sphere.dat"
+fix msd_out all print 250 "${time} ${c_msd[4]} ${msd_analytical}" file ${out_file} screen no
+
+# Run the simulation
+timestep 0.005
+run 50000

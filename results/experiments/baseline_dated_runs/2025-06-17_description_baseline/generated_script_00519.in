@@ -1,0 +1,45 @@
+# LAMMPS input script for MD-FE coupling with two-temperature dynamics
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define simulation box
+region          simbox block -12 12 -3 3 -3 3
+create_box      1 simbox
+
+# Create fcc lattice and atoms
+lattice         fcc 3.615
+create_atoms    1 box
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0103 3.40 13.5
+
+# Initialize velocities
+velocity        all create 20.0 12345
+
+# Define groups
+group           all type 1
+
+# Initialize AtC package
+fix             atc_fix all atc two_temperature
+fix_modify      atc_fix mesh create 4 4 4
+fix_modify      atc_fix two_temp_parameters file Ar_ttm.mat
+fix_modify      atc_fix initial_temperature_phonon 20.0
+fix_modify      atc_fix initial_temperature_electron 30.0
+fix_modify      atc_fix thermal_flux_control on
+fix_modify      atc_fix exponential_filter on
+
+# Equilibration phase
+thermo          100
+thermo_style    custom step temp pe
+timestep        0.001
+run             500
+
+# Relaxation phase
+thermo          1000
+thermo_style    custom step temp pe f_atc_fix[1] f_atc_fix[2] f_atc_fix[3]
+run             5000
+
+# End of input script

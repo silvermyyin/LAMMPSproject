@@ -1,0 +1,49 @@
+# LAMMPS input script for granular flow in a chute
+
+units		si
+dimension	3
+boundary	p p f
+atom_style	granular
+
+# Define the simulation box
+region		box block 0 1.0 0 1.0 0 1.0
+create_box	1 box
+
+# Particle properties
+variable	density equal 2500.0
+variable	radius equal 0.005
+
+# Define particle insertion region
+region		pour_region block 0.2 0.8 0.2 0.8 0.8 1.0
+
+# Insert particles dynamically
+fix		ins all pour 5000 1 29494 region pour_region diam ${radius} ${radius} density ${density} rate 0.10
+
+# Set up pair style and coefficients
+pair_style	gran/hooke/history 200.0 0.5 100.0 0.5 0.0
+pair_coeff	* *
+
+# Define gravity
+fix		gravity all gravity 1.0 spherical 0 -180
+
+# Set up integrator
+fix		integrate all nve/sphere
+
+# Set timestep
+timestep	0.001
+
+# Output settings
+thermo_style custom step ke pe etotal vol
+thermo		500
+
+# Run initial pouring phase
+run		10000
+
+# Adjust gravity for chute flow
+unfix		gravity
+fix		gravity all gravity 1.0 spherical 0 26.0
+
+# Run flow phase
+run		20000
+
+# End of script

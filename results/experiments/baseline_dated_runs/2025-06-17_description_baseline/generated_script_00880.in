@@ -1,0 +1,37 @@
+# LAMMPS input script for a water dimer using classical molecular mechanics
+
+units real
+atom_style full
+
+# Read system data
+read_data data.water.mm
+
+# Define groups
+group mm_group type 1 2  # Assuming type 1 and 2 are for the MM water
+group qm_group type 3    # Assuming type 3 is for the QM molecule
+
+# Set potentials
+pair_style lj/cut/coul/cut 6.0
+pair_coeff 1 1 0.1553 3.166 # Lennard-Jones for MM oxygen (example values)
+pair_coeff 1 2 0.0000 0.000 # No LJ between MM oxygen and QM
+pair_coeff 2 2 0.0000 0.000 # No LJ for QM group
+pair_coeff * * 0.0000 0.000 # Make sure QM has no LJ interactions
+
+bond_style harmonic
+bond_coeff 1 450.0 0.9572  # Example values for water O-H bond
+
+angle_style harmonic
+angle_coeff 1 55.0 104.52  # Example values for water H-O-H angle
+
+# Initialize velocity
+velocity all create 300.0 12345
+
+# Apply the NVE ensemble
+fix 1 all nve
+
+# Output settings
+thermo 1
+thermo_style custom step temp etotal ke pe
+
+# Run the simulation
+run 10

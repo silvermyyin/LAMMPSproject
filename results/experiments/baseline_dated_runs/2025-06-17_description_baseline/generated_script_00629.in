@@ -1,0 +1,38 @@
+# LAMMPS Input Script for Carbon-Based System using DRIP and REBO Potentials
+
+units metal
+atom_style molecular
+
+# Read the initial configuration
+read_data data.C
+
+# Define interatomic potential
+pair_style hybrid/overlay drip rebo
+pair_coeff * * drip C.drip C
+pair_coeff * * rebo CH.airebo C
+
+# Set boundary conditions
+boundary p p s
+
+# Define neighbor settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Compute per-atom potential energy
+compute peratom_pe all pe/atom
+
+# Output settings
+thermo 10
+thermo_style custom step pe etotal
+
+# Custom dump file
+dump 1 all custom 1 dump.carbon id type x y z fx fy fz c_peratom_pe
+dump_modify 1 sort id
+
+# Minimize energy
+min_style cg
+min_modify line max 100
+minimize 1.0e-15 1.0e-15 100 100
+
+# Run minimization
+run 0

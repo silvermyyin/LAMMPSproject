@@ -1,0 +1,31 @@
+# LAMMPS input script for VOH system using ReaxFF
+
+units real
+atom_style charge
+boundary p p p
+
+# Read in the initial configuration
+read_data voh_system.data
+
+# Define the force field
+pair_style reax/c lmp_control
+pair_coeff * * ffield.reax VOH V O H C
+
+# Charge equilibration
+fix 1 all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
+
+# Initialize the velocities
+velocity all create 500.0 12345
+
+# Apply the NVE integration method
+fix 2 all nve
+
+# Apply Berendsen thermostat for temperature control
+fix 3 all temp/berendsen 500.0 500.0 100.0
+
+# Run the simulation
+timestep 0.25
+thermo 100
+thermo_style custom step temp etotal press
+
+run 2000

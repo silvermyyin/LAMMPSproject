@@ -1,0 +1,36 @@
+# LAMMPS input script for a 3D Lennard-Jones melt with MDI interfacing
+
+units lj
+atom_style atomic
+
+# Read the initial configuration from a data file
+read_data data.lj_melt
+
+# Define the Lennard-Jones potential with a cutoff
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Set initial velocities with a Gaussian distribution at T = 1.44
+velocity all create 1.44 12345
+
+# Define the integration method
+fix 1 all nve
+
+# Set up the MDI interface
+fix 2 all mdi 100 mdi_input.mdi mdi_output.mdi mode force-off
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe press
+
+# Record snapshots of particle positions and MDI forces every 100 steps
+dump 1 all custom 100 dump.lj_melt id type x y z fx fy fz
+dump_modify 1 sort id
+
+# Run the simulation for 300 timesteps
+run 300
+
+# Finalization
+write_restart restart.lj_melt
+
+This script sets up a Lennard-Jones melt simulation, incorporates MDI for quantum mechanical interfacing, and ensures that outputs are configured for subsequent analysis.

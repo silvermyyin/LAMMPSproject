@@ -1,0 +1,51 @@
+# LAMMPS input script for MD-FEM thermal coupling using AtC package
+
+# Initialize simulation
+units real
+atom_style atomic
+dimension 3
+boundary p p f
+lattice fcc 3.615
+region simulation_box block 0 10 0 10 0 10 units box
+create_box 1 simulation_box
+
+# Define regions
+region md_region block 1 9 1 9 1 9 units box
+create_atoms 1 region md_region
+
+# Define potentials
+pair_style lj/cut 13.5
+pair_coeff 1 1 0.01 3.4
+
+# Set up neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define initial velocities
+velocity all create 20.0 123456 dist gaussian
+
+# Apply constraints and initial conditions
+fix wall all wall/reflect zhi EDGE
+fix temp_left all temp/rescale 10 40.0 40.0 0.1 1.0
+
+# AtC package settings
+fix atc all atc thermal
+fix_modify atc couple thermal
+fix_modify atc mesh fem meshfile.mesh
+
+# Thermostat control
+run_style verlet
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+# Initial run with rescale thermostat
+run 5000
+
+# Switch to flux-based control for heat transfer study
+unfix temp_left
+fix heat all thermal/conductivity 10
+
+# Continue the simulation
+run 5500
+
+# End of script

@@ -1,0 +1,33 @@
+# LAMMPS input script for a carbon-hydrogen system using DRIP and REBO potentials
+
+units metal
+atom_style molecular
+
+# Read atomic configuration from a data file
+read_data data.CH
+
+# Define boundary conditions
+boundary p p s
+
+# Define potentials
+pair_style hybrid/overlay drip rebo
+pair_coeff * * drip C.drip NULL C
+pair_coeff * * rebo CH.rebo C H
+
+# Define compute to calculate per-atom potential energy
+compute pe_atom all pe/atom
+
+# Set thermo output every 10 timesteps
+thermo 10
+thermo_style custom step temp etotal press
+
+# Define a custom dump file to record atom information
+dump 1 all custom 1 dump.atom id type x y z fx fy fz c_pe_atom
+dump_modify 1 sort id
+
+# Energy minimization
+min_style cg
+minimize 1.0e-12 1.0e-12 10000 100000
+
+# Run for 0 timesteps after minimization to output the final state
+run 0

@@ -1,0 +1,53 @@
+```lammps
+# LAMMPS input script for equilibrating alpha quartz using QTB dynamics
+
+units           real
+dimension       3
+boundary        p p p
+atom_style      charge
+
+# Define alpha quartz lattice
+lattice custom 4.913 &
+    a1 4.913 0.0 0.0 &
+    a2 2.4565 4.253 0.0 &
+    a3 0.0 0.0 5.405 &
+    basis 0.4697 0.0 0.0 &
+    basis 0.0 0.4697 0.333 &
+    basis 0.0 0.0 0.666 &
+    basis 0.4697 0.4697 0.5
+
+region          box block 0 3 0 3 0 3
+create_box      2 box
+create_atoms    1 box basis 1 1 basis 2 1 basis 3 1 basis 4 2
+
+# Atom masses and charges
+mass            1 28.0855  # Silicon
+mass            2 15.9994  # Oxygen
+
+set             type 1 charge 2.4
+set             type 2 charge -1.2
+
+# Define potentials
+pair_style      buck/coul/long 12.0
+pair_coeff      1 1 0.0 0.0 0.0
+pair_coeff      1 2 18003.7572 0.2052 133.5381
+pair_coeff      2 2 1388.7730 0.3623 175.0
+
+kspace_style    pppm 1.0e-4
+
+# Define QTB fix
+fix             1 all qtb 300.0 0.1
+
+# Define NPH ensemble
+fix             2 all nph iso 1.03125 1.03125 1000.0
+
+# Set timestep
+timestep        1.0e-3
+
+# Thermodynamic output
+thermo          500
+thermo_style    custom step temp press pe etotal
+
+# Run the simulation
+run             10000
+```

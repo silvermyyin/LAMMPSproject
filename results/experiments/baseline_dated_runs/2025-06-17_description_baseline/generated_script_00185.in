@@ -1,0 +1,35 @@
+# LAMMPS input script for 2D bulk devitrification simulation
+
+units lj
+dimension 2
+atom_style atomic
+
+# Read the pre-equilibrated glass configuration
+read_data glass_configuration.data
+
+# Define the lj/polysoftmd pair style for charged particles
+pair_style lj/polysoftmd 1.0 1.0 1.0 1.0
+pair_coeff * * 1.0 1.0 1.0
+
+# Set the initial velocity for particles
+velocity all create 0.035 12345 dist gaussian
+
+# Define the neighbor list
+neighbor 0.3 bin
+neigh_modify delay 5 every 1 check yes
+
+# Set up the NPT ensemble for annealing
+fix 1 all npt temp 0.035 0.11 0.1 iso 2.31052 2.31052 1.0
+
+# Set the timestep
+timestep 0.01
+
+# Set up thermo output
+thermo 10000000
+thermo_style custom step temp pe ke etotal press vol
+
+# Dump the trajectory in XYZ format
+dump 1 all xyz 10000000 trajectory.xyz
+
+# Run the simulation
+run 200000000

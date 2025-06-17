@@ -1,0 +1,34 @@
+# LAMMPS Input Script for BCC Mo using SNAP
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Create BCC lattice
+lattice bcc 3.160
+region box block 0 4 0 4 0 4
+create_box 1 box
+create_atoms 1 box
+
+# Set atom mass for Mo
+mass 1 183.84
+
+# Define the SNAP potential
+pair_style snap
+pair_coeff * * Mo_Chen_PRM2017.snapcoeff Mo_Chen_PRM2017.snapparam Mo
+
+# Initialize velocities for temperature 300 K
+velocity all create 300.0 12345 mom yes rot no dist gaussian
+
+# Define the simulation settings
+timestep 0.0005
+thermo 10
+
+# Run the simulation in NVE ensemble
+fix 1 all nve
+
+# Perform the simulation
+run 100
+
+# Clean up
+unfix 1

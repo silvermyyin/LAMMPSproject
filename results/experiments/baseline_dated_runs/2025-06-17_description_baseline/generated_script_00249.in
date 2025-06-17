@@ -1,0 +1,40 @@
+# LAMMPS input script for 3D granular simulation with BPM in a cylindrical setup
+
+units lj
+atom_style sphere
+
+# Define the simulation region
+dimension 3
+boundary f f p
+
+# Create a cylindrical region
+region cyl_reg cylinder z 0 0 10 -10 10 units box
+create_box 2 cyl_reg
+
+# Define cylindrical wall
+fix cyl_wall all wall/gran model hertz tangential history radius_out region cyl_reg
+
+# Define materials and interactions
+pair_style gran/hertz/history 200.0 NULL 50.0 0.5 0.5
+pair_coeff * *
+
+bond_style bpm/rotational
+bond_coeff * 1.0e5 0.2 0.5
+
+# Define gravity
+fix grav all gravity 1.0 vector 0.0 0.0 -1.0
+
+# Define particle deposition
+region drop_zone block -5 5 -5 5 8 10 units box
+fix dep all deposit 1000 1 1000 12345 region drop_zone vz -0.1 -0.1 units box
+
+# Integrate motion with BPM
+fix int_nve all nve/bpm/sphere
+
+# Set simulation parameters
+timestep 0.05
+thermo 1000
+thermo_style custom step temp epair ebond etotal press pxx pyy pzz f_bond
+
+# Run the simulation
+run 100000

@@ -1,0 +1,47 @@
+```lammps
+# LAMMPS Input Script for DNA Duplex Simulation using oxDNA2 Model
+
+units lj
+atom_style hybrid ellipsoid angle
+
+# Read initial configuration from data file
+read_data data.duplex1
+
+# Define potential styles for DNA interactions
+bond_style hybrid oxdna2/fene
+pair_style hybrid/overlay oxdna2/excv oxdna2/stack oxdna2/hbond oxdna2/cross oxdna2/coax oxdna2/dh
+
+# Set the mass of the DNA particles
+mass 1 1.0  # Type 1: DNA nucleotide
+
+# Set up periodic boundary conditions
+boundary p p p
+
+# Define groups for different interactions (if needed)
+group dna type 1
+
+# Initialize velocities
+velocity all create 1.0 87287 loop geom
+
+# Define integrator
+fix 1 all nve/asphere
+
+# Compute energies and output them
+compute ke all ke
+compute pe all pe
+compute rot all erotate/asphere
+
+# Set thermo output
+thermo 1000
+thermo_style custom step temp c_ke c_pe c_rot etotal
+
+# Output trajectory for visualization and analysis
+dump 1 all custom 10000 trajectory.lammpstrj id type x y z
+
+# Run the simulation
+timestep 0.00001
+run 1000000
+
+# Write final configuration to file
+write_data final_configuration.data
+```

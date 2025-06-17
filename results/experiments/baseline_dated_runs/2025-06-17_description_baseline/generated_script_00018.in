@@ -1,0 +1,45 @@
+# LAMMPS input script for a rigid sphere in a shear flow near a plane wall using lattice-Boltzmann fluid dynamics
+
+units micro
+dimension 3
+atom_style sphere
+
+# Create a simulation box
+boundary p p f
+region simbox block 0 40 0 40 0 40
+create_box 2 simbox
+
+# Create a single spherical particle
+region spheroid sphere 20 20 10 3
+create_atoms 1 region spheroid
+
+set atom 1 type 1
+set atom 1 diameter 6.0
+set atom 1 density 1.0
+
+# Group for the particle
+group spheroid id 1
+
+# Define lattice-Boltzmann fluid properties
+fix lbfluid all lb/fluid 4.0 1.0 1.0 omega 1.0
+
+# Set up particle-fluid interactions
+fix lbviscous spheroid lb/viscous
+
+# Define the shear flow by moving the top wall
+velocity all set 0.0 0.0 0.0
+fix wallmove all move linear 0.0 0.0001 0.0
+
+# Define the rigid body for the sphere
+fix rigidmove spheroid rigid single
+
+# Set timestep
+timestep 0.01
+
+# Output settings
+thermo 100
+thermo_style custom step time temp press
+dump id all custom 100 sphere_motion.lammpstrj id type x y z vx vy vz fx fy fz omegax omegay omegaz torquex torquey torquez
+
+# Run simulation
+run 7500

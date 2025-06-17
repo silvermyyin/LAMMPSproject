@@ -1,0 +1,60 @@
+```lammps
+# LAMMPS input script for simulating aspherical particles with SRD particles
+
+# Initialization
+units lj
+dimension 3
+atom_style hybrid ellipsoid sphere
+boundary p p p
+
+# Read data file for aspherical particles
+read_data aspherical_particles.data
+
+# Create small SRD particles on a simple cubic lattice
+lattice sc 0.8
+region srd_box block 0 10 0 10 0 10
+create_atoms 2 region srd_box
+mass 1 1.0
+mass 2 0.1  # Low mass for SRD particles
+
+# Define pair interactions
+pair_style hybrid/overlay lj/cut 1.12 srd 0.5 0.25 1.0
+pair_coeff * * lj/cut 1.0 1.0 1.12
+pair_coeff 1 2 lj/cut 0.5 1.0 1.12
+pair_coeff 2 2 lj/cut 0.1 0.1 1.12
+
+# Define neighor list
+neighbor 0.3 bin
+neigh_modify delay 0 every 1 check yes
+
+# Fixes
+fix srd all srd 0.5 0.25 1.0 12345
+fix_modify srd boundary no-slip
+
+# Initial velocities
+velocity all create 1.0 12345 loop geom
+
+# Remove overlapping particles
+delete_atoms overlap 0.2 all all
+
+# Compute properties
+compute rot_energy all erotate/asphere
+compute kin_energy all ke
+
+# Define thermo settings
+thermo 100
+thermo_style custom step temp press pe c_rot_energy c_kin_energy
+
+# Shear deformation
+fix deform_box all deform 1 x scale 1.0 y scale 1.0 z scale 1.0 remap x
+run 1000
+
+# Apply shear
+fix shear all deform 1 xy erate 0.01 remap v
+run 5000
+
+# Output
+dump 1 all custom 100 dump.aspherical id type x y z
+
+# End of script
+```

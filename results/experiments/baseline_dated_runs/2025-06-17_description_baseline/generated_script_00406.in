@@ -1,0 +1,69 @@
+# LAMMPS input script for dimer deposition on a substrate using Lennard-Jones potential
+
+units           lj
+atom_style      molecular
+boundary        p p f
+
+# Create simulation box
+region          box block 0 5 0 5 0 10
+create_box      3 box
+
+# Create substrate
+region          substrate block 0 5 0 5 0 1
+create_atoms    1 region substrate
+
+# Define dimer molecule
+molecule        dimer dimer.mol
+
+# Create a slab region for deposition
+region          slab block 0 5 0 5 8 10
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 2.5
+pair_coeff      * * 1.0 1.0 2.5
+pair_coeff      1 2 0.8 1.2 2.5
+pair_coeff      2 3 1.0 1.0 2.5
+pair_coeff      1 3 0.9 1.1 2.5
+
+# Define groups
+group           substrate type 1
+group           dimers type 2 3
+
+# Set masses
+mass            1 1.0
+mass            2 1.0
+mass            3 1.0
+
+# Fix substrate
+fix             fix_substrate substrate setforce 0.0 0.0 0.0
+
+# Rigid body fix for dimers
+fix             fix_dimer dimers rigid/nvt/small molecule temp 1.0 1.0 100.0
+
+# Langevin thermostat for mobile atoms
+fix             fix_thermo dimers langevin 1.0 1.0 100.0 48279
+
+# Time integration
+fix             fix_nve dimers nve
+
+# Reflective wall at the top
+fix             fix_wall all wall/reflect zhi EDGE
+
+# Neighbor settings
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Run simulation
+timestep        0.005
+run             10000
+
+# Dimer molecule file (dimer.mol)
+# Molecule definition for a dimer
+# 2 atoms
+# Atom ID, molecule ID, atom type, x, y, z
+# 1 1 2 0.0 0.0 0.0
+# 2 1 3 1.0 0.0 0.0

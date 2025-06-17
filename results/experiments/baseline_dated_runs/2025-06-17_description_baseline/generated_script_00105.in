@@ -1,0 +1,50 @@
+# LAMMPS input script for polymerization simulation with bond/react
+
+units real
+atom_style full
+boundary p p p
+
+# Initialize simulation from data file
+read_data polymerization_initial.data
+
+# Define force field
+pair_style lj/class2 10.0
+pair_modify tail yes mix sixthpower
+bond_style class2
+angle_style class2
+dihedral_style class2
+improper_style class2
+
+# Define molecule templates for reaction
+molecule pre_react styrene_pre.mol
+molecule post_react styrene_post.mol
+
+# Define bond/react command for polymerization
+fix 1 all bond/react \
+    molecule pre_react post_react \
+    react_atoms 3 3 \
+    bond_types 1 1 \
+    angle_types 1 1 \
+    dihedral_types 1 1 \
+    improper_types 1 1 \
+    stabilization yes \
+    fitting yes \
+    cutoff 10.0 \
+    overlap 0.5 \
+    max_reactions 30
+
+# Temperature control
+velocity all create 530.0 4928459 mom yes rot yes dist gaussian
+fix 2 all nvt temp 530.0 530.0 100.0
+fix 3 all temp/rescale 100 530.0 530.0 0.5 1.0
+
+# Output settings
+thermo 100
+thermo_style custom step temp press density f_1[1] f_1[2]
+dump 1 all custom 100 dump.polymer id type x y z
+
+# Run the simulation
+timestep 1.0
+run 8000
+
+# End of script

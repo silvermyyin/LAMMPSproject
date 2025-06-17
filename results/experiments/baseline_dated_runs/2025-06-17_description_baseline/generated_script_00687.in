@@ -1,0 +1,41 @@
+# LAMMPS Input Script for Omega Phase of Titanium
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define custom lattice for omega phase of titanium
+lattice custom 3.232 a1 1.0 0.0 0.0 a2 -0.5 0.86602540378 0.0 a3 0.0 0.0 5.147
+basis 0.0 0.0 0.0
+basis 0.5 0.5 0.0
+basis 0.0 0.66666666667 0.5
+basis 0.5 0.16666666667 0.5
+region          box block 0 3 0 3 0 3
+create_box      1 box
+create_atoms    1 box
+
+# Set mass for titanium
+mass            1 47.90
+
+# Define pair style and coefficients
+pair_style      meam/sw/spline
+pair_coeff      * * meam/sw/spline Ti.meam Ti
+
+# Neighbor and neighbor list settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Output settings
+thermo          10
+thermo_style    custom step pe
+
+# Calculate cohesive energy
+compute         pe_atom all pe/atom
+variable        cohesive_energy equal "c_pe_atom"
+run             0
+
+# Print comparison with reference cohesive energy
+variable        ref_energy equal -4.836
+variable        diff_energy equal "(${cohesive_energy} - ${ref_energy})"
+print           "Cohesive Energy: ${cohesive_energy} eV/atom"
+print           "Difference from reference: ${diff_energy} eV/atom"

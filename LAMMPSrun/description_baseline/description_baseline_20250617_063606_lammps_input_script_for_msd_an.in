@@ -1,0 +1,45 @@
+```lammps
+# LAMMPS input script for MSD analysis within a cylindrical manifold
+
+units lj
+atom_style atomic
+boundary f f p
+
+# Read initial configuration
+read_data msd.cyl.data
+
+# Define mass
+mass * 1.0
+
+# No explicit interactions
+pair_style none
+
+# Manifold constraint: cylindrical confinement
+fix 1 all nve/manifold/rattle cylinder z 0.0 0.0 5.0
+
+# Langevin thermostat for temperature control
+fix 2 all langevin 1.0 1.0 1.0 12345
+
+# Initialize velocities
+velocity all create 1.0 987654 dist gaussian
+
+# Compute mean squared displacement
+compute myMSD all msd
+
+# Setup output
+thermo 250
+thermo_style custom step temp c_myMSD
+
+# Dump trajectory data
+dump myDump all custom 250 trajectory.lammpstrj id type x y z vx vy vz
+
+# Run the simulation
+timestep 0.005
+run 50000
+
+# Output MSD data for analysis
+variable diff equal c_myMSD[4]
+print "Final MSD: ${diff}"
+
+write_dump all custom final_trajectory.lammpstrj id type x y z vx vy vz
+```

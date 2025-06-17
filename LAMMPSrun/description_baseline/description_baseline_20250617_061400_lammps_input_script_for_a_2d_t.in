@@ -1,0 +1,58 @@
+```lammps
+# LAMMPS input script for a 2D tensile test on an aluminum strip using TLSPH
+
+units           metal
+dimension       2
+boundary        p p p
+
+atom_style      sphere
+neighbor        0.01 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Create a 2D box and define lattice
+lattice         sq2 2.86         # Atomic spacing for aluminum
+region          box block 0 100 0 20 -0.25 0.25
+create_box      1 box
+create_atoms    1 box
+
+# Set mass and density
+mass            1 26.98
+set             type 1 density 1.0
+
+# Define the TLSPH style
+pair_style      sph/tlsph 1.0 20.0
+pair_coeff      1 1 70e3 0.3 0.0
+
+# Define the polynomial EOS and Johnson-Cook strength model
+fix             1 all eos/poly 1.0 0.0 0.0 0.0 0.0 0.0 0.0
+fix             2 all sph/tlsph/jc 70e3 0.3 1000 1.0 0.0 0.0 0.0 0.0 1.2
+
+# Define velocity boundary conditions for tensile test
+region          top block INF INF 19.5 20.0 INF INF
+group           top region top
+velocity        top set 0.0 0.01 0.0
+
+region          bottom block INF INF 0.0 0.5 INF INF
+group           bottom region bottom
+velocity        bottom set 0.0 -0.01 0.0
+
+# Apply the velocity boundary conditions
+fix             3 top move linear 0.0 0.01 0.0
+fix             4 bottom move linear 0.0 -0.01 0.0
+
+# Dynamic timestep
+timestep        0.001
+variable        dt equal "dt*0.1"
+fix             5 all dt/reset 10 NULL NULL ${dt}
+
+# Output settings
+thermo          100
+thermo_style    custom step time temp press vol
+
+# Output trajectory
+dump            1 all custom 1000 dump.2D_tensile id type x y z vx vy vz fx fy fz
+dump_modify     1 format line "%d %d %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g"
+
+# Run the simulation
+run             10000
+```

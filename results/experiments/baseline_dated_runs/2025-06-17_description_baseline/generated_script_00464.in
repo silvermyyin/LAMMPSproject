@@ -1,0 +1,30 @@
+# LAMMPS input script for AIMD simulation of two uranium dioxide (UO2) molecules
+
+units metal
+atom_style full
+
+# Read initial atomic positions and types from data file
+read_data data.2uo2
+
+# Define neighbor list
+neighbor 1.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Set initial velocity
+velocity all create 300.0 87287
+
+# Define the timestep
+timestep 0.00025
+
+# Set up the quantum mechanical fix using MDI interface
+fix qm all mdi/qm elements U O
+
+# Integrate equations of motion
+fix 1 all nve
+
+# Output thermodynamic properties
+thermo 5
+thermo_style custom step temp pe etotal press
+
+# Run the simulation
+run 20

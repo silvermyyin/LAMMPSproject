@@ -1,0 +1,52 @@
+# LAMMPS input script for a core-shell model using Wolf summation method
+# based on the work of Mitchel and Finchham
+
+units metal
+dimension 3
+boundary p p p
+atom_style full
+
+# Read in the core-shell data file
+read_data coreshell_data.lmp
+
+# Define groups for core and shell atoms
+group cores type 1
+group shells type 2
+
+# Define pair styles and coefficients for sodium and chloride ions
+pair_style born/coul/wolf/cs 0.3 10.0
+pair_coeff 1 1 0.0 0.0 0.0 0.0
+pair_coeff 1 2 0.5 1.0 0.2 0.0
+pair_coeff 2 2 0.5 1.0 0.2 0.0
+
+# Define harmonic bonds between core and shell atoms
+bond_style harmonic
+bond_coeff 1 100.0 0.0
+
+# Define the neighbor list
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+# Define the timestep
+timestep 0.002
+
+# Define the Berendsen thermostat for equilibration
+fix 1 all nve
+fix 2 all temp/berendsen 1427.0 1427.0 100.0
+
+# Custom thermo output
+thermo_style custom step temp pe ke etotal
+thermo 100
+
+# Compute temperature specifically for core and shell groups
+compute temp_core cores temp
+compute temp_shell shells temp
+
+# Equilibration run
+run 500
+
+# Remove the thermostat
+unfix 2
+
+# Continue dynamics for observation
+run 1000

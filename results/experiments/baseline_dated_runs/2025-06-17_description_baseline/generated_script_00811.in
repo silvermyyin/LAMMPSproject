@@ -1,0 +1,55 @@
+# LAMMPS input script for MOF simulation using MOF-FF
+
+# Initialize simulation
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data hkust1.data
+
+# Define force field styles
+pair_style buck6d/coul/gauss/long 10.0
+bond_style hybrid class2 morse
+angle_style hybrid class2/p6 cosine/buck6d
+dihedral_style opls
+
+# Ewald summation for long-range electrostatics
+kspace_style ewald 1.0e-4
+
+# Define pair coefficients for atom types
+pair_coeff 1 1 buck6d/coul/gauss/long 1000.0 0.1 12.0
+pair_coeff 1 2 buck6d/coul/gauss/long 1500.0 0.2 10.0
+pair_coeff 2 2 buck6d/coul/gauss/long 2000.0 0.15 11.0
+
+# Define bond coefficients
+bond_coeff 1 class2 100.0 1.5 0.0 0.0
+bond_coeff 2 morse 300.0 2.0 1.5
+
+# Define angle coefficients
+angle_coeff 1 class2/p6 70.0 120.0 0.0 0.0
+angle_coeff 2 cosine/buck6d 50.0 110.0
+
+# Define dihedral coefficients
+dihedral_coeff 1 opls 1.0 2.0 3.0 4.0
+
+# Neighbor list settings
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define simulation settings
+timestep 1.0
+thermo 100
+thermo_style custom step temp etotal press vol
+
+# Run minimization
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Setup for dynamics
+fix 1 all nvt temp 300.0 300.0 100.0
+
+# Run the simulation
+run 10000
+
+# Clean up
+unfix 1

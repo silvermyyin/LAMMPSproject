@@ -1,0 +1,45 @@
+# LAMMPS Input Script for 3D MD Simulation of DNA Duplexes using oxDNA2 Model
+
+units lj
+atom_style hybrid bond ellipsoid oxdna
+
+# Read initial configuration
+read_data dna_duplexes.data
+
+# Define pair styles for oxDNA2 interactions
+pair_style hybrid/overlay oxdna_exvol oxdna_stacking oxdna_hbond oxdna_crossstack oxdna_coaxstack oxdna_dh
+
+# Define pair coefficients (example values, need to be set according to the model)
+pair_coeff * * oxdna_exvol 1.0 1.0
+pair_coeff * * oxdna_stacking 1.0 1.0
+pair_coeff * * oxdna_hbond 1.0 1.0
+pair_coeff * * oxdna_crossstack 1.0 1.0
+pair_coeff * * oxdna_coaxstack 1.0 1.0
+pair_coeff * * oxdna_dh 1.0 1.0
+
+# Define bond style and coefficients
+bond_style fene
+bond_coeff * 30.0 1.5 1.0 1.0
+
+# Set up neighbor list
+neighbor 1.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Initialize velocities
+velocity all create 1.0 12345
+
+# Set up fix for NVE integration with aspherical particles
+fix 1 all nve/asphere
+
+# Output settings
+thermo_style custom step temp ke pe etotal
+thermo 1000
+
+# Run simulation
+timestep 1e-5
+run 1000000
+
+# Write final configuration
+write_data final_configuration.data
+
+This script sets up a molecular dynamics simulation using the oxDNA2 model to simulate DNA duplexes. Make sure to adjust the pair coefficients as required for the specific interactions in your system, as the values provided here are placeholders.

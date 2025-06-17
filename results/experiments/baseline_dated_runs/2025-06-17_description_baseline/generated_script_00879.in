@@ -1,0 +1,57 @@
+# LAMMPS Input Script for 2D Lennard-Jones System Simulation
+
+# Initialize simulation
+units lj
+dimension 2
+atom_style atomic
+
+# Create simulation box
+region box block 0 20 0 20 -0.5 0.5
+create_box 1 box
+
+# Create atoms on a square lattice
+lattice sq 0.8442
+create_atoms 1 box
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Assign initial velocities
+velocity all create 5.0 12345
+
+# Fixes
+fix 1 all nve
+fix 2 all enforce2d
+
+# Equilibrate system
+timestep 0.005
+thermo 100
+thermo_style custom step temp pe press pxx pyy pxy
+run 5000
+
+# Energy minimization
+unfix 1
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Box relaxation with specified stress targets
+variable target_stress equal 0.0
+fix 3 all box/relax iso ${target_stress}
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Further minimization with anisotropic box relaxation
+fix 4 all box/relax aniso 0.0 0.0 0.0
+min_style cg
+minimize 1.0e-6 1.0e-8 1000 10000
+
+# Output minimized energy
+variable E_min equal pe
+print "Minimized Energy: ${E_min}"
+
+# End of script

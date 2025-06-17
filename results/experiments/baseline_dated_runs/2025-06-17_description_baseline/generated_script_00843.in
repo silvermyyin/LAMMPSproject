@@ -1,0 +1,46 @@
+# LAMMPS input script for 2D overdamped active Brownian particles using WCA potential
+
+units lj
+dimension 2
+boundary p p f
+
+atom_style hybrid dipole sphere
+lattice sq 0.8442
+region simbox block -16 16 -16 16 -0.1 0.1
+create_box 1 simbox
+create_atoms 1 box
+
+mass 1 1.0
+set type 1 diameter 1.0
+set type 1 density 1.0
+
+# Initialize random dipole orientations
+set type 1 dipole/random 12345
+velocity all create 1.0 12345 dist gaussian
+
+# Define WCA potential (LJ with cutoff at 2^(1/6) sigma)
+pair_style lj/cut 1.12246
+pair_coeff * * 1.0 1.0 1.12246
+
+# Set up overdamped dynamics
+fix 1 all langevin 1.0 1.0 1.0 12345
+fix 2 all nve
+
+# Apply active force along dipole direction
+fix 3 all propel/self 4.0
+
+# Define output settings
+thermo 1000
+thermo_style custom step temp pe ke etotal press
+compute msd all msd
+fix msd_output all ave/time 1000 1 1000 c_msd[4] file msd.out mode vector
+
+# Equilibration phase
+timestep 0.001
+run 5000
+
+# Main simulation run
+timestep 0.0001
+run 20000
+
+# End of script

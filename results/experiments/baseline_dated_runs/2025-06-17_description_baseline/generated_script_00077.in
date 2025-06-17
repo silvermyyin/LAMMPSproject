@@ -1,0 +1,42 @@
+# LAMMPS input script for silicon simulation using Stillinger-Weber potential
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create simulation box and atoms
+lattice         diamond 5.431
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Define interatomic potential
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+# Set up neighbor list
+neighbor        1.0 nsq
+neigh_modify    every 1 delay 0
+
+# Define settings for simulation
+variable        timestep equal 0.001
+variable        thermostat equal 1  # 1 = use Langevin thermostat, 0 = no thermostat
+
+# Set up integration method
+timestep        ${timestep}
+
+# Apply fixes
+fix             1 all nve
+
+# Optionally apply Langevin thermostat
+if "${thermostat} == 1" then &
+  "fix 2 all langevin 300.0 300.0 0.1 48279"
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal
+
+# Run the simulation
+run             10000

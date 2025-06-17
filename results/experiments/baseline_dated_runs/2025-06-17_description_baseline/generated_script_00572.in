@@ -1,0 +1,38 @@
+# LAMMPS input script for a graphene system using LATTE QM model
+
+# Initialize simulation
+units metal
+atom_style full
+boundary p p p
+
+# Read data file
+read_data data.graphene
+
+# Replicate the system
+variable xrep equal 1
+variable yrep equal 1
+variable zrep equal 1
+replicate ${xrep} ${yrep} ${zrep}
+
+# Define interactions
+pair_style zero 10.0
+pair_coeff * *
+
+# Initial velocities
+velocity all create 100.0 12345
+
+# Define timestep
+timestep 0.00025
+
+# Quantum mechanical fix with LATTE
+fix 1 all mdi/qm latte
+
+# Integrate equations of motion
+fix 2 all nve
+
+# Output settings
+thermo 5
+thermo_style custom step temp pe etotal press
+
+# Run the simulation
+run 1000

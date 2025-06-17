@@ -1,0 +1,50 @@
+# LAMMPS input script for 2D simulation of dimer particles with SRD for viscosity study
+
+units lj
+dimension 2
+atom_style hybrid molecular sphere
+
+# Read in clusters of rigid dimer molecules
+read_data dimers.data
+
+# Define groups
+group dimers type 1  # Assuming dimers are type 1
+group solvent type 2  # Assuming small particles are type 2
+
+# Equilibration of dimers with soft potential
+pair_style soft 1.0
+pair_coeff * * 0.0 2.5  # Initial zero prefactor for soft potential
+fix 1 all nve
+fix 2 dimers adapt 1 pair soft a * * ramp 0.0 5.0  # Ramp up interaction strength over time
+
+# Allow system to equilibrate
+run 10000
+
+# Introduce small particles on a high-density lattice
+lattice sq 0.8
+region solvent_region block 0 50 0 50 -0.1 0.1
+create_atoms 2 region solvent_region
+
+# Remove overlaps between dimers and solvent particles
+delete_atoms overlap 0.5 dimers solvent
+
+# Switch to Lennard-Jones potential for interactions
+unfix 2
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5  # Dimer-dimer interactions
+pair_coeff 1 2 0.5 1.0 2.5  # Dimer-solvent interactions
+pair_coeff 2 2 0.1 1.0 2.5  # Solvent-solvent interactions
+
+# Define SRD method for hydrodynamic interactions
+fix 3 solvent srd 0.1 0.5 12345 isotropic
+fix 4 solvent viscosity 100 0.1
+
+# Set a small timestep for accurate dynamics
+timestep 0.001
+
+# Output diagnostics
+thermo_style custom step temp pe ke etotal
+thermo 100
+
+# Run the simulation
+run 50000

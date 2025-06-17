@@ -1,0 +1,42 @@
+# LAMMPS input script for molecular dynamics simulation of a graphene sheet
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Read atomic structure from an external data file
+read_data graphene.data
+
+# Define the Tersoff potential for carbon interactions (Lindsay and Broido)
+pair_style tersoff
+pair_coeff * * SiC.tersoff C
+
+# Set interlayer spacing for graphene
+variable zspacing equal 3.35
+
+# Initialize velocities at 300 K using a Gaussian distribution
+velocity all create 300.0 12345 dist gaussian
+
+# Define the timestep
+timestep 0.001
+
+# Calculate and print simulation box dimensions and volume
+variable Lx equal lx
+variable Ly equal ly
+variable Lz equal ${zspacing}
+variable Volume equal "lx*ly*${zspacing}"
+
+print "Simulation box dimensions: Lx = ${Lx}, Ly = ${Ly}, Lz = ${Lz}"
+print "Simulation box volume: Volume = ${Volume}"
+
+# Define thermo output
+thermo 1000
+thermo_style custom step temp pe etotal press pxx pyy pzz
+
+# Set up path integral molecular dynamics with i-PI
+fix 1 all ipi name graphene_socket mode unix-dgram
+
+# Run the simulation
+run 5000000
+
+This script sets up a molecular dynamics simulation of a graphene sheet using the specified interatomic potentials and simulation parameters. It also includes the i-PI driver setup for advanced path integral molecular dynamics, running for a total of 5 million steps.

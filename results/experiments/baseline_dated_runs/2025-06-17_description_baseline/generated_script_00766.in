@@ -1,0 +1,37 @@
+# LAMMPS Input Script for FCC Lattice with Lennard-Jones Potential
+
+# Initialize simulation
+units           lj
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define FCC lattice and simulation box
+lattice         fcc 0.8442
+region          box block 0 1 0 1 0 1
+create_box      1 box
+create_atoms    1 box
+
+# Set mass for the atom type
+mass            1 1.0
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 1.2
+pair_coeff      1 1 1.0 1.0 1.2
+
+# Neighbor settings
+neighbor        0.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Define output
+thermo_style    custom step pe ke etotal temp press vol lx ly lz vcm[1] vcm[2] vcm[3]
+thermo          100
+
+# Write initial configuration to data file
+write_data      tmp.data.fcc.orthog
+
+# Dump atom positions every 100 steps
+dump            1 all atom 100 tmp.dump.fcc.orthog
+
+# Run the simulation (initial setup only)
+run             0

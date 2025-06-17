@@ -1,0 +1,36 @@
+# LAMMPS input script for NaCl system using EAM potential
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define lattice with a diamond structure
+lattice         diamond 5.0
+region          box block 0 5 0 5 0 5
+create_box      2 box
+
+# Read atoms from a data file
+read_data       nacl.data
+
+# Specify the EAM potential file
+pair_style      eam
+pair_coeff      * * eam_alloy_file.eam Na Cl
+
+# Setup neighbor list
+neighbor        0.3 bin
+neigh_modify    delay 0 every 1 check yes
+
+# Initial velocity setup
+velocity        all create 1400.0 12345 mom yes rot yes dist gaussian
+
+# Equilibration using NPT ensemble
+fix             1 all npt temp 1400.0 300.0 0.1 iso 0.0 0.0 0.1
+
+# Define output settings
+thermo          50
+thermo_style    custom step temp pe ke etotal pxx pyy pzz
+
+# Run the simulation
+timestep        0.001
+run             500

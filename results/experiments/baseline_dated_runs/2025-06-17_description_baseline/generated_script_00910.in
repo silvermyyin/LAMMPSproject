@@ -1,0 +1,52 @@
+# Initialize the simulation
+units real
+atom_style full
+boundary p p p
+read_data data.mixture
+
+# Define groups
+group QM id 1:9
+group MM subtract all QM
+
+# Set charges of QM atoms to zero
+set group QM charge 0.0
+
+# Remove bonds and angles for QM atoms
+delete_bonds QM multi remove
+
+# Define potentials
+pair_style hybrid/overlay lj/cut/coul/long 12.0
+pair_coeff * * lj/cut/coul/long 0.0 0.0
+
+bond_style harmonic
+angle_style harmonic
+
+# Define kspace style for long-range electrostatics
+kspace_style pppm 1e-5
+
+# Define QM/MM interaction
+fix qmmm QM mdi/qmmm pyscf
+mdi_command "pyscf_input.py"
+fix_modify qmmm energy yes
+
+# Set timestep
+timestep 0.01
+
+# Define ensemble
+fix 1 all nve
+
+# Customize thermodynamic output
+thermo_style custom step temp etotal ke pe ebond eangle evdwl ecoul elong press
+thermo 1
+
+# Run the simulation
+run 1000
+
+# MDI command
+mdi "pyscf_input.py"
+mdi/qmmm "elements H C O N"
+mdi/qmmm "qm_calculation 2"
+
+# End of script
+
+This script sets up and executes a hybrid QM/MM simulation using the LAMMPS software, integrating with PySCF for quantum mechanical calculations. Ensure that `pyscf_input.py` contains the necessary PySCF setup for your system. Modify paths and details as needed for your specific simulation environment.

@@ -1,0 +1,43 @@
+# LAMMPS input script for methane (CH4) simulation using eFF
+
+# Define variables
+variable sname string "CH4fc.ang"
+
+# Initialize simulation
+units         metal
+atom_style    electron
+boundary      p p p
+
+# Read data file
+read_data     ${sname}
+
+# Pair style and coefficients
+pair_style    eff/cut 1000.0
+pair_coeff    * *
+
+# Define electron radius limits and pressure virials
+fix           1 all eff/nve/limit
+fix_modify    1 virial yes
+
+# Compute energy components
+compute       ke all ke
+compute       pauli all pair eff/pauli
+compute       elec all pair eff/coul
+compute       erest all pair eff/erest
+
+# Compute stress per atom
+compute       stress_atom all stress/atom virial
+
+# Compute effective temperature and pressure
+compute       temp_eff all temp/electron
+compute       press_eff all pressure temp_eff
+
+# Setup timestep
+timestep      0.0001
+
+# Thermodynamic output
+thermo_style  custom step temp c_temp_eff pe ke etotal c_pauli c_elec c_erest press c_press_eff
+thermo        10
+
+# Run simulation (no advanced steps)
+run           0

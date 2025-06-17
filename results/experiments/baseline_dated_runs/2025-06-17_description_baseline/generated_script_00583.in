@@ -1,0 +1,51 @@
+# LAMMPS Input Script for 250-molecule Butane System with Drude Polarizability
+
+units real
+atom_style full
+boundary p p p
+
+# Read data file
+read_data butane_data.data
+
+# Define pair style
+pair_style hybrid/overlay lj/cut/coul/long 10.0 10.0 thole 0.2
+pair_coeff * * lj/cut/coul/long 0.0 0.0
+pair_coeff * * thole 0.2
+
+# Define special bonds
+special_bonds lj/coul 0.0 0.0 0.5
+
+# Define bond style
+bond_style harmonic
+
+# Define angle style
+angle_style harmonic
+
+# Define dihedral style
+dihedral_style opls
+
+# Kspace style
+kspace_style pppm 1.0e-4
+
+# Initialize velocities
+velocity all create 300.0 12345 rot yes dist gaussian
+velocity drude create 1.0 12345 dist uniform
+
+# Fix for Drude particles
+fix drude all drude 1.0
+
+# Fix for SHAKE constraints
+fix shake all shake 0.0001 20 0 b 1 a 1
+
+# Fix for NVT ensemble with Drude thermostat
+fix nvt all nvt temp 300.0 300.0 100.0 tchain 1
+
+# Timestep
+timestep 0.5
+
+# Thermo settings
+thermo 100
+thermo_style custom step temp pe ke etotal evdwl ecoul elong press
+
+# Run the simulation
+run 2000

@@ -1,0 +1,55 @@
+# LAMMPS Input Script for Simulating Twinning Nucleation in Magnesium
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create simulation box with custom lattice orientation
+lattice custom 3.209 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.623
+region simbox block 0 10 0 10 0 10 units lattice
+create_box 1 simbox
+
+# Create atoms
+create_atoms 1 box
+
+# Define potential
+pair_style eam/alloy
+pair_coeff * * Mg.eam.alloy Mg
+
+# Define groups for deformation
+region lower block INF INF INF INF 0 1 units lattice
+region upper block INF INF INF INF 9 10 units lattice
+group lower region lower
+group upper region upper
+group middle subtract all lower upper
+
+# Minimize energy
+minimize 1.0e-4 1.0e-6 100 1000
+
+# Equilibration at 100K with 10 bar pressure
+velocity all create 100.0 12345 mom yes rot yes dist gaussian
+fix equilibration all npt temp 100.0 100.0 0.1 iso 10.0 10.0 1.0
+run 10000
+
+# Apply uniaxial strain along x-axis
+unfix equilibration
+fix deformation middle deform 1 x erate 1e-9 remap x
+fix 1 lower setforce 0.0 0.0 0.0
+fix 2 upper setforce 0.0 0.0 0.0
+
+# Monitor thermodynamic properties
+thermo 1000
+thermo_style custom step time temp press pxx pyy pzz pe ke etotal
+
+# Dump atomic configurations
+dump 1 all custom 1000 dump.mg.* id type x y z
+dump_modify 1 sort id
+
+# Run deformation simulation
+run 50000
+
+# End of script
+
+This script sets up a LAMMPS simulation to study twinning nucleation in magnesium under uniaxial loading. It starts by defining a custom lattice orientation and creating atoms within a simulation box. After energy minimization and equilibration, it applies a constant strain rate and monitors various thermodynamic properties. Atomic configurations are periodically dumped for analysis.

@@ -1,0 +1,48 @@
+# LAMMPS Input Script for Molecular Dynamics with Electrode Potential Difference
+
+# Initialization
+units           real
+atom_style      full
+boundary        p p p
+
+# Atom definition
+read_data       data.system
+
+# Include external settings file for modular configuration
+include         settings.mod
+
+# Define potentials and interactions
+pair_style      lj/cut 10.0
+pair_coeff      * * 0.1 1.0
+bond_style      harmonic
+bond_coeff      * 300.0 1.0
+angle_style     harmonic
+angle_coeff     * 50.0 109.5
+
+# Kspace style for long-range electrostatics with electrode corrections
+kspace_style    ewald/electrode 1.0e-4
+
+# Define groups for electrodes
+group           bottom_electrode region bottom
+group           top_electrode region top
+
+# Fix to apply constant potential difference
+variable        Vstart equal 0.0
+variable        Vend equal 1.0
+fix             1 all electrode/conp 100.0 bottom_electrode top_electrode v_Vstart v_Vend
+
+# Define computes for monitoring electrostatic properties
+compute         pot all property/atom q
+compute         charge_bottom bottom_electrode reduce sum c_pot
+compute         charge_top top_electrode reduce sum c_pot
+
+# Thermodynamic output configuration
+thermo          1
+thermo_style    custom step temp etotal c_charge_bottom c_charge_top
+thermo_modify   lost ignore norm no
+
+# Run the simulation for 10 timesteps
+timestep        1.0
+run             10
+
+Note: Ensure the existence of `data.system` and `settings.mod` files, as well as the correct definition of regions `bottom` and `top` to specify the electrodes.

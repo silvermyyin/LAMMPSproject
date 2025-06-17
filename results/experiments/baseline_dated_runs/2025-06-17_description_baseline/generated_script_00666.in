@@ -1,0 +1,45 @@
+# LAMMPS input script for 1477 K benchmark study on elastic properties
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define custom lattice with triclinic unit cell
+variable        a equal 5.457
+lattice         custom ${a} a1 1.0 0.0 0.0 a2 0.5 0.86602540378 0.0 a3 0.5 0.28867513459 0.81649658093 &
+                basis 0.0 0.0 0.0 basis 0.5 0.5 0.5 basis 0.25 0.25 0.25
+
+region          box prism 0 1 0 1 0 1 0 0 0 units lattice
+create_box      1 box
+create_atoms    1 box
+
+# Define potential (example Lennard-Jones, replace with appropriate potential)
+pair_style      lj/cut 10.0
+pair_coeff      * * 1.0 1.0 2.5
+
+# Set initial temperature
+velocity        all create 1477.0 12345 mom yes rot yes dist gaussian
+
+# Define settings for simulation
+timestep        0.000766
+thermo_style    custom step temp pe ke etotal press vol
+thermo          1000
+
+# Apply thermostat
+fix             1 all nvt temp 1477.0 1477.0 0.01
+
+# Equilibration and run
+run             10000  # Equilibration period
+reset_timestep  0
+run             100000 # Data collection period
+
+# Output stress and Born analysis
+compute         stress all stress/atom
+compute         born all born
+
+# Dump commands for detailed analysis (replace with desired output)
+dump            1 all custom 100 dump.stress id type x y z c_stress[1] c_stress[2] c_stress[3]
+dump_modify     1 sort id
+
+# End of script

@@ -1,0 +1,36 @@
+# LAMMPS input script for 3D Lennard-Jones melt simulation with MDI interface
+
+units           lj
+atom_style      atomic
+
+variable        densities index 0.7 0.8 0.9
+label           loop_densities
+
+read_data       data_${densities}
+
+# Displace atoms randomly to introduce disorder
+displace_atoms  all random 0.1 0.1 0.1 12345
+
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+pair_style      lj/cut 2.5
+pair_coeff      * * 1.0 1.0 2.5
+
+# Setup MDI interface
+fix             mdi_interface all mdi/qm
+
+# Integrate using velocity Verlet
+timestep        0.005
+thermo          100
+thermo_style    custom step temp pe ke etotal press v_mdi_interface
+
+# Dump output for post-processing
+dump            1 all custom 1000 dump_${densities}.lammpstrj id type x y z
+
+# Run for a specific number of steps
+run             10000
+
+# Move to the next density
+next            densities
+jump            SELF loop_densities

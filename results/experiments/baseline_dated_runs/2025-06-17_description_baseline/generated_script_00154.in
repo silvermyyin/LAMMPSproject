@@ -1,0 +1,40 @@
+# LAMMPS Input Script for Free Energy Perturbation with Hybrid Potential
+
+units real
+atom_style full
+boundary p p p
+
+# Read in initial configuration from a data file
+read_data system.data
+
+# Define potential interactions
+pair_style hybrid lj/cut/soft 2.5 coul/long 10.0
+pair_coeff * * lj/cut/soft 0.0 0.0  # Default to zero, adapted by fix adapt/fep
+kspace_style pppm 1.0e-4
+
+# Define group for shake constraints on hydrogen bonds
+group hydrogen type 1  # Assume type 1 is hydrogen, adjust as necessary
+
+# Apply SHAKE constraints to hydrogen bonds
+fix shake_hydrogen hydrogen shake 0.0001 20 0 b 1  # Adjust bond type as necessary
+
+# Define the NPT ensemble
+fix npt_all all npt temp 300.0 300.0 100.0 iso 1.0 1.0 1000.0
+
+# Define the free energy perturbation
+variable lambda equal ramp(0.0,1.0)
+fix adapt_fep all adapt/fep 1 pair lj/cut/soft epsilon * * v_lambda
+fix adapt_fep all adapt/fep 1 pair lj/cut/soft sigma * * v_lambda
+
+# Set up thermodynamic output
+thermo 100
+thermo_style custom step temp press etotal pe ke
+
+# Output free energy perturbation data
+fix fep_output all ave/time 100 1 100 v_lambda f_1[2] f_1[3] file fep_output.txt
+
+# Run the simulation
+timestep 1.0
+run 10000
+
+# End of input script

@@ -1,0 +1,42 @@
+units lj
+dimension 3
+boundary p p p
+
+atom_style body
+atom_modify map array
+
+# Lattice and Box
+region simbox block 0 50 0 50 0 50
+create_box 1 simbox
+
+# Define gravity
+variable g equal 1.0
+fix gravity all gravity ${g} vector 0.0 0.0 -1.0
+
+# Body style and material properties
+pair_style body/rounded/polyhedron 1.0 0.5 0.3 0.1
+pair_coeff * *
+
+# Particle insertion
+region slab block 20 30 20 30 40 50
+fix pour_particles all pour 1000 1 1 vol 0.1 50 region slab
+
+# Mix of different polyhedral shapes
+# Example: 2 types of polyhedrons
+set type 1 body/polyhedron 4 1 0.0 0.0 0.0 1 0 0 0
+set type 1 body/polyhedron 8 1 0.0 0.0 0.0 0 1 0 0
+
+# Wall at the bottom
+region bottom_wall block 0 50 0 50 0 1
+fix bottom_wall all wall/region bottom_wall lj93 1.0 1.0 1.0
+
+# Integration
+fix integrate all nve/body
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation
+timestep 0.001
+run 6000

@@ -1,0 +1,30 @@
+# LAMMPS input script - Continuation from restart file with NVE ensemble
+
+# Restart file to read
+read_restart walltest.restart
+
+# Define interactions
+special_bonds lj/coul 1.0 1.0 1.0
+
+# Define computes
+compute pe_atom all pe/atom
+compute total_pe all reduce sum c_pe_atom
+
+# Define integration style
+fix 1 all nve
+
+# Thermodynamic settings
+thermo_style custom step temp press etotal ke c_total_pe
+thermo 1
+
+# Enhance precision of thermodynamic output
+thermo_modify format float %20.15g
+
+# Uncomment the following line to dump atom coordinates with high precision
+# dump 1 all atom 100 dump.lammpstrj
+# dump_modify 1 format "%20.15g %20.15g %20.15g %20.15g %20.15g"
+
+# Run the simulation (modify the number of steps as needed)
+run 10000
+
+# End of script

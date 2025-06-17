@@ -1,0 +1,47 @@
+# LAMMPS input script for CF_x deposition on SiO2 substrate
+
+units real
+atom_style charge
+boundary p p f
+
+# Read equilibrated SiO2 data
+read_data sio2.data
+
+# Define regions for different layers of the substrate and deposition area
+region bottom_layer block INF INF INF INF INF 5 units box
+region middle_layer block INF INF INF INF 5 15 units box
+region top_layer block INF INF INF INF 15 INF units box
+region deposition_slab block INF INF INF INF 50 60 units box
+
+# Group atoms for different regions
+group frozen_layer region bottom_layer
+group nvt_layer region middle_layer
+group nve_layer region top_layer
+
+# Set up force interactions with a hybrid pair style
+pair_style hybrid reax/c NULL zbl 0.0 2.0
+pair_coeff * * reax/c ffield.reax Si O C F
+pair_coeff * * zbl
+
+# Fix the bottom layer to mimic a solid support
+fix freeze frozen_layer setforce 0.0 0.0 0.0
+
+# Apply NVT ensemble to the middle layer
+fix nvt nvt_layer nvt temp 300.0 300.0 100.0
+
+# Apply NVE ensemble to the top layer
+fix nve nve_layer nve
+
+# Define deposition of CF_x molecules
+fix deposit all deposit 10 1000 1000 12345 region deposition_slab &
+     vx -5.0 5.0 vy -5.0 5.0 vz -10.0 -20.0 units box
+
+# Remove atoms that go beyond the top of the simulation box
+fix evaporate all evaporate 10 100 top_layer 12345
+
+# Set timestep and run the simulation
+timestep 1.0
+thermo 100
+thermo_style custom step temp pe ke etotal
+
+run 10000

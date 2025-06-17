@@ -1,0 +1,41 @@
+# LAMMPS input script for BCC iron with spin dynamics and magnetic interactions
+
+units           metal
+atom_style      atomic
+
+# Create the BCC lattice
+lattice         bcc 2.8665
+region          box block 0 10 0 10 0 10
+create_box      1 box
+create_atoms    1 box
+
+# Set atomic mass for iron
+mass            1 55.845
+
+# Define potential and spin interactions
+pair_style      hybrid/overlay eam spin/exchange/biquadratic
+pair_coeff      * * eam Fe_mm.eam.fs Fe
+pair_coeff      * * spin/exchange/biquadratic 1.0 0.0 0.01
+
+# Initialize spins
+spin_style      atom
+spin            * 2.2
+
+# Define neighbor settings
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Define integration fixes
+fix             1 all nve/spin
+fix             2 all precession/spin
+fix             3 all langevin/spin 300.0 300.0 10.0 12345
+
+# Set timestep
+timestep        0.0001
+
+# Output settings
+thermo          100
+thermo_style    custom step time temp etotal pe ke spincoupling
+
+# Run simulation
+run             10000

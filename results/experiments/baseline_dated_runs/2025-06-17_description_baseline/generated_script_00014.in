@@ -1,0 +1,30 @@
+# LAMMPS Input Script for Ellipsoidal Particles with Resquared Potential
+
+units lj
+atom_style ellipsoid
+boundary p p f
+
+# Read initial configuration
+read_data Data_wall
+
+# Define interaction potential
+pair_style resquared
+pair_coeff * * 1.0 1.0 1.0 2.5
+
+# Define wall interactions
+fix wall_bottom all wall/ees zlo edge epsilon 1.0 sigma 1.0 cutoff 2.5
+fix wall_top all wall/ees zhi edge epsilon 1.0 sigma 1.0 cutoff 2.5
+
+# Define integrator
+timestep 0.0002
+fix integrate all nve/asphere
+
+# Compute properties
+compute quat all property/atom quatw quati quatj quatk
+
+# Thermodynamic output settings
+thermo_style custom step temp press etotal f_wall_bottom f_wall_top
+thermo 100
+
+# Run the simulation
+run 40000

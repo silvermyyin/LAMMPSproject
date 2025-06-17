@@ -1,0 +1,37 @@
+# LAMMPS input script for constant potential electrodes with ramping potential
+
+# Initialization
+units           real
+atom_style      full
+boundary        p p f
+dimension       3
+
+# Create simulation box, atoms, and initial configuration here
+# (Assuming the necessary data files and initial configuration are provided)
+
+# Include modular settings file
+include         settings.lmp
+
+# Kspace style for slab geometry
+kspace_style    ewald/electrode 1.0e-7 slab 3.0
+
+# Define electrode groups (assuming groups are predefined in the data or setup)
+group           electrode_bottom id 1
+group           electrode_top id 2
+
+# Fixes for electrodes with ramping potential
+fix             1 electrode_bottom electrode/conp electrode_top 1.979 symmetric yes
+
+# Define computes for thermodynamic output
+compute         charge_bottom electrode_bottom property/atom q
+compute         charge_top electrode_top property/atom q
+
+# Thermodynamic output settings
+thermo_style    custom step f_1[1] c_charge_bottom c_charge_top f_1[2] 
+thermo_modify   lost ignore
+thermo          1
+
+# Run settings
+timestep        1.0
+run             10
+Note: This script assumes that the initial configuration, including the atom positions and necessary group definitions, are provided in the corresponding data files or have been set up previously in the simulation workflow. The `settings.lmp` file should contain the detailed definitions of styles, computes, groups, and fixes necessary for the simulation.
