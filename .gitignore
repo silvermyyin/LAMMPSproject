@@ -6,7 +6,7 @@ venv/
 .DS_Store
 
 # Ignore LAMMPS log files
-results/be_description_generated_logs/
+# results/be_description_generated_logs/
 
 # Ignore LAMMPS dump files
 dump_*.xyz
