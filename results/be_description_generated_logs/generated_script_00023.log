@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for MoS2 Simulation using ReaxFF
+
+units           real
+atom_style      charge
+boundary        p p p
+
+# Define lattice and basis atoms for MoS2
+lattice custom 3.160 &    # specify lattice constant
+ERROR: Unknown lattice keyword: & (../lattice.cpp:235)
+Last command: lattice custom 3.160 &    # specify lattice constant

@@ -1,0 +1,90 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a BCC lattice in a triclinic box
+
+# Initialize simulation
+units           lj
+atom_style      atomic
+boundary        p p p
+
+# Define custom BCC lattice
+lattice custom 1.0   a1 1.0 0.0 0.0   a2 0.5 0.86602540378 0.0   a3 0.5 0.28867513459 0.81649658093   basis 0.0 0.0 0.0   basis 0.5 0.5 0.5
+Lattice spacing in x,y,z = 2.8284271 1.6329932 1.1547005
+
+# Create simulation box
+region mybox prism 0 2 0 2 0 2 0 0 0 units lattice
+create_box 1 mybox
+Created triclinic box = (0 0 0) to (5.6568542 3.2659863 2.3094011) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 44 atoms
+  using lattice units in triclinic box = (0 0 0) to (5.6568542 3.2659863 2.3094011) with tilt (0 0 0)
+  create_atoms CPU = 0.000 seconds
+
+# Set atom masses
+mass 1 1.0
+
+# Define Lennard-Jones potential
+pair_style lj/cut 1.1
+pair_coeff 1 1 1.0 1.0 1.1
+
+# Neighbor list settings
+neighbor 0.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Thermodynamic output
+thermo_style custom step temp etotal press pxx pyy pzz pxy pxz pyz vol
+thermo 1
+
+# Dump settings
+dump myDump all atom 100 dump.lammpstrj
+
+# Run setup for 0 timesteps
+run 0
+WARNING: No fixes with time integration, atoms won't move (../verlet.cpp:60)
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 1.1
+  ghost atom cutoff = 1.1
+  binsize = 0.55, bins = 11 6 5
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.064 | 3.064 | 3.064 Mbytes
+   Step          Temp          TotEng         Press           Pxx            Pyy            Pzz            Pxy            Pxz            Pyz           Volume    
+         0   0              774.5625       3281.4141      18             148.99219      9677.25        5.3226533e-14  6.8880398e-12  1.1878621e-07  42.666667    
+Loop time of 3.75e-07 on 1 procs for 0 steps with 44 atoms
+
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0          | 0          | 0          |   0.0 |  0.00
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 3.75e-07   |            |       |100.00
+
+Nlocal:             44 ave          44 max          44 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:            121 ave         121 max         121 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:            120 ave         120 max         120 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 120
+Ave neighs/atom = 2.7272727
+Neighbor list builds = 0
+Dangerous builds = 0
+
+# Write configuration to data file
+write_data bcc_triclinic.data
+System init for write_data ...
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Total wall time: 0:00:00

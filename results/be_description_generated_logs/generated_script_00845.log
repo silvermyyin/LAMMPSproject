@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D Simulation of Rubber Rings Impact using TLSPH
+
+units si
+atom_style sph
+dimension 3
+boundary p p p
+
+# Read initial geometry of a single rubber ring
+read_data rubber_ring.data
+ERROR: Cannot open file rubber_ring.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data rubber_ring.data

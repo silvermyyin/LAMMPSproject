@@ -1,0 +1,34 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for testing a Poisson solver with ATC in a metallic system
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      charge
+
+# Create fcc lattice and simulation box
+lattice         fcc 4.08
+Lattice spacing in x,y,z = 4.08 4.08 4.08
+region          box block 0 16 0 3 0 3
+create_box      1 box
+Created orthogonal box = (0 0 0) to (65.28 12.24 12.24)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 576 atoms
+  using lattice units in orthogonal box = (0 0 0) to (65.28 12.24 12.24)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style      lj/cut 13.0
+pair_coeff      1 1 0.0104 3.4 13.0  # Lennard-Jones parameters for Argon
+
+# Set charges and dielectric constant
+set             type 1 charge 1.0
+Setting atom values ...
+  576 settings made for charge
+dielectric      1.0
+
+# Define the ATC fix for coupling
+fix             atc all atc
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix             atc all atc

@@ -1,0 +1,76 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D Lennard-Jones Poiseuille flow simulation
+
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Define hcp lattice and create box
+lattice hcp 0.8442
+Lattice spacing in x,y,z = 1.1876539 2.0570768 1.9394306
+region box block 0 10 0 10 0 10
+create_box 3 box
+Created orthogonal box = (0 0 0) to (11.876539 20.570768 19.394306)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (11.876539 20.570768 19.394306)
+  create_atoms CPU = 0.000 seconds
+
+# Define regions for boundary conditions
+region lower block INF INF INF INF 0 1
+region upper block INF INF INF INF 9 10
+
+# Group atoms
+group lower region lower
+600 atoms in group lower
+group upper region upper
+400 atoms in group upper
+group liquid subtract all lower upper
+3000 atoms in group liquid
+
+# Assign atom types
+set group lower type 2
+Setting atom values ...
+  600 settings made for type
+set group upper type 3
+Setting atom values ...
+  400 settings made for type
+
+# Set masses
+mass * 1.0
+
+# Define LJ potential
+pair_style lj/cut 1.0
+pair_coeff * * 1.0 1.0 1.0
+
+# Fix boundaries
+fix fix_lower lower setforce 0.0 0.0 0.0
+fix fix_upper upper setforce 0.0 0.0 0.0
+
+# Initial velocities
+velocity lower set 0.0 0.0 0.0
+velocity upper set 0.0 0.0 0.0
+velocity liquid create 1.0 87287
+
+# Apply constant force to liquid group
+fix fix_flow liquid addforce 0.1 0.0 0.0
+
+# Temperature control
+fix fix_temp liquid temp/rescale 100 1.0 1.0 0.02 1.0
+
+# Integrate equations of motion
+fix fix_nve all nve
+
+# Compute momentum
+compute mom_liquid liquid momentum
+compute mom_reduce_liquid liquid reduce sum vx vy vz
+
+# Output settings
+thermo 1000
+thermo_style custom step temp c_mom_liquid[1] c_mom_liquid[2] c_mom_liquid[3] \
+ERROR: Unknown keyword '\' in thermo_style custom command (../thermo.cpp:1049)
+Last command: thermo_style custom step temp c_mom_liquid[1] c_mom_liquid[2] c_mom_liquid[3] \

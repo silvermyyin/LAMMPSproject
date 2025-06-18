@@ -1,0 +1,19 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for uniaxial strain simulation on fcc copper using EAM potential
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Define simulation box
+region          simbox block -18 18 -3 3 -3 3
+create_box      1 simbox
+Created orthogonal box = (-18 -3 -3) to (18 3 3)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms in slightly smaller region
+region          atomsbox block -17.5 17.5 -2.5 2.5 -2.5 2.5
+create_atoms    1 region atomsbox
+ERROR: Cannot create atoms with undefined lattice (../create_atoms.cpp:367)
+Last command: create_atoms    1 region atomsbox

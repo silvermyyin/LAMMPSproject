@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Lennard-Jones Fluid PIMD Simulation with Langevin Thermostat
+
+units lj
+atom_style atomic
+boundary p p p
+
+# Read initial atomic configurations from a data file
+variable ibead index 1
+read_data data.pimd.${ibead}
+read_data data.pimd.1
+ERROR: Cannot open file data.pimd.1: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.pimd.${ibead}

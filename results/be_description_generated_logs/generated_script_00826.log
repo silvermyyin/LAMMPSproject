@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating aspherical particles with SRD particles
+
+# Initialization
+units lj
+dimension 3
+atom_style hybrid ellipsoid sphere
+WARNING: Per-atom field rmass is used in multiple sub-styles; must be used consistently (../atom_vec_hybrid.cpp:166)
+boundary p p p
+
+# Read data file for aspherical particles
+read_data aspherical_particles.data
+ERROR: Cannot open file aspherical_particles.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data aspherical_particles.data

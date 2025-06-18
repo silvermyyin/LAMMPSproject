@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D spin dynamics simulation of bcc iron
+
+units metal
+atom_style spin
+boundary p p f
+
+# Read in the initial configuration
+read_data bcc_iron.data
+ERROR: Cannot open file bcc_iron.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data bcc_iron.data

@@ -1,0 +1,7 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for cyclohexane-methane mixture simulation
+
+units           real
+atom_style      template
+ERROR: Illegal atom_style template command (../atom_vec_template.cpp:57)
+Last command: atom_style      template

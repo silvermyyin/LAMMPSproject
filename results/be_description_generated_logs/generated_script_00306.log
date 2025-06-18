@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Drag Force Simulation on Colloidal Particle in LB Fluid
+
+# Initialize simulation
+units nano
+dimension 3
+boundary p p f
+atom_style sphere
+
+# Create simulation box
+region simbox block 0 50 0 50 0 50
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (50 50 50)
+  1 by 1 by 1 MPI processor grid
+
+# Define colloidal particle (single atom or composite)
+variable particle_type string "single" # Options: 'single' or 'composite'
+
+# Create atoms
+if "${particle_type} == single" then   "create_atoms 1 single 25 25 25"
+create_atoms 1 single 25 25 25
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (50 50 50)
+  create_atoms CPU = 0.000 seconds
+else   "create_atoms 1 box"   "create_atoms 2 box"   "group particle type 1 2"   "set group particle diameter 1.0"
+ERROR: Unknown command: else   "create_atoms 1 box"   "create_atoms 2 box"   "group particle type 1 2"   "set group particle diameter 1.0" (../input.cpp:314)
+Last command: else   "create_atoms 1 box"   "create_atoms 2 box"   "group particle type 1 2"   "set group particle diameter 1.0"

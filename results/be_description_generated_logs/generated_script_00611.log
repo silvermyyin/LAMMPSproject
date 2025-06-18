@@ -1,0 +1,17 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script to Demonstrate Replicate Command with Bond Loops
+
+# Ensure LAMMPS is built with MOLECULE and CLASS2 packages
+
+# Units and atom style
+units real
+atom_style full
+
+# Initialize simulation
+dimension 3
+boundary p p p
+
+# Atom definition for a simple linear chain (without bond loops)
+read_data data.chain
+ERROR: Cannot open file data.chain: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.chain

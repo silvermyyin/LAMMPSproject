@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D particles constrained to 2D plane using fix nve/manifold/rattle
+units lj
+dimension 3
+boundary p p f
+
+atom_style atomic
+read_data data.lammps
+ERROR: Cannot open file data.lammps: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.lammps

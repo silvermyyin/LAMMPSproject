@@ -1,0 +1,49 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D friction simulation using Lennard-Jones potentials
+
+# Initialize simulation
+units lj
+dimension 2
+atom_style atomic
+boundary p s p
+
+# Create geometry
+lattice hex 0.8
+Lattice spacing in x,y,z = 1.2014057 2.0808957 1.2014057
+region box block 0 40 0 20 -0.5 0.5
+create_box 2 box
+Created orthogonal box = (0 0 -0.60070285) to (48.056228 41.617915 0.60070285)
+  1 by 1 by 1 MPI processor grid
+
+# Define regions for slabs and asperities
+region lower_slab block 0 40 0 5 -0.5 0.5
+region upper_slab block 0 40 15 20 -0.5 0.5
+region lower_asperity sphere 20 5 0 2.0
+region upper_asperity sphere 20 15 0 2.0
+
+# Create atoms for slabs and asperities
+create_atoms 1 region lower_slab
+Created 440 atoms
+  using lattice units in orthogonal box = (0 -0.0041617915 -0.60070285) to (48.056228 41.622076 0.60070285)
+  create_atoms CPU = 0.000 seconds
+create_atoms 1 region upper_slab
+Created 440 atoms
+  using lattice units in orthogonal box = (0 -0.0041617915 -0.60070285) to (48.056228 41.622076 0.60070285)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 region lower_asperity
+Created 16 atoms
+  using lattice units in orthogonal box = (0 -0.0041617915 -0.60070285) to (48.056228 41.622076 0.60070285)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 region upper_asperity
+Created 18 atoms
+  using lattice units in orthogonal box = (0 -0.0041617915 -0.60070285) to (48.056228 41.622076 0.60070285)
+  create_atoms CPU = 0.000 seconds
+
+# Define groups
+group lower type 1
+880 atoms in group lower
+group upper type 1
+880 atoms in group upper
+group lower_boundary union lower_slab
+ERROR: Group ID lower_slab does not exist (../group.cpp:440)
+Last command: group lower_boundary union lower_slab

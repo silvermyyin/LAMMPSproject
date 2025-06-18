@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for TIP4P/2005 Water with Dissolved NaCl
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Create simulation box and read data
+read_data       water_nacl.data
+ERROR: Cannot open file water_nacl.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       water_nacl.data

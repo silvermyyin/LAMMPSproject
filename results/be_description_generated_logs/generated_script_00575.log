@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Argon Uniaxial Strain with AtC Method
+
+units real
+atom_style atomic
+
+# Define the lattice and region
+lattice fcc 3.405 # lattice constant for argon in Angstroms
+Lattice spacing in x,y,z = 3.405 3.405 3.405
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (34.05 34.05 34.05)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms in a sub-region
+region sub_box block 1 9 1 9 1 9
+create_atoms 1 region sub_box
+Created 2457 atoms
+  using lattice units in orthogonal box = (0 0 0) to (34.05 34.05 34.05)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style lj/smooth/linear 10.0
+pair_coeff 1 1 0.2381 3.405 2.5 10.0
+ERROR: Incorrect args for pair coefficients (../pair_lj_smooth_linear.cpp:192)
+Last command: pair_coeff 1 1 0.2381 3.405 2.5 10.0

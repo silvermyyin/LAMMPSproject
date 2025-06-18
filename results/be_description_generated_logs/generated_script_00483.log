@@ -1,0 +1,25 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a charged particle system with electrostatic interactions
+
+units lj
+atom_style charge
+
+# Create a simulation box
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms with charge
+create_atoms 1 random 100 12345 box
+Created 100 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+set type 1 charge 1.0
+Setting atom values ...
+  100 settings made for charge
+
+# Set initial velocities to zero
+velocity all create 0.0 12345 mom yes rot yes dist gaussian
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 0.0 12345 mom yes rot yes dist gaussian

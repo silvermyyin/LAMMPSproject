@@ -1,0 +1,9 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D SPH simulation of water flowing over a dam
+
+units           si
+dimension       2
+boundary        f f p
+atom_style      granular
+ERROR: Unrecognized atom style 'granular' (../atom.cpp:745)
+Last command: atom_style      granular

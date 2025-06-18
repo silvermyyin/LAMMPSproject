@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Silicon System with Energy Minimization and Dynamical Matrix Calculation
+
+units metal
+atom_style full
+boundary p p p
+
+# Read the initial configuration and force field parameters
+read_data silicon_input_file.lmp
+ERROR: Cannot open file silicon_input_file.lmp: No such file or directory (../read_data.cpp:367)
+Last command: read_data silicon_input_file.lmp

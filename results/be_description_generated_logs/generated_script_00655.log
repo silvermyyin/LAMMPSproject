@@ -1,0 +1,223 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# 2D Indentation Simulation with Energy Minimization
+
+units lj
+dimension 2
+boundary p s p
+atom_style atomic
+
+# Define a hexagonal lattice
+lattice hex 0.9
+Lattice spacing in x,y,z = 1.1326962 1.9618873 1.1326962
+region box block 0 20 0 20 -0.5 0.5
+create_box 1 box
+Created orthogonal box = (0 0 -0.56634808) to (22.653923 39.237746 0.56634808)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 820 atoms
+  using lattice units in orthogonal box = (0 -0.0039237746 -0.56634808) to (22.653923 39.24167 0.56634808)
+  create_atoms CPU = 0.000 seconds
+
+# Assign mass to atoms
+mass 1 1.0
+
+# Define Lennard-Jones potential with a cutoff of 2.5
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define groups
+region lower block INF INF INF 1.0 INF INF
+group lower region lower
+60 atoms in group lower
+group mobile subtract all lower
+760 atoms in group mobile
+
+# Apply constraints
+fix 1 lower setforce 0.0 0.0 0.0
+fix 2 all enforce2d
+
+# Define indenter properties
+variable indenter_radius equal 1.0
+variable k equal 100.0
+variable k1 equal 200.0
+
+# Simulation settings
+timestep 0.001
+thermo 100
+
+# Energy minimization parameters
+min_style cg
+minimize 1.0e-4 1.0e-6 100 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 17 29 1
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/2d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 4.174 | 4.174 | 4.174 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+         0   0             -3.2282175      0             -3.2282175     -1.5974637      889.06667    
+        10   0             -3.2327419      0             -3.2327419     -1.3610185      885.10891    
+Loop time of 0.0022875 on 1 procs for 10 steps with 820 atoms
+
+99.9% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+     -3.22821753457111   -3.2324231902676  -3.23274189644264
+  Force two-norm initial, final = 6.7430173 7.1541477
+  Force max component initial, final = 1.4687744 0.99416664
+  Final line search alpha, max atom move = 0.04183592 0.041591876
+  Iterations, force evaluations = 10 20
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0019852  | 0.0019852  | 0.0019852  |   0.0 | 86.78
+Neigh   | 5.0917e-05 | 5.0917e-05 | 5.0917e-05 |   0.0 |  2.23
+Comm    | 1.3793e-05 | 1.3793e-05 | 1.3793e-05 |   0.0 |  0.60
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 2.1837e-05 | 2.1837e-05 | 2.1837e-05 |   0.0 |  0.95
+Other   |            | 0.0002158  |            |       |  9.43
+
+Nlocal:            820 ave         820 max         820 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:            185 ave         185 max         185 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:           7180 ave        7180 max        7180 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 7180
+Ave neighs/atom = 8.7560976
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Indentation loop
+variable step loop 10
+label loop_start
+
+  # Update indenter position and apply spherical indenter potential
+  variable z_pos equal v_indenter_radius*${step}
+  variable z_pos equal v_indenter_radius*1
+  fix 3 mobile indent ${k} sphere 10.0 ${z_pos} 0.0 ${indenter_radius} units box
+  fix 3 mobile indent 100 sphere 10.0 ${z_pos} 0.0 ${indenter_radius} units box
+  fix 3 mobile indent 100 sphere 10.0 1 0.0 ${indenter_radius} units box
+  fix 3 mobile indent 100 sphere 10.0 1 0.0 1 units box
+
+  # Minimize energy
+  minimize 1.0e-4 1.0e-6 100 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 4.174 | 4.174 | 4.174 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+        10   0             -3.2327419      0             -3.2327419     -1.3620585      884.43309    
+        11   0             -3.2329063      0             -3.2329063     -1.3624642      884.43309    
+Loop time of 0.000372291 on 1 procs for 1 steps with 820 atoms
+
+93.2% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+     -3.23274189644264  -3.23274189644264  -3.23290632081446
+  Force two-norm initial, final = 7.1541477 5.9337988
+  Force max component initial, final = 0.99416664 0.90433599
+  Final line search alpha, max atom move = 0.10058676 0.090964226
+  Iterations, force evaluations = 1 2
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.00031229 | 0.00031229 | 0.00031229 |   0.0 | 83.88
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.624e-06  | 3.624e-06  | 3.624e-06  |   0.0 |  0.97
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 2.0584e-05 | 2.0584e-05 | 2.0584e-05 |   0.0 |  5.53
+Other   |            | 3.579e-05  |            |       |  9.61
+
+Nlocal:            820 ave         820 max         820 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:            185 ave         185 max         185 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:           7180 ave        7180 max        7180 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 7180
+Ave neighs/atom = 8.7560976
+Neighbor list builds = 0
+Dangerous builds = 0
+
+  # Output the minimized energy and structure
+  dump 1 all custom 100 dump.indent_${step}.lammpstrj id type x y z
+  dump 1 all custom 100 dump.indent_1.lammpstrj id type x y z
+  dump_modify 1 sort id
+
+  # Increment indenter stiffness
+  variable k equal ${k1}
+  variable k equal 200
+
+next step
+jump SELF loop_start
+
+  # Update indenter position and apply spherical indenter potential
+  variable z_pos equal v_indenter_radius*${step}
+  variable z_pos equal v_indenter_radius*2
+  fix 3 mobile indent ${k} sphere 10.0 ${z_pos} 0.0 ${indenter_radius} units box
+  fix 3 mobile indent 200 sphere 10.0 ${z_pos} 0.0 ${indenter_radius} units box
+  fix 3 mobile indent 200 sphere 10.0 2 0.0 ${indenter_radius} units box
+  fix 3 mobile indent 200 sphere 10.0 2 0.0 1 units box
+
+  # Minimize energy
+  minimize 1.0e-4 1.0e-6 100 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 4.174 | 4.174 | 4.174 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+        11   0             -3.2329063      0             -3.2329063     -1.3624942      884.41366    
+        12   0             -3.2330332      0             -3.2330332     -1.3641461      884.41366    
+Loop time of 0.000767334 on 1 procs for 1 steps with 820 atoms
+
+86.8% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+     -3.23290632081446  -3.23290632081446  -3.23303321171477
+  Force two-norm initial, final = 5.9337988 6.0330259
+  Force max component initial, final = 0.90433599 0.86021939
+  Final line search alpha, max atom move = 0.11057837 0.095121658
+  Iterations, force evaluations = 1 2
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.00028071 | 0.00028071 | 0.00028071 |   0.0 | 36.58
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 1.418e-06  | 1.418e-06  | 1.418e-06  |   0.0 |  0.18
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 1.375e-05  | 1.375e-05  | 1.375e-05  |   0.0 |  1.79
+Other   |            | 0.0004715  |            |       | 61.44
+
+Nlocal:            820 ave         820 max         820 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:            185 ave         185 max         185 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:           7180 ave        7180 max        7180 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 7180
+Ave neighs/atom = 8.7560976
+Neighbor list builds = 0
+Dangerous builds = 0
+
+  # Output the minimized energy and structure
+  dump 1 all custom 100 dump.indent_${step}.lammpstrj id type x y z
+  dump 1 all custom 100 dump.indent_2.lammpstrj id type x y z
+ERROR: Reuse of dump ID: 1 (../output.cpp:748)
+Last command:   dump 1 all custom 100 dump.indent_${step}.lammpstrj id type x y z

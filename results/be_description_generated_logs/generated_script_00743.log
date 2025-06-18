@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Metallic System using Lennard-Jones Potential
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Create simulation box and atoms (example for FCC lattice)
+lattice         fcc 3.615
+Lattice spacing in x,y,z = 3.615 3.615 3.615
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (36.15 36.15 36.15)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (36.15 36.15 36.15)
+  create_atoms CPU = 0.000 seconds
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 9.5251
+pair_coeff      * * 0.0104 2.740
+
+# Initialize velocities
+velocity        all create 0.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity        all create 0.0 12345

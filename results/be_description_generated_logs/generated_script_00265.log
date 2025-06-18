@@ -1,0 +1,37 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for GCMC Simulation of Lennard-Jones Fluid
+
+units lj
+atom_style atomic
+
+# Define simulation box and initialize atoms
+region box block 0 5 0 5 0 5
+create_box 1 box
+Created orthogonal box = (0 0 0) to (5 5 5)
+  1 by 1 by 1 MPI processor grid
+
+# Create initial set of atoms
+create_atoms 1 random 50 12345 box
+Created 50 atoms
+  using lattice units in orthogonal box = (0 0 0) to (5 5 5)
+  create_atoms CPU = 0.000 seconds
+
+# Set atomic mass
+mass 1 1.0
+
+# Define Lennard-Jones potential with cutoff
+pair_style lj/cut 3.0
+pair_coeff 1 1 1.0 1.0 3.0
+
+# Set neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define groups for GCMC
+group all type 1
+50 atoms in group all
+
+# GCMC settings
+fix gcmc all gcmc 10 100 100 0 29495 2.0 -1.25 0.5 pressure 1.5 displace 0.1 region box
+ERROR: Illegal fix gcmc command (../fix_gcmc.cpp:388)
+Last command: fix gcmc all gcmc 10 100 100 0 29495 2.0 -1.25 0.5 pressure 1.5 displace 0.1 region box

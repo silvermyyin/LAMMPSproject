@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for High-Pressure, High-Temperature Simulation of Diamond Cubic Carbon
+
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create a diamond cubic lattice
+lattice diamond 2.845
+Lattice spacing in x,y,z = 2.845 2.845 2.845
+region box block 0 3 0 3 0 3
+create_box 1 box
+Created orthogonal box = (0 0 0) to (8.535 8.535 8.535)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 216 atoms
+  using lattice units in orthogonal box = (0 0 0) to (8.535 8.535 8.535)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potentials
+pair_style hybrid/overlay zbl 1.0 2.0 snap
+pair_coeff * * zbl 6.0 6.0
+pair_coeff * * snap C_SNAP_2021.10.15.quadratic C
+ERROR: Incorrect args for pair coefficients (../pair_snap.cpp:386)
+Last command: pair_coeff * * snap C_SNAP_2021.10.15.quadratic C

@@ -1,0 +1,25 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D tensile test using Total Lagrangian SPH (TLSPH)
+
+units           si
+dimension       2
+boundary        f f p
+atom_style      sph
+
+# Define geometry and material properties
+region          simbox block 0 100 0 20 -0.1 0.1 units box
+create_box      1 simbox
+Created orthogonal box = (0 0 -0.1) to (100 20 0.1)
+  1 by 1 by 1 MPI processor grid
+lattice         sq2 1.0
+Lattice spacing in x,y,z = 1 1 1
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 -0.1) to (100 20 0.1)
+  create_atoms CPU = 0.000 seconds
+
+# Define mass and pair style
+mass            1 1.0  # mass density 1 kg/mm²
+pair_style      smd/tlsph 2.01 1.0 0.3 0.0
+ERROR: Unrecognized pair style 'smd/tlsph' is part of the MACHDYN package which is not enabled in this LAMMPS binary. (../force.cpp:275)
+Last command: pair_style      smd/tlsph 2.01 1.0 0.3 0.0

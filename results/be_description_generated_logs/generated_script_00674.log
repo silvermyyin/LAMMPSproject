@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for BCC Iron with Spin Dynamics
+
+# Initialization
+units           metal
+dimension       3
+boundary        p p p
+atom_style      spin
+
+# Lattice and region
+lattice         bcc 3.96
+Lattice spacing in x,y,z = 3.96 3.96 3.96
+region          simbox block 0 34 0 34 0 5
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (134.64 134.64 19.8)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 11560 atoms
+  using lattice units in orthogonal box = (0 0 0) to (134.64 134.64 19.8)
+  create_atoms CPU = 0.001 seconds
+
+# Set mass and spins
+mass            1 1.0
+set             atom * spin random
+Setting atom values ...
+WARNING: Set attribute spin is deprecated. Please use spin/atom instead. (../set.cpp:268)
+ERROR: Illegal set spin/atom command: missing argument(s) (../set.cpp:269)
+Last command: set             atom * spin random

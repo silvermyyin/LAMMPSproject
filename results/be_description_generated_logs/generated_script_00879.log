@@ -1,0 +1,34 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 2D Lennard-Jones System Simulation
+
+# Initialize simulation
+units lj
+dimension 2
+atom_style atomic
+
+# Create simulation box
+region box block 0 20 0 20 -0.5 0.5
+create_box 1 box
+Created orthogonal box = (0 0 -0.5) to (20 20 0.5)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms on a square lattice
+lattice sq 0.8442
+Lattice spacing in x,y,z = 1.0883719 1.0883719 1.0883719
+create_atoms 1 box
+Created 361 atoms
+  using lattice units in orthogonal box = (0 0 -0.5) to (20 20 0.5)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Assign initial velocities
+velocity all create 5.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 5.0 12345

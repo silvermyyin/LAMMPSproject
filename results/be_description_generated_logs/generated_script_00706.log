@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Water Simulation with Electric Field and AtC
+
+units real
+atom_style full
+boundary p p f
+
+# Create simulation box
+region box block 0 30 0 30 0 60
+create_box 2 box
+Created orthogonal box = (0 0 0) to (30 30 60)
+  1 by 1 by 1 MPI processor grid
+
+# Create water molecules
+# Here you would use a separate data file or commands to create water, e.g., read_data
+
+# Pair style and coefficients
+pair_style lj/cut/coul/long 10.0
+pair_coeff 1 1 0.1553 3.166 # O-O
+pair_coeff 2 2 0.0 0.0 # H-H
+pair_coeff 1 2 0.0 0.0 # O-H
+
+# Bond and angle styles
+bond_style harmonic
+bond_coeff 1 450 0.9572
+ERROR: Numeric index 1 is out of bounds (1-0) (../bond_harmonic.cpp:129)
+Last command: bond_coeff 1 450 0.9572

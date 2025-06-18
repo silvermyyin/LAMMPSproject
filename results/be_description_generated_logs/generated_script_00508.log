@@ -1,0 +1,242 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D Lennard-Jones Melt Simulation
+
+units lj
+atom_style atomic
+
+# Create simulation box and atoms
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 10 0 10 0 10
+create_box 2 box
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  create_atoms CPU = 0.000 seconds
+
+# Define atom types in a specific region
+region type2 block 3 6 INF INF INF INF
+group type2 region type2
+1400 atoms in group type2
+set group type2 type 2
+Setting atom values ...
+  1400 settings made for type
+
+# Define masses for atom types
+mass 1 1.0
+mass 2 1.0
+
+# Define Lennard-Jones potential with different cutoffs
+pair_style lj/cut 5.0
+pair_coeff 1 1 1.0 1.0 2.5
+pair_coeff 1 2 1.0 1.0 5.0
+pair_coeff 2 2 1.0 1.0 5.0
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 2 delay 0 check yes
+
+# Velocity initialization
+velocity all create 1.0 12345
+
+# Fix for time integration
+fix 1 all nve
+
+# Load balancing
+balance 1.0 shift xyz 10 1.1
+Balancing ...
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 2 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 5.3
+  ghost atom cutoff = 5.3
+  binsize = 2.65, bins = 7 7 7
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+ rebalancing time: 0.000 seconds
+  iteration count = 1
+  initial/final maximal load/proc = 4000 4000
+  initial/final imbalance factor  = 1 1
+  x cuts: 0 1
+  y cuts: 0 1
+  z cuts: 0 1
+
+# Output settings
+thermo 50
+thermo_style custom step temp pe ke etotal
+
+# Run the simulation in segments
+run 500
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 8.29 | 8.29 | 8.29 Mbytes
+   Step          Temp          PotEng         KinEng         TotEng    
+         0   1             -6.9453205      1.499625      -5.4456955    
+        50   0.49788312    -6.1963941      0.74663797    -5.4497561    
+       100   0.53322577    -6.249788       0.79963869    -5.4501493    
+       150   0.54794214    -6.2711571      0.82170773    -5.4494493    
+       200   0.55040409    -6.2738064      0.82539974    -5.4484067    
+       250   0.54359124    -6.2632105      0.81518301    -5.4480275    
+       300   0.54937761    -6.2709853      0.8238604     -5.4471249    
+       350   0.54344089    -6.2617962      0.81495755    -5.4468387    
+       400   0.54545217    -6.2646647      0.81797371    -5.446691     
+       450   0.55173999    -6.2739181      0.82740309    -5.446515     
+       500   0.54520641    -6.2648484      0.81760516    -5.4472432    
+Loop time of 2.83073 on 1 procs for 500 steps with 4000 atoms
+
+Performance: 76305.377 tau/day, 176.633 timesteps/s, 706.531 katom-step/s
+98.2% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.0507     | 2.0507     | 2.0507     |   0.0 | 72.44
+Neigh   | 0.73728    | 0.73728    | 0.73728    |   0.0 | 26.05
+Comm    | 0.026222   | 0.026222   | 0.026222   |   0.0 |  0.93
+Output  | 0.000152   | 0.000152   | 0.000152   |   0.0 |  0.01
+Modify  | 0.012014   | 0.012014   | 0.012014   |   0.0 |  0.42
+Other   |            | 0.004362   |            |       |  0.15
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          13863 ave       13863 max       13863 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         598890 ave      598890 max      598890 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 598890
+Ave neighs/atom = 149.7225
+Neighbor list builds = 48
+Dangerous builds = 0
+run 500
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 8.296 | 8.296 | 8.296 Mbytes
+   Step          Temp          PotEng         KinEng         TotEng    
+       500   0.54520641    -6.2648484      0.81760516    -5.4472432    
+       550   0.54110211    -6.2583517      0.81145025    -5.4469015    
+       600   0.55016092    -6.2728893      0.82503507    -5.4478543    
+       650   0.54184638    -6.2601763      0.81256637    -5.4476099    
+       700   0.54103329    -6.2591899      0.81134705    -5.4478429    
+       750   0.54372347    -6.2631742      0.81538131    -5.4477928    
+       800   0.53976137    -6.2568401      0.80943964    -5.4474004    
+       850   0.54364931    -6.2625582      0.81527009    -5.4472881    
+       900   0.54719724    -6.2674326      0.82059066    -5.4468419    
+       950   0.54489509    -6.2634756      0.8171383     -5.4463373    
+      1000   0.54948126    -6.2700928      0.82401583    -5.446077     
+Loop time of 2.91931 on 1 procs for 500 steps with 4000 atoms
+
+Performance: 73989.969 tau/day, 171.273 timesteps/s, 685.092 katom-step/s
+97.2% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1082     | 2.1082     | 2.1082     |   0.0 | 72.22
+Neigh   | 0.76797    | 0.76797    | 0.76797    |   0.0 | 26.31
+Comm    | 0.026517   | 0.026517   | 0.026517   |   0.0 |  0.91
+Output  | 0.000152   | 0.000152   | 0.000152   |   0.0 |  0.01
+Modify  | 0.012071   | 0.012071   | 0.012071   |   0.0 |  0.41
+Other   |            | 0.004376   |            |       |  0.15
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          13805 ave       13805 max       13805 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         598140 ave      598140 max      598140 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 598140
+Ave neighs/atom = 149.535
+Neighbor list builds = 49
+Dangerous builds = 0
+run 500
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 8.296 | 8.296 | 8.296 Mbytes
+   Step          Temp          PotEng         KinEng         TotEng    
+      1000   0.54948126    -6.2700928      0.82401583    -5.446077     
+      1050   0.54988695    -6.2709994      0.82462422    -5.4463752    
+      1100   0.54753687    -6.2671797      0.82109998    -5.4460797    
+      1150   0.54914817    -6.2698704      0.82351632    -5.446354     
+      1200   0.54860662    -6.2692583      0.8227042     -5.4465541    
+      1250   0.54687133    -6.2662243      0.82010192    -5.4461224    
+      1300   0.54277748    -6.2603658      0.81396268    -5.4464031    
+      1350   0.54743575    -6.2671939      0.82094834    -5.4462455    
+      1400   0.54404364    -6.2619021      0.81586145    -5.4460407    
+      1450   0.54512465    -6.263172       0.81748255    -5.4456894    
+      1500   0.5406368     -6.256589       0.81075246    -5.4458366    
+Loop time of 2.98296 on 1 procs for 500 steps with 4000 atoms
+
+Performance: 72411.332 tau/day, 167.619 timesteps/s, 670.475 katom-step/s
+95.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1621     | 2.1621     | 2.1621     |   0.0 | 72.48
+Neigh   | 0.77874    | 0.77874    | 0.77874    |   0.0 | 26.11
+Comm    | 0.026635   | 0.026635   | 0.026635   |   0.0 |  0.89
+Output  | 0.00015796 | 0.00015796 | 0.00015796 |   0.0 |  0.01
+Modify  | 0.011624   | 0.011624   | 0.011624   |   0.0 |  0.39
+Other   |            | 0.003723   |            |       |  0.12
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          13728 ave       13728 max       13728 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         600713 ave      600713 max      600713 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 600713
+Ave neighs/atom = 150.17825
+Neighbor list builds = 49
+Dangerous builds = 0
+run 500
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 8.296 | 8.296 | 8.296 Mbytes
+   Step          Temp          PotEng         KinEng         TotEng    
+      1500   0.5406368     -6.256589       0.81075246    -5.4458366    
+      1550   0.54067493    -6.256704       0.81080963    -5.4458944    
+      1600   0.54996022    -6.2705283      0.8247341     -5.4457942    
+      1650   0.54662949    -6.264898       0.81973925    -5.4451587    
+      1700   0.53832038    -6.2527578      0.8072787     -5.4454791    
+      1750   0.53828277    -6.2525756      0.80722229    -5.4453533    
+      1800   0.53477887    -6.247176       0.80196777    -5.4452082    
+      1850   0.54338125    -6.2595362      0.81486811    -5.4446681    
+      1900   0.53130327    -6.2406906      0.79675567    -5.4439349    
+      1950   0.54098603    -6.2552419      0.81127618    -5.4439658    
+      2000   0.54469547    -6.2605085      0.81683895    -5.4436695    
+Loop time of 2.85855 on 1 procs for 500 steps with 4000 atoms
+
+Performance: 75562.824 tau/day, 174.914 timesteps/s, 699.656 katom-step/s
+99.4% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.0638     | 2.0638     | 2.0638     |   0.0 | 72.20
+Neigh   | 0.75521    | 0.75521    | 0.75521    |   0.0 | 26.42
+Comm    | 0.024512   | 0.024512   | 0.024512   |   0.0 |  0.86
+Output  | 0.00015871 | 0.00015871 | 0.00015871 |   0.0 |  0.01
+Modify  | 0.01133    | 0.01133    | 0.01133    |   0.0 |  0.40
+Other   |            | 0.003527   |            |       |  0.12
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          13673 ave       13673 max       13673 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         609056 ave      609056 max      609056 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 609056
+Ave neighs/atom = 152.264
+Neighbor list builds = 50
+Dangerous builds = 0
+
+# End of script
+Total wall time: 0:00:11

@@ -1,0 +1,25 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for FCC <110> Stress Trajectories
+
+units           lj
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC Lattice
+lattice         fcc 1.4142136 orient x 1 -1 0 orient y 1 1 -2 orient z 1 1 1
+Lattice spacing in x,y,z = 2 2.3094011 2.4494897
+region          simbox block 0 5 0 5 0 5
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (9.9999999 11.547005 12.247449)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 2000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (9.9999999 11.547005 12.247449)
+  create_atoms CPU = 0.000 seconds
+
+# Set Mass and Pair Style
+mass            1 1.0
+pair_style      lj/cubic 2.5
+ERROR: Illegal pair_style command (../pair_lj_cubic.cpp:175)
+Last command: pair_style      lj/cubic 2.5

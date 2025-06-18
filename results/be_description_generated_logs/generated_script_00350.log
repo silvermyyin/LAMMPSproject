@@ -1,0 +1,25 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D heat conduction using eDPD in a cubic domain
+
+# Initialize the simulation
+units lj
+atom_style dpd
+
+# Create a cubic simulation box with periodic boundaries
+region box block 0 20 0 20 0 20
+create_box 1 box
+Created orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+
+# Create particles
+create_atoms 1 random 16000 12345 box
+Created 16000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (20 20 20)
+  create_atoms CPU = 0.001 seconds
+
+# Define particle properties
+mass 1 1.0
+set type 1 temp 1.0
+Setting atom values ...
+ERROR: Set keyword or custom property temp does not exist (../set.cpp:655)
+Last command: set type 1 temp 1.0

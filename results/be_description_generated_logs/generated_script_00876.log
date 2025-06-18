@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D simple cubic lattice with harmonic bonds and no pair interactions
+
+units lj
+dimension 2
+boundary p f p
+
+atom_style bond
+
+read_data data.simple_cubic
+ERROR: Cannot open file data.simple_cubic: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.simple_cubic

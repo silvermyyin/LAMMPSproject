@@ -1,0 +1,8 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D SDPD simulation of isothermal flow with Tait water properties
+
+units           micro
+dimension       2
+atom_style      sdpd
+ERROR: Unrecognized atom style 'sdpd' (../atom.cpp:745)
+Last command: atom_style      sdpd

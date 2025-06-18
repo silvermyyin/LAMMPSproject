@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D hexagonally packed atomic system with Voronoi tessellation
+
+units metal
+dimension 2
+boundary f f p
+
+# Create a hexagonal lattice
+lattice hex 1.0
+Lattice spacing in x,y,z = 1 1.7320508 1
+
+# Define simulation region and create atoms
+region box block 0 10 0 10 -0.1 0.1
+create_box 1 box
+Created orthogonal box = (0 0 -0.1) to (10 17.320508 0.1)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 200 atoms
+  using lattice units in orthogonal box = (0 0 -0.1) to (10 17.320508 0.1)
+  create_atoms CPU = 0.000 seconds
+
+# Set Lennard-Jones potential with a cutoff
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Enable compute voronoi/atom
+compute voro all voronoi/atom
+ERROR: Unrecognized compute style 'voronoi/atom' is part of the VORONOI package which is not enabled in this LAMMPS binary. (../modify.cpp:1289)
+Last command: compute voro all voronoi/atom

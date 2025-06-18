@@ -1,0 +1,36 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+units metal
+dimension 3
+boundary p p p
+
+atom_style atomic
+
+lattice fcc 5.405
+Lattice spacing in x,y,z = 5.405 5.405 5.405
+region simbox block -14 14 -3 3 -3 3
+create_box 1 simbox
+Created orthogonal box = (-75.67 -16.215 -16.215) to (75.67 16.215 16.215)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4032 atoms
+  using lattice units in orthogonal box = (-75.67 -16.215 -16.215) to (75.67 16.215 16.215)
+  create_atoms CPU = 0.000 seconds
+
+mass 1 39.95
+
+# Define finite element region
+region fe_region block -5 5 -1 1 -1 1
+group fe_group region fe_region
+263 atoms in group fe_group
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes rot no dist gaussian
+
+# Define pair style and potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.0103 3.4
+
+# Setup AtC package
+fix_modify AtC all AtC control file Cu_ttm.mat
+ERROR: Could not find fix_modify ID AtC (../modify.cpp:1051)
+Last command: fix_modify AtC all AtC control file Cu_ttm.mat

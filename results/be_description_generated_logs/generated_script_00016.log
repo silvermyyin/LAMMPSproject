@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Metal Alloy System using MEAM Potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Read data from external file
+read_data data.fe
+ERROR: Cannot open file data.fe: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.fe

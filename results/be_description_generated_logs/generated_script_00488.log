@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+units           metal
+dimension       2
+boundary        f f p
+atom_style      atomic
+
+# Create an FCC lattice and region
+lattice         fcc 3.615
+ERROR: Lattice style incompatible with simulation dimension (../lattice.cpp:70)
+Last command: lattice         fcc 3.615

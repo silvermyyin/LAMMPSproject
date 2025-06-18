@@ -1,0 +1,32 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Ti-Zr alloy using RANN potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create hcp lattice
+lattice hcp 2.995
+Lattice spacing in x,y,z = 2.995 5.1874922 4.8908145
+region simbox block 0 10 0 10 0 10
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (29.95 51.874922 48.908145)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (29.95 51.874922 48.908145)
+  create_atoms CPU = 0.000 seconds
+
+# Assign random types, 10% type 2 (Zr), 90% type 1 (Ti)
+set type 1 type/fraction 2 0.1 12345
+Setting atom values ...
+  421 settings made for type/fraction
+
+# Define interatomic potential
+pair_style rann
+ERROR: Unrecognized pair style 'rann' is part of the ML-RANN package which is not enabled in this LAMMPS binary. (../force.cpp:275)
+Last command: pair_style rann

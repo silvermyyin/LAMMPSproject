@@ -1,0 +1,33 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for a Methane-like System using Hybrid Potential
+
+# Initialize simulation
+units real
+dimension 3
+boundary p p p
+atom_style full
+
+# Create simulation box
+region box block 0 10 0 10 0 10
+create_box 2 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define atoms (methane-like and silane-like)
+create_atoms 1 random 50 12345 box
+Created 50 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 random 50 67890 box
+Created 50 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# Masses
+mass 1 12.011  # methane-like
+mass 2 28.085  # silane-like
+
+# Pair style and coefficients
+pair_style hybrid/overlay lj/cut 10.0 quip model_file=quip_params.xml
+ERROR: Illegal pair_style command (../pair_quip.cpp:213)
+Last command: pair_style hybrid/overlay lj/cut 10.0 quip model_file=quip_params.xml

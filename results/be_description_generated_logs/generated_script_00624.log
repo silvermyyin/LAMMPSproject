@@ -1,0 +1,62 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D LJ liquid simulation with shear flow, using a shearing wall and Langevin thermostat
+
+units lj
+dimension 2
+atom_style atomic
+
+# Define simulation box and lattice
+lattice sq2 0.6
+Lattice spacing in x,y,z = 1.8257419 1.8257419 1.8257419
+region box block 0 20 0 10 -0.25 0.25
+create_box 3 box
+Created orthogonal box = (0 0 -0.45643546) to (36.514837 18.257419 0.45643546)
+  1 by 1 by 1 MPI processor grid
+
+# Define regions for flow and walls
+region flow block 0 20 1 9 -0.25 0.25
+region lower_wall block 0 20 0 1 -0.25 0.25
+region upper_wall block 0 20 9 10 -0.25 0.25
+
+# Create atoms in entire box
+create_atoms 1 box
+Created 400 atoms
+  using lattice units in orthogonal box = (0 0 -0.45643546) to (36.514837 18.257419 0.45643546)
+  create_atoms CPU = 0.000 seconds
+
+# Assign atom types for walls
+group lower type 2
+0 atoms in group lower
+group upper type 3
+0 atoms in group upper
+group flow region flow
+340 atoms in group flow
+
+set group lower type 2
+Setting atom values ...
+  0 settings made for type
+set group upper type 3
+Setting atom values ...
+  0 settings made for type
+
+# Define LJ potential with a cutoff
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+pair_coeff 1 2 1.0 1.0 2.5
+pair_coeff 1 3 1.0 1.0 2.5
+pair_coeff 2 2 1.0 1.0 2.5
+pair_coeff 2 3 1.0 1.0 2.5
+pair_coeff 3 3 1.0 1.0 2.5
+
+# Define groups for dynamics
+group mobile union flow lower upper
+340 atoms in group mobile
+
+# Apply fixes
+fix 1 flow nve
+fix 2 flow langevin 1.0 1.0 1.0 48279
+fix 3 all enforce2d
+fix 4 upper setforce 0.0 0.0 0.0
+velocity upper set 2.7 0.0 0.0
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity upper set 2.7 0.0 0.0

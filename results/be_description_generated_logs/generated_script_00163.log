@@ -1,0 +1,25 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D granular mixing simulation
+
+units          si
+dimension      3
+boundary       p p f
+atom_style     sphere
+
+# Create simulation box
+region         simbox block 0 20 0 20 0 20 units box
+create_box     3 simbox
+Created orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+
+# Define cylindrical region for particles
+region         cylinder_reg cylinder z 10 10 10 0 20 units box
+
+# Define particles
+variable       diameter equal random(0.6,1.2)
+variable       density equal 1.0
+
+# Create particles using fix pour
+fix            1 all pour 1000 1 10000 region cylinder_reg diam variable diameter density variable density
+ERROR: Illegal fix pour command (../fix_pour.cpp:994)
+Last command: fix            1 all pour 1000 1 10000 region cylinder_reg diam variable diameter density variable density

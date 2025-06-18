@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for zero-temperature EOS calculation
+
+units electron
+atom_style atomic
+boundary p p p
+
+# Calculate lattice constant for given atomic volume (in bohr^3)
+variable atomic_volume equal 121.6
+variable lattice_constant equal (4 * v_atomic_volume)^(1/3)
+ERROR: Illegal variable command: expected 3 arguments but found 5 (../variable.cpp:449)
+Last command: variable lattice_constant equal (4 * v_atomic_volume)^(1/3)

@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simple cubic lattice of silicon using MEAM/SW/spline potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create lattice and simulation box
+lattice sc 2.612
+Lattice spacing in x,y,z = 2.612 2.612 2.612
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (26.12 26.12 26.12)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 1000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (26.12 26.12 26.12)
+  create_atoms CPU = 0.000 seconds
+
+# Set atomic mass for silicon
+mass 1 28.085
+
+# Define potential
+pair_style meam/spline
+pair_coeff * * meam/spline Si.meam.spline Si
+ERROR: Incorrect args for pair coefficients (../pair_meam_spline.cpp:385)
+Last command: pair_coeff * * meam/spline Si.meam.spline Si

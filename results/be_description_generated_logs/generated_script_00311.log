@@ -1,0 +1,48 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Lennard-Jones Melt Simulation with FCC Lattice
+
+units lj
+atom_style atomic
+
+# Create a cubic simulation box
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 10 0 10 0 10
+create_box 2 box
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms in the simulation box
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  create_atoms CPU = 0.000 seconds
+mass 1 1.0
+mass 2 1.0
+
+# Define a region for a subset of the atoms
+region subset block 3 6 INF INF INF INF
+group subset region subset
+1400 atoms in group subset
+set group subset type 2
+Setting atom values ...
+  1400 settings made for type
+
+# Define Lennard-Jones potential with different cutoffs
+pair_style lj/cut 5.0
+pair_coeff 1 1 1.0 1.0 2.5
+pair_coeff 1 2 1.0 1.0 5.0
+pair_coeff 2 2 1.0 1.0 5.0
+
+# Set up neighbor list with bin style
+neighbor 0.3 bin
+neigh_modify delay 5
+
+# Assign initial velocities
+velocity all create 1.0 12345 dist gaussian
+
+# Setup load balancing strategies
+balance 1.0 shift 1.0
+Balancing ...
+ERROR: Illegal balance shift command: missing argument(s) (../balance.cpp:197)
+Last command: balance 1.0 shift 1.0

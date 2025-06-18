@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for NaCl system with core-shell model
+
+units           metal
+atom_style      full
+boundary        p p p
+
+# Create atoms (example, should be replaced with actual data)
+read_data       nacl_data.txt
+ERROR: Cannot open file nacl_data.txt: No such file or directory (../read_data.cpp:367)
+Last command: read_data       nacl_data.txt

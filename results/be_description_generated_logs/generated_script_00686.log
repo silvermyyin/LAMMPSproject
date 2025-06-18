@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for BCC Iron with EAM potential and TTM
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define lattice and create simulation box
+lattice         bcc 2.87
+Lattice spacing in x,y,z = 2.87 2.87 2.87
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (28.7 28.7 28.7)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 2000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (28.7 28.7 28.7)
+  create_atoms CPU = 0.000 seconds
+
+# Set mass of iron
+mass            1 55.845
+
+# Define interatomic potential
+pair_style      eam
+pair_coeff      * * Fe_mm.eam.alloy Fe
+ERROR: Incorrect args for pair coefficients (../pair_eam.cpp:387)
+Last command: pair_coeff      * * Fe_mm.eam.alloy Fe

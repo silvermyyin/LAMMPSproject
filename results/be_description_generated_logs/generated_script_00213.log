@@ -1,0 +1,107 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D Lennard-Jones Melt Simulation
+
+# Initialization
+units           lj
+atom_style      atomic
+dimension       3
+boundary        p p p
+
+# Variables
+variable        x equal 5
+variable        y equal 5
+variable        z equal 5
+
+# Create simulation box
+lattice         fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region          box block 0 ${x} 0 ${y} 0 ${z}
+region          box block 0 5 0 ${y} 0 ${z}
+region          box block 0 5 0 5 0 ${z}
+region          box block 0 5 0 5 0 5
+create_box      1 box
+Created orthogonal box = (0 0 0) to (8.397981 8.397981 8.397981)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 500 atoms
+  using lattice units in orthogonal box = (0 0 0) to (8.397981 8.397981 8.397981)
+  create_atoms CPU = 0.000 seconds
+
+# Mass and potential settings
+mass            1 1.0
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5
+
+# Neighbor settings
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Initial velocities
+velocity        all create 1.44 87287
+
+# Define settings for output
+thermo          1
+thermo_style    custom step temp epair etotal press vol
+
+# Define fixes
+fix             1 all nve
+# Alternative ensemble (commented out)
+#fix             2 all npt temp 1.44 1.44 1.0 iso 0.0 0.0 1.0
+
+# Run the simulation
+run             10
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 6 6 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.144 | 3.144 | 3.144 Mbytes
+   Step          Temp          E_pair         TotEng         Press          Volume    
+         0   1.44          -6.7733681     -4.6176881     -5.0221006      592.27671    
+         1   1.4377284     -6.7699827     -4.6177033     -5.0009735      592.27671    
+         2   1.430795      -6.7596494     -4.6177493     -4.9371026      592.27671    
+         3   1.4188457     -6.7418377     -4.6178257     -4.8290333      592.27671    
+         4   1.4012975     -6.7156739     -4.6179316     -4.6744145      592.27671    
+         5   1.3773586     -6.6799028     -4.617997      -4.4700362      592.27671    
+         6   1.3460757     -6.6327267     -4.6176513     -4.2117355      592.27671    
+         7   1.3064191     -6.572472      -4.6167626     -3.8958179      592.27671    
+         8   1.2574371     -6.4986608     -4.6162774     -3.5213321      592.27671    
+         9   1.1985195     -6.410013      -4.6158292     -3.0873996      592.27671    
+        10   1.1297691     -6.3071605     -4.6158962     -2.5986959      592.27671    
+Loop time of 0.00275704 on 1 procs for 10 steps with 500 atoms
+
+Performance: 1566896.696 tau/day, 3627.076 timesteps/s, 1.814 Matom-step/s
+99.3% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0020424  | 0.0020424  | 0.0020424  |   0.0 | 74.08
+Neigh   | 0.00056808 | 0.00056808 | 0.00056808 |   0.0 | 20.60
+Comm    | 7.4123e-05 | 7.4123e-05 | 7.4123e-05 |   0.0 |  2.69
+Output  | 2.7749e-05 | 2.7749e-05 | 2.7749e-05 |   0.0 |  1.01
+Modify  | 2.8042e-05 | 2.8042e-05 | 2.8042e-05 |   0.0 |  1.02
+Other   |            | 1.667e-05  |            |       |  0.60
+
+Nlocal:            500 ave         500 max         500 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           1956 ave        1956 max        1956 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          19434 ave       19434 max       19434 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 19434
+Ave neighs/atom = 38.868
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# End of script
+Total wall time: 0:00:00

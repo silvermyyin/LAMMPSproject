@@ -1,0 +1,9 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 2D Poiseuille Flow using Lattice Boltzmann Method
+
+# Initialize simulation
+units           lj
+dimension       2
+atom_style      rheology
+ERROR: Unrecognized atom style 'rheology' (../atom.cpp:745)
+Last command: atom_style      rheology

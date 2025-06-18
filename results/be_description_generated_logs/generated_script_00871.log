@@ -1,0 +1,35 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# 3D Spin Dynamics Simulation of BCC Iron with Spin Lattice Model
+
+units metal
+atom_style spin
+boundary f f f
+
+# Create the simulation box
+lattice bcc 2.87
+Lattice spacing in x,y,z = 2.87 2.87 2.87
+region whole block 0 10 0 10 0 10
+create_box 2 whole
+Created orthogonal box = (0 0 0) to (28.7 28.7 28.7)
+  1 by 1 by 1 MPI processor grid
+
+# Define two regions with different spin configurations
+region fixed block 0 5 0 10 0 10
+region randomized block 5 10 0 10 0 10
+
+# Create atoms and assign spins
+create_atoms 1 region fixed
+Created 1100 atoms
+  using lattice units in orthogonal box = (0 0 0) to (28.7 28.7 28.7)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 region randomized
+Created 1000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (28.7 28.7 28.7)
+  create_atoms CPU = 0.000 seconds
+
+# Set initial spins for fixed region
+set region fixed spin 1.0 0.0 0.0
+Setting atom values ...
+WARNING: Set attribute spin is deprecated. Please use spin/atom instead. (../set.cpp:268)
+ERROR: Illegal set spin/atom command: missing argument(s) (../set.cpp:269)
+Last command: set region fixed spin 1.0 0.0 0.0

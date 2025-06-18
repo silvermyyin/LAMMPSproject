@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for charge equilibration comparison using buck/coul/long
+
+units           metal
+atom_style      charge
+
+# Read initial data
+read_data       data.aC
+ERROR: Cannot open file data.aC: No such file or directory (../read_data.cpp:367)
+Last command: read_data       data.aC

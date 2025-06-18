@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for MD simulation of BCC tantalum using SNAP potential
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create BCC lattice
+lattice         bcc 3.316
+Lattice spacing in x,y,z = 3.316 3.316 3.316
+region          simbox block 0 4 0 4 0 4
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (13.264 13.264 13.264)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 128 atoms
+  using lattice units in orthogonal box = (0 0 0) to (13.264 13.264 13.264)
+  create_atoms CPU = 0.000 seconds
+
+# Define mass of tantalum atoms
+mass            1 180.88
+
+# Define SNAP potential via MLIAP
+pair_style      mliap snap
+ERROR: Illegal pair_style mliap command: missing argument(s) (../pair_mliap.cpp:142)
+Last command: pair_style      mliap snap

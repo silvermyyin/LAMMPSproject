@@ -1,0 +1,32 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for XRD and SAED Analysis of Bulk Nickel
+
+# Initialize simulation
+clear
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create FCC lattice and simulation box
+lattice fcc 3.52
+Lattice spacing in x,y,z = 3.52 3.52 3.52
+region box block 0 32 0 32 0 32
+create_box 1 box
+Created orthogonal box = (0 0 0) to (112.64 112.64 112.64)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 131072 atoms
+  using lattice units in orthogonal box = (0 0 0) to (112.64 112.64 112.64)
+  create_atoms CPU = 0.005 seconds
+
+# Set atom mass
+mass 1 58.71
+
+# Specify no pair style (focus on structural analysis)
+pair_style none
+
+# Define computes for XRD and SAED
+compute xrd all xrd 40 80 1 0.01
+ERROR: Compute XRD: Invalid ASF atom type 80 (../compute_xrd.cpp:93)
+Last command: compute xrd all xrd 40 80 1 0.01

@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for bilayer graphene simulation using Lebedeva potential
+
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial configuration
+read_data 2particles.dat
+ERROR: Cannot open file 2particles.dat: No such file or directory (../read_data.cpp:367)
+Last command: read_data 2particles.dat

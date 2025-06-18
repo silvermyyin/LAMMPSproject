@@ -1,0 +1,30 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D colloidal system with voids
+
+units lj
+dimension 2
+atom_style atomic
+
+# Define simulation box
+lattice sq2 0.1
+Lattice spacing in x,y,z = 4.472136 4.472136 4.472136
+region box block 0 60 0 60 -0.5 0.5
+create_box 4 box
+Created orthogonal box = (0 0 -2.236068) to (268.32816 268.32816 2.236068)
+  1 by 1 by 1 MPI processor grid
+
+# Create initial atoms
+create_atoms 1 box
+Created 7200 atoms
+  using lattice units in orthogonal box = (0 0 -2.236068) to (268.32816 268.32816 2.236068)
+  create_atoms CPU = 0.000 seconds
+
+# Define regions for voids
+region void1 block 20 25 20 25 -0.5 0.5
+region void2 block 40 45 40 45 -0.5 0.5
+
+# Assign atom types with varying fractions
+set type 1 type/fraction 0.25 2 12345
+Setting atom values ...
+ERROR: Expected integer parameter instead of '0.25' in input script or data file (../set.cpp:100)
+Last command: set type 1 type/fraction 0.25 2 12345

@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for SiO2 zeolite with a methane molecule
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read initial configuration from data file
+read_data       zeolite_methane.data
+ERROR: Cannot open file zeolite_methane.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       zeolite_methane.data

@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 2D NEB Simulation of Atom Transition
+
+units           lj
+dimension       2
+boundary        p s p
+atom_style      atomic
+
+# Define lattice and system
+lattice         hex 0.9
+Lattice spacing in x,y,z = 1.1326962 1.9618873 1.1326962
+read_data       initial_configuration.data
+ERROR: Cannot open file initial_configuration.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       initial_configuration.data

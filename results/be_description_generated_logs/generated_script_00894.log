@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a hexagonal boron nitride (hBN) monolayer simulation
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create atoms from a data file
+read_data hbn.data
+ERROR: Cannot open file hbn.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data hbn.data

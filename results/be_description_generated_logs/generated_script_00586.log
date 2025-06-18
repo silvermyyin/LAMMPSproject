@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Testing Wall Interaction Models and Bonding Potentials
+units real
+atom_style bond
+
+# Create simulation box
+boundary f p p
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 random 10 12345 simbox
+Created 10 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# Define initial molecular structure
+mass 1 1.0
+
+# Define initial pair and bond styles
+pair_style zero 10.0
+pair_coeff * *
+
+bond_style zero
+bond_coeff * *
+ERROR: Invalid range string: * (../bond_zero.cpp:88)
+Last command: bond_coeff * *

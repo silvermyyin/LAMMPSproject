@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for SNAP Descriptors on a BCC Lattice
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define the BCC lattice
+lattice         bcc 3.316
+Lattice spacing in x,y,z = 3.316 3.316 3.316
+region          box block 0 5 0 5 0 5
+create_box      1 box
+Created orthogonal box = (0 0 0) to (16.58 16.58 16.58)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 250 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.58 16.58 16.58)
+  create_atoms CPU = 0.000 seconds
+
+# Assign mass to the atomic type
+mass            1 180.88
+
+# Define a zero potential pair style
+pair_style      zero 10.0
+pair_coeff      * *
+
+# Define computes for SNAP descriptors
+compute         sna_atom all sna/atom 1 2.0 3.0 3.0
+ERROR: Illegal compute sna/atom command (../compute_sna_atom.cpp:47)
+Last command: compute         sna_atom all sna/atom 1 2.0 3.0 3.0

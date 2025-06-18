@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for a Monolayer MoS2 System using ReaxFF Potential
+# Simulation of dynamic behavior and stability of MoS2 monolayer
+
+# Initialize simulation
+units           real
+dimension       3
+boundary        p p f
+atom_style      charge
+
+# Read data file
+read_data       single_layer_MoS2.data
+ERROR: Cannot open file single_layer_MoS2.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       single_layer_MoS2.data

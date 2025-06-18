@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a bilayer MoS2 system with AA' stacking
+
+units metal
+dimension 3
+boundary p p f
+
+atom_style atomic
+
+# Read atomic data from the input file
+read_data mos2_bilayer.data
+ERROR: Cannot open file mos2_bilayer.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data mos2_bilayer.data

@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for calculating the formation energy of an unrelaxed vacancy in a bcc lattice using MGPT
+
+units metal
+dimension 3
+boundary p p p
+
+# Calculate lattice constant from atomic volume
+variable vol equal 121.6
+variable a equal (v_vol*2)^(1.0/3.0)
+
+# Create a 5x5x5 bcc lattice
+lattice bcc ${a}
+lattice bcc 6.24196300283154
+Lattice spacing in x,y,z = 6.241963 6.241963 6.241963
+region box block 0 5 0 5 0 5
+create_box 1 box
+Created orthogonal box = (0 0 0) to (31.209815 31.209815 31.209815)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 250 atoms
+  using lattice units in orthogonal box = (0 0 0) to (31.209815 31.209815 31.209815)
+  create_atoms CPU = 0.000 seconds
+
+# Remove the central atom to create a vacancy
+delete_atoms region box group NULL compress no
+ERROR: Unknown delete_atoms option: group (../delete_atoms.cpp:905)
+Last command: delete_atoms region box group NULL compress no

@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for CO2/H2O Mixture in Graphene Slit
+
+units real
+atom_style full
+boundary p p p
+
+# Read in the initial configuration and potential parameters
+read_data graphite_raw.data
+ERROR: Cannot open file graphite_raw.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data graphite_raw.data

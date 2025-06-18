@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D simulation of point dipoles using ScaFaCoS with FMM
+
+units lj
+dimension 2
+atom_style charge
+boundary f f f
+
+read_data data.hammersley_sphere
+ERROR: Cannot run 2d simulation with nonperiodic Z dimension (../read_data.cpp:336)
+Last command: read_data data.hammersley_sphere

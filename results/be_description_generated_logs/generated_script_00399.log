@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D Simulation of Rounded Cubic Particles
+
+units lj
+dimension 3
+boundary p p p
+
+atom_style body
+ERROR: Invalid atom_style body command (../atom_vec_body.cpp:109)
+Last command: atom_style body

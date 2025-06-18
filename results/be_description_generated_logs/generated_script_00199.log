@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for alchemical transformation of water into ions
+
+units real
+atom_style full
+boundary p p p
+
+# Create simulation box and define regions
+region simbox block 0 30 0 30 0 30
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (30 30 30)
+  1 by 1 by 1 MPI processor grid
+
+# Create initial water molecules
+# Note: Atom IDs and positions should be set according to initial configuration
+create_atoms 1 single 5 5 5 mol water
+ERROR: Illegal create_atoms mol command: missing argument(s) (../create_atoms.cpp:182)
+Last command: create_atoms 1 single 5 5 5 mol water

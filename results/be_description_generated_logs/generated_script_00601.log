@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for HfO2 simulation using COMB potential
+
+units metal
+atom_style charge
+
+# Read data file
+read_data hafnium_oxide.data
+ERROR: Cannot open file hafnium_oxide.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data hafnium_oxide.data

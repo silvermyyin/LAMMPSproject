@@ -1,0 +1,66 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a simple rigid body system
+
+units lj
+atom_style atomic
+
+# Create a 3x3x3 cubic lattice of atoms
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 9 0 9 0 9
+create_box 1 box
+Created orthogonal box = (0 0 0) to (15.116366 15.116366 15.116366)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 2916 atoms
+  using lattice units in orthogonal box = (0 0 0) to (15.116366 15.116366 15.116366)
+  create_atoms CPU = 0.000 seconds
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define groups for rigid bodies
+group clump1 id 1 2 3 4 5 6 7 8 9
+9 atoms in group clump1
+group clump2 id 10 11 12 13 14 15 16 17 18
+9 atoms in group clump2
+group clump3 id 19 20 21 22 23 24 25 26 27
+9 atoms in group clump3
+group clump4 id 28 29 30 31 32 33 34 35 36
+9 atoms in group clump4
+group clump5 id 37 38 39 40 41 42 43 44 45
+9 atoms in group clump5
+group clump6 id 46 47 48 49 50 51 52 53 54
+9 atoms in group clump6
+group clump7 id 55 56 57 58 59 60 61 62 63
+9 atoms in group clump7
+group clump8 id 64 65 66 67 68 69 70 71 72
+9 atoms in group clump8
+group clump9 id 73 74 75 76 77 78 79 80 81
+9 atoms in group clump9
+
+# Apply rigid body constraints
+fix 1 clump1 rigid single
+  1 rigid bodies with 9 atoms
+fix 2 clump2 rigid single
+  1 rigid bodies with 9 atoms
+fix 3 clump3 rigid single
+  1 rigid bodies with 9 atoms
+fix 4 clump4 rigid single
+  1 rigid bodies with 9 atoms
+fix 5 clump5 rigid single
+  1 rigid bodies with 9 atoms
+fix 6 clump6 rigid single
+  1 rigid bodies with 9 atoms
+fix 7 clump7 rigid single
+  1 rigid bodies with 9 atoms
+fix 8 clump8 rigid single
+  1 rigid bodies with 9 atoms
+fix 9 clump9 rigid single
+  1 rigid bodies with 9 atoms
+
+# Initialize velocities
+velocity all create 100.0 4928459
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 100.0 4928459

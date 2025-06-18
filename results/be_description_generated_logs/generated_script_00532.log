@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for molecular dynamics simulation with electron interactions
+
+# Set the atom style for electrons
+atom_style electron
+
+# Define variables
+variable sname string "initial_configuration.data"
+
+# Read the initial configuration from the specified data file
+read_data ${sname}
+read_data initial_configuration.data
+ERROR: Cannot open file initial_configuration.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data ${sname}

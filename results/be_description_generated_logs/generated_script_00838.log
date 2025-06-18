@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Energy-Volume Curve of InP in Zincblende Structure
+
+units           metal
+dimension       3
+boundary        p p p
+
+# Define atomic masses
+mass            1 114.818  # Indium
+ERROR: Mass command before simulation box is defined (../input.cpp:1628)
+Last command: mass            1 114.818  # Indium

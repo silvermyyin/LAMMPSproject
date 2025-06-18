@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for S12S surfactant system
+
+units lj
+atom_style full
+
+# Read initial configuration
+read_data s12s_data_file.data
+ERROR: Cannot open file s12s_data_file.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data s12s_data_file.data

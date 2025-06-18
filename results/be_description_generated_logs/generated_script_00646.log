@@ -1,0 +1,21 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for querying and comparing equilibrium lattice constants
+# for aluminum and zirconium using various EAM models from OpenKIM
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Initialize variables for lattice constants
+variable        lat_al_1 equal 0.0
+variable        lat_al_2 equal 0.0
+variable        lat_zr equal 0.0
+
+# Al - EAM_Dynamo_ErcolessiAdams_1994_Al
+kim_init        KIM inter EAM_Dynamo_ErcolessiAdams_1994_Al__MO_123629422045_005
+
+WARNING: 'kim_init' has been renamed to 'kim init'. Please update your input.
+
+kim init KIM inter EAM_Dynamo_ErcolessiAdams_1994_Al__MO_123629422045_005
+ERROR: Unknown command: kim init KIM inter EAM_Dynamo_ErcolessiAdams_1994_Al__MO_123629422045_005 (../input.cpp:408)
+Last command: kim init KIM inter EAM_Dynamo_ErcolessiAdams_1994_Al__MO_123629422045_005

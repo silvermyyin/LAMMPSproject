@@ -1,0 +1,8 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D simulation of polygonal particles
+
+units lj
+dimension 2
+atom_style body nparticle
+ERROR: Invalid body nparticle command (../body_nparticle.cpp:37)
+Last command: atom_style body nparticle

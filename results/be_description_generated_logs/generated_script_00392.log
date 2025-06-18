@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Molecular Dynamics Simulation using MM3 Force Field
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read the initial configuration from a data file
+read_data       complex_molecule.data
+ERROR: Cannot open file complex_molecule.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       complex_molecule.data

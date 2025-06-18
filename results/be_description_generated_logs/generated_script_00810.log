@@ -1,0 +1,36 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for FCC Lattice of Argon with Lennard-Jones Interactions
+
+units           lj
+atom_style      atomic
+
+# Define the simulation box
+boundary        f f p
+region          simbox block -6 6 -6 6 -2 2
+create_box      1 simbox
+Created orthogonal box = (-6 -6 -2) to (6 6 2)
+  1 by 1 by 1 MPI processor grid
+
+# Define the lattice and create atoms
+lattice         fcc 5.405
+Lattice spacing in x,y,z = 0.90452678 0.90452678 0.90452678
+create_atoms    1 box
+Created 3281 atoms
+  using lattice units in orthogonal box = (-6 -6 -2) to (6 6 2)
+  create_atoms CPU = 0.000 seconds
+
+# Set mass for argon atoms
+mass            1 39.95
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.5
+pair_coeff      1 1 1.0 1.0 13.5
+
+# Define neighbor list
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Fix for atomistic-continuum coupling
+fix             atc all atc file meshfile.mesh kernel quartic cylinder radius 5.0
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix             atc all atc file meshfile.mesh kernel quartic cylinder radius 5.0

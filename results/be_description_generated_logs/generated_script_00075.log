@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a silicon system using the Stillinger-Weber (SW) potential with quip pair style
+
+units           metal
+dimension       3
+boundary        p p p
+
+# Atom style and reading from data file
+atom_style      atomic
+read_data       data_sw
+ERROR: Cannot open file data_sw: No such file or directory (../read_data.cpp:367)
+Last command: read_data       data_sw

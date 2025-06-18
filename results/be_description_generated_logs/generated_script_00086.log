@@ -1,0 +1,15 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D NEB simulation of atom transition from surface to adatom state
+
+# Initialize simulation
+units lj
+dimension 2
+boundary p p f
+atom_style atomic
+
+# Create lattice and read initial configuration
+lattice hex 0.9
+Lattice spacing in x,y,z = 1.1326962 1.9618873 1.1326962
+read_data initial.hop1.end
+ERROR: Cannot run 2d simulation with nonperiodic Z dimension (../read_data.cpp:336)
+Last command: read_data initial.hop1.end

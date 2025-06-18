@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 2D LJ Liquid Simulation to Study Diffusion
+
+units lj
+dimension 2
+atom_style atomic
+
+# Create a 2D LJ liquid
+lattice sq2 0.6
+Lattice spacing in x,y,z = 1.8257419 1.8257419 1.8257419
+region box block 0 40 0 40 -0.25 0.25
+create_box 1 box
+Created orthogonal box = (0 0 -0.45643546) to (73.029674 73.029674 0.45643546)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 3200 atoms
+  using lattice units in orthogonal box = (0 0 -0.45643546) to (73.029674 73.029674 0.45643546)
+  create_atoms CPU = 0.000 seconds
+
+# Define interactions
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocities
+velocity all create 1.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 1.0 12345

@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Argon System with Shear Deformation
+# Comparing Hardy and Cauchy-Born Metrics
+
+units metal
+atom_style atomic
+
+# Initialize simulation box
+lattice fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region box prism 0 10 0 10 0 10 0 0 0 units lattice
+create_box 1 box
+Created triclinic box = (0 0 0) to (40.5 40.5 40.5) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in triclinic box = (0 0 0) to (40.5 40.5 40.5) with tilt (0 0 0)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style lj/smooth/linear 2.5
+pair_coeff 1 1 0.0103 3.4
+
+# Define boundary conditions
+boundary p p p
+ERROR: Boundary command after simulation box is defined (../input.cpp:1432)
+Last command: boundary p p p

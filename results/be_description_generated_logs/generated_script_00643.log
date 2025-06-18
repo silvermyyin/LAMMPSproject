@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for RNA duplex interactions using oxRNA2 model
+
+# Initialize simulation
+units real
+dimension 3
+boundary p p p
+atom_style hybrid bond ellipsoid oxdna
+WARNING: Atom style hybrid defines both, per-type and per-atom masses; both must be set, but only per-atom masses will be used (../atom_vec_hybrid.cpp:132)
+
+# Read initial configuration from a data file
+read_data rna_duplex.data
+ERROR: Cannot open file rna_duplex.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data rna_duplex.data

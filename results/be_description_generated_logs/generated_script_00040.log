@@ -1,0 +1,7 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+units electron
+atom_style electron
+
+read_data methane_data.dat
+ERROR: Cannot open file methane_data.dat: No such file or directory (../read_data.cpp:367)
+Last command: read_data methane_data.dat

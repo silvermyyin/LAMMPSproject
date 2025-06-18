@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Calculating Steinhardt-Nelson Bond Orientational Order Parameters in an FCC Crystal
+
+# Initialize simulation
+units           lj
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC lattice and simulation box
+lattice         fcc 1.0
+Lattice spacing in x,y,z = 1.5874011 1.5874011 1.5874011
+region          box block 0 3 0 3 0 3
+create_box      1 box
+Created orthogonal box = (0 0 0) to (4.7622032 4.7622032 4.7622032)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 108 atoms
+  using lattice units in orthogonal box = (0 0 0) to (4.7622032 4.7622032 4.7622032)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style      lj/cut 3.0
+pair_coeff      1 1 1.0 1.0 3.0
+
+# Define compute for orientational order parameters
+compute         orient all orientorder/atom degrees 4
+ERROR: Illegal compute orientorder/atom command (../compute_orientorder_atom.cpp:102)
+Last command: compute         orient all orientorder/atom degrees 4

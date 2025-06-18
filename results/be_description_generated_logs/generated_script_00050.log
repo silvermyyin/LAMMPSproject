@@ -1,0 +1,21 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a simple rigid body system using Lennard-Jones units
+
+units lj
+atom_style atomic
+
+# Create a simulation box
+boundary p p p
+region box block 0 10 0 10 0 10
+create_box 9 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Read atoms from file
+read_data data.chains
+ERROR: Cannot use read_data without add keyword after simulation box is defined (../read_data.cpp:342)
+Last command: read_data data.chains

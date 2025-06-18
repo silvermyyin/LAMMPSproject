@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS script for 2D overdamped Brownian dynamics with self-propulsion
+
+units lj
+dimension 2
+boundary p p p
+
+atom_style atomic
+
+# Create 2D lattice and simulation box
+lattice sq 0.4
+Lattice spacing in x,y,z = 1.5811388 1.5811388 1.5811388
+region box block -16 16 -16 16 -0.1 0.1
+create_box 1 box
+Created orthogonal box = (-25.298221 -25.298221 -0.15811388) to (25.298221 25.298221 0.15811388)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 1024 atoms
+  using lattice units in orthogonal box = (-25.298221 -25.298221 -0.15811388) to (25.298221 25.298221 0.15811388)
+  create_atoms CPU = 0.000 seconds
+
+# Set masses and initial velocities
+mass 1 1.0
+velocity all create 1.0 12345 dist gaussian
+
+# Define simulation settings
+timestep 0.0000000001
+thermo 100
+thermo_style custom step temp press ke pe msd
+ERROR: Unknown keyword 'msd' in thermo_style custom command (../thermo.cpp:1049)
+Last command: thermo_style custom step temp press ke pe msd

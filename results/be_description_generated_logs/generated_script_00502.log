@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating magnetic skyrmions in a bcc iron lattice
+
+units metal
+atom_style spin
+dimension 3
+boundary p p f
+
+# Read initial configuration
+read_data initial.skyrmion
+ERROR: Cannot open file initial.skyrmion: No such file or directory (../read_data.cpp:367)
+Last command: read_data initial.skyrmion

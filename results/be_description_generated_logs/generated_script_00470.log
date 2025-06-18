@@ -1,0 +1,41 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D Lennard-Jones melt simulation
+
+# Initialize simulation
+units lj
+atom_style atomic
+
+# Define variables for box dimensions
+variable a equal 5.0  # Lattice constant
+variable density equal 0.8442
+variable vol equal v_a^3/v_density
+variable lx equal v_vol^(1.0/3.0)
+variable ly equal v_lx
+variable lz equal v_lx
+
+# Create simulation box
+region box block 0 ${lx} 0 ${ly} 0 ${lz}
+region box block 0 5.29039649211519 0 ${ly} 0 ${lz}
+region box block 0 5.29039649211519 0 5.29039649211519 0 ${lz}
+region box block 0 5.29039649211519 0 5.29039649211519 0 5.29039649211519
+create_box 1 box
+Created orthogonal box = (0 0 0) to (5.2903965 5.2903965 5.2903965)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms in an fcc lattice
+lattice fcc ${density}
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+create_atoms 1 box
+Created 172 atoms
+  using lattice units in orthogonal box = (0 0 0) to (5.2903965 5.2903965 5.2903965)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocity distribution
+velocity all create 1.44 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 1.44 12345

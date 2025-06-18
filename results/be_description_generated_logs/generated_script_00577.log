@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for FE simulation using AtC package
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define lattice
+lattice         fcc 5.25623
+Lattice spacing in x,y,z = 5.25623 5.25623 5.25623
+region          simulation_box block 0 100 0 10 0 10
+create_box      1 simulation_box
+Created orthogonal box = (0 0 0) to (525.623 52.5623 52.5623)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 40000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (525.623 52.5623 52.5623)
+  create_atoms CPU = 0.002 seconds
+
+# Mass and potential
+mass            1 39.948  # Atomic mass of Argon
+
+# AtC package setup
+fix             atc all atc
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix             atc all atc

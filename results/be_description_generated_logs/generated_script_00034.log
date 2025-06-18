@@ -1,0 +1,33 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D Overdamped Active Brownian Dynamics
+
+units lj
+dimension 3
+atom_style sphere
+
+# Define the simulation box
+boundary p p p
+region simbox block -8 8 -8 8 -8 8
+create_box 1 simbox
+Created orthogonal box = (-8 -8 -8) to (8 8 8)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms in a simple cubic lattice
+lattice sc 0.4
+Lattice spacing in x,y,z = 1.3572088 1.3572088 1.3572088
+create_atoms 1 box
+Created 1331 atoms
+  using lattice units in orthogonal box = (-8 -8 -8) to (8 8 8)
+  create_atoms CPU = 0.000 seconds
+
+# Set particle properties
+set type 1 mass 1.0
+Setting atom values ...
+  1331 settings made for mass
+set type 1 diameter 1.0
+Setting atom values ...
+  1331 settings made for diameter
+set type 1 dipole/random 12345
+Setting atom values ...
+ERROR: Illegal set dipole/random command: missing argument(s) (../set.cpp:254)
+Last command: set type 1 dipole/random 12345

@@ -1,0 +1,24 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for SPH simulation of water flow through a complex geometry
+
+units          real
+atom_style     sphere
+boundary       f f f
+
+# Define the region and create particles
+region         water cylinder y 0 0 10 0 100 units box
+create_box     2 water
+Created orthogonal box = (-10 0 -10) to (10 100 10)
+  1 by 1 by 1 MPI processor grid
+
+lattice        sc 0.1
+Lattice spacing in x,y,z = 0.1 0.1 0.1
+create_atoms   1 region water
+Created 31407000 atoms
+  using lattice units in orthogonal box = (-10 0 -10) to (10 100 10)
+  create_atoms CPU = 2.714 seconds
+
+# Define the SPH fluid and boundary interaction
+pair_style     hybrid/overlay sph/rhosum 0.1 20 sph/estack 0.1 20 1.0 wall/stl mesh.stl
+ERROR: Pair sph/rhosum requires atom attribute density, e.g. in atom_style sph (../pair_sph_rhosum.cpp:33)
+Last command: pair_style     hybrid/overlay sph/rhosum 0.1 20 sph/estack 0.1 20 1.0 wall/stl mesh.stl

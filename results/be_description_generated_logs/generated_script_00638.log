@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Kob-Andersen binary Lennard-Jones mixture
+
+units lj
+atom_style atomic
+
+# Read initial configuration
+read_data data.ka_mixture
+ERROR: Cannot open file data.ka_mixture: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.ka_mixture

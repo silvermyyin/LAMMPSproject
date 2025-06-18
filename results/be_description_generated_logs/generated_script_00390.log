@@ -1,0 +1,16 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D hexagonal lattice Lennard-Jones fluid
+
+# Initialize simulation
+units lj
+dimension 2
+boundary p p p
+atom_style atomic
+
+# Create hexagonal lattice
+lattice hex 1.0
+Lattice spacing in x,y,z = 1.0745699 1.8612097 1.0745699
+region box block 0 1 0 1 0 0.1
+create_box 1 box
+ERROR: Create_box region zlo/zhi for 2d simulation must straddle 0.0 (../create_box.cpp:100)
+Last command: create_box 1 box

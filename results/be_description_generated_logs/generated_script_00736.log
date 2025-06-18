@@ -1,0 +1,23 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for BCC lattice of tantalum with MLIAP and ZBL potential
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define the lattice and region
+lattice         bcc 3.316
+Lattice spacing in x,y,z = 3.316 3.316 3.316
+region          box block 0 4 0 4 0 4
+create_box      1 box
+Created orthogonal box = (0 0 0) to (13.264 13.264 13.264)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 128 atoms
+  using lattice units in orthogonal box = (0 0 0) to (13.264 13.264 13.264)
+  create_atoms CPU = 0.000 seconds
+
+# Set potential styles
+pair_style      hybrid/overlay mlip torch zbl 3.316
+ERROR: Unrecognized pair style 'mlip' (../force.cpp:275)
+Last command: pair_style      hybrid/overlay mlip torch zbl 3.316

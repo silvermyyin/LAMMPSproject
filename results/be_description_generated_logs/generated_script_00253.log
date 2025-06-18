@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for testing various interaction potentials and wall models
+
+# Initialization
+units real
+atom_style bond
+boundary f p p
+newton on
+
+# Create simulation box
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 single 5 5 5
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 1 single 6 5 5
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# Define bonds
+create_bonds single/bond 1 1 2
+ERROR: Invalid bond type in create_bonds command (../create_bonds.cpp:138)
+Last command: create_bonds single/bond 1 1 2

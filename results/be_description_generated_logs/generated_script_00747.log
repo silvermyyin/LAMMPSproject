@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for SPC/E Water Model Simulation
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration
+read_data spce_water.data
+ERROR: Cannot open file spce_water.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data spce_water.data

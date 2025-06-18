@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for SiH4 system using electron force field model
+
+units electron
+atom_style electron
+boundary s s s
+
+# Read in data file
+read_data sih4.data
+ERROR: Cannot open file sih4.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data sih4.data

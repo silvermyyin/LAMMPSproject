@@ -1,0 +1,32 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for electronic stopping power simulation
+
+units metal
+atom_style atomic
+
+# Create a large cubic simulation box
+lattice fcc 5.43
+Lattice spacing in x,y,z = 5.43 5.43 5.43
+region simbox block 0 100 0 100 0 100
+create_box 1 simbox
+Created orthogonal box = (0 0 0) to (543 543 543)
+  1 by 1 by 1 MPI processor grid
+
+# Define a smaller central region for electronic stopping
+region stopping_region block 45 55 45 55 45 55
+
+# Create a single silicon atom at the origin with specified velocity
+create_atoms 1 single 0.0 0.0 0.0
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (543 543 543)
+  create_atoms CPU = 0.000 seconds
+mass 1 28.0855
+
+# Set initial velocity for the silicon atom
+velocity all set 0.0 0.0 5.0
+
+# Define potential (use appropriate potential for silicon)
+pair_style none
+pair_coeff
+ERROR: Pair_coeff command without a pair style (../input.cpp:1741)
+Last command: pair_coeff

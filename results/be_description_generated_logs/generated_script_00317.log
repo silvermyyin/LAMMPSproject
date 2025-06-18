@@ -1,0 +1,24 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# Spin dynamics simulation of a simple cubic lattice system
+
+units metal
+atom_style spin
+dimension 3
+boundary f f f
+
+lattice sc 1.0
+Lattice spacing in x,y,z = 1 1 1
+region box block 0 1 0 1 0 1
+create_box 1 box
+Created orthogonal box = (0 0 0) to (1 1 1)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (1 1 1)
+  create_atoms CPU = 0.000 seconds
+
+set atom * spin 2.0 1.0 0.0
+Setting atom values ...
+WARNING: Set attribute spin is deprecated. Please use spin/atom instead. (../set.cpp:268)
+ERROR: Illegal set spin/atom command: missing argument(s) (../set.cpp:269)
+Last command: set atom * spin 2.0 1.0 0.0

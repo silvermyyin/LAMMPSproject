@@ -1,0 +1,30 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for two-temperature model simulation in a cylindrical region
+
+units real
+atom_style atomic
+boundary p p f
+
+# Create FCC lattice for Argon
+lattice fcc 5.26
+Lattice spacing in x,y,z = 5.26 5.26 5.26
+region myCylinder cylinder z 0 0 10 0 20 units box
+create_box 1 myCylinder
+Created orthogonal box = (-10 -10 0) to (10 10 20)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 region myCylinder
+Created 180 atoms
+  using lattice units in orthogonal box = (-10 -10 0) to (10 10 20)
+  create_atoms CPU = 0.000 seconds
+
+# Define Lennard-Jones potential for Argon
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.238 3.405
+
+# Define masses
+mass 1 39.95
+
+# Reflective boundary condition in z direction
+boundary p p f
+ERROR: Boundary command after simulation box is defined (../input.cpp:1432)
+Last command: boundary p p f

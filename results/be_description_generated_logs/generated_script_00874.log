@@ -1,0 +1,44 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for elastic wave propagation in a thermoelastic system
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create fcc lattice and box
+variable        a equal 4.05  # lattice constant for fcc (in Angstroms)
+lattice         fcc ${a}
+lattice         fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (40.5 40.5 40.5)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (40.5 40.5 40.5)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style      lj/cut 2.5
+pair_coeff      1 1 0.0103 3.40  # Lennard-Jones parameters for LJ potential
+
+# Define masses
+mass            1 63.55  # mass of Copper atom in g/mol
+
+# Initialize velocities and temperature
+velocity        all create 20.0 12345 mom yes rot yes dist gaussian
+fix             temp_control all temp/rescale 100 20.0 20.0 0.02 1.0
+
+# Set thermo output
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Time settings
+timestep        0.001  # fs
+
+# Atom-to-Continuum (AtC) coupling setup
+fix             atc all atc thermal_mesh 1 1 1 region box
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix             atc all atc thermal_mesh 1 1 1 region box

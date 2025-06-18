@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a CHON system using ReaxFF
+
+units real
+atom_style charge
+
+# Read atomic data from file
+read_data data.RDX
+ERROR: Cannot open file data.RDX: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.RDX

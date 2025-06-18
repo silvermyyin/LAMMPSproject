@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for DPD simulation of RDX system
+
+units metal
+atom_style atomic
+
+# Define the lattice and create the simulation box
+lattice hcp 3.0
+Lattice spacing in x,y,z = 3 5.1961524 4.8989795
+region simulation_box block 0 10 0 10 0 10
+create_box 1 simulation_box
+Created orthogonal box = (0 0 0) to (30 51.961524 48.989795)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms on the lattice
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (30 51.961524 48.989795)
+  create_atoms CPU = 0.000 seconds
+
+# Adjust the simulation box dimensions slightly
+change_box all x final 0 30.1 y final 0 30.1 z final 0 30.1 remap
+Changing box ...
+  orthogonal box = (0 0 0) to (90.3 51.961524 48.989795)
+  orthogonal box = (0 0 0) to (90.3 156.40419 48.989795)
+  orthogonal box = (0 0 0) to (90.3 156.40419 147.45928)
+
+# Define pair style and coefficients
+pair_style multi/lucy 1.0
+ERROR: Pair multi/lucy command requires atom_style with density (e.g. dpd, meso) (../pair_multi_lucy.cpp:64)
+Last command: pair_style multi/lucy 1.0

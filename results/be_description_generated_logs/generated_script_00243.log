@@ -1,0 +1,16 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating ethane-like system using eFF model
+
+# Initialization
+units       metal
+atom_style  electron
+boundary    p p p
+
+# Variables
+variable    sname string "ethane.data"
+
+# Read data
+read_data   ${sname}
+read_data   ethane.data
+ERROR: Cannot open file ethane.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data   ${sname}

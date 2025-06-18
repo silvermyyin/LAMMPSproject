@@ -1,0 +1,33 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for LJ System with Axilrod-Teller-Muto Potential
+
+# --------------- Initialization -----------------
+units lj
+atom_style atomic
+
+# --------------- Variables ----------------------
+variable a equal 1.0
+variable density equal 0.65
+variable box_length equal v_a*(4.0/v_density)^(1.0/3.0)
+
+# --------------- Create Atoms -------------------
+lattice fcc ${density}
+lattice fcc 0.65
+Lattice spacing in x,y,z = 1.8325207 1.8325207 1.8325207
+region box block 0 ${box_length} 0 ${box_length} 0 ${box_length}
+region box block 0 1.83252065414836 0 ${box_length} 0 ${box_length}
+region box block 0 1.83252065414836 0 1.83252065414836 0 ${box_length}
+region box block 0 1.83252065414836 0 1.83252065414836 0 1.83252065414836
+create_box 1 box
+Created orthogonal box = (0 0 0) to (3.3581319 3.3581319 3.3581319)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 32 atoms
+  using lattice units in orthogonal box = (0 0 0) to (3.3581319 3.3581319 3.3581319)
+  create_atoms CPU = 0.000 seconds
+
+# --------------- Define Interactions ------------
+mass 1 1.0
+pair_style hybrid/overlay lj/cut 4.5 threebody/atm
+ERROR: Illegal pair_style command (../pair_lj_cut.cpp:424)
+Last command: pair_style hybrid/overlay lj/cut 4.5 threebody/atm

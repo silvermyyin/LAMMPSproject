@@ -1,0 +1,43 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for granular dynamics in a cylindrical drum with thermal boundaries
+
+units si
+atom_style sphere
+boundary p p f
+newton off
+
+# Define the simulation domain
+region simbox block 0 0.2 0 0.2 0 0.1 units box
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (0.2 0.2 0.1)
+  1 by 1 by 1 MPI processor grid
+
+# Define the cylindrical drum region
+region drum cylinder z 0.1 0.1 0.08 0.0 0.1 units box
+create_atoms 1 random 10000 12345 drum
+Created 10000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (0.2 0.2 0.1)
+  create_atoms CPU = 0.001 seconds
+
+# Particle properties
+variable dmin equal 0.001
+variable dmax equal 0.002
+variable rhomin equal 2500
+variable rhomax equal 3000
+set type 1 diameter ${dmin} density ${rhomin}
+set type 1 diameter 0.001 density ${rhomin}
+set type 1 diameter 0.001 density 2500
+Setting atom values ...
+  10000 settings made for diameter
+  10000 settings made for density
+set type 2 diameter ${dmax} density ${rhomax}
+set type 2 diameter 0.002 density ${rhomax}
+set type 2 diameter 0.002 density 3000
+Setting atom values ...
+  0 settings made for diameter
+  0 settings made for density
+
+# Pair style and coefficients for granular interactions
+pair_style granular hertz/mindlin
+ERROR: Expected floating point parameter instead of 'hertz/mindlin' in input script or data file (../pair_granular.cpp:317)
+Last command: pair_style granular hertz/mindlin

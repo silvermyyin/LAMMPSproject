@@ -1,0 +1,35 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Thermal Conductivity of LJ Fluid
+
+# Variables for system dimensions
+variable x_dim equal 10
+variable y_dim equal 10
+variable z_dim equal 40
+
+# Initialize simulation in reduced LJ units
+units lj
+atom_style atomic
+
+# Define simulation box
+lattice fcc 0.6
+Lattice spacing in x,y,z = 1.8820721 1.8820721 1.8820721
+region simbox block 0 ${x_dim} 0 ${y_dim} 0 ${z_dim}
+region simbox block 0 10 0 ${y_dim} 0 ${z_dim}
+region simbox block 0 10 0 10 0 ${z_dim}
+region simbox block 0 10 0 10 0 40
+create_box 1 simbox
+Created orthogonal box = (0 0 0) to (18.820721 18.820721 75.282882)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 16000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (18.820721 18.820721 75.282882)
+  create_atoms CPU = 0.001 seconds
+
+# Define LJ potential with cutoff
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocity
+velocity all create 1.35 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 1.35 12345

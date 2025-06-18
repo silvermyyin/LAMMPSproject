@@ -1,0 +1,35 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for liquid argon simulation with electrostatic interactions
+
+units real
+dimension 3
+boundary p p p
+atom_style charge
+
+# Create a simple cubic lattice
+lattice sc 5.719
+Lattice spacing in x,y,z = 5.719 5.719 5.719
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (57.19 57.19 57.19)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 1000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (57.19 57.19 57.19)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style lj/cut/coul/cut 13.0
+pair_coeff 1 1 0.238 3.405  # Lennard-Jones parameters for argon
+dielectric 80.0
+
+# Define masses
+mass 1 39.948
+
+# Define initial velocities
+velocity all create 115.607 12345
+
+# Apply reflective boundary conditions in the x-direction
+fix walls all wall/reflect xlo EDGE xhi EDGE
+ERROR: Cannot use fix wall/reflect in periodic dimension x (../fix_wall_reflect.cpp:103)
+Last command: fix walls all wall/reflect xlo EDGE xhi EDGE

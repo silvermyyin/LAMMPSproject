@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for graphene-OH interacting with Cu2O (110) using COMB3 potential
+
+units           real
+atom_style      charge
+boundary        p p p
+
+# Read initial configuration and charges
+read_data       graphene_Cu2O.data
+ERROR: Cannot open file graphene_Cu2O.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       graphene_Cu2O.data

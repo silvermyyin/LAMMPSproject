@@ -1,0 +1,63 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D LJ simulation of crack propagation
+
+units           lj
+dimension       2
+atom_style      atomic
+
+# Define simulation box
+region          box block 0 50 0 50 -0.1 0.1
+create_box      5 box
+Created orthogonal box = (0 0 -0.1) to (50 50 0.1)
+  1 by 1 by 1 MPI processor grid
+
+# Create hexagonal lattice
+lattice         hex 0.8442
+Lattice spacing in x,y,z = 1.1695317 2.0256884 1.1695317
+region          lattice_region block 0 50 0 50 -0.1 0.1
+create_atoms    1 region lattice_region
+Created 2150 atoms
+  using lattice units in orthogonal box = (0 0 -0.1) to (50 50 0.1)
+  create_atoms CPU = 0.000 seconds
+
+# Set masses for atom types
+mass            * 1.0
+
+# Define LJ potential
+pair_style      lj/cut 2.5
+pair_coeff      * * 1.0 1.0 2.5
+
+# Define groups for boundary and crack regions
+region          lower block INF INF 0 1.5 INF INF
+region          upper block INF INF 48.5 50 INF INF
+region          leftupper block 0 1.5 25 50 INF INF
+region          leftlower block 0 1.5 0 25 INF INF
+
+group           lower region lower
+172 atoms in group lower
+group           upper region upper
+0 atoms in group upper
+group           leftupper region leftupper
+0 atoms in group leftupper
+group           leftlower region leftlower
+100 atoms in group leftlower
+
+# Assign different types for crack study
+set             group lower type 2
+Setting atom values ...
+  172 settings made for type
+set             group upper type 3
+Setting atom values ...
+  0 settings made for type
+set             group leftupper type 4
+Setting atom values ...
+  0 settings made for type
+set             group leftlower type 5
+Setting atom values ...
+  100 settings made for type
+
+# Assign velocities
+velocity        all create 0.01 4928459
+velocity        upper set 0.0 0.01
+ERROR: Illegal velocity command: missing argument(s) (../velocity.cpp:818)
+Last command: velocity        upper set 0.0 0.01

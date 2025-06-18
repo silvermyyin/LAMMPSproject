@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a peridynamic simulation
+# Impact of a spherical projectile on a cylindrical target
+
+units           si
+atom_style      atomic
+
+# Define simulation box
+region          simbox block -0.05 0.05 -0.05 0.05 -0.05 0.05 units box
+create_box      2 simbox
+Created orthogonal box = (-0.05 -0.05 -0.05) to (0.05 0.05 0.05)
+  1 by 1 by 1 MPI processor grid
+
+# Define cylindrical target
+region          target cylinder z 0 0 0.02 -0.05 0.05 units box
+create_atoms    1 region target
+ERROR: Cannot create atoms with undefined lattice (../create_atoms.cpp:367)
+Last command: create_atoms    1 region target

@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for W-He system using SNAP potential
+
+units metal
+dimension 3
+boundary p p p
+
+# Define lattice and simulation box
+lattice bcc 3.1803
+Lattice spacing in x,y,z = 3.1803 3.1803 3.1803
+region box block 0 4 0 4 0 4
+create_box 2 box
+Created orthogonal box = (0 0 0) to (12.7212 12.7212 12.7212)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms: tungsten (atom type 1)
+create_atoms 1 box
+Created 128 atoms
+  using lattice units in orthogonal box = (0 0 0) to (12.7212 12.7212 12.7212)
+  create_atoms CPU = 0.000 seconds
+
+# Masses
+mass 1 183.84  # Tungsten
+mass 2 4.0026  # Helium
+
+# Replace 5% of W atoms with He atoms
+set type 1 type 2 fraction 0.05 12345
+Setting atom values ...
+  128 settings made for type
+ERROR: Set keyword or custom property fraction does not exist (../set.cpp:655)
+Last command: set type 1 type 2 fraction 0.05 12345

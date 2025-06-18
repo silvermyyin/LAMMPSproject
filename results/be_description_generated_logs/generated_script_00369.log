@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for computing SNAP bispectrum descriptors in a BCC lattice
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Define a custom BCC lattice with triclinic symmetry
+lattice custom 2.86 a1 1.0 0.0 0.0 a2 0.5 0.86602540378 0.0 a3 0.5 0.28867513459 0.81649658093         basis 0.0 0.0 0.0 basis 0.5 0.5 0.5
+Lattice spacing in x,y,z = 5.72 3.3024435 2.3351802
+
+# Create a 3x2x1 supercell
+region box block 0 3 0 2 0 1
+create_box 1 box
+Created orthogonal box = (0 0 0) to (17.16 6.6048871 2.3351802)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 30 atoms
+  using lattice units in orthogonal box = (0 0 0) to (17.16 6.6048871 2.3351802)
+  create_atoms CPU = 0.000 seconds
+
+# Define a zero potential to satisfy compute sna/atom
+pair_style zero 5.0
+pair_coeff * *
+
+# Set up SNAP potential parameters
+twojmax = 6
+ERROR: Unknown command: twojmax = 6 (../input.cpp:314)
+Last command: twojmax = 6

@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for TIP4P/2005 water model simulation
+# Equilibration of water at 300 K using GLE thermostat
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Read data
+read_data       data.h2o-smart
+ERROR: Cannot open file data.h2o-smart: No such file or directory (../read_data.cpp:367)
+Last command: read_data       data.h2o-smart

@@ -1,0 +1,41 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Argon using Lennard-Jones potential on an fcc lattice
+
+# Variable definitions
+variable L equal 10.0
+variable w equal 5.0
+
+# Initialization
+units           metal
+dimension       3
+boundary        f f p
+atom_style      atomic
+
+# Define simulation box
+region          box block 0 ${L} 0 ${L} 0 ${w} units box
+region          box block 0 10 0 ${L} 0 ${w} units box
+region          box block 0 10 0 10 0 ${w} units box
+region          box block 0 10 0 10 0 5 units box
+create_box      1 box
+Created orthogonal box = (0 0 0) to (10 10 5)
+  1 by 1 by 1 MPI processor grid
+
+# Create fcc lattice and atoms
+lattice         fcc 4.0
+Lattice spacing in x,y,z = 4 4 4
+create_atoms    1 box
+Created 38 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 5)
+  create_atoms CPU = 0.000 seconds
+
+# Define mass
+mass            1 39.95
+
+# Lennard-Jones potential settings
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.2381 3.405
+
+# Atoms to Continuum (AtC) method setup
+fix             atc all atc
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix             atc all atc

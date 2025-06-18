@@ -1,0 +1,43 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a BCC lattice and bispectrum computation
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create BCC lattice
+lattice bcc 2.0
+Lattice spacing in x,y,z = 2 2 2
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 2000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (20 20 20)
+  create_atoms CPU = 0.000 seconds
+
+# Set mass for atoms
+mass 1 55.845  # Example: Iron
+
+# Define potential settings
+pair_style zero 6.0  # Dummy zero potential with cutoff
+pair_coeff * *
+
+# Define ZBL potential for realistic interactions
+pair_style zbl 2.0 3.0  # Inner and outer cutoffs
+pair_coeff 1 1 55.845 55.845  # Example: Iron
+
+# Initialize velocities
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+
+# Perturb atoms slightly
+displace_atoms all random 0.1 0.1 0.1 1000
+Displacing atoms ...
+
+# Setup computes for bispectrum
+compute sna all sna/atom 1 1.0 4.0 0.0
+ERROR: Illegal compute sna/atom command (../compute_sna_atom.cpp:47)
+Last command: compute sna all sna/atom 1 1.0 4.0 0.0

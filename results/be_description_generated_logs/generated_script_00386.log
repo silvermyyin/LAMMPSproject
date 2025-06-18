@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating ionized adamantane using electron-based model
+
+# Initialize simulation
+units real
+atom_style electron
+boundary p p p
+
+# Create atoms (example: assuming a data file 'adamantane.data' exists)
+read_data adamantane.data
+ERROR: Cannot open file adamantane.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data adamantane.data

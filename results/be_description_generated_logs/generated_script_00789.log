@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating electrons using EFF model
+
+units metal
+atom_style electron
+
+# Read atomic data
+read_data electron_system.data
+ERROR: Cannot open file electron_system.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data electron_system.data

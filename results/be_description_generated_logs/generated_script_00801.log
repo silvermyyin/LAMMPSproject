@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Colloidal Sphere Diffusion in Fluid
+
+units       lj
+atom_style  atomic
+
+# Parameters
+variable    is_bonded equal 1  # Set to 1 for bonded sphere, 0 for rigid body
+variable    temp equal 300.0
+variable    radius equal 10.0
+variable    density equal 0.8
+variable    lj_epsilon equal 1.0
+variable    lj_sigma equal 1.0
+variable    lj_cutoff equal 2.5
+variable    harmonic_k equal 200.0
+variable    trap_k equal 50.0
+
+# Create spherical region and fill with atoms
+region      simbox block -50 50 -50 50 -50 50
+create_box  2 simbox
+Created orthogonal box = (-50 -50 -50) to (50 50 50)
+  1 by 1 by 1 MPI processor grid
+
+region      sphere_reg sphere 0.0 0.0 0.0 ${radius}
+region      sphere_reg sphere 0.0 0.0 0.0 10
+create_atoms 1 random 10000 ${density} sphere_reg 12345
+create_atoms 1 random 10000 0.8 sphere_reg 12345
+ERROR: Expected integer parameter instead of '0.8' in input script or data file (../create_atoms.cpp:124)
+Last command: create_atoms 1 random 10000 ${density} sphere_reg 12345

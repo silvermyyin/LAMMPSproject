@@ -1,0 +1,95 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Lennard-Jones Translation Simulation
+
+units real
+atom_style atomic
+
+# Define lattice and create simulation box
+lattice fcc 5.256
+Lattice spacing in x,y,z = 5.256 5.256 5.256
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (52.56 52.56 52.56)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (52.56 52.56 52.56)
+  create_atoms CPU = 0.000 seconds
+
+# Assign mass to atoms
+mass 1 39.95
+
+# Define Lennard-Jones potential with cutoff
+pair_style lj/cut 13.5
+pair_coeff 1 1 0.0103 3.4
+
+# Set up initial velocities
+velocity all create 300.0 12345
+velocity all set 1.0 0.0 0.0
+
+# Define neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Minimize energy
+minimize 1.0e-4 1.0e-6 100 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 15.5
+  ghost atom cutoff = 15.5
+  binsize = 7.75, bins = 7 7 7
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 7.764 | 7.764 | 7.764 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   4.425681e+08  -349.39677      0              5.2755262e+09  1.6608584e+09
+         1   4.425681e+08  -349.39677      0              5.2755262e+09  1.6608584e+09
+Loop time of 0.0293774 on 1 procs for 1 steps with 4000 atoms
+
+99.3% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = quadratic factors are zero
+  Energy initial, next-to-last, final = 
+     -349.396774145308  -349.396774145308  -349.396774145308
+  Force two-norm initial, final = 2.133308e-16 2.133308e-16
+  Force max component initial, final = 1.6262186e-17 1.6262186e-17
+  Final line search alpha, max atom move = 1 1.6262186e-17
+  Iterations, force evaluations = 1 2
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.029103   | 0.029103   | 0.029103   |   0.0 | 99.06
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00011154 | 0.00011154 | 0.00011154 |   0.0 |  0.38
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0001633  |            |       |  0.56
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          10895 ave       10895 max       10895 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         856000 ave      856000 max      856000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 856000
+Ave neighs/atom = 214
+Neighbor list builds = 0
+Dangerous builds = 0
+
+# Define the integration method
+timestep 0.1
+fix 1 all nve
+
+# Compute Hardy fields using ATC
+fix atc all atc Hardy 1 0.1
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix atc all atc Hardy 1 0.1

@@ -1,0 +1,20 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for SPC/E water simulation with MD and GCMC
+
+units real
+atom_style full
+boundary p p p
+
+# Define a cubic lattice and create the simulation box
+lattice sc 10.0
+Lattice spacing in x,y,z = 10 10 10
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (100 100 100)
+  1 by 1 by 1 MPI processor grid
+
+# Create water molecules using the SPC/E model
+# (Assume the water molecule structure is predefined in a data file)
+read_data water_spce.data
+ERROR: Cannot use read_data without add keyword after simulation box is defined (../read_data.cpp:342)
+Last command: read_data water_spce.data

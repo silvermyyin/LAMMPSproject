@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a dielectric system with polarization at interfaces
+
+units         real
+atom_style    full
+boundary      p p p
+
+# Read initial configuration from data file
+read_data     dielectric_system.data
+ERROR: Cannot open file dielectric_system.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data     dielectric_system.data

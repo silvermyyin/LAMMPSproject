@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D Lennard-Jones melt simulation with MDI interface
+
+units           lj
+atom_style      atomic
+
+variable        densities index 0.7 0.8 0.9
+label           loop_densities
+
+read_data       data_${densities}
+read_data       data_0.7
+ERROR: Cannot open file data_0.7: No such file or directory (../read_data.cpp:367)
+Last command: read_data       data_${densities}

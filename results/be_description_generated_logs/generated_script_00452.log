@@ -1,0 +1,16 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for QM simulation of methane (CH4) using LATTE
+
+# Set up simulation units and atom style
+units metal
+atom_style full
+
+# Define variables for optional replication
+variable xrep equal 1
+variable yrep equal 1
+variable zrep equal 1
+
+# Read initial configuration from data file and replicate
+read_data data.ch4
+ERROR: Cannot open file data.ch4: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.ch4

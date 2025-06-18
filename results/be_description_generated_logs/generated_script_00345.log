@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D NEB simulation of adatom hopping
+
+# Initialize simulation
+units           lj
+dimension       2
+boundary        p s p
+atom_style      atomic
+
+# Read initial configuration
+read_data       initial.hop2
+ERROR: Cannot open file initial.hop2: No such file or directory (../read_data.cpp:367)
+Last command: read_data       initial.hop2

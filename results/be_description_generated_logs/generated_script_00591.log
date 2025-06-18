@@ -1,0 +1,30 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Hybrid Lennard-Jones Simulation
+
+units lj
+atom_style atomic
+
+# Define lattice and create simulation box
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region simbox block 0 10 0 10 0 10
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms and define regions
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  create_atoms CPU = 0.000 seconds
+region type2_region block 1 9 1 9 1 9
+group type2_atoms region type2_region
+2457 atoms in group type2_atoms
+set group type2_atoms type 2
+Setting atom values ...
+  2457 settings made for type
+
+# Define initial velocities
+velocity all create 3.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 3.0 12345

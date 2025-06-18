@@ -1,0 +1,7 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for quantum molecular dynamics simulation using AWPMD
+
+# Initialize simulation
+units           hartree
+ERROR: Illegal units command (../update.cpp:311)
+Last command: units           hartree

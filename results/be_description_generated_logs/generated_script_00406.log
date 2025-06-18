@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for dimer deposition on a substrate using Lennard-Jones potential
+
+units           lj
+atom_style      molecular
+boundary        p p f
+
+# Create simulation box
+region          box block 0 5 0 5 0 10
+create_box      3 box
+Created orthogonal box = (0 0 0) to (5 5 10)
+  1 by 1 by 1 MPI processor grid
+
+# Create substrate
+region          substrate block 0 5 0 5 0 1
+create_atoms    1 region substrate
+ERROR: Cannot create atoms with undefined lattice (../create_atoms.cpp:367)
+Last command: create_atoms    1 region substrate

@@ -1,0 +1,35 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for QMMM Simulation of Two Water Molecules
+
+units real
+atom_style full
+
+# Create simulation box and define atoms
+boundary p p p
+region simbox block 0 10 0 10 0 10
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define atom types
+# 1 = QM Oxygen
+# 2 = QM Hydrogen
+# 3 = MM Oxygen
+# 4 = MM Hydrogen
+
+# Create atoms
+create_atoms 1 single 2.0 5.0 5.0
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 single 2.96 5.0 5.0
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 single 2.0 5.76 5.0
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 3 single 7.0 5.0 5.0
+ERROR: Invalid atom type in create_atoms command (../create_atoms.cpp:301)
+Last command: create_atoms 3 single 7.0 5.0 5.0

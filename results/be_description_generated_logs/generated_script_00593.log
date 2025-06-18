@@ -1,0 +1,17 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for coarse-grained SPC/E water using hybrid/overlay pair style
+
+units           real
+atom_style      atomic
+dimension       3
+boundary        p p p
+
+# Create simulation box and atoms
+region          box block 0 50 0 50 0 50
+create_box      1 box
+Created orthogonal box = (0 0 0) to (50 50 50)
+  1 by 1 by 1 MPI processor grid
+# Assuming the atoms are already defined externally and read in
+read_data       system.data
+ERROR: Cannot use read_data without add keyword after simulation box is defined (../read_data.cpp:342)
+Last command: read_data       system.data

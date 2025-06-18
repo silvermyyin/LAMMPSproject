@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for aluminum atoms using AGNI potential
+
+units metal
+dimension 3
+boundary p p f
+
+atom_style atomic
+read_data adatom.data
+ERROR: Cannot open file adatom.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data adatom.data

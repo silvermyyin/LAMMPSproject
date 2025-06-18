@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Argon with Two-Temperature Modeling using AtC
+
+units real
+atom_style atomic
+
+# Initialization
+read_data argon_fcc.data
+ERROR: Cannot open file argon_fcc.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data argon_fcc.data

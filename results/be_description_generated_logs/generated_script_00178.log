@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Regression Tests of Three-Body Potential Models
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create cubic diamond lattice
+lattice         diamond 5.431
+Lattice spacing in x,y,z = 5.431 5.431 5.431
+region          box block 0 4 0 4 0 4
+create_box      8 box
+Created orthogonal box = (0 0 0) to (21.724 21.724 21.724)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 512 atoms
+  using lattice units in orthogonal box = (0 0 0) to (21.724 21.724 21.724)
+  create_atoms CPU = 0.000 seconds
+
+# Define potential for initial equilibration
+pair_style      sw
+pair_coeff      * * Si.sw Si
+ERROR: Number of element to type mappings does not match number of atom types (../pair.cpp:825)
+Last command: pair_coeff      * * Si.sw Si

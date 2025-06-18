@@ -1,0 +1,30 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a binary Ni-Al alloy using EAM potential
+
+# Initialize the simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create a lattice and define the simulation box
+lattice fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region box block 0 10 0 10 0 10
+create_box 2 box
+Created orthogonal box = (0 0 0) to (40.5 40.5 40.5)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (40.5 40.5 40.5)
+  create_atoms CPU = 0.000 seconds
+mass 1 58.69    # Mass of Nickel
+mass 2 26.98154 # Mass of Aluminum
+
+# Define the potential
+pair_style eam
+pair_coeff * * NiAl.eam.alloy Ni Al
+ERROR: Incorrect args for pair coefficients (../pair_eam.cpp:387)
+Last command: pair_coeff * * NiAl.eam.alloy Ni Al

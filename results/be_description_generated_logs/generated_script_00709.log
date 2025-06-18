@@ -1,0 +1,21 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D hexagonal lattice simulation with LJ potentials and LJ 9-3 walls
+
+units lj
+dimension 2
+boundary f f p
+
+atom_style atomic
+
+# Define the simulation box
+region box block 0 20 0 20 -0.5 0.5
+create_box 1 box
+Created orthogonal box = (0 0 -0.5) to (20 20 0.5)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms in a hexagonal lattice
+lattice hex 0.8442
+Lattice spacing in x,y,z = 1.1695317 2.0256884 1.1695317
+region circle circle 10 10 5
+ERROR: Unrecognized region style 'circle' (../domain.cpp:1987)
+Last command: region circle circle 10 10 5

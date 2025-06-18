@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating controlled degradation of a nanogel particle
+
+units lj
+atom_style molecular
+
+# Read initial configuration from data file
+read_data nanogel_initial.data
+ERROR: Cannot open file nanogel_initial.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data nanogel_initial.data

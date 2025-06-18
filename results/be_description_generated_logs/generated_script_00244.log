@@ -1,0 +1,7 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# Granular flow simulation with composite spherical particles
+
+units		si
+atom_style	granular
+ERROR: Unrecognized atom style 'granular' (../atom.cpp:745)
+Last command: atom_style	granular

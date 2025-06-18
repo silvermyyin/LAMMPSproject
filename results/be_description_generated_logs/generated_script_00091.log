@@ -1,0 +1,55 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Equilibration of Alpha Quartz with QTB
+
+# Initialize simulation
+units metal
+atom_style charge
+dimension 3
+boundary p p p
+
+# Define lattice and region
+variable a equal 4.913    # Lattice constant a for alpha quartz
+variable c equal 5.405    # Lattice constant c for alpha quartz
+lattice custom 1.0     a1 ${a} 0.0 0.0     a2 0.0 ${a} 0.0     a3 0.0 0.0 ${c}     basis 0.4697 0.0 0.0     basis 0.0 0.4697 0.0     basis 0.0 0.0 0.4697     basis 0.4133 0.2667 0.1193     basis 0.7333 0.1467 0.7867
+lattice custom 1.0     a1 4.913 0.0 0.0     a2 0.0 ${a} 0.0     a3 0.0 0.0 ${c}     basis 0.4697 0.0 0.0     basis 0.0 0.4697 0.0     basis 0.0 0.0 0.4697     basis 0.4133 0.2667 0.1193     basis 0.7333 0.1467 0.7867
+lattice custom 1.0     a1 4.913 0.0 0.0     a2 0.0 4.913 0.0     a3 0.0 0.0 ${c}     basis 0.4697 0.0 0.0     basis 0.0 0.4697 0.0     basis 0.0 0.0 0.4697     basis 0.4133 0.2667 0.1193     basis 0.7333 0.1467 0.7867
+lattice custom 1.0     a1 4.913 0.0 0.0     a2 0.0 4.913 0.0     a3 0.0 0.0 5.405     basis 0.4697 0.0 0.0     basis 0.0 0.4697 0.0     basis 0.0 0.0 0.4697     basis 0.4133 0.2667 0.1193     basis 0.7333 0.1467 0.7867
+Lattice spacing in x,y,z = 4.913 4.913 5.405
+region box block 0 1 0 1 0 1 units lattice
+create_box 2 box
+Created orthogonal box = (0 0 0) to (4.913 4.913 5.405)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 box basis 1 1 basis 2 1 basis 3 1 basis 4 2 basis 5 2
+Created 5 atoms
+  using lattice units in orthogonal box = (0 0 0) to (4.913 4.913 5.405)
+  create_atoms CPU = 0.000 seconds
+
+# Assign masses and charges
+mass 1 28.0855  # Silicon mass
+mass 2 15.999   # Oxygen mass
+set type 1 charge 1.2
+Setting atom values ...
+  3 settings made for charge
+set type 2 charge -0.6
+Setting atom values ...
+  2 settings made for charge
+
+# Define potential
+pair_style buck/coul/long 10.0
+pair_coeff 1 2 18003.7572 0.205204 133.5381
+pair_coeff 2 2 1388.7730 0.362319 175.0000
+kspace_style pppm 1.0e-4
+
+# Define simulation parameters
+variable temp equal 300.0
+variable press equal 0.0
+variable tdamp equal 0.1
+variable pdamp equal 1.0
+
+# Set up QTB
+fix 1 all qtb temp ${temp} seed 12345 window 0.5
+fix 1 all qtb temp 300 seed 12345 window 0.5
+ERROR: Illegal fix qtb command (../fix_qtb.cpp:87)
+Last command: fix 1 all qtb temp ${temp} seed 12345 window 0.5

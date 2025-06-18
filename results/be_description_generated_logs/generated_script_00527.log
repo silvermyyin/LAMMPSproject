@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Cu2O crystal using COMB potential
+
+# Initialization
+units metal
+dimension 3
+boundary p p p
+atom_style charge
+
+# Read data file
+read_data cu2o.data
+ERROR: Cannot open file cu2o.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data cu2o.data

@@ -1,0 +1,47 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Lennard-Jones fluid flowing around a cylindrical obstacle
+
+units       lj
+atom_style  atomic
+dimension   3
+
+# Create simulation box
+lattice     fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region      box block 0 10 0 10 0 10
+create_box  2 box
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  1 by 1 by 1 MPI processor grid
+
+# Create fluid atoms
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  create_atoms CPU = 0.000 seconds
+
+# Define cylindrical obstacle
+region      obstacle cylinder z 5 5 1.0 0 10 side in units box
+group       obstacle region obstacle
+30 atoms in group obstacle
+
+# Assign different atom type to the obstacle
+set         group obstacle type 2
+Setting atom values ...
+  30 settings made for type
+
+# Define Lennard-Jones potential
+pair_style  lj/cut 1.122462
+pair_coeff  * * 1.0 1.0 1.122462
+
+# Neighbor settings
+neighbor    0.3 bin
+neigh_modify delay 5
+
+# Define groups
+group       fluid subtract all obstacle
+3970 atoms in group fluid
+
+# Set initial velocities
+velocity    fluid create 1.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity    fluid create 1.0 12345

@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for a Solvated 5-mer Peptide Simulation
+
+units real
+atom_style full
+boundary p p p
+
+# Read initial configuration from a data file
+read_data peptide_data.lmp
+ERROR: Cannot open file peptide_data.lmp: No such file or directory (../read_data.cpp:367)
+Last command: read_data peptide_data.lmp

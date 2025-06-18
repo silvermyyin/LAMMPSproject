@@ -1,0 +1,34 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulation of elastic wave propagation using AtC
+
+units real
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create FCC lattice for Argon
+lattice fcc 5.26
+Lattice spacing in x,y,z = 5.26 5.26 5.26
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+Created orthogonal box = (0 0 0) to (52.6 52.6 52.6)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (52.6 52.6 52.6)
+  create_atoms CPU = 0.000 seconds
+
+# Define potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.238 3.405
+
+# Define groups for AtC coupling
+group internal region simbox
+4000 atoms in group internal
+group ghost subtract all internal
+0 atoms in group ghost
+
+# Read material properties from external file
+fix atcfix internal atc file Ar_elastic.mat
+ERROR: Unknown physics type in ATC (../fix_atc.cpp:471)
+Last command: fix atcfix internal atc file Ar_elastic.mat

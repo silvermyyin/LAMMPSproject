@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for BCC Niobium using UF3 Potential
+
+# Initialize simulation
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create BCC lattice
+lattice bcc 3.3005
+Lattice spacing in x,y,z = 3.3005 3.3005 3.3005
+region box block 0 4 0 4 0 4
+create_box 1 box
+Created orthogonal box = (0 0 0) to (13.202 13.202 13.202)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 128 atoms
+  using lattice units in orthogonal box = (0 0 0) to (13.202 13.202 13.202)
+  create_atoms CPU = 0.000 seconds
+
+# Define mass
+mass 1 92.906
+
+# Set potential
+pair_style uf3
+ERROR: Unrecognized pair style 'uf3' is part of the ML-UF3 package which is not enabled in this LAMMPS binary. (../force.cpp:275)
+Last command: pair_style uf3

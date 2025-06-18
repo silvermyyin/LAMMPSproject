@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for alpha-alumina with Streitz-Mintmire potential
+
+units metal
+atom_style charge
+boundary p p p
+
+# Read initial configuration from a data file
+read_data alpha_alumina.data
+ERROR: Cannot open file alpha_alumina.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data alpha_alumina.data

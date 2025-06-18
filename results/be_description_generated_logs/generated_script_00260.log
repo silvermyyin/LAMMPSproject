@@ -1,0 +1,7 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D Potts model with strain coupling
+# Simulation of a 50x50 lattice with 2500 sites
+
+units           lattice
+ERROR: Illegal units command (../update.cpp:311)
+Last command: units           lattice

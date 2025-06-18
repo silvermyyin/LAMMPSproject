@@ -1,0 +1,17 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D Granular Material Simulation
+
+units          si
+atom_style     sphere
+
+# Initialize simulation box with periodic boundaries in x and y, open in z
+boundary       p p f
+region         simbox block 0 10 0 10 0 10
+create_box     1 simbox
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Read particle data from external file
+read_data      data.particles
+ERROR: Cannot use read_data without add keyword after simulation box is defined (../read_data.cpp:342)
+Last command: read_data      data.particles

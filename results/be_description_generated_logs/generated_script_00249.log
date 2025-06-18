@@ -1,0 +1,20 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D granular simulation with BPM in a cylindrical setup
+
+units lj
+atom_style sphere
+
+# Define the simulation region
+dimension 3
+boundary f f p
+
+# Create a cylindrical region
+region cyl_reg cylinder z 0 0 10 -10 10 units box
+create_box 2 cyl_reg
+Created orthogonal box = (-10 -10 -10) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define cylindrical wall
+fix cyl_wall all wall/gran model hertz tangential history radius_out region cyl_reg
+ERROR: Expected floating point parameter instead of 'hertz' in input script or data file (../granular_model.cpp:178)
+Last command: fix cyl_wall all wall/gran model hertz tangential history radius_out region cyl_reg

@@ -1,0 +1,40 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D LJ binary mixture simulation
+
+units lj
+dimension 2
+atom_style atomic
+
+# Create simulation box
+region box block -30 30 -30 30 -0.1 0.1
+create_box 2 box
+Created orthogonal box = (-30 -30 -0.1) to (30 30 0.1)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 random 1500 12345 box
+Created 1500 atoms
+  using lattice units in orthogonal box = (-30 -30 -0.1) to (30 30 0.1)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 random 100 67890 box
+Created 100 atoms
+  using lattice units in orthogonal box = (-30 -30 -0.1) to (30 30 0.1)
+  create_atoms CPU = 0.000 seconds
+
+# Define LJ potential with cutoff
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+pair_coeff 2 2 1.0 1.0 2.5
+pair_coeff 1 2 1.0 1.0 2.5
+
+# Set mass for atom types
+mass 1 1.0
+mass 2 1.0
+
+# Set initial velocities
+velocity all create 1.0 12345
+
+# Apply periodic boundary conditions
+boundary p p p
+ERROR: Boundary command after simulation box is defined (../input.cpp:1432)
+Last command: boundary p p p

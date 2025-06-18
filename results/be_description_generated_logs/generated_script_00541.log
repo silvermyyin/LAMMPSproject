@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a binary polymer blend system
+
+units lj
+atom_style angle
+
+# Read initial configuration from a data file
+read_data polymer_blend.data
+ERROR: Cannot open file polymer_blend.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data polymer_blend.data

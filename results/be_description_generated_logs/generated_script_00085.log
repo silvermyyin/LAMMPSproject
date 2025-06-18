@@ -1,0 +1,48 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+units real
+atom_style full
+boundary p p p
+
+# Define QM and MM groups
+region box block 0 10 0 10 0 10
+create_box 2 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# QM water molecule: 3 atoms (H2O)
+create_atoms 1 single 5 5 5
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 1 single 5.96 5 5
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 1 single 4.04 5 5
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# MM water molecule: 3 atoms (H2O)
+create_atoms 2 single 7 7 7
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 single 7.96 7 7
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 single 6.04 7 7
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# Define masses
+mass 1 16.00  # Oxygen
+mass 2 1.008  # Hydrogen
+
+# Define bonds and angles for MM water molecule
+bond_style harmonic
+bond_coeff 1 450 0.9572  # O-H bond in MM water
+ERROR: Numeric index 1 is out of bounds (1-0) (../bond_harmonic.cpp:129)
+Last command: bond_coeff 1 450 0.9572  # O-H bond in MM water

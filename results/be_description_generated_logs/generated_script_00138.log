@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Argon deposition on Polystyrene substrate
+
+units real
+atom_style molecular
+boundary p p f
+
+# Initialization
+read_data polystyrene.data
+ERROR: Cannot open file polystyrene.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data polystyrene.data

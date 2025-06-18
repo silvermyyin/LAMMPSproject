@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Ni system with hybrid SNAP potentials
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define lattice and create atoms
+lattice         fcc 3.52
+Lattice spacing in x,y,z = 3.52 3.52 3.52
+region          box block 0 3 0 3 0 3
+create_box      1 box
+Created orthogonal box = (0 0 0) to (10.56 10.56 10.56)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 108 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10.56 10.56 10.56)
+  create_atoms CPU = 0.000 seconds
+
+# Set masses
+mass            1 58.693  # Mass of Ni
+
+# Pair style and coefficients for SNAP potentials
+pair_style      hybrid/overlay snap snap
+pair_coeff      * * snap snap_linear.snapcoeff Ni.snapparam Ni
+ERROR: Expected integer parameter instead of 'snap_linear.snapcoeff' in input script or data file (../pair_hybrid_overlay.cpp:54)
+Last command: pair_coeff      * * snap snap_linear.snapcoeff Ni.snapparam Ni

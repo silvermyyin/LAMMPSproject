@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D molecular dynamics simulation with periodic bonds in xy diagonal direction
+
+units           lj
+dimension       2
+atom_style      molecular
+
+# Read initial configuration from data file
+read_data       data.bond.xy
+ERROR: Cannot open file data.bond.xy: No such file or directory (../read_data.cpp:367)
+Last command: read_data       data.bond.xy

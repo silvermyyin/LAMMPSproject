@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Two-Temperature Model with AtC Package
+
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create a face-centered cubic (fcc) lattice
+lattice fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region whole block 0 20 0 20 0 20 units lattice
+create_box 1 whole
+Created orthogonal box = (0 0 0) to (81 81 81)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 region whole
+Created 32000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (81 81 81)
+  create_atoms CPU = 0.002 seconds
+
+# Define potential
+pair_style lj/cut 8.5
+pair_coeff 1 1 0.0104 2.74
+
+# Define AtC coupling
+fix_modify AtC AtC_property/elementset T_electrons constant 300
+ERROR: Could not find fix_modify ID AtC (../modify.cpp:1051)
+Last command: fix_modify AtC AtC_property/elementset T_electrons constant 300

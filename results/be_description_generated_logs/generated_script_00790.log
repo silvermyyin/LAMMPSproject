@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D molecular dynamics simulation of a copper block
+# using the EAM potential with eam/opt style and cuu3.eam potential file.
+
+units metal
+dimension 3
+boundary p p p
+
+atom_style atomic
+
+read_data copper_block.data
+ERROR: Cannot open file copper_block.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data copper_block.data

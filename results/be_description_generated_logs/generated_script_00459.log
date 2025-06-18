@@ -1,0 +1,25 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D MD simulation of hcp cobalt with spin dynamics
+
+units metal
+atom_style spin
+
+# Initialize simulation box with cobalt lattice
+lattice hcp 2.5075
+Lattice spacing in x,y,z = 2.5075 4.3431174 4.0947304
+region box block 0 5 0 5 0 5
+create_box 1 box
+Created orthogonal box = (0 0 0) to (12.5375 21.715587 20.473652)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 500 atoms
+  using lattice units in orthogonal box = (0 0 0) to (12.5375 21.715587 20.473652)
+  create_atoms CPU = 0.000 seconds
+
+# Define masses and spins
+mass 1 58.933195    # Mass of cobalt
+set group all spin random 1.0 0.0 0.0 12345
+Setting atom values ...
+WARNING: Set attribute spin is deprecated. Please use spin/atom instead. (../set.cpp:268)
+ERROR: Expected floating point parameter instead of 'random' in input script or data file (../set.cpp:271)
+Last command: set group all spin random 1.0 0.0 0.0 12345

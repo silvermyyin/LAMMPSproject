@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for MSD of Spherical Particles
+
+units lj
+dimension 3
+atom_style sphere
+
+# Read particle data
+read_data msd.sphere.data
+ERROR: Cannot open file msd.sphere.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data msd.sphere.data

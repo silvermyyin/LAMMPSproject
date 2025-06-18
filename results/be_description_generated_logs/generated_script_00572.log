@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a graphene system using LATTE QM model
+
+# Initialize simulation
+units metal
+atom_style full
+boundary p p p
+
+# Read data file
+read_data data.graphene
+ERROR: Cannot open file data.graphene: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.graphene

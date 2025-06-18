@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for silicalite in vacuum using Tersoff potential
+
+# Initialization
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Atom definition
+read_data       silicalite.data
+ERROR: Cannot open file silicalite.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       silicalite.data

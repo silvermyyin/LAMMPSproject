@@ -1,0 +1,114 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating a spherical droplet of Lennard-Jones particles
+
+units lj
+atom_style atomic
+
+# Define simulation box
+region box block -10 10 -10 10 -10 10
+create_box 1 box
+Created orthogonal box = (-10 -10 -10) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define face-centered cubic lattice and create atoms
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region droplet sphere 0 0 0 5
+create_atoms 1 region droplet
+Created 2123 atoms
+  using lattice units in orthogonal box = (-10 -10 -10) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# Set masses
+mass 1 1.0
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Generate initial velocities
+velocity all create 0.65 12345
+
+# Set neighbor list parameters
+neighbor 0.3 bin
+neigh_modify every 20 delay 0 check no
+
+# Define fixes
+fix 1 all nvt temp 0.65 0.65 0.1
+
+# Compute stress
+compute stress all stress/atom NULL
+
+# Define output settings
+thermo 50
+thermo_style custom step temp pe press
+
+# Run the simulation
+run 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 20 steps, delay = 0 steps, check = no
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 15 15 15
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.354 | 3.354 | 3.354 Mbytes
+   Step          Temp          PotEng         Press     
+         0   0.65          -5.982005      -1.5388007    
+        50   0.47452577    -5.5062457     -0.26284021   
+       100   0.69415633    -5.5556846      0.2046971    
+       150   0.65347127    -5.7179873      0.26725587   
+       200   0.65147009    -5.7704611      0.41412065   
+       250   0.66040408    -5.7879448      0.46236912   
+       300   0.64266453    -5.7846542      0.24913635   
+       350   0.62942119    -5.6343844     -0.00047859418
+       400   0.64422463    -5.4449713     -0.13564045   
+       450   0.62608245    -5.2336905     -0.13458533   
+       500   0.63678342    -5.0638088     -0.16459138   
+       550   0.64948919    -4.9388138     -0.20634954   
+       600   0.65039587    -4.8297696     -0.16932591   
+       650   0.65768722    -4.7609746     -0.11934298   
+       700   0.6730823     -4.7363799     -0.067442763  
+       750   0.65039793    -4.7596005     -0.082087998  
+       800   0.66973906    -4.7442868      0.016271054  
+       850   0.65597277    -4.784792       0.0075732807 
+       900   0.64766476    -4.8050339      0.0049168671 
+       950   0.65329804    -4.8043094      0.051504269  
+      1000   0.65430891    -4.827638       0.046505413  
+Loop time of 0.575176 on 1 procs for 1000 steps with 2123 atoms
+
+Performance: 751074.780 tau/day, 1738.599 timesteps/s, 3.691 Matom-step/s
+98.9% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.4663     | 0.4663     | 0.4663     |   0.0 | 81.07
+Neigh   | 0.086385   | 0.086385   | 0.086385   |   0.0 | 15.02
+Comm    | 0.0017882  | 0.0017882  | 0.0017882  |   0.0 |  0.31
+Output  | 0.00021125 | 0.00021125 | 0.00021125 |   0.0 |  0.04
+Modify  | 0.019643   | 0.019643   | 0.019643   |   0.0 |  3.42
+Other   |            | 0.0008525  |            |       |  0.15
+
+Nlocal:           2123 ave        2123 max        2123 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:            256 ave         256 max         256 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          62518 ave       62518 max       62518 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 62518
+Ave neighs/atom = 29.447951
+Neighbor list builds = 50
+Dangerous builds not checked
+
+# Output stress data
+fix 2 all ave/time 50 1 50 c_stress[1] c_stress[2] c_stress[3] file stress.dat mode vector
+ERROR: Fix ave/time compute stress does not calculate an array (../fix_ave_time.cpp:153)
+Last command: fix 2 all ave/time 50 1 50 c_stress[1] c_stress[2] c_stress[3] file stress.dat mode vector

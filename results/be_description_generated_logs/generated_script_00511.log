@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for a 3D Copper Block Simulation using Tersoff Potential
+
+units metal
+atom_style atomic
+
+# Read initial configuration from data file
+read_data data.pos
+ERROR: Cannot open file data.pos: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.pos

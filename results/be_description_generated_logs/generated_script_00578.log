@@ -1,0 +1,17 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Water Simulation with ReaxFF
+
+# Variables
+variable xrep equal 2
+variable yrep equal 2
+variable zrep equal 2
+
+# Initialization
+units real
+atom_style charge
+boundary p p f
+
+# Read data
+read_data water_data.lmp
+ERROR: Cannot open file water_data.lmp: No such file or directory (../read_data.cpp:367)
+Last command: read_data water_data.lmp

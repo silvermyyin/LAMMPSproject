@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D ionic fluid simulation using DPD with long-range electrostatics
+
+units lj
+atom_style charge
+boundary p p p
+
+# Read initial configuration from a data file
+read_data data.ionic_fluid
+ERROR: Cannot open file data.ionic_fluid: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.ionic_fluid

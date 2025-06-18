@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for FCC Nickel with spin dynamics
+
+units metal
+atom_style spin
+boundary p p p
+
+# Create FCC lattice
+lattice fcc 3.52
+Lattice spacing in x,y,z = 3.52 3.52 3.52
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (35.2 35.2 35.2)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (35.2 35.2 35.2)
+  create_atoms CPU = 0.000 seconds
+
+# Set mass for Nickel
+mass 1 58.6934
+
+# Define pair style and coefficients
+pair_style hybrid/overlay eam/alloy spin/exchange 4.0
+pair_coeff * * eam/alloy Ni_u3.eam
+ERROR: Number of element to type mappings does not match number of atom types (../pair_eam_alloy.cpp:50)
+Last command: pair_coeff * * eam/alloy Ni_u3.eam

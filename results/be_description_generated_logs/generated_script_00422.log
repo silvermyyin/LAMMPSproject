@@ -1,0 +1,8 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D molecular dynamics simulation of a DNA-like system using oxDNA2 model
+
+# Initialize simulation
+units real
+atom_style hybrid bond ellipsoid oxDNA
+ERROR: Invalid atom_style command (../atom_vec.cpp:141)
+Last command: atom_style hybrid bond ellipsoid oxDNA

@@ -1,0 +1,67 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for calculating thermal conductivity of a Lennard-Jones fluid
+
+# Initialization
+units lj
+atom_style atomic
+boundary p p p
+
+variable x equal 10
+variable y equal 10
+variable z equal 40
+
+lattice fcc 0.6
+Lattice spacing in x,y,z = 1.8820721 1.8820721 1.8820721
+region box block 0 ${x} 0 ${y} 0 ${z}
+region box block 0 10 0 ${y} 0 ${z}
+region box block 0 10 0 10 0 ${z}
+region box block 0 10 0 10 0 40
+create_box 1 box
+Created orthogonal box = (0 0 0) to (18.820721 18.820721 75.282882)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 16000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (18.820721 18.820721 75.282882)
+  create_atoms CPU = 0.001 seconds
+
+mass 1 1.0
+
+# LJ potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Velocity and initial temperature
+velocity all create 1.35 87287
+
+# Define regions for temperature gradient
+region hot block 0 ${x} 0 ${y} 0 5
+region hot block 0 10 0 ${y} 0 5
+region hot block 0 10 0 10 0 5
+region cold block 0 ${x} 0 ${y} 35 ${z}
+region cold block 0 10 0 ${y} 35 ${z}
+region cold block 0 10 0 10 35 ${z}
+region cold block 0 10 0 10 35 40
+
+# Group atoms
+group hot region hot
+2200 atoms in group hot
+group cold region cold
+2000 atoms in group cold
+group middle subtract all hot cold
+11800 atoms in group middle
+
+# Equilibration
+fix 1 all nvt temp 1.35 1.35 1.0
+
+# Thermostat hot and cold regions
+fix hot_temp hot langevin 1.70 1.70 1.0 48279
+fix cold_temp cold langevin 1.00 1.00 1.0 29381
+
+# Modify fix to calculate energy exchange
+fix_modify hot_temp energy yes
+ERROR: Fix hot_temp langevin does not support fix_modify energy command (../fix.cpp:164)
+Last command: fix_modify hot_temp energy yes

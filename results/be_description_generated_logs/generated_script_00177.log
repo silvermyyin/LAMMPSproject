@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for fcc argon using Lennard-Jones potential
+
+units real
+atom_style atomic
+
+# Create FCC lattice
+lattice fcc 5.256227487
+Lattice spacing in x,y,z = 5.2562275 5.2562275 5.2562275
+region simbox block 0 10 0 10 0 10 units lattice
+create_box 1 simbox
+Created orthogonal box = (0 0 0) to (52.562275 52.562275 52.562275)
+  1 by 1 by 1 MPI processor grid
+
+# Read initial atomic configuration from data file
+read_data argon_fcc.data
+ERROR: Cannot use read_data without add keyword after simulation box is defined (../read_data.cpp:342)
+Last command: read_data argon_fcc.data

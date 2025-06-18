@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a hybrid QM/MM simulation of two water molecules
+
+units           real
+atom_style      full
+boundary        p p p
+
+# Define atom types
+atom_modify     map array
+pair_style      lj/cut/coul/long 12.0
+bond_style      harmonic
+angle_style     harmonic
+kspace_style    pppm 1.0e-4
+
+# Read initial structure
+read_data       water_molecules.data
+ERROR: Cannot open file water_molecules.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       water_molecules.data

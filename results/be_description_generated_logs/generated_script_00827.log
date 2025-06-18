@@ -1,0 +1,15 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for a Metallic System using Lennard-Jones Potential
+
+units metal
+dimension 3
+boundary p p p
+
+variable ibead index 1
+
+# Atomistic setup
+atom_style atomic
+read_data data.${ibead}
+read_data data.1
+ERROR: Cannot open file data.1: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.${ibead}

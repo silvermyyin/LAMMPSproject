@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for exploring tungsten crystalline conformations using NWChem via MDI
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Communication settings
+comm_modify cutoff 2.0
+
+# Define tungsten mass
+mass 1 183.84
+ERROR: Mass command before simulation box is defined (../input.cpp:1628)
+Last command: mass 1 183.84

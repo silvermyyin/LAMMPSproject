@@ -1,0 +1,8 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a buckyball inside a carbon nanotube simulation
+
+# Initialize simulation
+units real
+atom_style molecular
+boundary f f f
+log log.buckyball_nanotube

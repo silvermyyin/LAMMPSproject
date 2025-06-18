@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D SDPD simulation of isothermal fluid behavior
+
+units micro       # Micro-scale units
+dimension 3       # 3D simulation
+boundary p p p    # Periodic boundary conditions
+
+atom_style sdpd   # Smoothed Dissipative Particle Dynamics
+ERROR: Unrecognized atom style 'sdpd' (../atom.cpp:745)
+Last command: atom_style sdpd   # Smoothed Dissipative Particle Dynamics

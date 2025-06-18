@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Amorphous SiO2 Simulation
+
+units real
+atom_style charge
+boundary p p f
+
+# Read the equilibrated data file
+read_data data.amorphous_SiO2
+ERROR: Cannot open file data.amorphous_SiO2: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.amorphous_SiO2

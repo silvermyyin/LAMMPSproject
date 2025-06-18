@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 2D Micelle Simulation
+
+# Initialization
+units lj
+dimension 2
+boundary p p p
+atom_style bond
+
+# Read initial data
+read_data micelle_initial.data
+ERROR: Cannot open file micelle_initial.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data micelle_initial.data

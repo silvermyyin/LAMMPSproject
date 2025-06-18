@@ -1,0 +1,34 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for MD-FEM thermal coupling using AtC package
+
+# Initialize simulation
+units real
+atom_style atomic
+dimension 3
+boundary p p f
+lattice fcc 3.615
+Lattice spacing in x,y,z = 3.615 3.615 3.615
+region simulation_box block 0 10 0 10 0 10 units box
+create_box 1 simulation_box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define regions
+region md_region block 1 9 1 9 1 9 units box
+create_atoms 1 region md_region
+Created 32 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# Define potentials
+pair_style lj/cut 13.5
+pair_coeff 1 1 0.01 3.4
+
+# Set up neighbor list
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define initial velocities
+velocity all create 20.0 123456 dist gaussian
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 20.0 123456 dist gaussian

@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D tensile test on an aluminum strip using TLSPH
+
+units           metal
+dimension       2
+boundary        p p p
+
+atom_style      sphere
+neighbor        0.01 bin
+neigh_modify    every 1 delay 0 check yes
+
+# Create a 2D box and define lattice
+lattice         sq2 2.86         # Atomic spacing for aluminum
+Lattice spacing in x,y,z = 2.86 2.86 2.86
+region          box block 0 100 0 20 -0.25 0.25
+create_box      1 box
+Created orthogonal box = (0 0 -0.715) to (286 57.2 0.715)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 -0.715) to (286 57.2 0.715)
+  create_atoms CPU = 0.000 seconds
+
+# Set mass and density
+mass            1 26.98
+ERROR: Cannot set per-type atom mass for atom style sphere (../input.cpp:1629)
+Last command: mass            1 26.98

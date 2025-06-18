@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Silicon Crystal Simulation
+
+# Initialization
+units           real
+atom_style      charge
+boundary        p p f
+
+# Create Silicon Lattice
+lattice         diamond 5.43
+Lattice spacing in x,y,z = 5.43 5.43 5.43
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (54.3 54.3 54.3)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 8000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (54.3 54.3 54.3)
+  create_atoms CPU = 0.001 seconds
+
+# Define Potential Parameters
+pair_style      hybrid reax/c NULL zbl 3.0 5.0
+
+Pair style 'reax/c' has been renamed to 'reaxff'
+
+ERROR: This pair style is no longer available (../pair_deprecated.cpp:63)
+Last command: pair_style      hybrid reax/c NULL zbl 3.0 5.0

@@ -1,0 +1,113 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Simulating a Liquid-Vapor Interface
+
+# Initialize simulation in LJ units
+units lj
+atom_style atomic
+
+# Set up simulation box
+boundary p p p
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 10 0 10 0 20
+create_box 1 box
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 33.591924)
+  1 by 1 by 1 MPI processor grid
+
+# Define liquid region and create atoms
+region liquid block 0 10 0 10 0 10
+create_atoms 1 region liquid
+Created 4200 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 33.591924)
+  create_atoms CPU = 0.000 seconds
+
+# Assign mass and initial velocities
+mass 1 1.0
+velocity all create 0.65 87287 loop geom
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set up NVT ensemble
+fix 1 all nvt temp 0.7 0.7 0.1
+
+# Compute stress along the z-direction
+compute stress all stress/atom NULL
+compute stress_z all reduce sum c_stress[3]
+
+# Output settings
+thermo 50
+thermo_style custom step temp pe etotal press c_stress_z
+thermo_modify line one
+
+# Run the simulation
+timestep 0.005
+run 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 12 12 24
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 4.478 | 4.478 | 4.478 Mbytes
+   Step          Temp          PotEng         TotEng         Press        c_stress_z  
+         0   0.65          -6.5342767     -5.5595088     -2.8605308      6.2822505    
+        50   0.42241449    -5.9743506     -5.3408798     -0.9519025      1.9464762    
+       100   0.64779893    -5.9243424     -4.9528754     -0.36706685     0.51742719   
+       150   0.73338101    -5.8710888     -4.7712792      0.11209013    -0.55365346   
+       200   0.68627572    -5.9988421     -4.9696737     -0.045281387   -0.17930863   
+       250   0.69105722    -6.0474978     -5.0111587     -0.0070076514  -0.31384455   
+       300   0.72080741    -6.0726883     -4.9917346      0.16418546    -0.69252242   
+       350   0.68032364    -6.1104085     -5.090166       0.29829392    -1.0417258    
+       400   0.71045015    -6.1580922     -5.0926707      0.48039273    -1.5676825    
+       450   0.68874011    -6.2250114     -5.1921472      0.50376679    -1.5973889    
+       500   0.69498199    -6.1969877     -5.1547629      0.56592321    -1.5847794    
+       550   0.70983585    -6.1935116     -5.1290113      0.41876185    -1.2908115    
+       600   0.69542029    -6.1519114     -5.1090293      0.30208945    -0.9838669    
+       650   0.70641209    -6.0951765     -5.0358107      0.21034271    -0.78427341   
+       700   0.69211939    -6.0687094     -5.0307775      0.028691032   -0.35141237   
+       750   0.70592545    -6.0138208     -4.9551847     -0.059931887   -0.1291304    
+       800   0.70030492    -5.9356071     -4.8853999     -0.13788177     0.11614601   
+       850   0.69113838    -5.8405574     -4.8040967     -0.21969637     0.28646538   
+       900   0.68849096    -5.7431816     -4.710691      -0.24796885     0.51018653   
+       950   0.71197669    -5.6714265     -4.6037158     -0.2947664      0.54898473   
+      1000   0.69241234    -5.5844887     -4.5461175     -0.31133291     0.63569645   
+Loop time of 1.73691 on 1 procs for 1000 steps with 4200 atoms
+
+Performance: 248717.658 tau/day, 575.735 timesteps/s, 2.418 Matom-step/s
+94.9% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.21       | 1.21       | 1.21       |   0.0 | 69.66
+Neigh   | 0.44458    | 0.44458    | 0.44458    |   0.0 | 25.60
+Comm    | 0.021326   | 0.021326   | 0.021326   |   0.0 |  1.23
+Output  | 0.0020301  | 0.0020301  | 0.0020301  |   0.0 |  0.12
+Modify  | 0.042405   | 0.042405   | 0.042405   |   0.0 |  2.44
+Other   |            | 0.01662    |            |       |  0.96
+
+Nlocal:           4200 ave        4200 max        4200 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           4794 ave        4794 max        4794 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         146782 ave      146782 max      146782 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 146782
+Ave neighs/atom = 34.948095
+Neighbor list builds = 115
+Dangerous builds = 0
+
+# Output stress results to a file
+fix 2 all ave/time 1 10 50 c_stress_z file stress_z_profile.dat mode vector
+ERROR: Fix ave/time compute stress_z does not calculate a vector (../fix_ave_time.cpp:151)
+Last command: fix 2 all ave/time 1 10 50 c_stress_z file stress_z_profile.dat mode vector

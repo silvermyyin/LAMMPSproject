@@ -1,0 +1,34 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Cyclohexane-Methane Mixture Simulation
+
+units real
+atom_style molecular
+boundary p p p
+
+# Define simulation box
+lattice fcc 10.0
+Lattice spacing in x,y,z = 10 10 10
+region simbox block 0 10 0 10 0 10
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (100 100 100)
+  1 by 1 by 1 MPI processor grid
+
+# Define masses
+mass 1 84.16  # Cyclohexane
+mass 2 16.04  # Methane
+
+# Define potential styles
+pair_style lj/cut 12.0
+bond_style harmonic
+angle_style harmonic
+dihedral_style harmonic
+
+# Interaction parameters
+pair_coeff * * 0.0 0.0  # Default to zero for safety
+pair_coeff 1 1 0.520 6.0  # Cyclohexane-Cyclohexane
+pair_coeff 2 2 0.294 3.7  # Methane-Methane
+pair_coeff 1 2 0.392 4.85 # Cyclohexane-Methane
+
+bond_coeff 1 300.0 1.54
+ERROR: Numeric index 1 is out of bounds (1-0) (../bond_harmonic.cpp:129)
+Last command: bond_coeff 1 300.0 1.54

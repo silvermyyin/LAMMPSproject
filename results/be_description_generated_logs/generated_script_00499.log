@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for shock dynamics in an fcc lattice using MSST
+
+units           real
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+lattice         fcc 3.615
+Lattice spacing in x,y,z = 3.615 3.615 3.615
+region          box block 0 18 0 18 0 18
+create_box      1 box
+Created orthogonal box = (0 0 0) to (65.07 65.07 65.07)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 23328 atoms
+  using lattice units in orthogonal box = (0 0 0) to (65.07 65.07 65.07)
+  create_atoms CPU = 0.001 seconds
+
+mass            1 39.948  # Argon mass in amu
+
+pair_style      lj/cut 10.0
+pair_coeff      1 1 0.2381 3.405  # Lennard-Jones parameters for Argon
+
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes
+
+timestep        2.0  # fs
+thermo_style    custom step temp ke pe etotal lx ly lz press pxx pyy pzz v_hugoniot_energy v_rayleigh_slope
+ERROR: Could not find thermo custom variable name: hugoniot_energy (../thermo.cpp:1110)
+Last command: thermo_style    custom step temp ke pe etotal lx ly lz press pxx pyy pzz v_hugoniot_energy v_rayleigh_slope

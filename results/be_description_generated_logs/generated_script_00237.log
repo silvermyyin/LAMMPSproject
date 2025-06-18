@@ -1,0 +1,38 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Argon FCC Lattice with AtC Elastic Damping
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Create simulation box
+region          simbox block 0 10 0 10 0 10 units box
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Create FCC lattice and Argon atoms
+lattice         fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region          simregion block 0 10 0 10 0 10 units box
+create_atoms    1 region simregion
+Created 63 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# Set mass for Argon
+mass            1 39.948
+
+# Define Lennard-Jones potential with cutoff
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0103 3.4
+
+# Initialize velocities
+velocity        all create 0.0 1234567
+
+# AtC package settings
+fix             atc all atc
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix             atc all atc

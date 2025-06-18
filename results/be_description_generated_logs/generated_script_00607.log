@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for QMMM simulation of SiO2 interacting with methane
+
+# Initialize simulation
+units real
+dimension 3
+boundary p p p
+atom_style full
+
+# Read data file containing zeolite and methane structure
+read_data zeolite_methane.data
+ERROR: Cannot open file zeolite_methane.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data zeolite_methane.data

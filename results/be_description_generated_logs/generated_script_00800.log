@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for peridynamic simulation of impact fracture dynamics
+
+units          si
+atom_style     atomic
+dimension      3
+boundary       p p p
+
+# Create a cylindrical target
+region target_reg cylinder y 0.0 0.0 0.005 0.0 0.005 units box
+create_box 1 target_reg
+Created orthogonal box = (-0.005 0 -0.005) to (0.005 0.005 0.005)
+  1 by 1 by 1 MPI processor grid
+
+# Define material properties and create target atoms
+lattice sc 1.0
+Lattice spacing in x,y,z = 1 1 1
+region target_atoms cylinder y 0.0 0.0 0.005 0.0 0.005 units box
+create_atoms 1 region target_atoms
+Created 1 atoms
+  using lattice units in orthogonal box = (-0.005 0 -0.005) to (0.005 0.005 0.005)
+  create_atoms CPU = 0.000 seconds
+
+# Define mass based on density and volume
+mass 1 2.75e-26  # mass in kg/atom, calculated from given density and volume
+
+# Define peridynamic potential
+pair_style peri/lps
+pair_coeff * * 1.0e10 1.0e-8 0.25  # Example coefficients
+ERROR: Incorrect args for pair coefficients (../pair_peri_lps.cpp:309)
+Last command: pair_coeff * * 1.0e10 1.0e-8 0.25  # Example coefficients

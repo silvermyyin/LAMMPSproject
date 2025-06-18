@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating magnetic and thermal properties of bcc iron
+
+units metal
+atom_style atomic
+atom_modify map array
+
+# Create a 3D periodic box
+boundary p p p
+
+# Define the lattice and create the simulation box
+lattice bcc 2.8665
+Lattice spacing in x,y,z = 2.8665 2.8665 2.8665
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (28.665 28.665 28.665)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 2000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (28.665 28.665 28.665)
+  create_atoms CPU = 0.000 seconds
+
+# Define masses and magnetic moments
+mass 1 55.845
+set type 1 spin 2.2 0.0 0.0 1.0
+Setting atom values ...
+WARNING: Set attribute spin is deprecated. Please use spin/atom instead. (../set.cpp:268)
+ERROR: Cannot set attribute spin for atom style atomic (../set.cpp:281)
+Last command: set type 1 spin 2.2 0.0 0.0 1.0

@@ -1,0 +1,33 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Argon system using Lennard-Jones potential
+# Simulation to study energy density and stress metrics
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC lattice and define simulation box
+lattice         fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (40.5 40.5 40.5)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (40.5 40.5 40.5)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style      lj/cut 10.0
+pair_coeff      1 1 0.0103 3.4
+
+# Set neighbor list and timestep
+neighbor        2.0 bin
+neigh_modify    delay 5
+
+# Set initial conditions
+velocity        all create 10.0 87287 loop geom
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity        all create 10.0 87287 loop geom

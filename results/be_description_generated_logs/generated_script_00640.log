@@ -1,0 +1,39 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D MD Simulation of Silicon using SW Potential
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define lattice and simulation box
+variable        x equal 20
+variable        y equal 20
+variable        z equal 20
+
+lattice         fcc 1.0
+Lattice spacing in x,y,z = 1 1 1
+region          box block 0 ${x} 0 ${y} 0 ${z}
+region          box block 0 20 0 ${y} 0 ${z}
+region          box block 0 20 0 20 0 ${z}
+region          box block 0 20 0 20 0 20
+create_box      1 box
+Created orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 32000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (20 20 20)
+  create_atoms CPU = 0.001 seconds
+
+# Set mass for silicon atoms
+mass            1 39.95
+
+# KIM Model for Silicon with Stillinger-Weber potential
+kim_init        SW_StillingerWeber_1985_Si__MO_405512056662_005
+
+WARNING: 'kim_init' has been renamed to 'kim init'. Please update your input.
+
+kim init SW_StillingerWeber_1985_Si__MO_405512056662_005
+ERROR: Unknown command: kim init SW_StillingerWeber_1985_Si__MO_405512056662_005 (../input.cpp:408)
+Last command: kim init SW_StillingerWeber_1985_Si__MO_405512056662_005

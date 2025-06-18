@@ -1,0 +1,48 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a Lennard-Jones fluid in a confined slab geometry
+
+units lj
+atom_style atomic
+
+# Define simulation box with mixed boundary conditions
+boundary p p m
+
+# Create a face-centered cubic lattice
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 10 0 10 -5 5
+create_box 1 box
+Created orthogonal box = (0 0 -8.397981) to (16.795962 16.795962 8.397981)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms in a slab region
+region slab block 0 10 0 10 -2 2
+create_atoms 1 region slab
+Created 1800 atoms
+  using lattice units in orthogonal box = (0 0 -8.397981) to (16.795962 16.795962 8.397981)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define masses
+mass 1 1.0
+
+# Define groups for atoms and walls
+group mobile region slab
+1800 atoms in group mobile
+
+# Initialize velocities
+velocity mobile create 1.5 87287
+
+# Apply NVE integration and Langevin thermostat
+fix 1 mobile nve
+fix 2 mobile langevin 1.5 1.5 0.5 49829
+
+# Define harmonic wall potentials
+variable wall_pos equal 4.0
+fix 3 all wall/harmonic zlo -${wall_pos} 1.0 1.0
+fix 3 all wall/harmonic zlo -4 1.0 1.0
+ERROR: Missing argument for fix wall/harmonic command (../fix_wall.cpp:67)
+Last command: fix 3 all wall/harmonic zlo -${wall_pos} 1.0 1.0

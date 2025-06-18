@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D polydisperse spheres with SRD fluid
+
+units lj
+dimension 2
+boundary p p p
+atom_style sphere
+
+# Create large particles
+lattice sq 0.7
+Lattice spacing in x,y,z = 1.1952286 1.1952286 1.1952286
+region box block 0 30 0 30 -0.1 0.1
+create_box 3 box
+Created orthogonal box = (0 0 -0.11952286) to (35.856858 35.856858 0.11952286)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box basis 1 1 basis 2 2 basis 3 3
+ERROR: Out of range basis setting '2 2' in create_atoms command (../create_atoms.cpp:173)
+Last command: create_atoms 1 box basis 1 1 basis 2 2 basis 3 3

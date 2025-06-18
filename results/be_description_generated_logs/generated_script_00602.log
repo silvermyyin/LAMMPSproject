@@ -1,0 +1,41 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Thermal Coupling Simulation using AtC package
+
+units           metal
+dimension       3
+boundary        p p p
+
+atom_style      atomic
+
+# Create an FCC lattice
+lattice         fcc 3.52
+Lattice spacing in x,y,z = 3.52 3.52 3.52
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (35.2 35.2 35.2)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (35.2 35.2 35.2)
+  create_atoms CPU = 0.000 seconds
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0104 3.40 13.5
+
+# Define regions for thermal boundaries
+region          left block INF 0.1 INF INF INF INF
+region          right block 9.9 INF INF INF INF INF
+
+# Groups for MD and boundary conditions
+group           boundary_left region left
+200 atoms in group boundary_left
+group           boundary_right region right
+0 atoms in group boundary_right
+group           internal subtract all boundary_left boundary_right
+3800 atoms in group internal
+
+# Set initial velocities
+velocity        all create 20.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity        all create 20.0 12345

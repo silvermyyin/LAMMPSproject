@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for CF_x deposition on SiO2 substrate
+
+units real
+atom_style charge
+boundary p p f
+
+# Read equilibrated SiO2 data
+read_data sio2.data
+ERROR: Cannot open file sio2.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data sio2.data

@@ -1,0 +1,24 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a BCC tantalum lattice using ZBL and MLIAP potentials
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Lattice and region definition
+lattice         bcc 3.316
+Lattice spacing in x,y,z = 3.316 3.316 3.316
+region          box block 0 4 0 4 0 4
+create_box      1 box
+Created orthogonal box = (0 0 0) to (13.264 13.264 13.264)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 128 atoms
+  using lattice units in orthogonal box = (0 0 0) to (13.264 13.264 13.264)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potentials
+pair_style      hybrid/overlay zbl 4.0 4.8 mlip/pytorch
+ERROR: Illegal pair_style command (../pair_zbl.cpp:184)
+Last command: pair_style      hybrid/overlay zbl 4.0 4.8 mlip/pytorch

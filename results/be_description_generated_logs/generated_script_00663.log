@@ -1,0 +1,36 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D square lattice setup with Lennard-Jones interactions
+
+# Initialize simulation
+units lj
+dimension 2
+boundary p p p
+atom_style atomic
+
+# Define lattice and simulation box
+lattice sq2 1.1
+Lattice spacing in x,y,z = 1.3483997 1.3483997 1.3483997
+region box block 0 1 0 1 -0.5 0.5
+create_box 1 box
+Created orthogonal box = (0 0 -0.67419986) to (1.3483997 1.3483997 0.67419986)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 2 atoms
+  using lattice units in orthogonal box = (0 0 -0.67419986) to (1.3483997 1.3483997 0.67419986)
+  create_atoms CPU = 0.000 seconds
+
+# Assign mass to atoms
+mass 1 1.0
+
+# Define interaction potential
+pair_style lj/cut 1.1
+pair_coeff 1 1 1.0 1.0 1.1
+
+# Neighbor settings
+neighbor 0.0 bin
+neigh_modify every 1 delay 0 check yes
+
+# Output settings
+thermo_style custom step pe lx ly lz pxx pyy pzz xcm(1) ycm(1)
+ERROR: Unknown keyword 'xcm(1)' in thermo_style custom command (../thermo.cpp:1049)
+Last command: thermo_style custom step pe lx ly lz pxx pyy pzz xcm(1) ycm(1)

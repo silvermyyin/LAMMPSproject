@@ -1,0 +1,16 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for sucrose system with LATTE QM package
+
+# Initialize simulation
+units metal
+atom_style full
+
+# Define user variables for system replication
+variable xrep equal 1
+variable yrep equal 1
+variable zrep equal 1
+
+# Read data file
+read_data data.sucrose
+ERROR: Cannot open file data.sucrose: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.sucrose

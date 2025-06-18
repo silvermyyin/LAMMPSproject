@@ -1,0 +1,41 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D Lennard-Jones melt simulation on an fcc lattice
+
+# Variables
+variable x equal 20
+variable y equal 20
+variable z equal 20
+
+# Initialize simulation
+units lj
+atom_style atomic
+boundary p p p
+
+# Create simulation box
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 ${x} 0 ${y} 0 ${z}
+region box block 0 20 0 ${y} 0 ${z}
+region box block 0 20 0 20 0 ${z}
+region box block 0 20 0 20 0 20
+create_box 1 box
+Created orthogonal box = (0 0 0) to (33.591924 33.591924 33.591924)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 32000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (33.591924 33.591924 33.591924)
+  create_atoms CPU = 0.001 seconds
+
+# Mass and potential
+mass 1 1.0
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Read atomic configurations and velocities from ADIOS-formatted dump files
+read_dump adios_file_200.bp 200 x y z box yes format adios
+ERROR: Unrecognized reader style 'adios' is part of the ADIOS package which is not enabled in this LAMMPS binary. (../read_dump.cpp:236)
+Last command: read_dump adios_file_200.bp 200 x y z box yes format adios

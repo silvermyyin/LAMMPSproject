@@ -1,0 +1,25 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D simulation of Gay-Berne ellipsoids in LJ fluid
+
+units lj
+dimension 2
+atom_style ellipsoid
+
+# Create simulation box
+lattice sq 0.02
+Lattice spacing in x,y,z = 7.0710678 7.0710678 7.0710678
+region boxreg block 0 20 0 20 -0.25 0.25
+create_box 2 boxreg
+Created orthogonal box = (0 0 -1.767767) to (141.42136 141.42136 1.767767)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 box
+Created 400 atoms
+  using lattice units in orthogonal box = (0 0 -1.767767) to (141.42136 141.42136 1.767767)
+  create_atoms CPU = 0.000 seconds
+
+# Set masses and shapes
+mass 1 1.0
+ERROR: Cannot set per-type atom mass for atom style ellipsoid (../input.cpp:1629)
+Last command: mass 1 1.0

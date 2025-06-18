@@ -1,0 +1,25 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a peridynamic simulation of a cylindrical target impacted by a spherical projectile
+
+units           si
+atom_style      atomic
+dimension       3
+boundary        p p p
+
+# Define the target material properties
+variable        density equal 7800  # kg/m^3 for steel
+variable        volume equal 1.0e-9  # m^3 (arbitrary small volume for cubic lattice)
+variable        bulk_modulus equal 160e9  # Pa
+
+# Define the peridynamic parameters
+variable        horizon equal 0.001
+variable        s00 equal 3.0
+
+# Create target
+region          target_reg cylinder y 0.0 0.0 0.005 0.0 0.01 units box
+create_box      1 target_reg
+Created orthogonal box = (-0.005 0 -0.005) to (0.005 0.01 0.005)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 region target_reg
+ERROR: Cannot create atoms with undefined lattice (../create_atoms.cpp:367)
+Last command: create_atoms    1 region target_reg

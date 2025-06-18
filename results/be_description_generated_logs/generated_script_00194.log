@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D granular flow simulation in a rotating container
+
+# Initialize simulation
+units si
+dimension 3
+boundary f f f
+atom_style sphere
+
+# Create simulation box
+region box block 0 10 0 10 0 10 units box
+create_box 2 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define regions for particle insertion
+region pour_region block 4 6 4 6 8 9 units box
+
+# Particle properties
+variable diameter equal 1.0
+variable density equal 2500.0
+
+# Define pair style and coefficients
+pair_style hybrid gran/hooke 200000.0 0.3 50.0 NULL
+ERROR: Illegal pair_style command (../pair_gran_hooke_history.cpp:373)
+Last command: pair_style hybrid gran/hooke 200000.0 0.3 50.0 NULL

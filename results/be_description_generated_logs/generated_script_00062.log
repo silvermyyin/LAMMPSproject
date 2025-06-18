@@ -1,0 +1,38 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D MD simulation of Lennard-Jones particles
+# using Langevin thermostat in an elongated periodic box
+
+units           lj
+atom_style      atomic
+boundary        p p p
+
+# Create FCC lattice and initialize simulation box
+lattice         fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region          simbox block 0 8 0 8 0 20
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (13.43677 13.43677 33.591924)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 5120 atoms
+  using lattice units in orthogonal box = (0 0 0) to (13.43677 13.43677 33.591924)
+  create_atoms CPU = 0.000 seconds
+
+# Modify box to elongate in z-direction
+change_box      all z final 0 34 remap
+Changing box ...
+  orthogonal box = (0 0 0) to (13.43677 13.43677 57.106271)
+
+# Define potential
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5
+
+# Define groups
+region          left_half block INF INF INF INF INF 10
+group           left_half region left_half
+1536 atoms in group left_half
+
+# Initialize velocities for left half group
+velocity        left_half create 6.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity        left_half create 6.0 12345

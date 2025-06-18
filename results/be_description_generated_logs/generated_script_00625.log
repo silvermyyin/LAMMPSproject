@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Argon system using AtC approach
+
+units           metal
+atom_style      atomic
+boundary        f p p
+
+# Create simulation box
+lattice         fcc 0.02186  # Argon density in metal units
+Lattice spacing in x,y,z = 0.02186 0.02186 0.02186
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (0.2186 0.2186 0.2186)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (0.2186 0.2186 0.2186)
+  create_atoms CPU = 0.000 seconds
+
+# Define Lennard-Jones potential
+pair_style      lj/cut 13.0
+pair_coeff      1 1 0.0104 3.4  # Lennard-Jones parameters for Argon
+
+# Initialize velocities and displacements
+velocity        all create 0.0 12345 mom yes rot yes dist gaussian
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity        all create 0.0 12345 mom yes rot yes dist gaussian

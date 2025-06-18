@@ -1,0 +1,37 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for equilibrating alpha quartz using QTB dynamics
+
+units           real
+dimension       3
+boundary        p p p
+atom_style      charge
+
+# Define alpha quartz lattice
+lattice custom 4.913     a1 4.913 0.0 0.0     a2 2.4565 4.253 0.0     a3 0.0 0.0 5.405     basis 0.4697 0.0 0.0     basis 0.0 0.4697 0.333     basis 0.0 0.0 0.666     basis 0.4697 0.4697 0.5
+Lattice spacing in x,y,z = 36.206354 20.894989 26.554765
+
+region          box block 0 3 0 3 0 3
+create_box      2 box
+Created orthogonal box = (0 0 0) to (108.61906 62.684967 79.664295)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box basis 1 1 basis 2 1 basis 3 1 basis 4 2
+Created 165 atoms
+  using lattice units in orthogonal box = (0 0 0) to (108.61906 62.684967 79.664295)
+  create_atoms CPU = 0.000 seconds
+
+# Atom masses and charges
+mass            1 28.0855  # Silicon
+mass            2 15.9994  # Oxygen
+
+set             type 1 charge 2.4
+Setting atom values ...
+  126 settings made for charge
+set             type 2 charge -1.2
+Setting atom values ...
+  39 settings made for charge
+
+# Define potentials
+pair_style      buck/coul/long 12.0
+pair_coeff      1 1 0.0 0.0 0.0
+ERROR: Incorrect args for pair coefficients (../pair_buck_coul_long.cpp:268)
+Last command: pair_coeff      1 1 0.0 0.0 0.0

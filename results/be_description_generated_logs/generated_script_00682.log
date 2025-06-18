@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script to calculate the cohesive energy of Argon using OpenKIM
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Define lattice and region
+lattice fcc 5.2485
+Lattice spacing in x,y,z = 5.2485 5.2485 5.2485
+region box block 0 1 0 1 0 1
+create_box 1 box
+Created orthogonal box = (0 0 0) to (5.2485 5.2485 5.2485)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4 atoms
+  using lattice units in orthogonal box = (0 0 0) to (5.2485 5.2485 5.2485)
+  create_atoms CPU = 0.000 seconds
+
+# Initialize the KIM potential
+kim_init model LJ_Shifted_Bernardes_1958MedCutoff_Ar__MO_126566794224_004 metal
+
+WARNING: 'kim_init' has been renamed to 'kim init'. Please update your input.
+
+kim init model LJ_Shifted_Bernardes_1958MedCutoff_Ar__MO_126566794224_004 metal
+ERROR: Unknown command: kim init model LJ_Shifted_Bernardes_1958MedCutoff_Ar__MO_126566794224_004 metal (../input.cpp:408)
+Last command: kim init model LJ_Shifted_Bernardes_1958MedCutoff_Ar__MO_126566794224_004 metal

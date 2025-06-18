@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D simulation of dimer particles with SRD for viscosity study
+
+units lj
+dimension 2
+atom_style hybrid molecular sphere
+WARNING: Atom style hybrid defines both, per-type and per-atom masses; both must be set, but only per-atom masses will be used (../atom_vec_hybrid.cpp:132)
+
+# Read in clusters of rigid dimer molecules
+read_data dimers.data
+ERROR: Cannot open file dimers.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data dimers.data

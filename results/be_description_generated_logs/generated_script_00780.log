@@ -1,0 +1,19 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# 2D Oxidizing Bar Simulation with Hybrid Rheo/Thermal Bond Atom Style
+
+units lj
+dimension 2
+atom_style hybrid bond
+
+boundary p p f
+
+# Create regions
+region whole block 0 20 0 10 -0.5 0.5
+region left_bar block 0 9 0 8 -0.5 0.5
+region right_bar block 11 20 0 8 -0.5 0.5
+region floor block 0 20 0 1 -0.5 0.5
+
+# Create simulation box and atoms
+create_box 2 whole
+ERROR: Cannot run 2d simulation with nonperiodic Z dimension (../create_box.cpp:43)
+Last command: create_box 2 whole

@@ -1,0 +1,16 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for Argon simulation with two-temperature model
+
+units real
+atom_style atomic
+
+# Create simulation box
+lattice fcc 5.256 origin 0.0 0.0 0.0
+Lattice spacing in x,y,z = 5.256 5.256 5.256
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (52.56 52.56 52.56)
+  1 by 1 by 1 MPI processor grid
+boundary p p f
+ERROR: Boundary command after simulation box is defined (../input.cpp:1432)
+Last command: boundary p p f

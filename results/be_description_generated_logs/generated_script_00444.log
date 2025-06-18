@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for AtC Simulation with Periodic Boundary Conditions
+# Elastic behavior of a material using AtC package
+
+units           metal
+dimension       3
+boundary        p p p
+
+atom_style      atomic
+
+# Create FCC lattice
+lattice         fcc 5.25623
+Lattice spacing in x,y,z = 5.25623 5.25623 5.25623
+region          simbox block 0 100 0 10 0 10
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (525.623 52.5623 52.5623)
+  1 by 1 by 1 MPI processor grid
+
+# Initialize empty atom system
+create_atoms    1 box
+Created 40000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (525.623 52.5623 52.5623)
+  create_atoms CPU = 0.002 seconds
+
+# Read material properties from external file
+fix             atc all atc
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix             atc all atc

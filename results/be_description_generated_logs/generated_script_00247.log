@@ -1,0 +1,42 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# 2D Simulation of Rigid Star-Shaped Particles with SRD Interactions
+
+units lj
+dimension 2
+atom_style hybrid sphere molecular
+WARNING: Atom style hybrid defines both, per-type and per-atom masses; both must be set, but only per-atom masses will be used (../atom_vec_hybrid.cpp:132)
+
+# Create simulation box
+boundary p p p
+lattice hex 0.7
+Lattice spacing in x,y,z = 1.2843567 2.2245711 1.2843567
+region box block 0 100 0 100 -0.1 0.1
+create_box 2 box
+Created orthogonal box = (0 0 -0.12843567) to (128.43567 222.45711 0.12843567)
+  1 by 1 by 1 MPI processor grid
+
+# Create star-shaped particles (type 1)
+lattice hex 0.5
+Lattice spacing in x,y,z = 1.5196714 2.632148 1.5196714
+create_atoms 1 box
+Created 14450 atoms
+  using lattice units in orthogonal box = (0 0 -0.12843567) to (128.43567 222.45711 0.12843567)
+  create_atoms CPU = 0.001 seconds
+group stars type 1
+14450 atoms in group stars
+set group stars diameter 2.0
+Setting atom values ...
+  14450 settings made for diameter
+set group stars mass 5.0
+Setting atom values ...
+  14450 settings made for mass
+
+# Initial velocities for stars
+velocity stars create 1.0 12345 loop geom
+
+# Equilibrate star particles with a soft potential
+pair_style soft 1.0
+pair_coeff * * 0.0 1.0
+fix ramp_up all adapt 1000 pair soft a * * ramp 0.0 50.0
+ERROR: Argument #10 must be variable not ramp (../fix_adapt.cpp:120)
+Last command: fix ramp_up all adapt 1000 pair soft a * * ramp 0.0 50.0

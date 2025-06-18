@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D MD Simulation of DNA Duplexes using oxDNA2 Model
+
+units lj
+atom_style hybrid bond ellipsoid oxdna
+WARNING: Atom style hybrid defines both, per-type and per-atom masses; both must be set, but only per-atom masses will be used (../atom_vec_hybrid.cpp:132)
+
+# Read initial configuration
+read_data dna_duplexes.data
+ERROR: Cannot open file dna_duplexes.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data dna_duplexes.data

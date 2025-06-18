@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D hexagonal lattice with LJ interactions
+
+dimension 2
+units lj
+atom_style atomic
+
+# Create a 2D hexagonal lattice of particles
+lattice hex 0.8442
+Lattice spacing in x,y,z = 1.1695317 2.0256884 1.1695317
+region box block 0 10 0 10 -0.5 0.5
+create_box 1 box
+Created orthogonal box = (0 0 -0.58476587) to (11.695317 20.256884 0.58476587)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 200 atoms
+  using lattice units in orthogonal box = (0 0 -0.58476587) to (11.695317 20.256884 0.58476587)
+  create_atoms CPU = 0.000 seconds
+
+# Define interaction potentials
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set up boundary conditions
+boundary f f p
+ERROR: Boundary command after simulation box is defined (../input.cpp:1432)
+Last command: boundary f f p

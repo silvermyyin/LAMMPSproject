@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a molecular dynamics simulation of Lennard-Jones particles
+
+units real
+atom_style full
+
+# Create simulation box and atoms
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 0.8442 0.8442 0.8442
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (8.442 8.442 8.442)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (8.442 8.442 8.442)
+  create_atoms CPU = 0.001 seconds
+
+# Define LJ potential with a cutoff of 5.0
+pair_style lj/cut 5.0
+pair_coeff 1 1 0.238 3.405
+
+# Set initial velocities
+velocity all create 300.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 300.0 12345

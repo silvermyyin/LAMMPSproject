@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for electronic system using electron force field model
+
+# Initialize simulation
+units electron
+atom_style electron
+boundary p p p
+
+# Read data
+variable sname string "system.data"
+read_data ${sname}
+read_data system.data
+ERROR: Cannot open file system.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data ${sname}

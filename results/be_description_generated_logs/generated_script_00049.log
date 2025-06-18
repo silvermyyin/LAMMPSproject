@@ -1,0 +1,33 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 2D Potts Model with Strain Coupling
+
+units lj
+dimension 2
+atom_style atomic
+boundary p p p
+
+# Create a 50x50 square lattice with 2500 sites
+lattice sq 1.0
+Lattice spacing in x,y,z = 1 1 1
+region box block 0 50 0 50 -0.5 0.5
+create_box 1 box
+Created orthogonal box = (0 0 -0.5) to (50 50 0.5)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 2500 atoms
+  using lattice units in orthogonal box = (0 0 -0.5) to (50 50 0.5)
+  create_atoms CPU = 0.000 seconds
+
+# Define Potts model parameters
+variable T equal 1.0
+variable sweeps equal 10
+
+# Define neighbor list with 8 neighbors
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Pair style and coefficients for Potts model with strain coupling
+# Assuming a custom pair style "potts/strain" is available
+pair_style potts/strain 8
+ERROR: Unrecognized pair style 'potts/strain' (../force.cpp:275)
+Last command: pair_style potts/strain 8

@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for granular flow through a funnel
+
+units si
+atom_style sphere
+dimension 3
+boundary p p f
+
+# Define the simulation box
+region simbox block -5 5 -5 5 0 10 units box
+create_box 1 simbox
+Created orthogonal box = (-5 -5 0) to (5 5 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define the funnel geometry
+region funnel_cone cone z 0 0 0 2 0 5 units box open
+ERROR: Illegal region open command: missing argument(s) (../region.cpp:371)
+Last command: region funnel_cone cone z 0 0 0 2 0 5 units box open

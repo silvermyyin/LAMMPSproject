@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for constant potential electrodes with ramping potential difference
+
+units           metal
+dimension       3
+boundary        p p f
+atom_style      charge
+kspace_style    pppm/electrode 1.0e-4
+ERROR: Unrecognized kspace style 'pppm/electrode' is part of the ELECTRODE package which is not enabled in this LAMMPS binary. (../force.cpp:660)
+Last command: kspace_style    pppm/electrode 1.0e-4

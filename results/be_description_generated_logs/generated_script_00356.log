@@ -1,0 +1,30 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a Lennard-Jones fluid in a simple cubic lattice
+
+units lj
+atom_style atomic
+boundary p p p
+
+# Create a simple cubic lattice
+lattice sc 0.5
+Lattice spacing in x,y,z = 1.259921 1.259921 1.259921
+region box block 0 8 0 8 0 8
+create_box 1 box
+Created orthogonal box = (0 0 0) to (10.079368 10.079368 10.079368)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 512 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10.079368 10.079368 10.079368)
+  create_atoms CPU = 0.000 seconds
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Apply tail corrections
+pair_modify tail yes
+
+# Set initial velocities
+velocity all create 1.0 12345 mom yes rot yes dist gaussian
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 1.0 12345 mom yes rot yes dist gaussian

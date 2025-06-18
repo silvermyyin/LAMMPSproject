@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Single-Point Energy Calculations of UO2 Clusters
+
+units metal
+atom_style full
+
+# Loop over cluster sizes
+variable sizes loop 3
+label loop_start
+
+# Clear previous simulation data
+clear
+
+# Read data file for the current cluster size
+variable filename equal "cluster_${sizes}.data"
+read_data ${filename}
+ERROR: Variable filename: Variable evaluation before simulation box is defined (../variable.cpp:2361)
+Last command: read_data ${filename}

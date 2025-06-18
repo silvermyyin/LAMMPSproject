@@ -1,0 +1,41 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D Lennard-Jones Melt Simulation using KIM API
+
+units           lj
+atom_style      atomic
+boundary        p p p
+
+# Define variables for simulation box dimensions
+variable        x equal 20
+variable        y equal 20
+variable        z equal 20
+
+# Create an FCC lattice of argon atoms
+lattice         fcc 4.4300
+Lattice spacing in x,y,z = 0.9665376 0.9665376 0.9665376
+region          box block 0 ${x} 0 ${y} 0 ${z}
+region          box block 0 20 0 ${y} 0 ${z}
+region          box block 0 20 0 20 0 ${z}
+region          box block 0 20 0 20 0 20
+create_box      1 box
+Created orthogonal box = (0 0 0) to (19.330752 19.330752 19.330752)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 32000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (19.330752 19.330752 19.330752)
+  create_atoms CPU = 0.001 seconds
+
+# Define mass for Argon atoms
+mass            1 39.95
+
+# Initialize velocities
+velocity        all create 200.0 12345
+
+# KIM API - Define Lennard-Jones potential for Argon
+kim_init        args LennardJones_Ar_P_Morse
+
+WARNING: 'kim_init' has been renamed to 'kim init'. Please update your input.
+
+kim init args LennardJones_Ar_P_Morse
+ERROR: Unknown command: kim init args LennardJones_Ar_P_Morse (../input.cpp:408)
+Last command: kim init args LennardJones_Ar_P_Morse

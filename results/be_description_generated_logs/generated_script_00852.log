@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D droplet oscillation simulation using many-body DPD
+
+units lj
+dimension 3
+boundary p p p
+
+atom_style dpd
+
+# Create simulation box
+region simbox block -25 25 -10 10 -10 10
+create_box 1 simbox
+Created orthogonal box = (-25 -10 -10) to (25 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Create droplet region using FCC lattice
+lattice fcc 0.85
+Lattice spacing in x,y,z = 1.6757672 1.6757672 1.6757672
+region droplet sphere 0 0 0 8
+create_atoms 1 region droplet
+Created 6721 atoms
+  using lattice units in orthogonal box = (-25 -10 -10) to (25 10 10)
+  create_atoms CPU = 0.001 seconds
+
+# Define pair styles and coefficients
+pair_style hybrid/overlay mdpd/rhosum 1.0 1.0 25.0 1.0 1.0 mdpd 1.0 1.0 25.0
+ERROR: Illegal number of setting arguments for pair_style mdpd/rhosum (../pair_mdpd_rhosum.cpp:184)
+Last command: pair_style hybrid/overlay mdpd/rhosum 1.0 1.0 25.0 1.0 1.0 mdpd 1.0 1.0 25.0

@@ -1,0 +1,15 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Lithium Dendritic System Simulation
+
+# Initialize simulation
+units metal
+atom_style electron
+
+# Define variables
+variable sname string "lithium_dendritic_system.data"
+
+# Read in data
+read_data ${sname}
+read_data lithium_dendritic_system.data
+ERROR: Cannot open file lithium_dendritic_system.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data ${sname}

@@ -1,0 +1,30 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating amorphous carbon using ReaxFF
+
+units real
+atom_style charge
+boundary p p p
+
+# Create a simulation box
+region simbox block 0 70 0 70 0 70 units box
+create_box 1 simbox
+Created orthogonal box = (0 0 0) to (70 70 70)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 random 1372 12345 simbox
+Created 1372 atoms
+  using lattice units in orthogonal box = (0 0 0) to (70 70 70)
+  create_atoms CPU = 0.000 seconds
+mass 1 12.01  # carbon atom mass
+
+# Set charge for carbon atoms
+set type 1 charge 0.0
+Setting atom values ...
+  1372 settings made for charge
+
+# Define force field
+pair_style reaxff NULL
+pair_coeff * * ffield.reax C C C C
+ERROR: Incorrect args for pair coefficients (../pair_reaxff.cpp:280)
+Last command: pair_coeff * * ffield.reax C C C C

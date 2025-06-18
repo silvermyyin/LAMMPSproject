@@ -1,0 +1,30 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for deposition of dimer molecules onto a substrate
+
+units           lj
+dimension       3
+boundary        p p f
+atom_style      molecular
+
+# Create simulation box
+region          simbox block 0 50 0 50 0 50
+create_box      3 simbox
+Created orthogonal box = (0 0 0) to (50 50 50)
+  1 by 1 by 1 MPI processor grid
+
+# Define substrate region
+region          substrate block 0 50 0 50 0 5
+create_atoms    1 random 500 12345 substrate
+Created 500 atoms
+  using lattice units in orthogonal box = (0 0 0) to (50 50 50)
+  create_atoms CPU = 0.000 seconds
+group           substrate region substrate
+500 atoms in group substrate
+set             group substrate type 1
+Setting atom values ...
+  500 settings made for type
+
+# Define deposition region
+region          depo slab 0 50 0 50 45 50
+ERROR: Unrecognized region style 'slab' (../domain.cpp:1987)
+Last command: region          depo slab 0 50 0 50 45 50

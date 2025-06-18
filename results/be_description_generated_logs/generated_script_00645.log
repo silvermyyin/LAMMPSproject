@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a carbon-hydrogen system using DRIP and REBO potentials
+
+units metal
+atom_style molecular
+
+# Read atomic configuration from a data file
+read_data data.CH
+ERROR: Cannot open file data.CH: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.CH

@@ -1,0 +1,20 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D Lennard-Jones melt with varying densities
+
+units lj
+atom_style atomic
+
+# Loop over different densities
+variable density loop 3
+label loop_start
+
+if "${density} == 1" then "variable rho equal 0.7"
+variable rho equal 0.7
+if "${density} == 2" then "variable rho equal 0.8"
+if "${density} == 3" then "variable rho equal 0.9"
+
+# Read corresponding data file for current density
+read_data data.lj_rho${rho}
+read_data data.lj_rho0.7
+ERROR: Cannot open file data.lj_rho0.7: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.lj_rho${rho}

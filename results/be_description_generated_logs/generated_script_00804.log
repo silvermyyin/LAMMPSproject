@@ -1,0 +1,20 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D simulation of a circular cluster of particles
+
+# Initialize simulation in LJ units
+units lj
+dimension 2
+atom_style atomic
+
+# Define the simulation box
+region box block 0 50 0 50 -0.1 0.1
+create_box 1 box
+Created orthogonal box = (0 0 -0.1) to (50 50 0.1)
+  1 by 1 by 1 MPI processor grid
+
+# Define a circular region and create atoms on a hexagonal lattice
+lattice hex 0.7
+Lattice spacing in x,y,z = 1.2843567 2.2245711 1.2843567
+region circle circle 25 25 10
+ERROR: Unrecognized region style 'circle' (../domain.cpp:1987)
+Last command: region circle circle 25 25 10

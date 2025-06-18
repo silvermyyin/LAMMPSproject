@@ -1,0 +1,68 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D Lennard-Jones melt simulation
+
+units lj
+atom_style atomic
+
+# Create simulation box and atoms
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  create_atoms CPU = 0.000 seconds
+
+# Set mass and initialize velocities
+mass 1 1.0
+velocity all create 1.44 87287 loop geom
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Neighbor list settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define communication and balance settings
+comm_style tiled
+balance 1.0 rcb
+Balancing ...
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 12 12 12
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+ rebalancing time: 0.001 seconds
+  iteration count = 0
+  initial/final maximal load/proc = 4000 4000
+  initial/final imbalance factor  = 1 1
+
+# Define integrator
+fix 1 all nve
+
+# Compute velocity averages over a grid
+fix 2 all ave/spatial 1 10 100 z lower 0.1 vz units reduced file vel.profile
+
+Fix styles 'ave/spatial' and 'ave/spatial/sphere' have been replaced
+by the more general fix ave/chunk and compute chunk/atom commands.
+All ave/spatial and ave/spatial/sphere functionality is available in these
+new commands. These ave/spatial keywords & options are part of fix ave/chunk:
+  Nevery, Nrepeat, Nfreq, input values, norm, ave, file, overwrite, title123
+These ave/spatial keywords & options for binning are part of compute chunk/atom:
+  dim, origin, delta, region, bound, discard, units
+
+ERROR: This fix style is no longer available (../fix_deprecated.cpp:64)
+Last command: fix 2 all ave/spatial 1 10 100 z lower 0.1 vz units reduced file vel.profile

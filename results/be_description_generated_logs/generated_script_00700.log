@@ -1,0 +1,32 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D granular flow simulation
+
+units si
+dimension 3
+atom_style sphere
+
+boundary fm fm fm
+
+# Define simulation domain
+region box block 0 10 0 10 0 10 units box
+create_box 1 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Material properties for granular particles
+variable Kn equal 10000.0
+variable Kt equal 2000.0
+variable gamma_n equal 50.0
+variable gamma_t equal 10.0
+variable xmu equal 0.5
+
+# Define pair style and coefficients
+pair_style granular hooke/history ${Kn} ${Kt} ${gamma_n} ${gamma_t} ${xmu}
+pair_style granular hooke/history 10000 ${Kt} ${gamma_n} ${gamma_t} ${xmu}
+pair_style granular hooke/history 10000 2000 ${gamma_n} ${gamma_t} ${xmu}
+pair_style granular hooke/history 10000 2000 50 ${gamma_t} ${xmu}
+pair_style granular hooke/history 10000 2000 50 10 ${xmu}
+pair_style granular hooke/history 10000 2000 50 10 0.5
+pair_coeff * *
+ERROR: Incorrect args for pair coefficients (../pair_granular.cpp:332)
+Last command: pair_coeff * *

@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Copper using SNAP Neural Network Model
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Initialize simulation box with FCC lattice of Copper
+lattice         fcc 3.615
+Lattice spacing in x,y,z = 3.615 3.615 3.615
+region          box block 0 4 0 4 0 4
+create_box      1 box
+Created orthogonal box = (0 0 0) to (14.46 14.46 14.46)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 256 atoms
+  using lattice units in orthogonal box = (0 0 0) to (14.46 14.46 14.46)
+  create_atoms CPU = 0.000 seconds
+
+# Specify the mass of Copper
+mass            1 63.546
+
+# Machine Learning Interatomic Potential using SNAP
+pair_style      mlip snap
+ERROR: Unrecognized pair style 'mlip' (../force.cpp:275)
+Last command: pair_style      mlip snap

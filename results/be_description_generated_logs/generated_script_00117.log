@@ -1,0 +1,17 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 2D Hexagonal Lattice using Lennard-Jones Potential
+
+# Initialize simulation
+clear
+units lj
+dimension 2
+boundary p p p
+atom_style atomic
+
+# Define hexagonal lattice
+# Hexagonal lattice vectors for 2D:
+# a1 = (1, 0)
+# a2 = (0.5, sqrt(3)/2)
+lattice custom 1.0     a1 1.0 0.0     a2 0.5 0.8660254037844386     basis  0.0 0.0
+ERROR: Expected floating point parameter instead of 'a2' in input script or data file (../lattice.cpp:192)
+Last command: lattice custom 1.0     a1 1.0 0.0     a2 0.5 0.8660254037844386     basis  0.0 0.0

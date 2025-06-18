@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a charged particle system with long-range electrostatics
+
+units lj
+atom_style charge
+
+# Read the initial configuration from the data file
+read_data data.cloud_wall
+ERROR: Cannot open file data.cloud_wall: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.cloud_wall

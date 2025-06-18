@@ -1,0 +1,43 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D Lennard-Jones melt simulation with MDI
+
+units lj
+atom_style atomic
+
+# Variables for box dimensions
+variable x equal 5
+variable y equal 5
+variable z equal 5
+
+# Create simulation box
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region mybox block 0 ${x} 0 ${y} 0 ${z}
+region mybox block 0 5 0 ${y} 0 ${z}
+region mybox block 0 5 0 5 0 ${z}
+region mybox block 0 5 0 5 0 5
+create_box 1 mybox
+Created orthogonal box = (0 0 0) to (8.397981 8.397981 8.397981)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 500 atoms
+  using lattice units in orthogonal box = (0 0 0) to (8.397981 8.397981 8.397981)
+  create_atoms CPU = 0.000 seconds
+
+mass 1 1.0
+
+# Assign initial velocities
+velocity all create 1.44 87287 dist gaussian
+
+# Define neighbor list
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Define potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# MDI setup
+fix qm all mdi
+ERROR: Unrecognized fix style 'mdi' (../modify.cpp:924)
+Last command: fix qm all mdi

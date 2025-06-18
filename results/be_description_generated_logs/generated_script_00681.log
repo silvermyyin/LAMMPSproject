@@ -1,0 +1,33 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for validation of descriptor gradients using SNAP in a BCC metallic system
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create a BCC lattice with lattice parameter 2.0
+lattice         bcc 2.0
+Lattice spacing in x,y,z = 2 2 2
+region          box block 0 10 0 10 0 10
+create_box      2 box
+Created orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 2000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (20 20 20)
+  create_atoms CPU = 0.000 seconds
+
+# Define masses for two atom types
+mass            1 55.845  # Example: Iron
+mass            2 58.933  # Example: Cobalt
+
+# Slight random displacement for thermal vibrations
+displace_atoms  all random 0.01 0.01 0.01 12345
+Displacing atoms ...
+
+# Pair style and potential
+pair_style      hybrid/overlay zero 10.0 zbl 0.0 2.0
+ERROR: Illegal pair_style command (../pair_zbl.cpp:189)
+Last command: pair_style      hybrid/overlay zero 10.0 zbl 0.0 2.0

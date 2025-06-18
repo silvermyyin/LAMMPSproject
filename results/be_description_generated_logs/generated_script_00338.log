@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Comparing Hardy and Cauchy-Born Metrics
+
+units real
+atom_style atomic
+boundary p p p
+
+# Initialize simulation box
+lattice fcc 5.256
+Lattice spacing in x,y,z = 5.256 5.256 5.256
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (52.56 52.56 52.56)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (52.56 52.56 52.56)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+mass 1 39.95
+pair_style lj/cut 13.5
+pair_coeff 1 1 0.238 3.405  # Argon parameters: epsilon = 0.238 kcal/mol, sigma = 3.405 Å
+
+# Initialize AtC package
+fix atc all atc control 1 NULL NULL NULL
+ERROR: Illegal fix atc command (../fix_atc.cpp:56)
+Last command: fix atc all atc control 1 NULL NULL NULL

@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for QM/MM simulation of a water system using PySCF
+
+units real
+atom_style full
+boundary p p p
+
+# Define atom masses
+mass 1 15.9994  # Oxygen
+ERROR: Mass command before simulation box is defined (../input.cpp:1628)
+Last command: mass 1 15.9994  # Oxygen

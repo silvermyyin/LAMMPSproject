@@ -1,0 +1,37 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Lennard-Jones Melt Simulation
+
+units lj
+atom_style atomic
+
+# Create simulation box and atoms
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  create_atoms CPU = 0.000 seconds
+
+# Define interatomic potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set mass and initial velocities
+mass 1 1.0
+velocity all create 3.0 4928459 dist gaussian
+
+# Define neighbor list
+neighbor 0.3 bin
+neigh_modify every 20 delay 0 check no
+
+# Fix NVE for time integration
+fix 1 all nve
+
+# Python callback functions
+variable step python "print(f'Step: {self.lmp.get_thermo(\"step\")}', flush=True)"
+ERROR: Input line quote not followed by white-space (../input.cpp:555)
+Last command: variable step python "print(f'Step: {self.lmp.get_thermo(\"step\")}', flush=True)"

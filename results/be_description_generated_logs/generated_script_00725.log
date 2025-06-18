@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for overdamped dynamics of non-interacting ellipsoidal particles with dipole moments
+
+units lj
+atom_style ellipsoid
+
+# Define the simulation box
+region box block -8 8 -8 8 -8 8
+create_box 1 box
+Created orthogonal box = (-8 -8 -8) to (8 8 8)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms on a simple cubic lattice
+lattice sc 1.0
+Lattice spacing in x,y,z = 1 1 1
+create_atoms 1 box
+Created 4096 atoms
+  using lattice units in orthogonal box = (-8 -8 -8) to (8 8 8)
+  create_atoms CPU = 0.000 seconds
+set type 1 mass 1.0
+Setting atom values ...
+  4096 settings made for mass
+
+# Assign random dipoles and quaternions
+set type 1 dipole/random 12345
+Setting atom values ...
+ERROR: Illegal set dipole/random command: missing argument(s) (../set.cpp:254)
+Last command: set type 1 dipole/random 12345

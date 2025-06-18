@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D fluid flow through a pipe using Lennard-Jones interactions
+
+units lj
+dimension 2
+boundary p p f
+
+# Define lattice for wall atoms
+lattice sq2 1.0
+Lattice spacing in x,y,z = 1.4142136 1.4142136 1.4142136
+region domain block 0 50 0 20 -0.5 0.5
+create_box 3 domain
+ERROR: Cannot run 2d simulation with nonperiodic Z dimension (../create_box.cpp:43)
+Last command: create_box 3 domain

@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Argon Atoms with Two-Temperature Model
+
+units           metal
+dimension       3
+boundary        p s s
+atom_style      atomic
+
+# Create FCC Lattice and Define Region
+lattice         fcc 5.405
+Lattice spacing in x,y,z = 5.405 5.405 5.405
+region          simbox block 0 10 0 10 0 10
+create_box      1 simbox
+Created orthogonal box = (0 0 0) to (54.05 54.05 54.05)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4410 atoms
+  using lattice units in orthogonal box = (0 -0.005405 -0.005405) to (54.05 54.055405 54.055405)
+  create_atoms CPU = 0.000 seconds
+
+# Lennard-Jones Potential Parameters for Argon
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0103 3.4
+
+# Initialize Velocities
+velocity        all create 40.0 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity        all create 40.0 12345

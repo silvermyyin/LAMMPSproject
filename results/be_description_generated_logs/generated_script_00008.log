@@ -1,0 +1,21 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D Lennard-Jones Melt Simulation
+
+# Variables for scaling the simulation box
+variable x equal 1
+variable y equal 1
+variable z equal 1
+
+# Initialize simulation in LJ units
+units lj
+atom_style atomic
+
+# Create a simulation box with dimensions scaled by input variables
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 ${x}*20 0 ${y}*20 0 ${z}*20
+region box block 0 1*20 0 ${y}*20 0 ${z}*20
+region box block 0 1*20 0 1*20 0 ${z}*20
+region box block 0 1*20 0 1*20 0 1*20
+ERROR: Expected floating point parameter instead of '1*20' in input script or data file (../region_block.cpp:74)
+Last command: region box block 0 ${x}*20 0 ${y}*20 0 ${z}*20

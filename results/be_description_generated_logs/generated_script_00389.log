@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for molecular dynamics simulation of InP crystal using SNAP
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Create FCC lattice with diamond structure
+lattice         fcc 5.83 orient x 1 0 0 orient y 0 1 0 orient z 0 0 1
+Lattice spacing in x,y,z = 5.83 5.83 5.83
+region          box block 0 4 0 4 0 4
+create_box      2 box
+Created orthogonal box = (0 0 0) to (23.32 23.32 23.32)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 256 atoms
+  using lattice units in orthogonal box = (0 0 0) to (23.32 23.32 23.32)
+  create_atoms CPU = 0.000 seconds
+
+# Define masses for In and P
+mass            1 114.818    # Indium
+mass            2 30.973762  # Phosphorus
+
+# Read SNAP potential parameters
+pair_style      snap
+pair_coeff      * * InP_JCPA2020.snap In P
+ERROR: Incorrect args for pair coefficients (../pair_snap.cpp:386)
+Last command: pair_coeff      * * InP_JCPA2020.snap In P

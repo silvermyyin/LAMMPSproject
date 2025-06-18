@@ -1,0 +1,10 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for rigid body dynamics of unconnected clumps
+
+units lj
+atom_style atomic
+
+# Read initial configuration from data file
+read_data rigid_clumps.data
+ERROR: Cannot open file rigid_clumps.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data rigid_clumps.data

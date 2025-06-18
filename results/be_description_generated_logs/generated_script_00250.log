@@ -1,0 +1,28 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Simulating a Sigma5(310) Grain Boundary in a Metallic FCC System
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define lattice and regions
+lattice         fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region          whole block 0 50 0 50 0 50 units box
+create_box      2 whole
+Created orthogonal box = (0 0 0) to (50 50 50)
+  1 by 1 by 1 MPI processor grid
+
+# Create two regions for the grain boundary
+region          lower block 0 50 0 25 0 50 units box
+region          upper block 0 50 25 50 0 50 units box
+
+# Create atoms in the lower region with one orientation
+create_atoms    1 region lower
+Created 4063 atoms
+  using lattice units in orthogonal box = (0 0 0) to (50 50 50)
+  create_atoms CPU = 0.000 seconds
+orient          region lower x 1 0 0 y 0 1 0 z 0 0 1
+ERROR: Unknown command: orient          region lower x 1 0 0 y 0 1 0 z 0 0 1 (../input.cpp:314)
+Last command: orient          region lower x 1 0 0 y 0 1 0 z 0 0 1

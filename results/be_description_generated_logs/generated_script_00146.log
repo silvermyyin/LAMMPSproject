@@ -1,0 +1,22 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating magnetic properties of fcc cobalt
+
+units           metal
+atom_style      spin
+
+# Define the lattice and simulation box
+lattice         hcp 2.507  # approximate lattice constant for Co in angstroms
+Lattice spacing in x,y,z = 2.507 4.3422514 4.0939139
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (25.07 43.422514 40.939139)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (25.07 43.422514 40.939139)
+  create_atoms CPU = 0.000 seconds
+
+# Set up spin lattice model
+spin            1 1 1  # Initialize spins with random orientations
+ERROR: Unknown command: spin            1 1 1  # Initialize spins with random orientations (../input.cpp:314)
+Last command: spin            1 1 1  # Initialize spins with random orientations

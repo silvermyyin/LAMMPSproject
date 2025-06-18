@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Toluene with Drude Polarizability
+
+units real
+atom_style full
+boundary p p p
+
+# Create a box and read data
+read_data toluene.data
+ERROR: Cannot open file toluene.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data toluene.data

@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D NaCl system with long-range Coulombic interactions
+
+units           lj
+dimension       2
+atom_style      charge
+
+# Read initial configuration from data file
+read_data       nacl.data
+ERROR: Cannot open file nacl.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data       nacl.data

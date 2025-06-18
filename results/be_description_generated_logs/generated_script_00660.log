@@ -1,0 +1,16 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for methane (CH4) simulation using eFF
+
+# Define variables
+variable sname string "CH4fc.ang"
+
+# Initialize simulation
+units         metal
+atom_style    electron
+boundary      p p p
+
+# Read data file
+read_data     ${sname}
+read_data     CH4fc.ang
+ERROR: Cannot open file CH4fc.ang: No such file or directory (../read_data.cpp:367)
+Last command: read_data     ${sname}

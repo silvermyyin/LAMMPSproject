@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for surface deposition of dimer molecules
+
+units lj
+atom_style molecular
+boundary p p f
+
+# Initialize simulation box
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region simbox block 0 20 0 20 0 30
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (33.591924 33.591924 50.387886)
+  1 by 1 by 1 MPI processor grid
+
+# Substrate creation
+region substrate block 0 20 0 20 0 2
+create_atoms 1 region substrate
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (33.591924 33.591924 50.387886)
+  create_atoms CPU = 0.001 seconds
+
+# LJ potential settings
+pair_style lj/cut 2.5
+pair_coeff * * 1.0 1.0 2.5
+
+# Bond settings
+bond_style harmonic
+bond_coeff 1 5.0 1.0
+ERROR: Numeric index 1 is out of bounds (1-0) (../bond_harmonic.cpp:129)
+Last command: bond_coeff 1 5.0 1.0

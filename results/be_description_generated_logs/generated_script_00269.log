@@ -1,0 +1,15 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating a rigid spherical particle in a pressure-driven flow
+# using lattice-Boltzmann methods
+
+units micro
+dimension 3
+boundary p p f
+
+atom_style sphere
+atom_modify map array
+
+# Read initial particle configuration
+read_data particle_data.txt
+ERROR: Cannot open file particle_data.txt: No such file or directory (../read_data.cpp:367)
+Last command: read_data particle_data.txt

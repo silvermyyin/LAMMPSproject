@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a molecular simulation of disilane (Si2H6) using eFF model
+
+units electron
+atom_style electron
+boundary f f f
+
+# Read the initial configuration from a data file
+read_data data.Si2H6
+ERROR: Cannot open file data.Si2H6: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.Si2H6

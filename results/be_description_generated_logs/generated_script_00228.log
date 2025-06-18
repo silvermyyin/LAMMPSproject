@@ -1,0 +1,35 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for AtC thermal coupling simulation
+# Heat conduction in MD/FEM regions
+
+units           metal
+dimension       3
+boundary        f p p
+atom_style      atomic
+
+# Create FCC lattice and region
+lattice         fcc 3.615
+Lattice spacing in x,y,z = 3.615 3.615 3.615
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (36.15 36.15 36.15)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (36.15 36.15 36.15)
+  create_atoms CPU = 0.000 seconds
+
+# Define potential
+pair_style      lj/cut 13.5
+pair_coeff      1 1 0.0103 2.5 13.5
+
+# Define groups
+group           internal region box
+4000 atoms in group internal
+group           ghost subtract all internal
+0 atoms in group ghost
+
+# Initialize velocities
+velocity        all create 20.0 87287 loop geom
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity        all create 20.0 87287 loop geom

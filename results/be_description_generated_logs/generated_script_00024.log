@@ -1,0 +1,33 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Overdamped Dynamics of Dipole-Attached Sphere in 2D
+
+units lj
+dimension 2
+boundary p p p
+
+atom_style hybrid sphere dipole
+WARNING: Atom style hybrid defines both, per-type and per-atom masses; both must be set, but only per-atom masses will be used (../atom_vec_hybrid.cpp:132)
+
+lattice sq 0.01
+Lattice spacing in x,y,z = 10 10 10
+region simbox block -30 30 -30 30 -0.1 0.1
+create_box 1 simbox
+Created orthogonal box = (-300 -300 -1) to (300 300 1)
+  1 by 1 by 1 MPI processor grid
+
+create_atoms 1 random 100 12345 simbox
+Created 100 atoms
+  using lattice units in orthogonal box = (-300 -300 -1) to (300 300 1)
+  create_atoms CPU = 0.000 seconds
+
+# Set initial properties
+set group all diameter 1.0
+Setting atom values ...
+  100 settings made for diameter
+set group all mass 1.0
+Setting atom values ...
+  100 settings made for mass
+set group all dipole/random 1.0 12345
+Setting atom values ...
+ERROR: Expected integer parameter instead of '1.0' in input script or data file (../set.cpp:255)
+Last command: set group all dipole/random 1.0 12345

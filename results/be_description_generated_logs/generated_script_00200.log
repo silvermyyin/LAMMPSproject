@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 3D MD Simulation with Manifold Constraint
+
+# Initialize simulation
+units lj
+atom_style atomic
+boundary p p p
+
+# Read atom positions and other setup parameters from external file
+read_data data.setup
+ERROR: Cannot open file data.setup: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.setup

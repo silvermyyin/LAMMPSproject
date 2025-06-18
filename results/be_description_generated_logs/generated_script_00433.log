@@ -1,0 +1,14 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for electron system simulation
+
+units electron
+atom_style electron
+
+# Variables
+variable sname string "data.electron"
+
+# Initialize system
+read_data ${sname}
+read_data data.electron
+ERROR: Cannot open file data.electron: No such file or directory (../read_data.cpp:367)
+Last command: read_data ${sname}

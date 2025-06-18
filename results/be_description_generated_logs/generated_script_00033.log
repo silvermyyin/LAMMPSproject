@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for BCC lattice with ZBL potential and bispectrum calculation
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Create BCC lattice
+lattice bcc 2.0
+Lattice spacing in x,y,z = 2 2 2
+region box block 0 10 0 10 0 10
+create_box 2 box
+Created orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+create_atoms 2 box
+Created 2000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (20 20 20)
+  create_atoms CPU = 0.000 seconds
+
+# Slightly displace atoms to introduce randomness
+displace_atoms all random 0.01 0.01 0.01 12345
+Displacing atoms ...
+
+# Define ZBL potential with inner and outer cutoffs
+pair_style zbl 0.5 3.0
+pair_coeff * * 2.0 2.0
+
+# Set up compute for bispectrum components using SNA
+compute sna all sna/atom 3 2.0 4 0.99363
+ERROR: Illegal compute sna/atom command (../compute_sna_atom.cpp:47)
+Last command: compute sna all sna/atom 3 2.0 4 0.99363

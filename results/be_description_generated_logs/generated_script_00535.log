@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating Al2O3 and calculating elastic constants
+
+units metal
+atom_style charge
+
+# Define the lattice structure
+variable a equal 4.758  # Lattice constant for Al2O3 in Angstroms
+lattice custom ${a} a1 0.5 0.5 0.0 a2 0.5 0.0 0.5 a3 0.0 0.5 0.5     basis 0.0 0.0 0.0 basis 0.5 0.5 0.5
+lattice custom 4.758 a1 0.5 0.5 0.0 a2 0.5 0.0 0.5 a3 0.0 0.5 0.5     basis 0.0 0.0 0.0 basis 0.5 0.5 0.5
+Lattice spacing in x,y,z = 4.758 4.758 4.758
+
+region box block 0 10 0 10 0 10 units lattice
+create_box 2 box
+Created orthogonal box = (0 0 0) to (47.58 47.58 47.58)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms for Al2O3
+create_atoms 1 box
+Created 8000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (47.58 47.58 47.58)
+  create_atoms CPU = 0.001 seconds
+
+# Masses
+mass 1 26.9815  # Al atomic mass
+mass 2 15.999   # O atomic mass
+
+# Define potential
+pair_style smtbq
+ERROR: Unrecognized pair style 'smtbq' is part of the SMTBQ package which is not enabled in this LAMMPS binary. (../force.cpp:275)
+Last command: pair_style smtbq

@@ -1,0 +1,32 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D molecular dynamics simulation using LJ units
+
+units lj
+atom_style atomic
+
+# Create simulation box and atoms
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 random 100 12345 box
+Created 100 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# LJ potential parameters
+mass 1 1.0
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Initial velocities corresponding to temperature of 0.8
+velocity all create 0.8 12345
+
+# NPT ensemble to maintain constant temperature and pressure
+fix 1 all npt temp 0.8 0.8 0.1 z 1.0 1.0 1.0
+
+# Apply harmonic bias field to investigate density fluctuations
+variable q equal 2.0*PI/10.0
+fix 2 all rhok 0.1 1.0 v_q NULL NULL
+ERROR: Expected integer parameter instead of '0.1' in input script or data file (../fix_rhok.cpp:68)
+Last command: fix 2 all rhok 0.1 1.0 v_q NULL NULL

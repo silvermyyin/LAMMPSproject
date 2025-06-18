@@ -1,0 +1,35 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D DPD simulation of a binary fluid mixture
+
+# Initialize simulation in reduced Lennard-Jones units
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create a face-centered cubic lattice and define simulation box
+lattice fcc 5.0
+Lattice spacing in x,y,z = 0.92831777 0.92831777 0.92831777
+region box block 0 5 0 5 0 5
+create_box 2 box
+Created orthogonal box = (0 0 0) to (4.6415888 4.6415888 4.6415888)
+  1 by 1 by 1 MPI processor grid
+
+# Define masses for two types of particles
+mass 1 1.0
+mass 2 2.0
+
+# Create atoms for the two particle types
+create_atoms 1 box
+Created 500 atoms
+  using lattice units in orthogonal box = (0 0 0) to (4.6415888 4.6415888 4.6415888)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 box
+Created 500 atoms
+  using lattice units in orthogonal box = (0 0 0) to (4.6415888 4.6415888 4.6415888)
+  create_atoms CPU = 0.000 seconds
+
+# Define DPD/ext pair style and coefficients
+pair_style dpd/ext 1.0 1.0
+ERROR: Illegal pair_style command (../pair_dpd_ext.cpp:246)
+Last command: pair_style dpd/ext 1.0 1.0

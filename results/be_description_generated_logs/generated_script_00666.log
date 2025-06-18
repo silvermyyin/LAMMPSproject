@@ -1,0 +1,31 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 1477 K benchmark study on elastic properties
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define custom lattice with triclinic unit cell
+variable        a equal 5.457
+lattice         custom ${a} a1 1.0 0.0 0.0 a2 0.5 0.86602540378 0.0 a3 0.5 0.28867513459 0.81649658093                 basis 0.0 0.0 0.0 basis 0.5 0.5 0.5 basis 0.25 0.25 0.25
+lattice         custom 5.457 a1 1.0 0.0 0.0 a2 0.5 0.86602540378 0.0 a3 0.5 0.28867513459 0.81649658093                 basis 0.0 0.0 0.0 basis 0.5 0.5 0.5 basis 0.25 0.25 0.25
+Lattice spacing in x,y,z = 10.914 6.3012008 4.4556218
+
+region          box prism 0 1 0 1 0 1 0 0 0 units lattice
+create_box      1 box
+Created triclinic box = (0 0 0) to (10.914 6.3012008 4.4556218) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 8 atoms
+  using lattice units in triclinic box = (0 0 0) to (10.914 6.3012008 4.4556218) with tilt (0 0 0)
+  create_atoms CPU = 0.000 seconds
+
+# Define potential (example Lennard-Jones, replace with appropriate potential)
+pair_style      lj/cut 10.0
+pair_coeff      * * 1.0 1.0 2.5
+
+# Set initial temperature
+velocity        all create 1477.0 12345 mom yes rot yes dist gaussian
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity        all create 1477.0 12345 mom yes rot yes dist gaussian

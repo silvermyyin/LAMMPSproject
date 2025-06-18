@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Electrostatic Equilibrium in a Diamond Lattice
+
+units metal
+atom_style atomic
+
+# Create simulation box
+boundary f p p
+lattice diamond 1.0
+Lattice spacing in x,y,z = 1 1 1
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Define atoms
+create_atoms 1 box
+Created 8000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+mass 1 12.01
+
+# Define potential
+pair_style none
+
+# Initialize AtC package
+fix myAtC all atc apply
+ERROR: Unknown physics type in ATC (../fix_atc.cpp:471)
+Last command: fix myAtC all atc apply

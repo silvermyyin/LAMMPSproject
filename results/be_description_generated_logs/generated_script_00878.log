@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Cohesive Energy Calculation of Alpha-Titanium using MEAM/SW/spline potential
+
+# Initialization
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define custom HCP lattice for alpha-Titanium
+variable a equal 2.951  # Lattice constant a in Angstroms
+variable c equal 4.683  # Lattice constant c in Angstroms
+lattice         custom ${a}                 a1 1.0 0.0 0.0                 a2 0.5 0.86602540378 0.0                 a3 0.0 0.0 ${c}/${a}                 basis 0.0 0.0 0.0                 basis 0.3333333 0.6666667 0.5
+lattice         custom 2.951                 a1 1.0 0.0 0.0                 a2 0.5 0.86602540378 0.0                 a3 0.0 0.0 ${c}/${a}                 basis 0.0 0.0 0.0                 basis 0.3333333 0.6666667 0.5
+lattice         custom 2.951                 a1 1.0 0.0 0.0                 a2 0.5 0.86602540378 0.0                 a3 0.0 0.0 4.683/${a}                 basis 0.0 0.0 0.0                 basis 0.3333333 0.6666667 0.5
+lattice         custom 2.951                 a1 1.0 0.0 0.0                 a2 0.5 0.86602540378 0.0                 a3 0.0 0.0 4.683/2.951                 basis 0.0 0.0 0.0                 basis 0.3333333 0.6666667 0.5
+ERROR: Expected floating point parameter instead of '4.683/2.951' in input script or data file (../lattice.cpp:211)
+Last command: lattice         custom ${a}                 a1 1.0 0.0 0.0                 a2 0.5 0.86602540378 0.0                 a3 0.0 0.0 ${c}/${a}                 basis 0.0 0.0 0.0                 basis 0.3333333 0.6666667 0.5

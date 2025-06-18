@@ -1,0 +1,34 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating a simple rigid body system with Lennard-Jones interactions
+
+units lj
+atom_style atomic
+
+# Create simulation box
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 random 100 12345 box
+Created 100 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+
+# Define interaction potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Define groups for rigid bodies
+variable nclumps equal 10
+variable natoms_per_clump equal 10
+
+group clump type 1
+100 atoms in group clump
+
+# Assign atoms to clumps
+set group clump property/atom clump (atom-id-1)/v_natoms_per_clump
+Setting atom values ...
+ERROR: Set keyword or custom property property/atom does not exist (../set.cpp:655)
+Last command: set group clump property/atom clump (atom-id-1)/v_natoms_per_clump

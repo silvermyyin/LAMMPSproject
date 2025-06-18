@@ -1,0 +1,29 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Liquid Methane Equilibration with Quantum Thermal Bath
+
+units real
+atom_style charge
+boundary p p p
+
+# Define methane lattice
+lattice custom 5.00 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0         basis 0.0 0.0 0.0 basis 0.25 0.25 0.25 basis 0.75 0.75 0.75
+Lattice spacing in x,y,z = 5 5 5
+
+region box block 0 10 0 10 0 10
+create_box 2 box
+Created orthogonal box = (0 0 0) to (50 50 50)
+  1 by 1 by 1 MPI processor grid
+
+# Define atoms
+create_atoms 1 box basis 1 1 basis 2 2 basis 3 2
+Created 3000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (50 50 50)
+  create_atoms CPU = 0.000 seconds
+
+mass 1 12.01  # Carbon
+mass 2 1.008  # Hydrogen
+
+# ReaxFF force field
+pair_style reaxff
+ERROR: Illegal pair_style command (../pair_reaxff.cpp:188)
+Last command: pair_style reaxff

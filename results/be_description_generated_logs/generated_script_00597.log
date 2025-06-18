@@ -1,0 +1,4 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+Here is a complete LAMMPS input script for the described 2D simulation of ellipsoidal particles using the SRD method:
+ERROR: Unknown command: Here is a complete LAMMPS input script for the described 2D simulation of ellipsoidal particles using the SRD method: (../input.cpp:314)
+Last command: Here is a complete LAMMPS input script for the described 2D simulation of ellipsoidal particles using the SRD method:

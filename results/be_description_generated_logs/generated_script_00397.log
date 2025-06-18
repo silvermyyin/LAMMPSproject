@@ -1,0 +1,8 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Wavepacket Atom Style Simulation
+
+# Initialize simulation
+units         electron
+atom_style    wavepacket
+ERROR: Unrecognized atom style 'wavepacket' is part of the AWPMD package which is not enabled in this LAMMPS binary. (../atom.cpp:745)
+Last command: atom_style    wavepacket

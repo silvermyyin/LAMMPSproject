@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Omega Phase of Titanium
+
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Define custom lattice for omega phase of titanium
+lattice custom 3.232 a1 1.0 0.0 0.0 a2 -0.5 0.86602540378 0.0 a3 0.0 0.0 5.147
+ERROR: No basis atoms in lattice (../lattice.cpp:240)
+Last command: lattice custom 3.232 a1 1.0 0.0 0.0 a2 -0.5 0.86602540378 0.0 a3 0.0 0.0 5.147

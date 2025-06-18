@@ -1,0 +1,27 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Spin-Lattice Simulation of Iron in Bismuth Oxide Matrix
+
+units           metal
+atom_style      spin
+
+# Define the lattice and simulation box
+lattice         sc 3.96
+Lattice spacing in x,y,z = 3.96 3.96 3.96
+region          simbox block 0 10 0 10 0 10 units lattice
+create_box      2 simbox
+Created orthogonal box = (0 0 0) to (39.6 39.6 39.6)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms    1 box basis 1 1
+Created 1000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (39.6 39.6 39.6)
+  create_atoms CPU = 0.000 seconds
+
+# Set mass and magnetic moment
+mass            1 55.845
+set             type 1 spin 1.0
+Setting atom values ...
+WARNING: Set attribute spin is deprecated. Please use spin/atom instead. (../set.cpp:268)
+ERROR: Illegal set spin/atom command: missing argument(s) (../set.cpp:269)
+Last command: set             type 1 spin 1.0

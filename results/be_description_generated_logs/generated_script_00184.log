@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D simulation of liquid front propagation in a glass system
+
+units lj
+dimension 2
+boundary p p p
+atom_style charge
+
+# Read initial configuration
+read_data initial_glass_configuration.data
+ERROR: Cannot open file initial_glass_configuration.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data initial_glass_configuration.data

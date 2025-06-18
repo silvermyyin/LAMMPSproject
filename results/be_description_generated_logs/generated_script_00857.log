@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D periodic system with bonded interactions
+
+# Initialization
+units lj
+dimension 2
+atom_style molecular
+
+# Read the initial configuration from a data file
+read_data initial_config.data
+ERROR: Cannot open file initial_config.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data initial_config.data

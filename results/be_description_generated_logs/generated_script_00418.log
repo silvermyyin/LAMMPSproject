@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 3D Lennard-Jones fluid simulation
+
+units lj
+atom_style atomic
+
+# Define simulation box
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 4 0 4 0 4
+create_box 1 box
+Created orthogonal box = (0 0 0) to (6.7183848 6.7183848 6.7183848)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 256 atoms
+  using lattice units in orthogonal box = (0 0 0) to (6.7183848 6.7183848 6.7183848)
+  create_atoms CPU = 0.000 seconds
+
+# Define the Lennard-Jones potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Set initial velocities
+velocity all create 1.44 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 1.44 12345

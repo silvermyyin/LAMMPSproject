@@ -1,0 +1,126 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating the melting behavior of Ca-O system
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      charge
+
+# Create lattice and define simulation box
+lattice         fcc 4.8
+Lattice spacing in x,y,z = 4.8 4.8 4.8
+region          box block 0 10 0 10 0 10
+create_box      2 box
+Created orthogonal box = (0 0 0) to (48 48 48)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (48 48 48)
+  create_atoms CPU = 0.000 seconds
+
+# Shift oxygen atoms to represent ionic structure
+displace_atoms  all move 0.5 0.5 0.5
+Displacing atoms ...
+
+# Set masses
+mass            1 40.08   # mass of Calcium
+mass            2 16.00   # mass of Oxygen
+
+# Assign charges
+set             type 1 charge 1.2   # Ca2+
+Setting atom values ...
+  4000 settings made for charge
+set             type 2 charge -1.2  # O2-
+Setting atom values ...
+  0 settings made for charge
+
+# Define pair style and interactions
+pair_style      hybrid/overlay coul/long 12.0 pedone 12.0
+pair_coeff      * * coul/long
+pair_coeff      1 2 pedone 0.0 0.0 0.0 0.0 0.0
+
+# KSpace style for long-range interactions
+kspace_style    pppm 1.0e-4
+
+# Initial velocity
+velocity        all create 6000.0 12345 mom yes rot yes dist gaussian
+
+# Define fixes
+fix             1 all nvt temp 3000.0 3000.0 0.1
+
+# Output settings
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+
+# Run the simulation
+timestep        0.002
+run             1000
+PPPM initialization ...
+WARNING: System is not charge neutral, net charge = 4800 (../kspace.cpp:327)
+  using 12-bit tables for long-range coulomb (../kspace.cpp:342)
+  G vector (1/distance) = 0.23018365
+  grid = 24 24 24
+  stencil order = 5
+  estimated absolute RMS force accuracy = 0.0015640168
+  estimated relative force accuracy = 0.00010861496
+  using double precision KISS FFT
+  3d grid and FFT values/proc = 27000 13824
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 14
+  ghost atom cutoff = 14
+  binsize = 7, bins = 7 7 7
+  2 neighbor lists, perpetual/occasional/extra = 2 0 0
+  (1) pair coul/long, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+  (2) pair pedone, perpetual, skip from (1)
+      attributes: half, newton on
+      pair build: skip
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 10.09 | 10.09 | 10.09 Mbytes
+   Step          Temp          PotEng         KinEng         TotEng         Press     
+         0   6000          -39633.355      3101.4679     -36531.887      1125215.7    
+       100   3030.8459     -38112.786      1566.6786     -36546.108      1118148.9    
+       200   3063.9784     -37964.704      1583.8051     -36380.899      1119032.2    
+       300   3032.7158     -37963.438      1567.6451     -36395.793      1118881.6    
+       400   2980.0729     -37978.042      1540.4334     -36437.609      1118546.3    
+       500   3024.0298     -37967.258      1563.1553     -36404.103      1118820.3    
+       600   2965.4659     -37952.049      1532.8829     -36419.166      1118601.2    
+       700   3043.8802     -37976.245      1573.4161     -36402.829      1118873.9    
+       800   2992.1551     -37947.644      1546.6788     -36400.965      1118755.2    
+       900   3018.6274     -37946.427      1560.3627     -36386.064      1118893.8    
+      1000   2991.9636     -37975.656      1546.5799     -36429.076      1118619.6    
+Loop time of 11.4183 on 1 procs for 1000 steps with 4000 atoms
+
+Performance: 15.134 ns/day, 1.586 hours/ns, 87.579 timesteps/s, 350.315 katom-step/s
+98.7% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 7.8675     | 7.8675     | 7.8675     |   0.0 | 68.90
+Kspace  | 2.2781     | 2.2781     | 2.2781     |   0.0 | 19.95
+Neigh   | 1.1679     | 1.1679     | 1.1679     |   0.0 | 10.23
+Comm    | 0.048791   | 0.048791   | 0.048791   |   0.0 |  0.43
+Output  | 0.00013592 | 0.00013592 | 0.00013592 |   0.0 |  0.00
+Modify  | 0.046938   | 0.046938   | 0.046938   |   0.0 |  0.41
+Other   |            | 0.008974   |            |       |  0.08
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          11874 ave       11874 max       11874 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         829245 ave      829245 max      829245 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 829245
+Ave neighs/atom = 207.31125
+Neighbor list builds = 66
+Dangerous builds = 0
+Total wall time: 0:00:11

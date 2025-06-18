@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for a 3D Spin-Lattice Simulation of Cobalt
+
+units metal
+atom_style spin
+boundary p p p
+
+# Initialize simulation from data file
+read_data cobalt_spin_lattice.data
+ERROR: Cannot open file cobalt_spin_lattice.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data cobalt_spin_lattice.data

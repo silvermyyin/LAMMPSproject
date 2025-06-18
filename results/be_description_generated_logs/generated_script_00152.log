@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for methane (CH4) simulation using LATTE
+
+# Initialize simulation
+units metal
+atom_style full
+
+# Read data file
+read_data data.ch4
+ERROR: Cannot open file data.ch4: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.ch4

@@ -1,0 +1,17 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for 2D SPH Fluid Simulation with Shear Forces
+
+units        si
+dimension    2
+atom_style   sphere
+
+# Create a 2D box with dimensions (0, 0) to (0.1, 0.1) meters
+region       simbox block 0 0.1 0 0.1 -0.01 0.01
+create_box   3 simbox
+Created orthogonal box = (0 0 -0.01) to (0.1 0.1 0.01)
+  1 by 1 by 1 MPI processor grid
+
+# Create fluid particles
+region       fluid block 0.02 0.08 0.02 0.08
+ERROR: Illegal region command: missing argument(s) (../region.cpp:305)
+Last command: region       fluid block 0.02 0.08 0.02 0.08

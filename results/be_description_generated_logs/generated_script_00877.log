@@ -1,0 +1,18 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script to calculate average elastic properties of a cubic crystal
+
+# Define variables for elastic constants (example values)
+variable C11 equal 250.0  # GPa
+variable C22 equal 250.0  # GPa
+variable C33 equal 250.0  # GPa
+variable C12 equal 150.0  # GPa
+variable C13 equal 150.0  # GPa
+variable C23 equal 150.0  # GPa
+variable C44 equal 100.0  # GPa
+variable C55 equal 100.0  # GPa
+variable C66 equal 100.0  # GPa
+
+# Compute the average elastic moduli for cubic crystals
+variable C11cubic equal (v_C11 + v_C22 + v_C33) / 3.0
+ERROR: Illegal variable command: expected 3 arguments but found 9 (../variable.cpp:449)
+Last command: variable C11cubic equal (v_C11 + v_C22 + v_C33) / 3.0

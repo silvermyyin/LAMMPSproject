@@ -1,0 +1,15 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D simulation of a square lattice with custom triclinic box
+
+# Initialize simulation
+units lj
+dimension 2
+boundary p p p
+atom_style atomic
+
+# Define lattice and region
+variable a equal 1.0
+lattice custom ${a} a1 1.0 0.0 0.0 a2 0.5 0.86602540378 0.0
+lattice custom 1 a1 1.0 0.0 0.0 a2 0.5 0.86602540378 0.0
+ERROR: No basis atoms in lattice (../lattice.cpp:240)
+Last command: lattice custom ${a} a1 1.0 0.0 0.0 a2 0.5 0.86602540378 0.0

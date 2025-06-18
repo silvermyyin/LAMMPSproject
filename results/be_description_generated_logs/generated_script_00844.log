@@ -1,0 +1,12 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Water Simulation using ReaxFF
+
+# Initialize simulation
+units real
+atom_style charge
+boundary p p p
+
+# Read data file
+read_data data.water
+ERROR: Cannot open file data.water: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.water

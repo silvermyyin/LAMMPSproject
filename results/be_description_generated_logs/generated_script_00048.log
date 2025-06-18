@@ -1,0 +1,36 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for H-Ga system using MEAM potential
+
+units metal
+dimension 3
+boundary p p p
+
+atom_style atomic
+
+# Define the lattice and simulation box
+lattice fcc 4.646
+Lattice spacing in x,y,z = 4.646 4.646 4.646
+region box block 0 3 0 3 0 3
+create_box 2 box
+Created orthogonal box = (0 0 0) to (13.938 13.938 13.938)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms at specific positions
+create_atoms 1 single 0.0 0.0 0.0
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (13.938 13.938 13.938)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 single 2.323 2.323 2.323
+Created 1 atoms
+  using lattice units in orthogonal box = (0 0 0) to (13.938 13.938 13.938)
+  create_atoms CPU = 0.000 seconds
+
+# Assign masses to atom types
+mass 1 1.008  # Hydrogen
+mass 2 69.723 # Gallium
+
+# MEAM potential configuration
+pair_style meam
+pair_coeff * * library.meam Ga H GaH.meam Ga H
+ERROR: Cannot open MEAM library file  (../pair_meam.cpp:213)
+Last command: pair_coeff * * library.meam Ga H GaH.meam Ga H

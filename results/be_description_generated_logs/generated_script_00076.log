@@ -1,0 +1,8 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+units metal
+atom_style atomic
+boundary p p p
+
+read_data data.dpd
+ERROR: Cannot open file data.dpd: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.dpd

@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for polymer chain simulation
+
+units lj
+atom_style full
+
+# Create a 3D periodic box
+boundary p p p
+read_data polymer_data.data
+ERROR: Cannot open file polymer_data.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data polymer_data.data

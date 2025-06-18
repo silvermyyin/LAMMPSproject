@@ -1,0 +1,46 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Kawasaki Dynamics on LJ System
+
+units lj
+atom_style atomic
+
+# Define simulation box
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 10 0 10 0 10
+create_box 2 box
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  1 by 1 by 1 MPI processor grid
+
+# Create atoms
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 16.795962)
+  create_atoms CPU = 0.000 seconds
+mass 1 50.0
+mass 2 50.0
+
+# Define Lennard-Jones potential
+pair_style lj/cut 2.0
+pair_coeff 1 1 1.0 1.0 2.0
+pair_coeff 2 2 1.0 1.0 2.0
+pair_coeff 1 2 1.0 1.0 2.0
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+# Group atoms by type
+group type1 type 1
+4000 atoms in group type1
+group type2 type 2
+0 atoms in group type2
+
+# Output settings
+thermo 100
+thermo_style custom step temp pe ke etotal press vol
+
+# Voronoi tessellation settings
+compute voro all voronoi/atom
+ERROR: Unrecognized compute style 'voronoi/atom' is part of the VORONOI package which is not enabled in this LAMMPS binary. (../modify.cpp:1289)
+Last command: compute voro all voronoi/atom

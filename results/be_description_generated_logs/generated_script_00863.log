@@ -1,0 +1,40 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script: Cylindrical Liquid-Vapor Interface with LJ Potential
+
+# Initialize simulation
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Create simulation box
+lattice fcc 0.8442
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+region box block 0 10 0 10 0 20
+create_box 1 box
+Created orthogonal box = (0 0 0) to (16.795962 16.795962 33.591924)
+  1 by 1 by 1 MPI processor grid
+
+# Define cylindrical region for liquid phase
+region liquid_cylinder cylinder z 5 5 3 0 20
+create_atoms 1 region liquid_cylinder
+Created 2220 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.795962 16.795962 33.591924)
+  create_atoms CPU = 0.000 seconds
+
+# LJ Potential
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Neighbor settings
+neighbor 0.3 bin
+neigh_modify delay 5 every 1
+
+# Define groups
+group liquid region liquid_cylinder
+2220 atoms in group liquid
+
+# Set initial velocities
+velocity all create 0.65 12345
+ERROR: Not all per-type masses are set. Type 1 is missing. (../velocity.cpp:60)
+Last command: velocity all create 0.65 12345

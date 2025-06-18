@@ -1,0 +1,26 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for peridynamic simulation of a cylindrical target impacted by a spherical projectile
+
+units           si
+atom_style      atomic
+dimension       3
+boundary        f f f
+
+# Define lattice and target geometry
+lattice         sc 1.0
+Lattice spacing in x,y,z = 1 1 1
+region          target cylinder z 0.0 0.0 0.005 0.0 0.02 units box
+create_box      2 target
+Created orthogonal box = (-0.005 -0.005 0) to (0.005 0.005 0.02)
+  1 by 1 by 1 MPI processor grid
+create_atoms    1 region target
+Created 1 atoms
+  using lattice units in orthogonal box = (-0.005 -0.005 0) to (0.005 0.005 0.02)
+  create_atoms CPU = 0.000 seconds
+
+# Define material properties
+mass            1 2.75e-26  # Mass of atom (2200 kg/m³ * 1.25e-10 m³/atom)
+pair_style      peri/ves
+pair_coeff      * * 3.5e8 0.005 1.25e-10
+ERROR: Incorrect args for pair coefficients (../pair_peri_ves.cpp:349)
+Last command: pair_coeff      * * 3.5e8 0.005 1.25e-10

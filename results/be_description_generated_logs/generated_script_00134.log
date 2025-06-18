@@ -1,0 +1,21 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for NEB Simulation of Vacancy Hopping in Silicon
+
+# Initialize simulation
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+# Define lattice and create simulation box
+lattice         diamond 5.431
+Lattice spacing in x,y,z = 5.431 5.431 5.431
+region          box block 0 10 0 10 0 10
+create_box      1 box
+Created orthogonal box = (0 0 0) to (54.31 54.31 54.31)
+  1 by 1 by 1 MPI processor grid
+
+# Read initial configuration and introduce vacancy
+read_data       silicon.data
+ERROR: Cannot use read_data without add keyword after simulation box is defined (../read_data.cpp:342)
+Last command: read_data       silicon.data

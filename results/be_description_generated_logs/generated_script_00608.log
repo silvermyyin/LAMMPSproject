@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for simulating a rigid body system with Lennard-Jones units
+
+# Initialize simulation
+units lj
+atom_style bond
+
+# Read in data file
+read_data rigid_body_system.data
+ERROR: Cannot open file rigid_body_system.data: No such file or directory (../read_data.cpp:367)
+Last command: read_data rigid_body_system.data

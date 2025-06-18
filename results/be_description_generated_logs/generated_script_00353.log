@@ -1,0 +1,13 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for thermal transport simulation in a 2D system using AtC
+
+# Initialize simulation
+units real
+dimension 2
+boundary p p f
+atom_style atomic
+
+# Create FCC lattice
+lattice fcc 3.615
+ERROR: Lattice style incompatible with simulation dimension (../lattice.cpp:70)
+Last command: lattice fcc 3.615

@@ -1,0 +1,22 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 3D Lennard-Jones melt simulation with RDF analysis
+
+units lj
+atom_style atomic
+
+# Define variables for box dimensions
+variable x equal 20
+variable y equal 20
+variable z equal 20
+
+# Create simulation box and atoms
+region box block 0 ${x} 0 ${y} 0 ${z}
+region box block 0 20 0 ${y} 0 ${z}
+region box block 0 20 0 20 0 ${z}
+region box block 0 20 0 20 0 20
+create_box 1 box
+Created orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+ERROR: Cannot create atoms with undefined lattice (../create_atoms.cpp:367)
+Last command: create_atoms 1 box

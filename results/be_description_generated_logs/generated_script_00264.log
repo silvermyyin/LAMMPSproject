@@ -1,0 +1,11 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Energy Minimization of Water Model using LATTE and FIRE
+
+# Set simulation parameters
+units metal
+atom_style full
+
+# Read initial configuration from data file
+read_data data.water
+ERROR: Cannot open file data.water: No such file or directory (../read_data.cpp:367)
+Last command: read_data data.water

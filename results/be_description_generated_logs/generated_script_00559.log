@@ -1,0 +1,17 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS Input Script for Argon Atoms using Lennard-Jones Potential
+
+# Define variables
+variable x equal 10.0      # Box size in x-direction (in Angstroms)
+variable y equal 10.0      # Box size in y-direction (in Angstroms)
+variable z equal 10.0      # Box size in z-direction (in Angstroms)
+variable rhostar equal 0.8 # Reduced density
+variable tinitial equal 1.0 # Reduced initial temperature
+variable sigma equal 3.405  # Lennard-Jones sigma for Argon (in Angstroms)
+variable epsilon equal 0.0103 # Lennard-Jones epsilon for Argon (in eV)
+
+# Calculate lattice constant based on reduced density
+variable a equal (variable sigma)*pow(4.0/${rhostar},1.0/3.0)
+variable a equal (variable sigma)*pow(4.0/0.8,1.0/3.0)
+ERROR: Illegal variable command: expected 3 arguments but found 4 (../variable.cpp:449)
+Last command: variable a equal (variable sigma)*pow(4.0/${rhostar},1.0/3.0)

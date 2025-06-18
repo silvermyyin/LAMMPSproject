@@ -1,0 +1,71 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for 2D simulation of rigid body dynamics with SRD
+
+units lj
+dimension 2
+atom_style hybrid sphere molecular
+WARNING: Atom style hybrid defines both, per-type and per-atom masses; both must be set, but only per-atom masses will be used (../atom_vec_hybrid.cpp:132)
+
+# Create simulation box
+lattice hex 0.7
+Lattice spacing in x,y,z = 1.2843567 2.2245711 1.2843567
+region box block 0 20 0 20 -0.5 0.5
+create_box 2 box
+Created orthogonal box = (0 0 -0.64217836) to (25.687135 44.491422 0.64217836)
+  1 by 1 by 1 MPI processor grid
+
+# Create large rigid clusters
+region large_sphere sphere 10 10 0 3.0
+create_atoms 1 region large_sphere
+Created 34 atoms
+  using lattice units in orthogonal box = (0 0 -0.64217836) to (25.687135 44.491422 0.64217836)
+  create_atoms CPU = 0.000 seconds
+
+# Create small SRD particles
+lattice sq2 0.8
+Lattice spacing in x,y,z = 1.5811388 1.5811388 1.5811388
+region small_particles block 0 20 0 20 -0.5 0.5
+create_atoms 2 region small_particles
+Created 677 atoms
+  using lattice units in orthogonal box = (0 0 -0.64217836) to (25.687135 44.491422 0.64217836)
+  create_atoms CPU = 0.000 seconds
+
+# Define masses
+mass 1 5.0
+mass 2 1.0
+
+# Define interaction potentials
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+pair_coeff 1 2 1.0 1.0 2.5
+pair_coeff 2 2 0.5 1.0 2.5
+
+# Set initial velocities
+velocity all create 1.0 12345
+
+# Fixes for simulation
+fix 1 all nve
+fix 2 all enforce2d
+
+# Equilibrate large particles
+fix 3 all rigid single
+  1 rigid bodies with 711 atoms
+run 5000
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+WARNING: One or more atoms are time integrated more than once (../modify.cpp:296)
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 19 32 1
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton
+      stencil: half/bin/2d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 8.441 | 8.441 | 8.441 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+ERROR: Temperature compute degrees of freedom < 0 (../compute_temp.cpp:98)
+Last command: run 5000

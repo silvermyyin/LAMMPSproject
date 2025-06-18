@@ -1,0 +1,56 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a bonded particle model simulation with granular Hookean contact
+
+units lj
+dimension 3
+atom_style sphere
+boundary f f f
+
+# Create geometry
+lattice fcc 0.8
+Lattice spacing in x,y,z = 1.7099759 1.7099759 1.7099759
+region simbox block 0 50 0 50 0 50 units box
+create_box 2 simbox
+Created orthogonal box = (0 0 0) to (50 50 50)
+  1 by 1 by 1 MPI processor grid
+
+# Define regions
+region plate cylinder z 25 25 10 0 10 units box
+region projectile sphere 25 25 45 5 units box
+
+# Create atoms
+create_atoms 1 region plate
+Created 2550 atoms
+  using lattice units in orthogonal box = (0 0 0) to (50 50 50)
+  create_atoms CPU = 0.000 seconds
+create_atoms 2 region projectile
+Created 422 atoms
+  using lattice units in orthogonal box = (0 0 0) to (50 50 50)
+  create_atoms CPU = 0.000 seconds
+
+# Randomize positions slightly to simulate imperfections
+displace_atoms all random 0.1 0.1 0.1 12345
+Displacing atoms ...
+
+# Set masses and radii
+set type 1 mass 1.0
+Setting atom values ...
+  2550 settings made for mass
+set type 1 diameter 1.0
+Setting atom values ...
+  2550 settings made for diameter
+set type 2 mass 1.0
+Setting atom values ...
+  422 settings made for mass
+set type 2 diameter 1.0
+Setting atom values ...
+  422 settings made for diameter
+
+# Define neighbor and communication settings
+neighbor 0.3 bin
+neigh_modify delay 0
+
+# Define pair style and coefficients
+pair_style gran/hooke/history 200.0 NULL 50.0 NULL 0.5
+ERROR: Illegal pair_style command (../pair_gran_hooke_history.cpp:373)
+Last command: pair_style gran/hooke/history 200.0 NULL 50.0 NULL 0.5

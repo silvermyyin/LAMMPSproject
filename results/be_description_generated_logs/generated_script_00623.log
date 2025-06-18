@@ -1,0 +1,15 @@
+LAMMPS (27 Jun 2024 - Development - patch_27Jun2024-612-gaa0b6c47c2-modified)
+# LAMMPS input script for a 2D SRD fluid system with a low-density lattice and SRD particles
+
+units lj
+atom_style atomic
+dimension 2
+boundary p p f
+
+# Define 2D square lattice with low density
+lattice sq 0.4
+Lattice spacing in x,y,z = 1.5811388 1.5811388 1.5811388
+region box block 0 30 0 30 -0.5 0.5
+create_box 1 box
+ERROR: Cannot run 2d simulation with nonperiodic Z dimension (../create_box.cpp:43)
+Last command: create_box 1 box
