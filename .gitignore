@@ -5,9 +5,6 @@ venv/
 # Ignore macOS system files
 .DS_Store
 
-# Ignore LAMMPS log files
-# results/be_description_generated_logs/
-
 # Ignore LAMMPS dump files
 dump_*.xyz
 sw_example.xml
